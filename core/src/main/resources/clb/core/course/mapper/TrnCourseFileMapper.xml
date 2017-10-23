@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnCourseFileMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnCourseFile">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FILE_NAME" property="fileName" jdbcType="DECIMAL" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="download_times" property="downloadTimes" />
+        <result column="supplier_id" property="supplierId" />
+        <result column="NAME" property="name" />
+        <result column="prd_division" property="prdDivision"/>
+        <result column="prd_class" property="prdClass" />
+        <result column="product_class" property="productClass" /> 
+		<result column="file_content" property="fileContent" /> 
+        <result column="UPLOAD_DATE" property="uploadDate" jdbcType="TIMESTAMP" />
+        <result column="FILE_NUM" property="fileNum" jdbcType="VARCHAR" />
+		<result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+		<result column="file_path" property="filePath"/>
+    </resultMap>
+
+<!-- 根据产品id选择已经上传的文件 -->
+	<select id="selectBycourseId" parameterType="clb.core.course.dto.TrnCourseFile" resultMap="BaseResultMap">
+		select
+		ftcf.LINE_ID,
+		ftcf.COURSE_ID,
+		ftcf.FILE_ID,
+		ftcf.FILE_CONTENT,
+		ftcf.DOWNLOAD_TIMES,
+		ftcf.FILE_NUM,
+		ftcf.LAST_UPDATE_DATE,
+		sf.FILE_NAME,
+		sf.UPLOAD_DATE,
+		ceil(SF.FILE_SIZE/1024) FILE_SIZE
+		from fms_trn_course_file ftcf, sys_file sf
+		where ftcf.FILE_ID = sf.FILE_ID
+		and ftcf.COURSE_ID = #{courseId}
+	</select>
+	
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnCourseFile" resultMap="BaseResultMap" >
+		select
+		ftcf.LINE_ID,
+		ftcf.COURSE_ID,
+		(
+			select ftc.TOPIC from fms_trn_course ftc where ftc.COURSE_ID = ftcf.COURSE_ID
+		) TOPIC,
+		ftcf.FILE_ID,
+		ftcf.FILE_CONTENT,
+		ftcf.DOWNLOAD_TIMES,
+		ftcf.prd_division,
+		ftcf.prd_class,
+		ftcf.PRODUCT_CLASS,
+		ftcf.SUPPLIER_ID,
+		fss.NAME,
+		ftcf.FILE_NUM,
+		ftcf.LAST_UPDATE_DATE,
+		sf.FILE_NAME,
+		ceil(SF.FILE_SIZE/1024) FILE_SIZE,
+		sf.UPLOAD_DATE
+		from fms_trn_course_file ftcf
+			LEFT JOIN fms_spe_supplier fss 
+			ON fss.SUPPLIER_ID = ftcf.SUPPLIER_ID
+			LEFT JOIN sys_file sf 
+			ON ftcf.FILE_ID = sf.FILE_ID
+			LEFT JOIN fms_trn_course ftc
+			ON ftc.COURSE_ID = ftcf.COURSE_ID
+		where 1=1
+        <if test="courseId != null and courseId != ''">
+            AND ftcf.COURSE_ID = #{courseId}
+        </if >
+		
+		<if test="prdDivision !=null and prdDivision !=''">
+			and ftcf.prd_division =#{prdDivision}
+		</if>
+		
+		<if test="prdClass !=null and prdClass !=''">
+			and ftcf.prd_class =#{prdClass}
+		</if>
+		
+		<if test="lineId != null and lineId != ''">
+            AND ftcf.LINE_ID = #{lineId}
+        </if >
+        
+        <if test="fileNum != null and fileNum != ''">
+            AND ftcf.FILE_NUM LIKE CONCAT('%', #{fileNum}, '%')
+        </if >
+        
+        <if test="topic !=null and topic !=''">
+			and ftc.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+        
+        <if test="supplierId !=null and supplierId !=''">
+			and ftcf.SUPPLIER_ID = #{supplierId}
+		</if>
+		
+		<!-- <if test="productClass !=null and productClass !=''">
+			and ftcf.PRODUCT_CLASS like CONCAT('%', #{productClass}, '%')
+		</if> -->
+		
+		<if test="fileContent != null and fileContent != ''">
+            AND ftcf.FILE_CONTENT LIKE CONCAT('%', #{fileContent}, '%')
+        </if >
+        
+		<if test="startDate!=null and startDate!=''">
+		<![CDATA[   
+					and DATE_FORMAT(ftcf.LAST_UPDATE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="endDate!=null and endDate!=''">
+		<![CDATA[    
+					and DATE_FORMAT(ftcf.LAST_UPDATE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if>
+		order by ftcf.FILE_NUM desc 
+	</select>
+		
+	<select id="selectByParams" parameterType="clb.core.course.dto.TrnCourseFile" resultMap="BaseResultMap">
+		select
+		ftcf.LINE_ID,
+		ftcf.COURSE_ID,
+	    ftc.TOPIC,
+	    ftcf.supplier_id,
+	    ftcf.PRODUCT_CLASS,
+	     ftcf.FILE_CONTENT,
+			ftcf.FILE_ID,
+			sf.file_path,
+	ftcf.DOWNLOAD_TIMES,
+			sf.FILE_NAME,
+			ceil(SF.FILE_SIZE/1024) FILE_SIZE,
+			sf.LAST_UPDATE_DATE
+			from fms_trn_course_file ftcf inner join  sys_file sf on ftcf.FILE_ID = sf.FILE_ID
+	    LEFT JOIN fms_trn_course ftc on ftcf.COURSE_ID=ftc.COURSE_ID
+	    <where>
+	    	<if test="supplierId!=null ">
+			and ftcf.supplier_id=#{supplierId}
+			</if>
+			<if test="productClass!=null and productClass!=''">
+			and ftcf.PRODUCT_CLASS=#{productClass}
+			</if>
+			<if test="fileContent!=null and fileContent!=''">
+			and ftcf.FILE_CONTENT like CONCAT('%', #{fileContent}, '%')
+			</if>
+			<if test="fileName!=null and fileName!=''">
+			and sf.FILE_NAME like CONCAT('%', #{fileName}, '%')
+			</if>
+			<if test="prdDivision !=null and prdDivision !=''">
+					and ftcf.prd_division =#{prdDivision}
+			</if>
+			<if test="prdClass !=null and prdClass !=''">
+					and ftcf.prd_class=#{prdClass}
+			</if>
+			<if test="topic !=null and topic !=''">
+					and ftc.topic=#{topic}
+			</if>
+			<if test="courseId !=null">
+					and ftcf.COURSE_ID=#{courseId}
+			</if>
+	    </where>
+	</select>
+
+</mapper>

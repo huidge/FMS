@@ -1,0 +1,158 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+	//获取"文章列表页面"传过来的 参数
+	var planId = '${RequestParameters.planId}';
+	var viewModel = kendo.observable({
+		model : {
+			
+		}
+	});
+	
+
+	function ages(str) {
+		var r = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);
+		if (r == null)
+			return false;
+		var d = new Date(r[1], r[3] - 1, r[4]);
+		if (d.getFullYear() == r[1] && (d.getMonth() + 1) == r[3]
+				&& d.getDate() == r[4]) {
+			var Y = new Date().getFullYear();
+			return ("年龄   =   " + (Y - r[1]) + "   周岁");
+		}
+		return ("输入的日期格式错误！");
+	}
+	
+	console(ages("1980-03-22"))
+
+	console.log(planId);
+	viewModel.model.set("planId", planId);
+
+	$.ajax({
+		type : "POST",
+		async : false,
+		url : "${base.contextPath}/fms/pln/plan/request/query",
+		data : {
+			planId : planId
+		},
+		success : function(json) {
+			var row = json.rows[0] || {};
+			for ( var k in row) {
+				viewModel.model.set(k, row[k]);
+			}
+		}
+	});
+
+	//保存复查信息
+	function saveReviewEdit() {
+		$.ajax({
+			type : "POST",
+			async : false,
+			dataType : 'json',
+			url : "${base.contextPath}/fms/pln/plan/request/editReview",
+			data : {
+				"planId" : planId,
+				"reviewProcessComments" : viewModel.model.reviewProcessComments
+			},
+			success : function(json) {
+				kendo.ui.showInfoDialog({
+					title : $l('hap.tip.info'),
+					message : '保存成功！'
+				});
+				window.parent.$("#dialog").data("kendoWindow").close();
+			}
+		});
+	}
+
+	//取消按钮
+	function cancel() {
+		window.parent.$("#dialog").data("kendoWindow").close();
+	}
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 10%; display: block;">
+				<div style="width: 98%; margin-top: 5px;">
+					<form class="form-horizontal">
+						<div class="row" style="margin-left: 5px;">
+							<div class="form-group">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">复查原因:</label>
+											<div class="col-sm-9">
+												<textarea rows="3" cols="15" data-bind="value:model.reviewProcessComments" style="width: 80%"
+													class="k-textbox" required></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div style="margin-top: 10px; padding-left: 20px" >
+							<span class="btn btn-default" onclick="cancel()">
+								<i class="fa fa-eraser" style="margin-right: 3px;"></i>取消
+							</span> 
+							<span class="btn btn-success" onclick="saveReviewEdit()" type="submit" style="margin-left: 53%">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span> 
+						</div>
+					</form>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+		
+		//点击保存
+		function saveData() {
+			//判断是新建还是修改
+			if (bigId != 0) {
+				//修改
+				Hap.submitForm({
+					url : '${base.contextPath}/fms/pln/e/plan/template/big/updateByBigId',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "序号重复了!"
+							});
+						}
+
+					}
+				})
+			} else {
+				viewModel.model.set("bigId",null);
+				//添加
+				Hap.submitForm({
+					url : '${base.contextPath}/fms/pln/e/plan/template/big/add',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "序号重复了!"
+							});
+						}
+
+					}
+				})
+			}
+		}
+
+</script>
+</body>
+</html>

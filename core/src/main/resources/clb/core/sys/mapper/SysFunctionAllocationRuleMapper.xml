@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.SysFunctionAllocationRuleMapper">
+    <resultMap id="BaseResultMap" type="clb.core.sys.dto.SysFunctionAllocationRule">
+        <result column="rule_id" property="ruleId" jdbcType="DECIMAL" />
+        <result column="function_code" property="functionCode"/>
+        <result column="column_code"  property="columnCode"/>
+        <result column="column_value"  property="columnValue"/>
+        <result column="role_id"  property="roleId"/>
+		<result column="role_code"  property="roleCode"/>
+        <result column="allocation_api"  property="allocationApi"/>
+        <result column="send_notice"  property="sendNotice"/>
+        <result column="is_alive"  property="isAlive"/>
+    </resultMap>
+
+	<select id="selectByDto" resultMap="BaseResultMap">
+		select fsfar.*,srb.ROLE_CODE  from fms_sys_function_allocation_rule fsfar
+		LEFT JOIN sys_role_b srb
+		ON fsfar.ROLE_ID = srb.ROLE_ID
+		<where>
+			<if
+				test="functionCode !=null and functionCode !=''">
+				and fsfar.FUNCTION_CODE = #{functionCode}
+			</if>
+			<if
+				test="columnCode !=null and columnCode !=''">
+				and fsfar.column_code = #{columnCode}
+			</if>
+
+			<if
+				test="columnValue !=null and columnValue !=''">
+				and fsfar.column_value = #{columnValue}
+			</if>
+
+			<if test="roleName !=null and roleName !=''">
+				and fsfar.role_id in( select tmp.ROLE_ID from (
+							SELECT * from(SELECT
+								- 1 AS ROLE_ID,
+								'创建者' role_name
+							FROM
+								DUAL
+							UNION
+								SELECT
+									ROLE_ID,
+									ROLE_NAME
+								FROM
+									sys_role_b
+								WHERE
+									ENABLE_FLAG = 'Y' ) t where
+								 t.ROLE_NAME LIKE CONCAT('%', CONCAT(#{roleName}, '%')) 
+								 ) tmp
+							  ) 
+			</if>
+		</where>
+	</select>
+
+</mapper>

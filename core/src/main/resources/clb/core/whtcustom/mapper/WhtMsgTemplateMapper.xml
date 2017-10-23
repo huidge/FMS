@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtMsgTemplateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtMsgTemplate">
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="WHT_TEMPLATE_ID" property="whtTemplateId" jdbcType="VARCHAR" />
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_NAME" property="templateName" jdbcType="VARCHAR" />
+        <result column="PRIMARY_INDUSTRY" property="primaryIndustry" jdbcType="VARCHAR" />
+        <result column="SECONDARY_INDUSTRY" property="secondaryIndustry" jdbcType="VARCHAR" />
+        <result column="DETAIL_CONTENT" property="detailContent" jdbcType="VARCHAR" />
+        <result column="CONTENT_SAMPLE" property="contentSample" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.whtcustom.dto.WhtMsgTemplate"
+		resultMap="BaseResultMap">
+		SELECT
+		fwmt.*
+		FROM fms_wht_msg_template fwmt
+		WHERE 1=1
+		<if test="templateId !=null and templateId !=''">
+			and fwmt.TEMPLATE_ID =#{templateId}
+		</if>
+		
+		<if test="whtTemplateId !=null and whtTemplateId !=''">
+			and fwmt.WHT_TEMPLATE_ID =#{whtTemplateId}
+		</if>
+		
+		<if test="cfgId !=null and cfgId !=''">
+			and fwmt.CFG_ID =#{cfgId}
+		</if>
+	</select>
+
+</mapper>

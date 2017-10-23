@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wanjun.feng on 17/4/18.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="clb.core.production.mapper.PrdDiscountMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdDiscount">
+        <id column="DISCOUNT_ID" property="discountId" jdbcType="DECIMAL" />
+        <result column="NOTICE_ID" property="noticeId" jdbcType="DECIMAL" />
+        <result column="NOTICE_TITLE" property="noticeTitle" jdbcType="VARCHAR" />
+        <result column="NOTICE_CONTENT" property="noticeContent" jdbcType="VARCHAR" />
+        <result column="PRD_DIVISION" property="prdDivision" jdbcType="VARCHAR" />
+        <result column="PRD_CLASS" property="prdClass" jdbcType="VARCHAR" />
+        <result column="PRD_DIVISION_NAME" property="prdDivisionName" jdbcType="VARCHAR" />
+        <result column="PRD_CLASS_NAME" property="prdClassName" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="DATE_FROM" property="dateFrom" jdbcType="DATE" />
+        <result column="DATE_TO" property="dateTo" jdbcType="DATE" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+        <result column="PRD_DIVISION_NAME" property="prdDivisionName" jdbcType="VARCHAR" />
+        <result column="PRD_CLASS_NAME" property="prdClassName" jdbcType="VARCHAR" />
+        <result column="RELEASE_DATE" property="releaseDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <select id="selectDiscounts" resultMap="BaseResultMap">
+       SELECT 
+		  t.DISCOUNT_ID,
+		  fna.ARTICLE_ID NOTICE_ID,
+		  fna.TITLE NOTICE_TITLE,
+		  fna.CONTENT NOTICE_CONTENT,
+		  t.PRD_DIVISION,
+		  scvb1.meaning PRD_DIVISION_NAME,
+		  t.PRD_CLASS,
+		  scvb2.MEANING PRD_CLASS_NAME,
+		  t.ITEM_ID,
+		  fpi.ITEM_NAME,
+		  t.CONTENT,
+		  t.DATE_FROM,
+		  t.DATE_TO,
+		  t.REQUEST_ID,
+		  t.PROGRAM_ID,
+		  t.OBJECT_VERSION_NUMBER,
+		  t.CREATED_BY,
+		  t.CREATION_DATE,
+		  t.LAST_UPDATED_BY,
+		  t.LAST_UPDATE_DATE,
+		  t.LAST_UPDATE_LOGIN,
+		  fna.RELEASE_DATE
+		FROM
+		  fms_prd_discount t 
+		  LEFT JOIN fms_prd_class_set fpcs 
+		    ON fpcs.set_code = 'PRODUCTION_CLASS' 
+		  LEFT JOIN fms_prd_items fpi 
+		    ON t.item_id = fpi.item_id 
+		  LEFT JOIN fms_ntc_article fna 
+		    ON t.notice_id = fna.article_id 
+		  LEFT JOIN sys_code_b scb1 
+		    ON scb1.CODE = 'PRD.PRODUCT_DIVISION' 
+		  LEFT JOIN sys_code_value_b scvb1 
+		    ON scb1.CODE_ID = scvb1.CODE_ID 
+		    AND scvb1.VALUE = t.PRD_DIVISION 
+		  LEFT JOIN sys_code_b scb2 
+		    ON scb2.CODE = 'PRD.PRODUCT_CLASS' 
+		  LEFT JOIN sys_code_value_b scvb2 
+		    ON scb2.CODE_ID = scvb2.CODE_ID 
+		    AND scvb2.VALUE = t.PRD_CLASS 
+		<where>
+	        <if test="prdDiscount !=null and prdDiscount.itemId != null">
+	            AND t.item_id = #{prdDiscount.itemId}
+	        </if >
+			<if test="prdDiscount !=null and prdDiscount.prdDivision !=null and prdDiscount.prdDivision !=''">
+				and t.prd_division like concat('%',concat(#{prdDiscount.prdDivision},'%'))
+			</if>
+			<if test="prdDiscount !=null and prdDiscount.prdClass !=null and prdDiscount.prdClass !=''">
+				and t.prd_class like concat('%',concat(#{prdDiscount.prdClass},'%'))
+			</if>
+			<if test="prdDiscount !=null and prdDiscount.itemName !=null and prdDiscount.itemName !=''">
+				and (fpi.item_name LIKE CONCAT('%', CONCAT(#{prdDiscount.itemName}, '%')) 
+				  OR fpi.item_code LIKE CONCAT('%', CONCAT(#{prdDiscount.itemName}, '%')))
+			</if>
+			<if test="prdDiscount !=null and prdDiscount.statusCode =='Y'.toString()">
+				and <![CDATA[ t.date_from <= CURRENT_TIMESTAMP ]]>
+				and <![CDATA[ date_add(t.date_to,interval 1 day) >= CURRENT_TIMESTAMP ]]>
+			</if>
+			<if test="prdDiscount !=null and prdDiscount.statusCode =='N'.toString()">
+				and (<![CDATA[ t.date_from >= CURRENT_TIMESTAMP ]]>
+						OR <![CDATA[ date_add(t.date_to,interval 1 day) <= CURRENT_TIMESTAMP ]]>)
+			</if>
+		</where>
+		ORDER BY fna.RELEASE_DATE desc, t.DISCOUNT_ID desc
+	</select>
+</mapper>

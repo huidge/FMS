@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clb.core.wecorp.mapper.WecorpAccountTicketMapper">
+
+    <resultMap id="tokenMap" type="clb.core.wecorp.dto.WecorpAccountTicket" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="ticket_value" property="ticketValue" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findByAppIdAndType" resultMap="tokenMap" >
+           SELECT * FROM woa_account_ticket WHERE app_id=#{appId} AND type=#{type} ORDER BY creation_date DESC limit 1
+    </select>
+
+</mapper>

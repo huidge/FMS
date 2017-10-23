@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clb.core.wecorp.mapper.WecorpMaterialMapper">
+
+    <resultMap id="materialMap" type="clb.core.wecorp.dto.WecorpMaterial">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="attachment_id" property="attachmentId" jdbcType="VARCHAR"/>
+        <result column="purpose" property="purpose" jdbcType="VARCHAR"/>
+        <result column="account_num" property="accountNum" jdbcType="VARCHAR"/>
+        <result column="account_media_id" property="accountMediaId" jdbcType="VARCHAR"/>
+        <result column="account_media_url" property="accountMediaUrl" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR"/>
+        <result column="material_type" property="materialType" jdbcType="VARCHAR"/>
+        <result column="expires_in" property="expiresIn" jdbcType="VARCHAR"/>
+        <result column="last_update_date" property="lastUpdateDate" jdbcType="VARCHAR"/>
+        <result column="creation_date" property="creationDate" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+       id,attachment_id,purpose,account_num,account_media_id,account_media_url,content,
+       enable_flag,material_type,expires_in,last_update_date,creation_date
+    </sql>
+
+
+    <select id="findMaterial" resultMap="materialMap" >
+        SELECT <include refid="Base_Column_List" /> FROM woa_material WHERE attachment_id=#{attachmentId} AND purpose=#{purpose} AND account_num=#{accountNum} AND enable_flag=#{enableFlag}
+    </select>
+
+    <select id="findMaterialByattachmentId" resultMap="materialMap" >
+        SELECT <include refid="Base_Column_List" /> FROM woa_material WHERE attachment_id=#{attachmentId}
+    </select>
+
+    <select id="findByAccountMediaIdAndAccountNum" resultMap="materialMap" >
+        SELECT <include refid="Base_Column_List" /> FROM woa_material WHERE account_media_id=#{accountMediaId} AND account_num=#{accountNum}
+    </select>
+
+    <select id="queryMaterial" resultMap="materialMap" parameterType="clb.core.wecorp.dto.WecorpMaterialDTO">
+        SELECT <include refid="Base_Column_List" /> FROM woa_material WHERE 1=1
+        <if test="purpose!=null and purpose!=''">
+            AND purpose=#{purpose}
+        </if>
+        <if test="enableFlag!=null and enableFlag!=''">
+            AND enable_flag=#{enableFlag}
+        </if>
+        <if test="materialType!=null and materialType!=''">
+            AND material_type=#{materialType}
+        </if>
+        <choose>
+            <when test="creationDateSort!=null and creationDateSort!=''">
+                <if test="creationDateSort=='ASC'">
+                    ORDER BY creation_date ASC
+                </if>
+                <if test="creationDateSort=='DESC'">
+                    ORDER BY creation_date DESC
+                </if>
+            </when>
+            <when test="(creationDateSort!=null or creationDateSort!='') and lastUpdateDateSort!=null and lastUpdateDateSort!=''">
+                <if test="lastUpdateDateSort=='ASC'">
+                    ORDER BY last_update_date ASC
+                </if>
+                <if test="lastUpdateDateSort=='DESC'">
+                    ORDER BY last_update_date DESC
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY creation_date ASC
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

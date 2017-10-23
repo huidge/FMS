@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.system.mapper.SysUserCustomFunctionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.system.dto.SysUserCustomFunction">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="MODULE_CFG_ID" property="moduleCfgId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="AllFieldsMap" type="clb.core.system.dto.SysUserCustomFunction">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="MODULE_CFG_ID" property="moduleCfgId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_SHOW_NAME" property="functionShowName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="SELECT_FLAG" property="selectFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryOwnFuncs" parameterType="clb.core.system.dto.SysUserCustomFunction" resultMap="AllFieldsMap">
+       SELECT
+            ucf.MODULE_CFG_ID,
+            wmc.FUNCTION_SHOW_NAME,
+            wmc.ENGLISH_NAME,
+            "Y" SELECT_FLAG
+        FROM
+            FMS_SYS_USER_CUSTOM_FUNCTION ucf,
+            FMS_SYS_WORKBENCH_MODULE_CFG wmc
+        WHERE
+            ucf.MODULE_CFG_ID = wmc.CFG_ID
+        AND wmc.status = "Y"
+        AND ucf.USER_ID = #{userId}
+        order by ucf.line_id,wmc.order_by
+    </select>
+
+    <select id="queryAvailableFuncs" parameterType="clb.core.system.dto.SysUserCustomFunction" resultMap="AllFieldsMap">
+        SELECT
+            wmc.CFG_ID MODULE_CFG_ID,
+            wmc.FUNCTION_SHOW_NAME,
+            wmc.ENGLISH_NAME,
+            "N" SELECT_FLAG,
+            wmc.order_by,
+            null line_id
+        FROM
+            FMS_SYS_WORKBENCH_MODULE_CFG wmc
+        WHERE
+            1 = 1
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                sys_user_role sur,
+                FMS_SYS_WORKBENCH_ROLE swr
+            WHERE
+                sur.USER_ID = #{userId}
+            AND swr.CFG_ID = wmc.CFG_ID
+            AND sur.role_id = swr.role_id
+            AND swr.STATUS = "Y"
+        )
+        AND NOT EXISTS (
+            SELECT
+                1
+            FROM
+                FMS_SYS_USER_CUSTOM_FUNCTION ucf
+            WHERE
+                ucf.user_id = #{userId}
+            AND wmc.CFG_ID = ucf.MODULE_CFG_ID
+        )
+        AND wmc.status = "Y"
+        UNION
+        SELECT
+            ucf.MODULE_CFG_ID,
+            wmc.FUNCTION_SHOW_NAME,
+            wmc.ENGLISH_NAME,
+            "Y" SELECT_FLAG,
+            wmc.order_by,
+            ucf.line_id
+        FROM
+            FMS_SYS_USER_CUSTOM_FUNCTION ucf,
+            FMS_SYS_WORKBENCH_MODULE_CFG wmc
+        WHERE
+            ucf.MODULE_CFG_ID = wmc.CFG_ID
+        AND wmc.status = "Y"
+        AND ucf.USER_ID = #{userId}
+        order by line_id,order_by
+    </select>
+
+    <delete id="deleteFuncs" parameterType="clb.core.system.dto.SysUserCustomFunction">
+        DELETE FROM FMS_SYS_USER_CUSTOM_FUNCTION
+         WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlLevelMapper">
+	<resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlLevel">
+		<result column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="CHANNEL_CLASS_Code" property="channelClassCode" jdbcType="VARCHAR" />
+		<result column="LEVEL_NAME" property="levelName" jdbcType="VARCHAR" />
+		<result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+		<result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+		<result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+		<result column="THE_THIRD_TEAR" property="theThirdTear" jdbcType="DECIMAL" />
+		<result column="THE_FORTH_YEAR" property="theForthYear" jdbcType="DECIMAL" />
+		<result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+		<result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+		<result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+		<result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+		<result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+		<result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+		<result column="VERSION" property="version" jdbcType="DECIMAL" />
+		<result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="DATE" />
+		<result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="DATE" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="max_version" property="maxVersion" jdbcType="DECIMAL" />
+		<result column="count" property="count" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<select id="selectByCondition" parameterType="clb.core.channel.dto.CnlLevel"
+		resultMap="BaseResultMap">
+		select 
+		fcl.ID,
+		fcl.CHANNEL_CLASS_CODE,
+		fcl.LEVEL_NAME,
+		fcl.THE_FIRST_YEAR THE_FIRST_YEAR,
+		fcl.THE_SECOND_YEAR THE_SECOND_YEAR,
+		fcl.THE_THIRD_TEAR THE_THIRD_TEAR,
+		fcl.THE_FORTH_YEAR THE_FORTH_YEAR, 
+		fcl.THE_FIFTH_YEAR THE_FIFTH_YEAR,
+		fcl.THE_SIXTH_YEAR THE_SIXTH_YEAR,
+		fcl.THE_SEVENTH_YEAR THE_SEVENTH_YEAR,
+		fcl.THE_EIGHT_YEAR THE_EIGHT_YEAR,
+		fcl.THE_NINTH_YEAR THE_NINTH_YEAR,
+		fcl.THE_TENTH_YEAR THE_TENTH_YEAR,
+		fcl.EFFECTIVE_END_DATE,
+		fcl.EFFECTIVE_START_DATE,
+		fcl.VERSION,
+		fcl.SUPPLIER_ID,
+		fss.SUPPLIER_CODE,
+		fss.`NAME`
+		from fms_cnl_level fcl, fms_spe_supplier fss
+		where fcl.SUPPLIER_ID = fss.SUPPLIER_ID
+		    <if test="channelClassCode!=null and channelClassCode!=''">
+			   and fcl.CHANNEL_CLASS_CODE like CONCAT('%', #{channelClassCode}, '%')
+		    </if>
+		    <if test="levelName!=null and levelName!=''">
+			   and fcl.LEVEL_NAME like CONCAT('%', #{levelName}, '%')
+		    </if>
+		    <if test="version!=null and version!=''">
+			   and fcl.VERSION like CONCAT('%', #{version}, '%')
+		    </if>
+		    <if test="supplierCode!=null and supplierCode!=''">
+			   and fss.SUPPLIER_CODE like CONCAT('%', #{supplierCode}, '%')
+		    </if>
+		    <if test="supplierId!=null and supplierId!=''">
+			   and fss.SUPPLIER_ID = #{supplierId}
+		    </if>
+		    <if test="name!=null and name!=''">
+			   and fss.NAME like CONCAT('%', #{name}, '%')
+		    </if>
+		ORDER BY fcl.CREATION_DATE desc
+	</select>
+	
+	<select id="selectCountByCondition" parameterType="clb.core.channel.dto.CnlLevel" resultMap="BaseResultMap">
+		select 
+		max(version) max_version,
+		count(*) count 
+		from fms_cnl_level fcl
+		<where>
+		    <if test="channelClassCode!=null and channelClassCode!=''">
+			   and fcl.CHANNEL_CLASS_CODE like CONCAT('%', #{channelClassCode}, '%')
+		    </if>
+		    <if test="levelName!=null and levelName!=''">
+			   and fcl.LEVEL_NAME = #{levelName}
+		    </if>
+		    <if test="supplierId!=null and supplierId!=''">
+			   and fcl.SUPPLIER_ID like CONCAT('%', #{supplierId}, '%')
+		    </if>
+		</where>
+	</select>
+	
+	<insert id="cnlLevelInsert"  parameterType="clb.core.channel.dto.CnlLevel">
+	 insert into 
+	 fms_cnl_level
+	 (CHANNEL_CLASS_CODE,
+	  LEVEL_NAME,
+	  SUPPLIER_ID,
+	  THE_FIRST_YEAR,
+	  THE_SECOND_YEAR,
+	  THE_THIRD_TEAR,
+	  THE_FORTH_YEAR,
+	  THE_FIFTH_YEAR,
+	  THE_SIXTH_YEAR,
+	  THE_SEVENTH_YEAR,
+	  THE_EIGHT_YEAR,
+	  THE_NINTH_YEAR,
+	  THE_TENTH_YEAR,
+	  EFFECTIVE_END_DATE,
+	  EFFECTIVE_START_DATE,
+	  VERSION
+	 ) 
+	 values
+	 (#{channelClassCode},
+	  #{levelName},
+	  #{supplierId},
+	  #{theFirstYear},
+	  #{theSecondYear},
+	  #{theThirdTear},
+	  #{theForthYear},
+	  #{theFifthYear},
+	  #{theSixthYear},
+	  #{theSeventhYear},
+	  #{theEightYear},
+	  #{theNinthYear},
+	  #{theTenthYear},
+	  #{effectiveEndDate},
+	  #{effectiveStartDate},
+	  #{version}
+	 )
+	</insert>
+	
+	<!-- 查看之前版本 -->
+	<select id="selectPreviousVersion" resultMap="BaseResultMap">
+	   select * 
+	   from fms_cnl_level fcl
+	   where  fcl.CHANNEL_CLASS_CODE = #{channelClassCode}
+          and fcl.LEVEL_NAME = #{levelName}
+          and fcl.SUPPLIER_ID = #{supplierId}
+          and version = #{version}
+	</select>
+</mapper>

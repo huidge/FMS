@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/24.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnChannelRatioMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnChannelRatio">
+        <result column="RATIO_ID" property="ratioId" jdbcType="DECIMAL"/>
+        <result column="RATIO_NAME" property="ratioName" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="selectChannelRatios" parameterType="clb.core.commission.dto.CmnChannelRatio" resultMap="BaseResultMap">
+        SELECT 
+		  ccr.RATIO_ID,
+		  ccr.RATIO_NAME,
+		  ccr.CHANNEL_ID,
+		  fcc.CHANNEL_NAME,
+		  ccr.OBJECT_VERSION_NUMBER 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO ccr,
+		  fms_cnl_channel fcc 
+		WHERE ccr.CHANNEL_ID = fcc.CHANNEL_ID
+        <if test = "channelId != null and channelId != ''" >
+            AND fcc.CHANNEL_ID = #{channelId}
+        </if>
+        <if test = "channelId == null or channelId == ''" >
+        <if test = "roleCode != 'ADMIN' and roleCode != 'PM manager'" >
+            AND (
+				CASE
+				WHEN (
+					SELECT
+						COUNT(1)
+					FROM
+						sys_user_role sur,
+						sys_role_b sr
+					WHERE
+						sr.ROLE_ID = sur.ROLE_ID
+					AND sur.USER_ID = #{userId}
+					AND sr.ROLE_CODE IN ('PM manager', 'ADMIN')
+				) > 0 THEN
+					1 = 1
+				ELSE
+					EXISTS (
+						SELECT
+							1
+						FROM
+							sys_user su,
+							hr_employee he
+						WHERE
+							su.USER_ID = #{userId}
+						AND su.`RELATED_PARTY_ID` = he.`EMPLOYEE_ID`
+						AND he.`OWNERSHIP_ID` = ccr.`CHANNEL_ID`
+					)
+				END
+			)
+        </if>
+        </if>
+        <if test = "channelName != null and channelName != ''" >
+            AND fcc.CHANNEL_NAME = #{channelName}
+        </if>
+		<if test = "ratioName != null and ratioName != ''" >
+			AND ccr.RATIO_NAME = #{ratioName}
+		</if>
+		ORDER BY ccr.RATIO_ID DESC
+    </select>
+    <select id="wsSelectChannelRatios" parameterType="clb.core.commission.dto.CmnChannelRatio" resultMap="BaseResultMap">
+        SELECT 
+		  ccr.RATIO_ID,
+		  ccr.RATIO_NAME,
+		  ccr.CHANNEL_ID,
+		  fcc.CHANNEL_NAME,
+		  ccr.OBJECT_VERSION_NUMBER 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO ccr,
+		  fms_cnl_channel fcc 
+		WHERE ccr.CHANNEL_ID = fcc.CHANNEL_ID
+		  AND ccr.CHANNEL_ID = #{channelId}
+        <if test = "channelId != null and channelId != ''" >
+            AND fcc.CHANNEL_ID = #{channelId}
+        </if>
+        <if test = "channelName != null and channelName != ''" >
+            AND fcc.CHANNEL_NAME = #{channelName}
+        </if>
+		ORDER BY ccr.CREATION_DATE DESC, ccr.CHANNEL_ID, ccr.RATIO_NAME
+    </select>
+    <!-- 根据渠道ID和渠道级别查找渠道分成 -->
+    <select id="selectByChannelIdAndRatioName" parameterType="clb.core.commission.dto.CmnChannelRatio" resultMap="BaseResultMap">
+        SELECT 
+		  ccr.RATIO_ID,
+		  ccr.RATIO_NAME,
+		  ccr.CHANNEL_ID,
+		  ccr.OBJECT_VERSION_NUMBER 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO ccr
+		WHERE ccr.CHANNEL_ID = #{channelId}
+		    AND ccr.RATIO_NAME = #{ratioName}
+    </select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeContractMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeContract">
+        <result column="CONTRACT_ID" property="contractId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="LEVEL_ONE_TYPE" property="levelOneType" jdbcType="VARCHAR" />
+        <result column="LEVEL_TWO_TYPE" property="levelTwoType" jdbcType="VARCHAR" />
+        <result column="LEVEL_THREE_TYPE" property="levelThreeType" jdbcType="VARCHAR" />
+        <result column="CONTRACT_NAME" property="contractName" jdbcType="VARCHAR" />
+        <result column="BR" property="br" jdbcType="VARCHAR" />
+        <result column="CI" property="ci" jdbcType="VARCHAR" />
+        <result column="ADDRESS_MESSAGE" property="addressMessage" jdbcType="VARCHAR" />
+        <result column="SAME_SETTLE" property="sameSettle" jdbcType="VARCHAR" />
+        <result column="SETTLE_CONTRACT_NAME" property="settleContractName" jdbcType="VARCHAR" />
+        <result column="SETTLE_BR" property="settleBr" jdbcType="VARCHAR" />
+        <result column="SETTLE_CI" property="settleCi" jdbcType="VARCHAR" />
+        <result column="SETTLE_ADDRESS_MESSAGE" property="settleAddressMessage" jdbcType="VARCHAR" />
+        <result column="COLLECTION_TERM_ID" property="collectionTermId" jdbcType="DECIMAL" />
+        <result column="SETTLE_TYPE_CODE" property="settleTypeCode" jdbcType="VARCHAR" />
+        <result column="COLLECTION_ACCOUNT" property="collectionAccount" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+</mapper>

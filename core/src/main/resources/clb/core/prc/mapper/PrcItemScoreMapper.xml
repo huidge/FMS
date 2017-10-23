@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.prc.mapper.PrcItemScoreMapper">
+	<resultMap id="BaseResultMap" type="clb.core.prc.dto.PrcItemScore">
+		<result column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+		<result column="RADAR_LINE_ID" property="radarLineId" jdbcType="DECIMAL" />
+		<result column="RADAR_LINE_DETAIL_ID" property="radarLineDetailId"
+			jdbcType="DECIMAL" />
+		<result column="SCORE" property="score" jdbcType="DECIMAL" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="ITEM_NAME" property="itemName" />
+		<result column="COMP_DIM_NAME" property="compDimName" />
+		<result column="ITEM_ID_CONNECT_ITEM" property="itemIdConnectItem" />
+		<result column="DETAIL_NAME" property="detailName" />
+		<result column="DETAIL_ID" property="detailId" />
+	</resultMap>
+
+	<!-- 查看所有列 -->
+	<select id="queryColumns" parameterType="java.lang.Long"
+		resultType="java.util.Map">
+		select fpi.ITEM_NAME
+		,fpi.ITEM_ID,CONCAT('item',fpi.ITEM_ID) ITEM_ID_CONNECT_ITEM from
+		fms_prd_items fpi,
+		fms_prd_attribute_set fpas
+		where fpas.ATT_SET_ID =
+		fpi.ATT_SET_ID
+		and
+		fpi.ATT_SET_ID = #{attSetId}
+	</select>
+
+	<!-- 查看产品分数信息 -->
+	<select id="selectItemScoreInfo" resultMap="BaseResultMap">
+		select
+		fpis.ID,fpis.ITEM_ID, fpis.SCORE, fprl.COMP_DIM_NAME from
+		fms_prc_item_score
+		fpis, fms_prc_radar_line fprl
+		where
+		fpis.radar_line_id = fprl.line_id
+		and fprl.COMP_DIM_NAME = #{compDimName}
+		and fpis.ITEM_ID = #{itemId}
+		and fpis.ATT_SET_ID = #{attSetId}
+		UNION ALL
+		SELECT fpis.ID, fpis.ITEM_ID, fpis.SCORE,fprld.DETAIL_NAME from
+		fms_prc_item_score
+		fpis, fms_prc_radar_line_detail fprld
+		where
+		fpis.RADAR_LINE_DETAIL_ID = fprld.DETAIL_ID
+		and fprld.DETAIL_NAME = #{compDimName}
+		and fpis.ITEM_ID = #{itemId}
+		and fpis.ATT_SET_ID = #{attSetId}
+	</select>
+
+	<!-- 查询所有维度名称 -->
+	<select id="selectNameInfo" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select DISTINCT(fprl.COMP_DIM_NAME) from fms_prc_item_score
+		fpis,
+		fms_prc_radar_line fprl
+		where fpis.radar_line_id = fprl.line_id
+		and
+		fpis.ATT_SET_ID =#{attSetId}
+		UNION ALL
+		SELECT
+		DISTINCT(fprld.DETAIL_NAME) from fms_prc_item_score
+		fpis,
+		fms_prc_radar_line_detail fprld
+		where fpis.RADAR_LINE_DETAIL_ID =
+		fprld.DETAIL_ID
+		and fpis.ATT_SET_ID =#{attSetId}
+	</select>
+
+	<!-- 查询所有产品 -->
+	<select id="queryItems" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select fpi.ITEM_NAME,
+		       fpi.ITEM_ID,
+		       CONCAT('item',fpi.ITEM_ID) ITEM_ID_CONNECT_ITEM 
+		from fms_prd_items fpi where fpi.ATT_SET_ID = #{attSetId}
+	</select>
+
+	<!-- 查询行维度 -->
+	<select id="queryRadarLine" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select fprl.COMP_DIM_NAME, fprl.LINE_ID RADAR_LINE_ID
+		from fms_prc_radar_line fprl
+		where fprl.ATT_SET_ID = #{attSetId}
+		  and fprl.`STATUS` = 'Y'
+	</select>
+
+	<!-- 查询行名细维度 -->
+	<select id="queryRadarLineDetail" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		SELECT CONCAT('----',DETAIL_NAME) DETAIL_NAME, fprld.DETAIL_ID
+		from fms_prc_radar_line_detail fprld 
+		where
+		fprld.LINE_ID = #{lineId}
+		and fprld.`STATUS` = 'Y'
+		order by fprld.DETAIL_ID
+	</select>
+
+    <!-- 通过名称查询行维度信息 -->
+    <select id="queryRadarLineByName"
+		resultMap="BaseResultMap">
+        select fprl.COMP_DIM_NAME, fprl.LINE_ID RADAR_LINE_ID
+        from fms_prc_radar_line fprl 
+        where  fprl.COMP_DIM_NAME = #{compDimName}
+        and fprl.ATT_SET_ID = #{attSetIt}
+    </select>
+    
+     <!-- 通过名称查询行明细维度信息 -->
+    <select id="queryRadarLineDetailByName" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+        select fprld.DETAIL_NAME, fprld.DETAIL_ID RADAR_LINE_DETAIL_ID
+        from fms_prc_radar_line_detail fprld 
+        where fprld.DETAIL_NAME = #{detailName}
+    </select>
+    
+    <!-- 通过条件查询记录是否存在 -->
+    <select id="selectByCondition" parameterType="clb.core.prc.dto.PrcItemScore" resultMap="BaseResultMap">
+        select * from fms_prc_item_score fpis
+         <where>
+           <if test="itemId != null and itemId != ''">
+            AND fpis.ITEM_ID = #{itemId}
+           </if>
+           <if test="attSetId != null and attSetId != ''">
+            AND fpis.ATT_SET_ID = #{attSetId}
+           </if>
+           <if test="radarLineId != null and radarLineId != ''">
+            AND fpis.RADAR_LINE_ID = #{radarLineId}
+           </if>
+           <if test="radarLineDetailId != null and radarLineDetailId != ''">
+            AND fpis.RADAR_LINE_DETAIL_ID = #{radarLineDetailId}
+           </if>
+         </where>
+    </select>
+    
+    <!-- 插入itemScore表 -->
+    <insert id="insertItemScore" parameterType="clb.core.prc.dto.PrcItemScore">
+        insert into 
+        fms_prc_item_score
+        (ITEM_ID,
+         ATT_SET_ID,
+         RADAR_LINE_ID,
+         RADAR_LINE_DETAIL_ID,
+         SCORE
+        )
+        values
+        (#{itemId},
+         #{attSetId},
+         #{radarLineId},
+         #{radarLineDetailId},
+         #{score}
+        )
+    </insert>
+    
+    <update id="updateItemScore" parameterType="clb.core.prc.dto.PrcItemScore">
+        update fms_prc_item_score
+        set score = #{score},
+        OBJECT_VERSION_NUMBER = OBJECT_VERSION_NUMBER +1,
+        LAST_UPDATE_DATE = current_timestamp
+        where id = #{id}
+    </update>
+    
+</mapper>

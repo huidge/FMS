@@ -1,0 +1,142 @@
+<#-- 
+ * description:通用导入信息页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../include/header.html">
+<script type="text/javascript">
+    var response = {};
+    response.data = window.parent.trArray;
+</script>
+<body>
+</script>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="template">
+  	<div id="toolbar-btn" style="padding-bottom:10px;">
+         <span id="gridAdd" onclick="addRow()" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+		 <span id="gridDelete" onclick="deleteData()"  class="btn btn-danger" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
+		 <span id="gridSave" onclick="saveData()"  class="btn btn-success" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+	</div>
+</script>
+
+<script type="text/javascript">
+	
+	dataSource = new kendo.data.DataSource({
+		data: response.data,
+        schema: {
+            model: {
+            	fields: {
+            		trName: {type: "string"},
+                }
+            }
+        },
+        pageSize: 10
+    });
+
+    var BaseUrl = _basePath;
+    var grid = $("#Grid").kendoGrid({
+    	dataSource:dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        selectable:'multiple,rowbox',
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+		            {
+		                field: "trName",
+		                title: '<@spring.message "spe.trname"/>',
+		                width: 100,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    editor: function(container, options){
+	                    	$('<input id="gridlevelTwoType" required validationMessage="必输" class="k-textbox" name="' + options.field + '"/>')
+	                        .appendTo(container);
+	                   	}
+		            }],
+        toolbar: kendo.template($("#template").html()),
+        editable: true
+    }).data("kendoGrid");
+    
+    
+    //自适应屏幕
+    Hap.autoResizeGrid("#Grid");
+    
+  	//添加行
+    function addRow(){
+		grid.addRow();
+    }
+    
+    
+  	//删除数据
+	function deleteData(){
+		var checked = grid.selectedDataItems();
+		if(checked.length == 0){
+            kendo.ui.showInfoDialog({
+            	message: $l('hap.tip.selectrow')
+            })
+            return;
+    	 }
+		kendo.ui.showConfirmDialog({
+    		title:'确认框',
+            message:'<@spring.message "hap.tip.delete_confirm"/>',
+        }).done(function (e) {
+        	if (e.button == 'OK') {
+        		datas = dataSource.data();
+				for(var i = 0;i < datas.length; i ++){
+					for(var j=0;j<checked.length;j++){
+						if(datas[i].uid == checked[j].uid){
+							dataSource.remove(datas[i]);
+						}
+					}
+				}
+				grid.refresh();
+				kendo.ui.showInfoDialog({
+		            title    : '提示',
+		            message  : '删除成功，请保存数据!'
+		        })
+        	}
+        });
+	};
+	
+	//保存数据
+	function saveData(){
+		var data = dataSource.data();
+		var str = '';
+		for(var i=0;i<data.length;i++){
+			if(data[i].trName.indexOf(";") != -1){
+				kendo.ui.showInfoDialog({
+                    title    : '提示',
+                    message  : '签单经理姓名不能包含\';\'号'
+                })
+                return;
+			}
+			str = str+data[i].trName+";";
+		}
+		window.parent.viewModel.model.signTr = str;
+		window.parent.kendo.ui.showInfoDialog({
+            title    : '提示',
+            message  : '操作成功，请至主页面保存数据!'
+        })
+		cancel();
+	};
+    
+  	//取消
+	function cancel(){
+		window.parent.$("#trDialog").data('kendoWindow').close();
+	};
+</script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdCommissionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdCommission">
+        <result column="COMMISSION_ID" property="commissionId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="FIRST_YEAR_AMOUNT" property="firstYearAmount" jdbcType="DECIMAL" />
+        <result column="SECOND_YEAR_AMOUNT" property="secondYearAmount" jdbcType="DECIMAL" />
+        <result column="THIRD_YEAR_AMOUNT" property="thirdYearAmount" jdbcType="DECIMAL" />
+        <result column="FOURTH_YEAR_AMOUNT" property="fourthYearAmount" jdbcType="DECIMAL" />
+        <result column="FIFTH_YEAR_AMOUNT" property="fifthYearAmount" jdbcType="DECIMAL" />
+        <result column="SIXTH_YEAR_AMOUNT" property="sixthYearAmount" jdbcType="DECIMAL" />
+        <result column="SEVENTH_YEAR_AMOUNT" property="seventhYearAmount" jdbcType="DECIMAL" />
+        <result column="EIGHT_YEAR_AMOUNT" property="eightYearAmount" jdbcType="DECIMAL" />
+        <result column="NINTH_YEAR_AMOUNT" property="ninthYearAmount" jdbcType="DECIMAL" />
+        <result column="TENTH_YEAR_AMOUNT" property="tenthYearAmount" jdbcType="DECIMAL" />
+        <result column="FIRST_YEAR_ACTUAL" property="firstYearActual" jdbcType="DECIMAL" />
+        <result column="SECOND_YEAR_ACTUAL" property="secondYearActual" jdbcType="DECIMAL" />
+        <result column="THIRD_YEAR_ACTUAL" property="thirdYearActual" jdbcType="DECIMAL" />
+        <result column="FOURTH_YEAR_ACTUAL" property="fourthYearActual" jdbcType="DECIMAL" />
+        <result column="FIFTH_YEAR_ACTUAL" property="fifthYearActual" jdbcType="DECIMAL" />
+        <result column="SIXTH_YEAR_ACTUAL" property="sixthYearActual" jdbcType="DECIMAL" />
+        <result column="SEVENTH_YEAR_ACTUAL" property="seventhYearActual" jdbcType="DECIMAL" />
+        <result column="EIGHT_YEAR_ACTUAL" property="eightYearActual" jdbcType="DECIMAL" />
+        <result column="NINTH_YEAR_ACTUAL" property="ninthYearActual" jdbcType="DECIMAL" />
+        <result column="TENTH_YEAR_ACTUAL" property="tenthYearActual" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_CODE" property="contractCode" jdbcType="VARCHAR" />
+        <result column="COMMISSION_PERSON" property="commissionPerson" jdbcType="VARCHAR" />
+        <result column="PRE_USER_ID" property="preUserId" jdbcType="DECIMAL" />
+        <result column="ALL_MANUAL" property="allManual" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdCommission" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap" >
+        SELECT
+        foc.COMMISSION_ID,
+        foc.ORDER_ID,
+        foc.ITEM_ID,
+        foc.CURRENCY,
+        foc.CHANNEL_CONTRACT_ID,
+        foc.THE_FIRST_YEAR,
+        foc.THE_SECOND_YEAR,
+        foc.THE_THIRD_YEAR,
+        foc.THE_FOURTH_YEAR,
+        foc.THE_FIFTH_YEAR,
+        foc.THE_SIXTH_YEAR,
+        foc.THE_SEVENTH_YEAR,
+        foc.THE_EIGHT_YEAR,
+        foc.THE_NINTH_YEAR,
+        foc.THE_TENTH_YEAR,
+        foc.FIRST_YEAR_AMOUNT,
+        foc.SECOND_YEAR_AMOUNT,
+        foc.THIRD_YEAR_AMOUNT,
+        foc.FOURTH_YEAR_AMOUNT,
+        foc.FIFTH_YEAR_AMOUNT,
+        foc.SIXTH_YEAR_AMOUNT,
+        foc.SEVENTH_YEAR_AMOUNT,
+        foc.EIGHT_YEAR_AMOUNT,
+        foc.NINTH_YEAR_AMOUNT,
+        foc.TENTH_YEAR_AMOUNT,
+        foc.FIRST_YEAR_ACTUAL,
+        foc.SECOND_YEAR_ACTUAL,
+        foc.THIRD_YEAR_ACTUAL,
+        foc.FOURTH_YEAR_ACTUAL,
+        foc.FIFTH_YEAR_ACTUAL,
+        foc.SIXTH_YEAR_ACTUAL,
+        foc.SEVENTH_YEAR_ACTUAL,
+        foc.EIGHT_YEAR_ACTUAL,
+        foc.NINTH_YEAR_ACTUAL,
+        foc.TENTH_YEAR_ACTUAL,
+        foc.PROGRAM_ID,
+        foc.REQUEST_ID,
+        foc.COMPANY_ID,
+        foc.COMPANY_TYPE,
+        foc.SEQ_NUM,
+        fpi.ITEM_NAME,
+		CASE
+		  WHEN foc.ADDITION_ID IS NULL AND foc.ITEM_ID = foo.ITEM_ID AND foo.ORDER_TYPE = 'INSURANCE' THEN
+			foo.YEAR_PAY_AMOUNT
+          WHEN foc.ADDITION_ID IS NULL AND foc.ITEM_ID = foo.ITEM_ID AND foo.ORDER_TYPE != 'INSURANCE' THEN
+            foo.POLICY_AMOUNT
+		  ELSE
+			foa.YEAR_PAY_AMOUNT
+		END YEAR_PAY_AMOUNT
+        FROM
+        fms_ord_commission AS foc
+		JOIN fms_ord_order foo
+		ON foo.order_id = foc.order_id
+        LEFT JOIN fms_prd_items fpi
+        ON foc.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_ord_addition foa
+		ON foa.ADDITION_ID = foc.ADDITION_ID
+        WHERE 1=1
+        AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+        AND foc.COMPANY_TYPE = #{companyType , jdbcType=VARCHAR}
+        <if test="companyId != null and companyId != ''">
+            AND foc.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
+        </if>
+        <if test="seqNum != null">
+            AND foc.SEQ_NUM = #{seqNum , jdbcType=DECIMAL}
+        </if>
+        order by foc.SEQ_NUM
+    </select>
+
+    <select id="queryOrdCommissionAll" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap" >
+        SELECT
+        foc.COMMISSION_ID,
+        foc.ORDER_ID,
+        foc.ITEM_ID,
+        foc.CURRENCY,
+        foc.CHANNEL_CONTRACT_ID,
+        foc.THE_FIRST_YEAR,
+        foc.THE_SECOND_YEAR,
+        foc.THE_THIRD_YEAR,
+        foc.THE_FOURTH_YEAR,
+        foc.THE_FIFTH_YEAR,
+        foc.THE_SIXTH_YEAR,
+        foc.THE_SEVENTH_YEAR,
+        foc.THE_EIGHT_YEAR,
+        foc.THE_NINTH_YEAR,
+        foc.THE_TENTH_YEAR,
+        foc.FIRST_YEAR_AMOUNT,
+        foc.SECOND_YEAR_AMOUNT,
+        foc.THIRD_YEAR_AMOUNT,
+        foc.FOURTH_YEAR_AMOUNT,
+        foc.FIFTH_YEAR_AMOUNT,
+        foc.SIXTH_YEAR_AMOUNT,
+        foc.SEVENTH_YEAR_AMOUNT,
+        foc.EIGHT_YEAR_AMOUNT,
+        foc.NINTH_YEAR_AMOUNT,
+        foc.TENTH_YEAR_AMOUNT,
+        foc.FIRST_YEAR_ACTUAL,
+        foc.SECOND_YEAR_ACTUAL,
+        foc.THIRD_YEAR_ACTUAL,
+        foc.FOURTH_YEAR_ACTUAL,
+        foc.FIFTH_YEAR_ACTUAL,
+        foc.SIXTH_YEAR_ACTUAL,
+        foc.SEVENTH_YEAR_ACTUAL,
+        foc.EIGHT_YEAR_ACTUAL,
+        foc.NINTH_YEAR_ACTUAL,
+        foc.TENTH_YEAR_ACTUAL,
+        foc.PROGRAM_ID,
+        foc.REQUEST_ID,
+        foc.COMPANY_ID,
+        foc.COMPANY_TYPE,
+        foc.SEQ_NUM,
+        fpi.ITEM_NAME,
+        CASE
+        WHEN foc.ADDITION_ID IS NULL AND foc.ITEM_ID = foo.ITEM_ID AND foo.ORDER_TYPE = 'INSURANCE' THEN
+        foo.YEAR_PAY_AMOUNT
+        WHEN foc.ADDITION_ID IS NULL AND foc.ITEM_ID = foo.ITEM_ID AND foo.ORDER_TYPE != 'INSURANCE' THEN
+        foo.POLICY_AMOUNT
+        ELSE
+        foa.YEAR_PAY_AMOUNT
+        END YEAR_PAY_AMOUNT
+        FROM
+        fms_ord_commission AS foc
+        JOIN fms_ord_order foo
+        ON foo.order_id = foc.order_id
+        LEFT JOIN fms_prd_items fpi
+        ON foc.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN fms_ord_addition foa
+        ON foa.ADDITION_ID = foc.ADDITION_ID
+        WHERE 1=1
+        <if test="orderId != null">
+            AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+        </if>
+        <if test="additionId != null">
+            AND foc.ADDITION_ID = #{additionId , jdbcType=DECIMAL}
+        </if>
+        <if test="manualFlag != null">
+            AND (foc.MANUAL_FLAG = #{manualFlag , jdbcType=VARCHAR} OR #{manualFlag , jdbcType=VARCHAR} = 'N' AND foc.MANUAL_FLAG IS NULL)
+        </if>
+        <if test="companyType != null">
+            AND foc.COMPANY_TYPE = #{companyType , jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null">
+            AND foc.COMPANY_ID = #{companyId , jdbcType=VARCHAR}
+        </if>
+        <if test="itemId != null">
+            AND foc.ITEM_ID = #{itemId , jdbcType=DECIMAL}
+        </if>
+        <if test="seqNum != null">
+            AND foc.SEQ_NUM = #{seqNum , jdbcType=DECIMAL}
+        </if>
+        order by foc.SEQ_NUM
+    </select>
+
+    <select id="queryWsOrdCommission" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap" >
+        SELECT * FROM
+        (SELECT
+        foc.COMMISSION_ID,
+        foc.ORDER_ID,
+        foc.ITEM_ID,
+        foc.CURRENCY,
+        foc.THE_FIRST_YEAR,
+        foc.THE_SECOND_YEAR,
+        foc.THE_THIRD_YEAR,
+        foc.THE_FOURTH_YEAR,
+        foc.THE_FIFTH_YEAR,
+        foc.THE_SIXTH_YEAR,
+        foc.THE_SEVENTH_YEAR,
+        foc.THE_EIGHT_YEAR,
+        foc.THE_NINTH_YEAR,
+        foc.THE_TENTH_YEAR,
+        foc.FIRST_YEAR_AMOUNT,
+        foc.SECOND_YEAR_AMOUNT,
+        foc.THIRD_YEAR_AMOUNT,
+        foc.FOURTH_YEAR_AMOUNT,
+        foc.FIFTH_YEAR_AMOUNT,
+        foc.SIXTH_YEAR_AMOUNT,
+        foc.SEVENTH_YEAR_AMOUNT,
+        foc.EIGHT_YEAR_AMOUNT,
+        foc.NINTH_YEAR_AMOUNT,
+        foc.TENTH_YEAR_AMOUNT,
+        ifnull(foc.FIRST_YEAR_ACTUAL,0) FIRST_YEAR_ACTUAL,
+        ifnull(foc.SECOND_YEAR_ACTUAL,0) SECOND_YEAR_ACTUAL,
+        ifnull(foc.THIRD_YEAR_ACTUAL,0) THIRD_YEAR_ACTUAL,
+        ifnull(foc.FOURTH_YEAR_ACTUAL,0) FOURTH_YEAR_ACTUAL,
+        ifnull(foc.FIFTH_YEAR_ACTUAL,0) FIFTH_YEAR_ACTUAL,
+        ifnull(foc.SIXTH_YEAR_ACTUAL,0) SIXTH_YEAR_ACTUAL,
+        ifnull(foc.SEVENTH_YEAR_ACTUAL,0) SEVENTH_YEAR_ACTUAL,
+        ifnull(foc.EIGHT_YEAR_ACTUAL,0) EIGHT_YEAR_ACTUAL,
+        ifnull(foc.NINTH_YEAR_ACTUAL,0) NINTH_YEAR_ACTUAL,
+        ifnull(foc.TENTH_YEAR_ACTUAL,0) TENTH_YEAR_ACTUAL,
+        foc.PROGRAM_ID,
+        foc.REQUEST_ID,
+        foc.COMPANY_ID,
+        foc.COMPANY_TYPE,
+        foc.SEQ_NUM,
+        fpi.ITEM_NAME,
+        CASE foc.COMPANY_ID
+        WHEN (SELECT SU.RELATED_PARTY_ID FROM sys_user su where SU.user_id = #{request.userId, jdbcType = DECIMAL} AND Su.user_type = 'CHANNEL') THEN
+        '我的分成'
+        ELSE
+        '下级佣金率'
+        END COMMISSION_PERSON
+        FROM
+        fms_ord_commission AS foc
+        LEFT JOIN fms_prd_items fpi
+        ON foc.ITEM_ID = fpi.ITEM_ID
+        WHERE 1=1
+        AND foc.COMPANY_TYPE = 'CHANNEL'
+        AND ( foc.SEQ_NUM = (SELECT distinct foc1.SEQ_NUM - 1 FROM fms_ord_commission foc1
+        WHERE foc1.order_id = foc.ORDER_ID AND foc.ITEM_ID = foc1.ITEM_ID AND foc1.COMPANY_TYPE = 'CHANNEL'
+        AND foc1.COMPANY_ID = (SELECT SU.RELATED_PARTY_ID FROM sys_user su where SU.user_id = #{request.userId, jdbcType = DECIMAL} AND Su.user_type = 'CHANNEL') ))
+        <if test="orderId != null">
+            AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+        </if>
+        <if test="commissionId != null">
+            AND foc.COMMISSION_ID = #{commissionId , jdbcType=DECIMAL}
+        </if>
+        <if test="companyType != null">
+            AND foc.COMPANY_TYPE = #{companyType , jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null">
+            AND foc.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
+        </if>
+        UNION ALL
+        SELECT
+        foc.COMMISSION_ID,
+        foc.ORDER_ID,
+        foc.ITEM_ID,
+        foc.CURRENCY,
+        foc.THE_FIRST_YEAR - ifnull(foc1.THE_FIRST_YEAR,0) THE_FIRST_YEAR,
+        foc.THE_SECOND_YEAR- ifnull(foc1.THE_SECOND_YEAR,0) THE_SECOND_YEAR,
+        foc.THE_THIRD_YEAR- ifnull(foc1.THE_THIRD_YEAR,0) THE_THIRD_YEAR,
+        foc.THE_FOURTH_YEAR- ifnull(foc1.THE_FOURTH_YEAR,0) THE_FOURTH_YEAR,
+        foc.THE_FIFTH_YEAR - ifnull(foc1.THE_FIFTH_YEAR,0) THE_FIFTH_YEAR,
+        foc.THE_SIXTH_YEAR - ifnull(foc1.THE_SIXTH_YEAR,0) THE_SIXTH_YEAR,
+        foc.THE_SEVENTH_YEAR - ifnull(foc1.THE_SEVENTH_YEAR,0) THE_SEVENTH_YEAR,
+        foc.THE_EIGHT_YEAR - ifnull(foc1.THE_EIGHT_YEAR,0) THE_EIGHT_YEAR,
+        foc.THE_NINTH_YEAR - ifnull(foc1.THE_NINTH_YEAR,0) THE_NINTH_YEAR,
+        foc.THE_TENTH_YEAR - ifnull(foc1.THE_TENTH_YEAR,0) THE_TENTH_YEAR,
+        foc.FIRST_YEAR_AMOUNT - ifnull(foc1.FIRST_YEAR_AMOUNT,0) FIRST_YEAR_AMOUNT,
+        foc.SECOND_YEAR_AMOUNT - ifnull(foc1.SECOND_YEAR_AMOUNT,0) SECOND_YEAR_AMOUNT,
+        foc.THIRD_YEAR_AMOUNT - ifnull(foc1.THIRD_YEAR_AMOUNT,0) THIRD_YEAR_AMOUNT,
+        foc.FOURTH_YEAR_AMOUNT - ifnull(foc1.FOURTH_YEAR_AMOUNT,0) FOURTH_YEAR_AMOUNT,
+        foc.FIFTH_YEAR_AMOUNT - ifnull(foc1.FIFTH_YEAR_AMOUNT,0) FIFTH_YEAR_AMOUNT,
+        foc.SIXTH_YEAR_AMOUNT - ifnull(foc1.SIXTH_YEAR_AMOUNT,0) SIXTH_YEAR_AMOUNT,
+        foc.SEVENTH_YEAR_AMOUNT - ifnull(foc1.SEVENTH_YEAR_AMOUNT,0) SEVENTH_YEAR_AMOUNT,
+        foc.EIGHT_YEAR_AMOUNT - ifnull(foc1.EIGHT_YEAR_AMOUNT,0) EIGHT_YEAR_AMOUNT,
+        foc.NINTH_YEAR_AMOUNT - ifnull(foc1.NINTH_YEAR_AMOUNT,0) NINTH_YEAR_AMOUNT,
+        foc.TENTH_YEAR_AMOUNT - ifnull(foc1.TENTH_YEAR_AMOUNT,0) TENTH_YEAR_AMOUNT,
+        ifnull(foc.FIRST_YEAR_ACTUAL,0) - ifnull(foc1.FIRST_YEAR_ACTUAL,0) FIRST_YEAR_ACTUAL,
+        ifnull(foc.SECOND_YEAR_ACTUAL,0) - ifnull(foc1.SECOND_YEAR_ACTUAL,0) SECOND_YEAR_ACTUAL,
+        ifnull(foc.THIRD_YEAR_ACTUAL,0) - ifnull(foc1.THIRD_YEAR_ACTUAL,0) THIRD_YEAR_ACTUAL,
+        ifnull(foc.FOURTH_YEAR_ACTUAL,0) - ifnull(foc1.FOURTH_YEAR_ACTUAL,0) FOURTH_YEAR_ACTUAL,
+        ifnull(foc.FIFTH_YEAR_ACTUAL,0) - ifnull(foc1.FIFTH_YEAR_ACTUAL,0) FIFTH_YEAR_ACTUAL,
+        ifnull(foc.SIXTH_YEAR_ACTUAL,0) - ifnull(foc1.SIXTH_YEAR_ACTUAL,0) SIXTH_YEAR_ACTUAL,
+        ifnull(foc.SEVENTH_YEAR_ACTUAL,0) - ifnull(foc1.SEVENTH_YEAR_ACTUAL,0) SEVENTH_YEAR_ACTUAL,
+        ifnull(foc.EIGHT_YEAR_ACTUAL,0) - ifnull(foc1.EIGHT_YEAR_ACTUAL,0) EIGHT_YEAR_ACTUAL,
+        ifnull(foc.NINTH_YEAR_ACTUAL,0) - ifnull(foc1.NINTH_YEAR_ACTUAL,0) NINTH_YEAR_ACTUAL,
+        ifnull(foc.TENTH_YEAR_ACTUAL,0) - ifnull(foc1.TENTH_YEAR_ACTUAL,0) TENTH_YEAR_ACTUAL,
+        foc.PROGRAM_ID,
+        foc.REQUEST_ID,
+        foc.COMPANY_ID,
+        foc.COMPANY_TYPE,
+        foc.SEQ_NUM,
+        fpi.ITEM_NAME,
+        CASE foc.COMPANY_ID
+        WHEN (SELECT SU.RELATED_PARTY_ID FROM sys_user su where SU.user_id = #{request.userId, jdbcType = DECIMAL} AND Su.user_type = 'CHANNEL') THEN
+        '我的分成'
+        ELSE
+        '下级佣金率'
+        END COMMISSION_PERSON
+        FROM
+        fms_ord_commission AS foc
+        LEFT JOIN fms_ord_commission foc1
+        ON foc1.order_id = foc.ORDER_ID AND foc.ITEM_ID = foc1.ITEM_ID AND foc1.COMPANY_TYPE = 'CHANNEL' AND foc1.SEQ_NUM = foc.SEQ_NUM -1
+        LEFT JOIN fms_prd_items fpi
+        ON foc.ITEM_ID = fpi.ITEM_ID
+        WHERE 1=1
+        AND foc.COMPANY_TYPE = 'CHANNEL'
+        AND foc.COMPANY_ID = (SELECT SU.RELATED_PARTY_ID FROM sys_user su where SU.user_id = #{request.userId, jdbcType = DECIMAL} AND Su.user_type = 'CHANNEL')
+        <if test="orderId != null">
+            AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+        </if>
+        <if test="commissionId != null">
+            AND foc.COMMISSION_ID = #{commissionId , jdbcType=DECIMAL}
+        </if>
+        <if test="companyType != null">
+            AND foc.COMPANY_TYPE = #{companyType , jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null">
+            AND foc.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
+        </if>
+        ) fooc
+    </select>
+
+    <select id="queryCompany" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap" >
+        SELECT
+        DISTINCT foc.COMPANY_ID,
+        foc.COMPANY_TYPE,
+        foc.SEQ_NUM,
+        CASE foc.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fcc.CHANNEL_NAME
+        ELSE
+        fss.name
+        END COMPANY_NAME
+        FROM
+        fms_ord_commission AS foc
+        LEFT JOIN fms_cnl_channel fcc
+        ON (foc.COMPANY_TYPE = 'CHANNEL' AND foc.COMPANY_ID = fcc.CHANNEL_ID)
+        LEFT JOIN fms_spe_supplier fss
+        ON (foc.COMPANY_TYPE = 'SUPPLIER' AND foc.COMPANY_ID = fss.SUPPLIER_ID)
+        WHERE 1=1
+        <if test = "orderId != null"> AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        order by foc.SEQ_NUM
+    </select>
+    
+    <select id="queryCommissionData" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap">
+		SELECT 
+			foc.*,
+			(CASE foc.COMPANY_TYPE
+			WHEN 'CHANNEL' THEN
+			fcc.CHANNEL_NAME
+			ELSE
+			fss.name
+			END)COMPANY_NAME,
+			fccc.CONTRACT_CODE
+		FROM
+			fms_ord_commission AS foc
+			LEFT JOIN fms_cnl_channel fcc
+			ON (foc.COMPANY_TYPE = 'CHANNEL' AND foc.COMPANY_ID = fcc.CHANNEL_ID)
+			LEFT JOIN fms_spe_supplier fss
+			ON (foc.COMPANY_TYPE = 'SUPPLIER' AND foc.COMPANY_ID = fss.SUPPLIER_ID)
+			LEFT JOIN fms_cnl_channel_contract fccc on foc.CHANNEL_CONTRACT_ID = fccc.CHANNEL_CONTRACT_ID
+			<where>
+				<if test="orderId != null">
+					foc.ORDER_ID = #{orderId}
+				</if>
+				<if test="itemId != null">
+					AND foc.ITEM_ID = #{itemId}
+				</if>
+			</where>
+    </select>
+    
+    <select id="queryCommissionDataByOrderIds" resultMap="BaseResultMap">
+		SELECT 
+			foc.*,
+			(CASE foc.COMPANY_TYPE
+			WHEN 'CHANNEL' THEN
+			fcc.CHANNEL_NAME
+			ELSE
+			fss.name
+			END)COMPANY_NAME,
+			fccc.CONTRACT_CODE
+		FROM
+			fms_ord_commission AS foc
+			LEFT JOIN fms_cnl_channel fcc
+			ON (foc.COMPANY_TYPE = 'CHANNEL' AND foc.COMPANY_ID = fcc.CHANNEL_ID)
+			LEFT JOIN fms_spe_supplier fss
+			ON (foc.COMPANY_TYPE = 'SUPPLIER' AND foc.COMPANY_ID = fss.SUPPLIER_ID)
+			LEFT JOIN fms_cnl_channel_contract fccc on foc.CHANNEL_CONTRACT_ID = fccc.CHANNEL_CONTRACT_ID
+			where foc.ORDER_ID IN
+			<foreach collection="orders" item="order" index="index"
+	            open="(" close=")" separator=",">
+	            #{order.orderId, jdbcType = DECIMAL}
+	        </foreach>
+    </select>
+
+    <select id="queryManualFlag" parameterType="clb.core.order.dto.OrdCommission" resultMap="BaseResultMap">
+        SELECT
+        CASE
+        WHEN count(1) = COUNT(foc.MANUAL_FLAG = 'Y') AND count(1) > 0 THEN
+        'Y'
+        ELSE
+        'N'
+        END ALL_MANUAL
+        FROM
+        fms_ord_commission foc
+        <where>
+            <if test="orderId != null">
+                foc.ORDER_ID = #{orderId}
+            </if>
+        </where>
+    </select>
+
+
+
+</mapper>

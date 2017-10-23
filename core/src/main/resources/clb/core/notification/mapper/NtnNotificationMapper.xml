@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.notification.mapper.NtnNotificationMapper">
+    <resultMap id="BaseResultMap" type="clb.core.notification.dto.NtnNotification">
+        <result column="NOTIFICATION_ID" property="notificationId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="status" property="status" />
+        <result column="REQUEST_URL" property="requestUrl" />
+        <result column="IMPORTANT_FLAG" property="importantFlag" />
+		<result column="SHOW_DATE" property="showDate" jdbcType="DATE"/>
+    </resultMap>
+
+	<select id="queryList" parameterType="clb.core.notification.dto.NtnNotification" resultMap="BaseResultMap" >
+		SELECT NOTIFICATION_ID,USER_ID,TITLE,CONTENT,STATUS,REQUEST_URL,CREATION_DATE SHOW_DATE,IMPORTANT_FLAG from fms_ntn_notification
+			WHERE STATUS &lt;&gt;'DELETE' 
+			<if test="notificationId !=null ">
+				and NOTIFICATION_ID = #{notificationId}
+			</if>
+			<if test="userId !=null">
+				and USER_ID = #{userId}
+			</if>
+			<if test="title !=null and title !=''">
+				AND TITLE LIKE CONCAT('%', #{title}, '%')
+			</if>
+			<if test="content !=null and content !=''">
+				AND CONTENT LIKE CONCAT('%', #{content}, '%')
+			</if>
+			<if test="status !=null and status !=''">
+				and STATUS = #{status}
+			</if>
+			order by status asc,IMPORTANT_FLAG DESC, CREATION_DATE desc
+	</select>
+	
+	<delete id="deleteOverDueDay" >
+       UPDATE fms_ntn_notification SET `STATUS`='DELETE'
+		WHERE
+			CREATION_DATE &lt;= SUBDATE( NOW(),
+				INTERVAL (
+					SELECT
+						spv.PROFILE_VALUE
+					FROM
+						sys_profile sp
+					INNER JOIN sys_profile_value spv ON sp.PROFILE_ID = spv.PROFILE_ID
+					WHERE
+						sp.PROFILE_NAME = 'DELETE_NOTICE_INTERVAL_TIME'
+				) DAY
+			)
+		AND `STATUS` = 'READ'
+    </delete>
+	
+</mapper>

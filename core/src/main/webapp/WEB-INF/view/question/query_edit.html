@@ -1,0 +1,196 @@
+<#include "../include/header.html">
+<script src="../lib/clb/js/clb.kendo.editor.js"></script>
+<script src="${base.contextPath}/clb/common/clbCode?questionTypeData=QA.QUESTION_TYPE" type="text/javascript"></script>
+<script type="text/javascript">
+	//获取"问题列表页面"传过来的 参数
+	var questionId = '${RequestParameters.questionId!0}';
+	
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+
+	//判断上一个页面传递过来的值
+	if (questionId != 0) {
+		viewModel.model.set("questionId", questionId);
+		$.ajax({
+			type : "POST",
+			async : false,
+			url : "${base.contextPath}/question/query/query",
+			data : {
+				questionId : questionId
+			},
+			success : function(json) {
+				var row = json.rows[0] || {};
+				for ( var k in row) {
+					viewModel.model.set(k, row[k]);
+				}
+			}
+		});
+	}
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;">
+				<legend>
+					<div class="col-xs-9" style="text-align: left"><span class="panel-title">问题维护</span></div>
+            	
+	            	<div class="col-xs-1" style="text-align: right">
+	            		<span class="btn btn-default" style="width:120px" onclick="closeWin()">
+						    <i class="fa fa-reply" style="margin-right:3px;"></i>返回上一页
+						</span>
+	            	</div> 
+				</legend>
+				<div style="width: 98%; margin-top: 5px;">
+					<form class="form-horizontal">
+						<div class="row" style="margin-left: 5px;">
+							<div class="form-group">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">问题类型:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="questionType" name="questionType"
+													data-bind="value:model.questionType">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">问题名称:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="questionName" class="k-textbox" name="questionName"
+													data-bind="value:model.questionName" >
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">备注:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px"  name="comments"
+													data-bind="value:model.comments" class="k-textbox" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">解决方案:</label>
+											<div class="col-sm-9" style="text-align: left">
+												<textarea id="editor" required name="solution"
+                                               data-bind="value:model.solution" ></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="text-center" style="margin-top: 10px" id="saveData">
+							<span class="btn btn-success" onclick="saveData()" type="submit" id="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span> 
+						</div>
+					</form>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+		
+		// 问题类型的下拉框
+        $('#questionType').kendoDropDownList({
+            optionLabel: "-请选择问题类型-",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:questionTypeData
+        });
+
+		//富文本编辑
+		$(document).ready(function() {
+           /* $("#editor").kendoEditor({
+               tools: [
+                   "fontName",
+                   "fontSize",
+                   "formatting",
+                   "bold",
+                   "italic",
+                   "underline",
+                   "strikethrough",
+                   "justifyLeft",
+                   "justifyCenter",
+                   "justifyRight",
+                   "justifyFull",
+                   "insertUnorderedList",
+                   "insertOrderedList",
+                   "indent",
+                   "outdent",
+                   "insertImage",
+                   "subscript",
+                   "superscript",
+                   "foreColor",
+                   "backColor",
+               ],
+           }); */
+           
+			$.clbKendoEditor("editor");
+			$.clbKendoUpload('<@spring.message "fms.pub.oss_web_path"/>','ARTICLE',"${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}");
+     });
+		
+		//点击取消的时候  关闭页面
+		function closeWin() {
+			parent.closeTab('QUESTION_EDIT' + questionId);
+		};
+		   
+		//点击保存
+		function saveData() {
+			if (questionId != 0) {
+				//修改
+				Hap.submitForm({
+					url : '${base.contextPath}/question/query/submit',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "失败"
+							});
+						}
+					}
+				})
+			} else {
+				viewModel.model.set("questionId",null);
+				//添加
+				Hap.submitForm({
+					async: false, 
+					url : '${base.contextPath}/question/query/add',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "失败"
+							});
+						}
+
+					}
+				})
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.system.mapper.ClbCodeValueMapper">
+    <resultMap id="BaseResultMap" type="clb.core.system.dto.ClbCodeValue" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="CODE_VALUE_ID" property="codeValueId" jdbcType="DECIMAL"/>
+        <result column="CODE_ID" property="codeId" jdbcType="DECIMAL"/>
+        <result column="VALUE" property="value" jdbcType="VARCHAR"/>
+        <result column="MEANING" property="meaning" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="PARENT_VALUE" property="parentValue" jdbcType="VARCHAR"/>
+        <result column="ORDER_SEQ" property="orderSeq" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="selectCodeValuesByCodeName" resultMap="BaseResultMap" parameterType="string">
+        SELECT scvb.code_id,
+               scvb.value,
+               sct.meaning,
+        	   scvb.enabled_flag
+          FROM sys_code_value_b scvb
+          LEFT OUTER JOIN sys_code_value_tl sct
+            ON (scvb.code_value_id = sct.code_value_id AND sct.lang = #{request.locale,jdbcType=VARCHAR})
+         INNER JOIN sys_code_b scb
+            ON (scb.code_id = scvb.code_id)
+         WHERE scb.code = #{codeName}
+    </select>
+    
+    <select id="selectCodeValuesByParam" resultMap="BaseResultMap" parameterType="clb.core.system.dto.ClbCodeValue">
+        SELECT
+			t.*
+		FROM
+			sys_code_value_b t
+		WHERE
+			t.CODE_ID = (
+				SELECT
+					b.CODE_ID
+				FROM
+					sys_code_b b
+				WHERE
+					b.`CODE` = #{code}
+			)
+			<if test="meaning != null and meaning!='' ">
+				and t.MEANING=#{meaning}
+			</if>
+			<if test="value != null and value!='' ">
+				and t.`VALUE`=#{value}
+			</if>
+			<if test="enabledFlag != null and enabledFlag!='' ">
+				and t.ENABLED_FLAG=#{enabledFlag}
+			</if>
+			<if test="description != null and description!='' ">
+				and t.description=#{description}
+			</if>
+    </select>
+    
+    <select id="selectCodeValueByMeaning" resultMap="BaseResultMap">
+        SELECT
+			t.*
+		FROM
+			sys_code_value_b t,
+			sys_code_b b
+		WHERE
+			t.CODE_ID = b.CODE_ID
+			and b.CODE = #{code}
+			and t.MEANING = #{meaning}
+    </select>
+
+    <select id="selectCodeValuesByCodeId" resultMap="BaseResultMap">
+        SELECT scvb.code_value_id,
+               scvb.code_id,
+               scvb.value,
+               sct.meaning,
+               sct.description,
+               scvb.order_seq,
+               scvb.enabled_flag,
+               scvb.parent_value
+        FROM sys_code_value_b scvb
+        LEFT OUTER JOIN sys_code_value_tl sct
+        ON (scvb.code_value_id = sct.code_value_id AND sct.lang = #{request.locale,jdbcType=VARCHAR})
+        WHERE scvb.code_id = #{codeId}
+        ORDER BY scvb.code_value_Id ASC
+    </select>
+
+    <delete id="deleteByCodeId" parameterType="clb.core.system.dto.ClbCodeValue">
+        delete from
+        SYS_CODE_VALUE_B
+        where CODE_ID = #{codeId,jdbcType=DECIMAL}
+    </delete>
+    <delete id="deleteTlByCodeId" parameterType="clb.core.system.dto.ClbCodeValue">
+        delete from
+        SYS_CODE_VALUE_TL
+        where CODE_VALUE_ID in (
+                  select code_value_id
+                  from sys_code_value_b cvb
+                  where cvb.code_id = #{codeId,jdbcType=DECIMAL})
+    </delete>
+
+    <!-- Mclin添加， 查询消息模版编码LOV -->
+    <select id="queryMsgTemCodeLov" resultMap="BaseResultMap">
+	    select scvb.value,
+	    	   coalesce(scvt.meaning, scvb.meaning) meaning
+	      from sys_code_b scb, sys_code_value_b scvb
+	      left outer join sys_code_value_tl scvt
+	        ON (scvb.code_value_id = scvt.code_value_id AND scvt.lang = #{request.locale,jdbcType=VARCHAR,javaType=java.lang.String})
+	     <where>
+	     	scb.code = 'SYS.MES_TEM_TYPE'
+	        and scb.code_id = scvb.code_id
+	        <if	test="value != null">
+	        	and 
+	        	(
+	        		lower(scvb.value) like concat('%', concat(#{value, jdbcType=VARCHAR}, '%'))
+	        		or
+	        		upper(scvb.value) like concat('%', concat(#{value, jdbcType=VARCHAR}, '%'))
+	        	)
+	        </if>
+	        <if	test="meaning != null">
+	        	and 
+	        	(
+	        		scvt.meaning like concat('%', concat(#{meaning, jdbcType=VARCHAR}, '%'))
+	        		or
+	        		scvb.meaning like concat('%', concat(#{meaning, jdbcType=VARCHAR}, '%'))
+	        	)
+	        </if>
+	     </where>
+    </select>
+    
+    <!-- Mclin添加， 查询邮箱帐号编码LOV -->
+    <select id="queryEmlAccountCodeLov" resultMap="BaseResultMap">
+    select scvb.value,
+    	   coalesce(scvt.meaning, scvb.meaning) meaning
+      from sys_code_b scb, sys_code_value_b scvb
+      left outer join sys_code_value_tl scvt
+        ON (scvb.code_value_id = scvt.code_value_id AND scvt.lang = #{request.locale,jdbcType=VARCHAR,javaType=java.lang.String})
+     <where>
+     	scb.code = 'SYS.EMAIL_ACCOUNT_CODE'
+        and scb.code_id = scvb.code_id
+        <if	test="value != null">
+        	and 
+        	(
+        		lower(scvb.value) like concat('%', concat(#{value, jdbcType=VARCHAR}, '%'))
+        		or
+        		upper(scvb.value) like concat('%', concat(#{value, jdbcType=VARCHAR}, '%'))
+        	)
+        </if>
+        <if	test="meaning != null">
+        	and 
+        	(
+        		scvt.meaning like concat('%', concat(#{meaning, jdbcType=VARCHAR}, '%'))
+        		or
+        		scvb.meaning like concat('%', concat(#{meaning, jdbcType=VARCHAR}, '%'))
+        	)
+        </if>
+     </where>
+    </select>
+</mapper>

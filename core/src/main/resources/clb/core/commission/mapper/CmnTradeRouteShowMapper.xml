@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnTradeRouteShowMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnTradeRouteShow">
+        <result column="ROUTE_ID" property="routeId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_COMMISSION_LINE_ID" property="channelCommissionLineId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+        <result column="COMPANY_COMMISSION_LINE_ID" property="companyCommissionLineId" jdbcType="DECIMAL" />
+        <result column="CHILD_ROUTE_ID" property="childRouteId" jdbcType="DECIMAL" />
+        <result column="PARENT_ROUTE_ID" property="parentRouteId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR" />
+        <result column="DEAL_PATH_NAME" property="dealPathName" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <delete id="deleteRouteData">
+        delete from
+        fms_cmn_trade_route_show
+        WHERE 1 = 1
+    </delete>
+
+    <insert id="insertShowRouteData">
+        INSERT INTO fms_cmn_trade_route_show
+        SELECT * FROM fms_cmn_trade_route WHERE 1=1
+    </insert>
+
+    <insert id="transferShowRouteData" parameterType="java.lang.Long">
+        INSERT INTO fms_cmn_trade_route_show
+        SELECT * FROM fms_cmn_trade_route WHERE BATCH_ID = #{0}
+    </insert>
+
+    <select id="queryCmnTradeRoute" parameterType="clb.core.commission.dto.CmnTradeRouteShow" resultMap="BaseResultMap" >
+        SELECT
+        fctr.ROUTE_ID,
+        fctr.CHANNEL_COMMISSION_LINE_ID,
+        fctr.SEQ_NUM,
+        fctr.COMPANY_ID,
+        fctr.COMPANY_TYPE,
+        fctr.COMPANY_COMMISSION_LINE_ID,
+        fctr.CHILD_ROUTE_ID,
+        fctr.PARENT_ROUTE_ID,
+        fctr.PROGRAM_ID,
+        fctr.REQUEST_ID,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.CURRENCY
+        ELSE
+        fcsc.CURRENCY
+        END CURRENCY,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_FIRST_YEAR
+        ELSE
+        fcsc.THE_FIRST_YEAR
+        END THE_FIRST_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_SECOND_YEAR
+        ELSE
+        fcsc.THE_SECOND_YEAR
+        END THE_SECOND_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_THIRD_YEAR
+        ELSE
+        fcsc.THE_THIRD_YEAR
+        END THE_THIRD_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_FOURTH_YEAR
+        ELSE
+        fcsc.THE_FOURTH_YEAR
+        END THE_FOURTH_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_FIFTH_YEAR
+        ELSE
+        fcsc.THE_FIFTH_YEAR
+        END THE_FIFTH_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_SIXTH_YEAR
+        ELSE
+        fcsc.THE_SIXTH_YEAR
+        END THE_SIXTH_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_SEVENTH_YEAR
+        ELSE
+        fcsc.THE_SEVENTH_YEAR
+        END THE_SEVENTH_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_EIGHT_YEAR
+        ELSE
+        fcsc.THE_EIGHT_YEAR
+        END THE_EIGHT_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_NINTH_YEAR
+        ELSE
+        fcsc.THE_NINTH_YEAR
+        END THE_NINTH_YEAR,
+        CASE fctr.COMPANY_TYPE
+        WHEN 'CHANNEL' THEN
+        fccc.THE_TENTH_YEAR
+        ELSE
+        fcsc.THE_TENTH_YEAR
+        END THE_TENTH_YEAR,
+        fctr.DEAL_PATH,
+        fcc.CHANNEL_TYPE_CODE,
+        FCCC.CHANNEL_CONTRACT_ID
+        FROM fms_cmn_trade_route_show fctr
+        LEFT JOIN fms_cmn_channel_commission_show fccc
+        ON (fctr.COMPANY_TYPE = 'CHANNEL' AND fctr.COMPANY_COMMISSION_LINE_ID = fccc.LINE_ID)
+        LEFT JOIN fms_cnl_channel fcc
+        ON (fctr.COMPANY_TYPE = 'CHANNEL' AND fctr.COMPANY_ID = fcc.CHANNEL_ID)
+        LEFT JOIN fms_cmn_supplier_commission_show fcsc
+        ON (fctr.COMPANY_TYPE = 'SUPPLIER' AND fctr.COMPANY_COMMISSION_LINE_ID = fcsc.LINE_ID)
+        WHERE 1=1
+        <if test="channelCommissionLineId!=null and channelCommissionLineId!=''">
+            and	fctr.CHANNEL_COMMISSION_LINE_ID = #{channelCommissionLineId}
+        </if>
+        ORDER BY fctr.CHANNEL_COMMISSION_LINE_ID,fctr.SEQ_NUM
+    </select>
+</mapper>

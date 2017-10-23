@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdTemplateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdTemplate">
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_TYPE_CODE" property="templateTypeCode" jdbcType="VARCHAR" />
+        <result column="APPLY_CLASS_CODE" property="applyClassCode" jdbcType="VARCHAR" />
+        <result column="APPLY_CLASS" property="applyClass" jdbcType="VARCHAR" />
+        <result column="AFTER_TYPE" property="afterType" jdbcType="VARCHAR" />
+		<result column="AFTER_PROJECT" property="afterProject" jdbcType="VARCHAR" />
+        <result column="APPLY_ITEM" property="applyItem" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="CodeResultMap" type="clb.core.system.dto.ClbCodeValue" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="CODE_VALUE_ID" property="codeValueId" jdbcType="DECIMAL"/>
+        <result column="CODE_ID" property="codeId" jdbcType="DECIMAL"/>
+        <result column="VALUE" property="value" jdbcType="VARCHAR"/>
+        <result column="MEANING" property="meaning" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PARENT_VALUE" property="parentValue" jdbcType="VARCHAR"/>
+        <result column="ORDER_SEQ" property="orderSeq" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <resultMap id="LineResultMap" type="clb.core.order.dto.OrdTemplateLine">
+        <result column="TEMPLATE_LINE_ID" property="templateLineId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_NAME" property="templateName" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_CONTENT" property="templateContent" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_TYPE_CODE" property="templateTypeCode" jdbcType="VARCHAR" />
+        <result column="AFTER_TYPE" property="afterType" jdbcType="VARCHAR" />
+		<result column="AFTER_PROJECT" property="afterProject" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdTemplate" parameterType="clb.core.order.dto.OrdTemplate" resultMap="BaseResultMap" >
+        SELECT
+        fot.TEMPLATE_ID,
+        fot.TEMPLATE_TYPE_CODE,
+        fot.APPLY_CLASS_CODE,
+        scvt.meaning APPLY_CLASS,
+        fot.APPLY_ITEM,
+        fot.ENABLE_FLAG,
+        fot.PROGRAM_ID,
+        fot.REQUEST_ID
+        FROM
+        fms_ord_template AS fot
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        <if test = "enableFlag != null"> AND fot.enable_flag = #{enableFlag , jdbcType=VARCHAR} </if>
+        <if test = "templateId != null"> AND fot.TEMPLATE_ID = #{templateId , jdbcType=DECIMAL} </if>
+        <if test = "templateTypeCode != null"> AND fot.TEMPLATE_TYPE_CODE = #{templateTypeCode , jdbcType=VARCHAR} </if>
+        <if test = "applyClassCode != null"> AND fot.APPLY_CLASS_CODE = #{applyClassCode , jdbcType=VARCHAR} </if>
+        <if test = "applyItem != null"> AND fot.APPLY_ITEM LIKE CONCAT('%', #{applyItem , jdbcType=VARCHAR}, '%')  </if>
+
+    </select>
+
+    <select id="queryApplyClass" parameterType="clb.core.order.dto.OrdTemplate" resultMap="BaseResultMap" >
+        SELECT
+        distinct fot.APPLY_CLASS_CODE,
+                 scvt.meaning APPLY_CLASS
+        FROM
+        fms_ord_template fot
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        AND fot.enable_flag = 'Y'
+        <if test = "templateTypeCode != null"> AND fot.TEMPLATE_TYPE_CODE = #{templateTypeCode , jdbcType=VARCHAR} </if>
+    </select>
+
+    <select id="queryCodeValue" resultMap="CodeResultMap">
+        SELECT scvb.code_value_id,
+        scvb.code_id,
+        scvb.value,
+        sct.meaning,
+        sct.description,
+        scvb.order_seq,
+        scvb.enabled_flag,
+        scvb.parent_value
+        FROM sys_code_value_b scvb
+        LEFT OUTER JOIN sys_code_value_tl sct
+        ON (scvb.code_value_id = sct.code_value_id AND sct.lang = #{request.locale,jdbcType=VARCHAR})
+        WHERE scvb.code_id = #{codeId}
+        <if test = "value != null"> AND scvb.value LIKE CONCAT('%', #{value , jdbcType=VARCHAR}, '%') </if>
+        <if test = "meaning != null"> AND scvb.meaning LIKE CONCAT('%', #{meaning , jdbcType=VARCHAR}, '%') </if>
+        ORDER BY scvb.code_value_Id ASC
+    </select>
+
+    <select id="queryCodeValueUnq" resultMap="CodeResultMap">
+        SELECT scvb.code_value_id,
+        scvb.code_id,
+        scvb.value,
+        sct.meaning,
+        sct.description,
+        scvb.order_seq,
+        scvb.enabled_flag,
+        scvb.parent_value
+        FROM sys_code_value_b scvb
+        LEFT OUTER JOIN sys_code_value_tl sct
+        ON (scvb.code_value_id = sct.code_value_id AND sct.lang = #{request.locale,jdbcType=VARCHAR})
+        WHERE scvb.code_id = #{codeId}
+        AND (scvb.value = #{value , jdbcType=VARCHAR} OR scvb.meaning = #{meaning , jdbcType=VARCHAR})
+        ORDER BY scvb.code_value_Id ASC
+    </select>
+	<!-- 查询售后类型 -->
+	<select id="queryApplyItem" parameterType="clb.core.order.dto.OrdTemplate" resultMap="BaseResultMap">
+		SELECT
+			fot.TEMPLATE_ID,
+        	fot.APPLY_ITEM AFTER_TYPE
+        FROM
+        	fms_ord_template AS fot
+        WHERE 1=1
+        	AND fot.ENABLE_FLAG = 'Y' AND fot.APPLY_ITEM  IS NOT NULL
+        	<if test = "templateTypeCode != null"> AND fot.TEMPLATE_TYPE_CODE = #{templateTypeCode , jdbcType=VARCHAR} </if>
+        	<if test = "afterProject != null"> AND fot.APPLY_CLASS_CODE = #{afterProject , jdbcType=VARCHAR}</if>
+	</select>
+	
+	<!-- 查询售后项目 -->
+	<select id="queryApplyClassOnOrdAfter" parameterType="clb.core.order.dto.OrdTemplate" resultMap="BaseResultMap" >
+        SELECT
+        distinct fot.APPLY_CLASS_CODE AFTER_PROJECT,
+                 scvt.meaning APPLY_CLASS
+        FROM
+        fms_ord_template fot
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        AND fot.enable_flag = 'Y'
+        <if test = "templateTypeCode != null"> AND fot.TEMPLATE_TYPE_CODE = #{templateTypeCode , jdbcType=VARCHAR} </if>
+    </select>
+	
+	<!-- 查询售后话术模板的内容 -->
+	<select id="queryTemplateNameOnOrdAfter" parameterType="clb.core.order.dto.OrdTemplateLine" resultMap="LineResultMap" >
+		SELECT 
+			fotl.TEMPLATE_NAME,
+			fotl.TEMPLATE_CONTENT
+		FROM
+			fms_ord_template_line fotl
+		WHERE 1 = 1
+			<if test = "templateId != null"> AND fotl.TEMPLATE_ID = #{templateId}</if>
+	</select>
+</mapper>

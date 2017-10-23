@@ -1,0 +1,654 @@
+<#include "../include/header.html">
+<body>
+<script src="${base.contextPath}/clb/common/clbCode?questionTypeData=QA.QUESTION_TYPE" type="text/javascript"></script>
+<script type="text/javascript">
+	var channelId = <#if RequestParameters.channelId?exists> ${RequestParameters.channelId} <#else>-1</#if>;
+  	var orderNumber = '${RequestParameters.orderNumber!}';
+  
+    if(orderNumber == 'null'){
+      orderNumber = null;
+    }
+	var newAnswer = "";
+	var newfileId = "";
+    var viewModel = kendo.observable({
+        model: {
+        	consultId: '${RequestParameters.consultId!0}',
+          //orderNumber: '${RequestParameters.orderNumber!}',
+          orderNumber: orderNumber,
+        	//questionDate: '${RequestParameters.questionDate!}',
+        	contactPersonName: '${RequestParameters.contactPersonName!}',
+        	contactPhoneComb: '${RequestParameters.contactPhoneComb!}',
+        	emailAddress: '${RequestParameters.emailAddress!}',
+        	questionType: '${RequestParameters.questionType!}',
+        },
+        questionTypeData:questionTypeData,
+        
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+        	//viewModel.model.set("newfileId",fileId);
+           
+        	//$('#Grid').data('kendoGrid').saveChanges();
+			newAnswer= document.getElementById("contentAnswer").value;
+			
+			if(newAnswer.trim() == ""){
+				kendo.ui.showErrorDialog({
+					message : "请输入要回复的内容"
+				});
+				return;
+			}
+			
+            // if(newAnswer != "" || newfileId !=""){
+            	if(newAnswer){
+            		viewModel.model.set("newAnswer", newAnswer);
+            	};
+            	if(newfileId){
+            		viewModel.model.set("newfileId",newfileId);
+            	};
+            	
+            	/* if(viewModel.model.flag == "add"){
+            		kendo.ui.showConfirmDialog({
+                        title: $l('hap.tip.info'),
+                        message: $l('该问题已有回复，是否要追加')
+                    }).done(function (event) {
+	                    	if (event.button == 'OK') {
+	                    	}else{
+	                    		return;
+	                    	}
+                    	}
+                    });
+            	} */
+            	console.log(viewModel.model);
+            	 Hap.submitForm({
+                    url: '${base.contextPath}/fms/qa/consult/line/submit',
+                    formModel: viewModel.model,
+                    success: function (json) {
+                        if (json.success) {
+                        	//alert("成功");
+                             kendo.ui.showInfoDialog({
+                                message: "成功"
+                            }).done(function (event) {
+                            	if (event.button == 'OK') {
+                           			window.parent.location.reload();
+                            	var successtemp ="";
+           	        			if(newfileId){
+           	        				successtemp = "<button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' onclick='downloadFile(this)'><span class='fa fa-download'></span></button>"
+           	        			};
+                            	
+                            	html += "<tr>" +
+	        						"<td><label style='text-align: right;width:200px;'>" +"答复"+" :&nbsp&nbsp"+"</label></td>"+
+	        	        			"<td><textarea id='textarea' readonly style='width: 600px;height: 80px;resize:none'>" + newAnswer + "</textarea></td>" + 
+	        	        			"<td><label style='margin-left:10px;width:120px;'>" + "附件：  " + newfileId + " " + successtemp +"</label></td>"+
+	        	                	"</tr>";
+					            document.getElementById("content").innerHTML = html;
+	                        	newAnswer = "";
+	                        	newfileId = "";
+	                        	$("#contentAnswer").val('');	
+                            	
+                            	//答复状态的判断
+           	        		  	var ids=[];
+           	        		  	var answerStatus = "Y";
+           	        	    	ids.push(viewModel.model.consultId);
+           	       				 $.ajax({
+           	       	                    type: "POST",
+           	       	                    url: "${base.contextPath}/fms/qa/question/consult/updataStatus",
+           	       	                    data: {"ids":ids,"answerStatus":answerStatus},
+           	       	                    dataType: "json",
+           	       	                    success: function(data){
+           	       	                    }
+           	       	              });
+	                            };
+                            });
+                        } else {
+                            kendo.ui.showErrorDialog({
+                                message: "失败"
+                            }); 
+                        }
+                    }
+                });
+            	 
+            	 
+            /* }else{
+            	kendo.ui.showErrorDialog({
+						message : "请输入要回复的内容或附件"
+					});
+            }  */           
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        returnFunction: function () {
+        	window.parent.$("#classSetManageWin").data("kendoWindow").close();
+        },
+         resetForm: function () {
+            /* var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            } */
+            var contentAnswer= document.getElementById("contentAnswer").value;
+            if(contentAnswer){
+            	$("#contentAnswer").val('');
+			}
+
+        } 
+    });
+    	
+    	var qaQuestionFileId = '${RequestParameters.fileId!}';
+    	if(qaQuestionFileId){
+    		viewModel.model.questionFileId = qaQuestionFileId;
+    	}
+    	var qaQuestion = '${RequestParameters.questionDescription!}';
+    	if(qaQuestion){
+    		viewModel.model.question = qaQuestion;
+    	}
+    	
+    	
+ 		//增加行信息
+     window.addLine = function () {
+		  	var id = viewModel.model.consultId;
+			 $.ajax({
+                    type: "POST",
+                    url: "${base.contextPath}/fms/qa/consult/line/addLine",
+                    data: {"id":id,"question":qaQuestion,"questionFileId":qaQuestionFileId},
+	                dataType: "json",
+                    success: function(data){
+                    	for(var i=0;i<data.rows.length;i++){
+                    		viewModel.model.lineId = (data.rows[i].lineId);
+          			  	}
+                    }
+              });
+     }
+    	
+     var question=[];
+     var answer=[];
+     var questionFileId=[];
+     var answerFileId=[];
+    var jsons="";
+     if(viewModel.model.consultId) {
+        $.ajax({
+            type: "POST",
+            async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+            url: "${base.contextPath}/fms/qa/consult/line/selectAll",
+            data: {consultId: viewModel.model.consultId},
+            success: function (json) {
+            	var rowLength = json.rows.length;
+            	if(rowLength == 0){
+            		addLine();
+            		question.push(qaQuestion);
+             		if(qaQuestionFileId != "null"){
+             			questionFileId.push(qaQuestionFileId);
+             		}else{
+             			questionFileId.push("无");
+             		}
+             		answer.push("无");
+             		answerFileId.push("无");
+            	}else{
+	            	jsons=json;
+	            	console.log(rowLength);
+	            	for(var i=0;i<rowLength;i++){
+					    	question.push(json.rows[i].question);
+					    	if(json.rows[i].questionFileId){
+						    	questionFileId.push(json.rows[i].questionFileId);
+					    	}else{
+					    		questionFileId.push("无");
+					    	};
+					    	if(json.rows[i].answer){
+						    	answer.push(json.rows[i].answer);
+					    	}else{
+					    		answer.push("无");
+					    	};
+					    	if(json.rows[i].answerFileId){
+						    	answerFileId.push(json.rows[i].answerFileId);
+					    	}else{
+					    		answerFileId.push("无");
+					    	};
+				    } 
+	            	
+	                var row = json.rows[0] || {};
+	                viewModel.model.statusDate = row.statusDate;
+	                viewModel.model.lineId = json.rows[(rowLength-1)].lineId;
+	                viewModel.model.question = json.rows[(rowLength-1)].question;
+	                viewModel.model.questionFileId = json.rows[(rowLength-1)].questionFileId;
+	                /* for (var k in row) {
+	                    viewModel.model.set(k, row[k]);
+	                } */
+            	}
+            }
+        });
+        console.log(question);
+        console.log(questionFileId);
+        console.log(answer);
+        console.log(answerFileId);
+    }
+     
+     //console.log(viewModel.model);
+    
+     
+     //问题库查询问题
+     var solution;
+     var questionSelect;
+     function myFunction(){
+    	 //debugger;
+	     if($("#questionSelect").val()){
+	     	 questionSelect = $("#questionSelect").val();
+	    	 $.ajax({
+		           url : '${base.contextPath}/question/query/query',
+		           type : "POST",
+		           dataType : "json",
+		           data : {
+		        	   questionType:questionSelect
+		           },
+		           success : function(json) {
+		        	   for(var i=0;i<json.rows.length;i++){
+		        		   solution = json.rows[i].solution
+		        		   document.getElementById("contentAnswer").innerText = solution;
+				   		}
+		           },
+		           
+		           error : function(){
+		        	   kendo.ui.showErrorDialog({
+							message : "没有找到"
+						});
+		           }, 
+		           
+		       })
+	     }
+     }
+     
+     function downloadFile(e)
+     {
+    	 temp = $(e.parentNode)[0].innerText;
+    	 var tempList = temp.split(" ");
+    	 downloadFileId = parseInt(tempList[1]);
+    	 console.log(downloadFileId);
+    	 //console.log(viewModel.model);
+    	  if(temp){
+	    	 $.ajax({
+	 	        type: "POST",
+	 	        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+	 	        url: "${base.contextPath}/fms/trn/course/file/queryToken",
+	 	        data: {"downloadFileId":downloadFileId},
+	 	        success: function (json) {
+	 	            var row = json.rows[0] || {};
+	 	            if(row._token){
+	 	            	$.ajax({
+	 	                   url : '${base.contextPath}/commons/attach/validateFile',
+	 	                   type : "POST",
+	 	                   dataType : "json",
+	 	                   data : {
+	 	                       fileId:downloadFileId,
+	 	                       token:row._token
+	 	                   },
+	 	                   success : function(json) {
+	 	                       if(json.success == true){
+	 	                           url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+downloadFileId+'&token='+row._token;
+	 	                           var iframe = document.getElementById("ifile");
+	 	                           iframe.src=url;
+	 	                       }else{
+	 	                           kendo.ui.showErrorDialog({
+	 	                               message  : '<@spring.message "fms.file_not_exists"/>'
+	 	                           })
+	 	                       }
+	 	                   },
+	 	               })
+	 	            }else{
+	 	            	kendo.ui.showErrorDialog({
+	                        message: "文件不存在，可能已损坏或被删除"
+	                    });
+	 	            }
+	 	        }
+	 	    });
+    	 } 
+         /* data = dataSource.getByUid(uid);
+          */
+
+     };
+</script>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<iframe id="ifile" style="display:none"></iframe>
+    <div id="fileWinCompany" style="display: none;">
+        <input type="file" id="filesCompany" name="filesCompany"></input>
+    </div>
+<iframe id="ifileCompany" style="display:none"></iframe>
+<div id="content-container">
+    <div id="page-content" >
+        <div class="panel" > 
+        <div id="query-form" >
+            <form class="form-horizontal" id="myForm" >
+                <div class="panel-body" >
+               			<div class="col-xs-12" style="margin-bottom: 6px">
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right"> 订单号：</label>
+                                   <div class="col-xs-8">
+                                    <input type="text" style="width: 100%;noshade" readonly 
+                                           data-bind="value:model.orderNumber" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right"> 签单日期：</label>
+                                   <div class="col-xs-8">
+                                    <input type="text" id="statusDate" style="width: 100%" readonly
+                                            data-bind="value:model.statusDate" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+               			<div class="col-xs-12" style="margin-bottom: 6px">
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right"> 联系人：</label>
+                                   <div class="col-xs-8">
+                                    <input type="text" id="contactPersonName" style="width: 100%" readonly
+                                           data-bind="value:model.contactPersonName" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right">电话：</label>
+                                   <div class="col-xs-8">
+                                    <input type="text" style="width: 100%" readonly
+                                           data-bind="value:model.contactPhoneComb" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+               			<div class="col-xs-12" style="margin-bottom: 30px">
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right">邮箱：</label>
+                                   <div class="col-xs-8">
+                                    <input type="text" style="width: 100%"  readonly
+                                           data-bind="value:model.emailAddress" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-xs-6" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-4 control-label"
+                                          style="text-align: right">问题类型：</label>
+                                   <div class="col-xs-8">
+                                    <input  style="width: 100%;" readonly id="questionTypeData"
+                                           data-bind="value:model.questionType" class="k-textbox">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       
+                       <HR style="margin-top:10px;FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="75%" color=#987cb9 SIZE=3>
+                       
+               			<div class="col-xs-12" style="margin-top: 15px;margin-bottom: 20px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" id="content">
+	                            	<script type="text/javascript">
+	                            	var more = question.length;
+	                            	var answerIndex = (answer.length)-1;
+	                            	var answerFileIdIndex = (answerFileId.length)-1;
+		                            	console.log(answer[answerIndex]);
+	                            	if(answer[answerIndex] == "无" && answerFileId[answerFileIdIndex] == "无"){
+	                            		more = (question.length) + ((answer.length)-1);
+	                            		viewModel.model.flag = "update";
+	                            	}else{
+	                            		more = more*2;
+	                            		viewModel.model.flag = "add";
+	                            	}
+	                            	console.log(more);
+	                                var html = "";
+	                                html += "<table cellspacing=10px style='border-collapse:separate; border-spacing:0px 10px;' >" ;
+	                                for(var i=1;i<=more;i++){
+	                            	  if(i%2!=0){
+	                            	   	//奇数 
+	                            	   	    var questiontemp ="";
+	                            	   	    var answertemp ="";
+                       	        			if(questionFileId[0] != "无"){
+                       	        				questiontemp = "<button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' onclick='downloadFile(this)'><span class='fa fa-download'></span></button>"
+                       	        			};
+                       	        			if(answerFileId[0] != "无"){
+                       	        				answertemp = "<button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' onclick='downloadFile(this)'><span class='fa fa-download'></span></button>"
+                       	        			};
+	                            	        html += "<tr>" + 
+	                            	        			"<td><label style='text-align: right;width:200px;'>" +viewModel.model.contactPersonName+" :&nbsp&nbsp"+"</label></td>"+
+	                            	        			"<td><textarea id='textarea' readonly='readonly' style='width: 600px;height: 80px;resize:none'>" + question[0] + "</textarea></td>" + 
+	                            	        			"<td><label style='margin-left:10px;width:120px;'>" + "附件：  " +questionFileId[0] + " " + questiontemp +"</label></td>"+
+	                            	                "</tr>";
+	                            	        //console.log(question);
+	                            	        question.shift();
+	                            	        questionFileId.shift();
+	                            	 	}else{
+	                            			html += "<tr>" +
+	                            						"<td><label style='text-align: right;width:200px;'>" +"答复"+" :&nbsp&nbsp"+"</label></td>"+
+	                            	        			"<td><textarea id='textarea' readonly style='width: 600px;height: 80px;resize:none'>" + answer[0] + "</textarea></td>" + 
+	                            	        			"<td><label style='margin-left:10px;width:120px;'>" + "附件：  " +answerFileId[0] + " " + answertemp +"</label></td>"+
+	                            	                "</tr>";
+	                            	        //console.log(answer);
+	                            	        answer.shift();
+	                            	        answerFileId.shift();
+	                            	 	}
+	                            	 }
+	                            	html += "</table>";
+	                                document.getElementById("content").innerHTML = html;
+	                            	</script>
+                               </div>
+                           </div>
+                       </div>
+                       
+                       <HR style="margin-top:20px;FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="75%" color=#987cb9 SIZE=3>
+                            
+                       <div class="col-xs-12" style="margin-top: 15px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <div class="col-xs-5" style="text-align: right">
+		                                <label class="col-sm-3 control-label" style="text-align: right ">上传附件：</label>
+		                                <div class="col-sm-8">
+		                                    <input type="file" name="files" id="photos" >
+		                                </div>
+                                   </div>
+                                   <div class="col-xs-7" style="text-align: left">
+						              <textarea id="contentAnswer" type="text" placeholder="请输入要回复的内容"
+				                                      style="width:80%;height: 100px;" required 
+				                                      validationMessage="{0}不能为空！"></textarea>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>     
+                       
+                            
+			            <div class="col-xs-12" style="margin-top:20px;text-align: center">
+		                    <span class="btn btn-default" style="margin-right:50px;" type="button" data-bind="click:returnFunction"><i class="fa fa-reply" style="text-align: right"></i><@spring.message "clb.return"/></span>
+                      		<span class="btn btn-default" style="margin-right:50px;" data-bind="click:resetForm"><i class="fa fa-refresh" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                      		<span class="btn btn-success k-grid-save-changes" style="margin-right:50px;" data-bind="click:saveFunction"><i class="fa fa-save"></i><@spring.message "hap.save"/></span>
+			            </div>
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+       <!-- <div style="clear:both" hidden>
+		        <div id="Grid"></div>
+		</div>  -->
+		</div>
+    </div>
+    <!-- 咨询窗口 -->
+    <div id="classWin"></div>
+</div>
+
+<script type="text/javascript">
+    kendo.bind($('#page-content'), viewModel);
+    
+  	//问题类型下拉框
+	$("#questionTypeData").kendoComboBox({
+		dataSource:questionTypeData,
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value"
+	});
+    
+    //上传附件
+    $("#photos").kendoUpload({
+		async : {
+			saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		},
+		showFileList : false,
+		upload : onUpload,
+		success : onSuccess
+	});
+
+	function onUpload(e) {
+		e.data = {
+			modularName : 'QA',
+			allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+			maxSize : 20480
+		}
+
+	};
+
+	function onSuccess(e) {
+		if (e.response.success) {
+			newfileId = e.response.file.fileId;
+			console.log(newfileId);
+		} else {
+			kendo.ui.showErrorDialog({
+				message : e.response.message
+			})
+		}
+	}
+    
+    
+    
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/qa/consult/line/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/qa/consult/line/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/qa/consult/line/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/qa/consult/line/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        serverSorting: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "lineId",
+                fields: {
+                	lineId:{},
+                    question:{},
+                    answer:{},
+                    questionFileId:{},
+                    answerFileId:{},
+                    programId:{},
+                    requestId:{},
+                    statusDate:{},
+                	lineId:{},
+                	consultId:{defaultValue:viewModel.model.consultId},
+                	orderNumber: {defaultValue:viewModel.model.orderNumber},
+                	questionDate: {defaultValue:viewModel.model.questionDate},
+                	contactPersonName: {defaultValue:viewModel.model.contactPersonName},
+                	contactPhoneComb: {defaultValue:viewModel.model.contactPhoneComb},
+                	emailAddress: {defaultValue:viewModel.model.emailAddress},
+                	questionType: {validation:{required:true}},
+                	fileId:{defaultValue:viewModel.model.fileId},
+                }
+            }
+        }
+    });
+	
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "lineId",
+                title: '<@spring.message "QaConsultLine.lineId"/>',
+                width: 120,
+            },
+                    {
+                field: "consultId",
+                title: '咨询id',
+                width: 120
+            },
+                    {
+                field: "question",
+                title: '问题',
+                width: 120
+            },
+                    {
+                field: "answer",
+                title: '回答',
+                width: 120
+            },
+                    {
+                field: "questionFileId",
+                title: '问题附件id',
+                width: 120
+            },
+                    {
+                field: "answerFileId",
+                title: '回答附件id',
+                width: 120
+            },
+                    {
+                field: "statusDate",
+                title: '签单时间',
+                width: 120
+            },
+                    /* {
+                field: "requestId",
+                title: '<@spring.message "QaConsultLine.requestId"/>',
+            }  */
+        ],
+        editable: true
+    });
+    
+    Hap.autoResizeGrid("#Grid");
+</script>
+
+
+</body>
+</html>

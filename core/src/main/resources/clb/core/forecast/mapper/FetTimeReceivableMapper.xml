@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetTimeReceivableMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetTimeReceivable">
+        <result column="RECEIVABLE_ID" property="receivableId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_PERIOD" property="receiptPeriod" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_TYPE" property="paymentCompanyType" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_TYPE" property="receiveCompanyType" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_ID" property="paymentCompanyId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_COMPANY_ID" property="receiveCompanyId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_TYPE" property="receiptType" jdbcType="VARCHAR" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ORDER_CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="EXCHANGE_RATE" property="exchangeRate" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="DUE_DATE" property="dueDate" jdbcType="DATE" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <delete id="deleteCurData" parameterType="clb.core.forecast.dto.FetPeriod">
+        DELETE
+        FROM
+            fms_fet_time_receivable
+        WHERE
+            1 = 1
+        AND RECEIVE_COMPANY_ID = #{partyId}
+        AND RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        /*AND EXISTS (
+            SELECT
+                1
+            FROM
+                fms_fet_period_head fph,
+                fms_fet_period ffp
+            WHERE
+                1 = 1
+            AND fph.HEAD_ID = ffp.HEAD_ID
+            AND CURRENT_TIMESTAMP() BETWEEN ffp.START_DATE AND ffp.END_DATE
+            AND ffp.period_name = receipt_period)*/
+    </delete>
+
+    <select id="queryCurChannelPeriod" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            MAX(ffp.PERIOD_ID)
+        FROM
+            fms_fet_period_head fph,
+            fms_fet_period ffp
+        WHERE
+            fph.HEAD_ID = ffp.HEAD_ID
+        AND CURRENT_TIMESTAMP() BETWEEN ffp.START_DATE AND ffp.END_DATE
+        AND fph.PARTY_TYPE = 'CHANNEL'
+        AND fph.PARTY_ID = #{channelId}
+    </select>
+
+    <select id="queryUnconfirmedAmount" resultMap="BaseResultMap" parameterType="clb.core.channel.dto.CnlPerformanceParas">
+        SELECT DISTINCT
+            fftr.*
+        FROM
+            fms_fet_time_receivable fftr
+        LEFT JOIN fms_ord_order foo ON fftr.order_id = foo.order_id
+        WHERE
+            fftr.RECEIVE_COMPANY_ID = #{channelId}
+        <if test="performanceType != null and performanceType == 'personal'">
+            AND fftr.RECEIPT_TYPE LIKE '_ZJF'
+        </if>
+        <if test="beginYear != null">
+        AND YEAR (
+            CASE
+            WHEN foo.order_type = 'INSURANCE' THEN
+              foo.EXPECT_COOL_DATE
+            ELSE
+              foo.ISSUE_DATE
+            END) = #{beginYear}
+            <if test="beginMonth != null">
+                AND MONTH (
+                CASE
+                WHEN foo.order_type = 'INSURANCE' THEN
+                  foo.EXPECT_COOL_DATE
+                ELSE
+                  foo.ISSUE_DATE
+                END) = #{beginMonth}
+            </if>
+            ;
+        </if>
+    </select>
+
+</mapper>

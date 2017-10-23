@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlChannelContractMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlChannelContract">
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_CODE" property="contractCode" jdbcType="VARCHAR" />
+        <result column="CONTRACT_TYPE_CODE" property="contractTypeCode" jdbcType="VARCHAR" />
+        <result column="PRODUCT_DIVISION" property="productDivision" jdbcType="VARCHAR" />
+        <result column="PARTY_ID" property="partyId" jdbcType="DECIMAL" />
+        <result column="PARTY_TYPE" property="partyType" jdbcType="VARCHAR" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="START_DATE" property="startDate" jdbcType="DATE" />
+        <result column="END_DATE" property="endDate" jdbcType="DATE" />
+        <result column="CONTRACT_APPROACH" property="contractApproach" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="MERCHANT_PERSON" property="merchantPerson" jdbcType="VARCHAR" />
+        <result column="CHANNEL_PERSON" property="channelPerson" jdbcType="VARCHAR" />
+        <result column="INTRODUCE_PERSON" property="introducePerson" jdbcType="VARCHAR" />
+        <result column="MAKE_PERSON" property="makePerson" jdbcType="VARCHAR" />
+        <result column="PRODUCT_PERSON" property="productPerson" jdbcType="VARCHAR" />
+        <result column="BUSINESS_PERSON" property="businessPerson" jdbcType="VARCHAR" />
+        <result column="MERCHANT_BENEFIT" property="merchantBenefit" jdbcType="VARCHAR" />
+        <result column="CHANNEL_BENEFIT" property="channelBenefit" jdbcType="VARCHAR" />
+        <result column="INTRODUCE_BENEFIT" property="introduceBenefit" jdbcType="VARCHAR" />
+        <result column="MAKE_BENEFIT" property="makeBenefit" jdbcType="VARCHAR" />
+        <result column="PRODUCT_BENEFIT" property="productBenefit" jdbcType="VARCHAR" />
+        <result column="BUSINESS_BENEFIT" property="businessBenefit" jdbcType="VARCHAR" />
+        <result column="SETTLE_FLAG" property="settleFlag" jdbcType="VARCHAR" />
+        <result column="SETTLE_TYPE_CODE" property="settleTypeCode" jdbcType="VARCHAR" />
+        <result column="SPECIAL_TREATMENT" property="specialTreatment" jdbcType="VARCHAR" />
+        <result column="SETTLE_ACCOUNT" property="settleAccount" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="PARTY_NAME" property="partyName" jdbcType="VARCHAR" />
+        <result column="RATE_LEVEL_ID" property="rateLevelId" jdbcType="DECIMAL" />
+        <result column="RATE_LEVEL_NAME" property="rateLevelName" jdbcType="VARCHAR" />
+        <result column="DEFINE_RATE_FLAG" property="defineRateFlag" jdbcType="VARCHAR" />
+
+        <result column="BUSINESS_STAFF" property="businessStaff" jdbcType="VARCHAR" />
+        <result column="CLB_CLUB" property="clbClub" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER" property="reserveSupplier" jdbcType="VARCHAR" />
+        <result column="SIGN_NOTICE" property="signNotice" jdbcType="VARCHAR" />
+        <result column="FILL" property="fill" jdbcType="VARCHAR" />
+        <result column="CONTRACT_SIGN" property="contractSign" jdbcType="VARCHAR" />
+        <result column="SITE_FOLLOW" property="siteFollow" jdbcType="VARCHAR" />
+        <result column="POLICY_REVIEW" property="policyReview" jdbcType="VARCHAR" />
+        <result column="POLICY_SEND" property="policySend" jdbcType="VARCHAR" />
+        <result column="POLICY_FOLLOW" property="policyFollow" jdbcType="VARCHAR" />
+
+        <result column="BUSINESS_STAFF_USER_ID" property="businessStaffUserId" jdbcType="DECIMAL" />
+        <result column="CLB_CLUB_USER_ID" property="clbClubUserId" jdbcType="DECIMAL" />
+        <result column="RESERVE_SUPPLIER_USER_ID" property="reserveSupplierUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_NOTICE_USER_ID" property="signNoticeUserId" jdbcType="DECIMAL" />
+        <result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_SIGN_USER_ID" property="contractSignUserId" jdbcType="DECIMAL" />
+        <result column="SITE_FOLLOW_USER_ID" property="siteFollowUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_REVIEW_USER_ID" property="policyReviewUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_SEND_USER_ID" property="policySendUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_FOLLOW_USER_ID" property="policyFollowUserId" jdbcType="DECIMAL" />
+
+        <result column="BUSINESS_STAFF_USER_NAME" property="businessStaffUserName" jdbcType="VARCHAR" />
+        <result column="CLB_CLUB_USER_NAME" property="clbClubUserName" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_USER_NAME" property="reserveSupplierUserName" jdbcType="VARCHAR" />
+        <result column="SIGN_NOTICE_USER_NAME" property="signNoticeUserName" jdbcType="VARCHAR" />
+        <result column="FILL_USER_NAME" property="fillUserName" jdbcType="VARCHAR" />
+        <result column="CONTRACT_SIGN_USER_NAME" property="contractSignUserName" jdbcType="VARCHAR" />
+        <result column="SITE_FOLLOW_USER_NAME" property="siteFollowUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_REVIEW_USER_NAME" property="policyReviewUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_SEND_USER_NAME" property="policySendUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_FOLLOW_USER_NAME" property="policyFollowUserName" jdbcType="VARCHAR" />
+
+        <result column="RATE1" property="rate1" jdbcType="DECIMAL" />
+
+    </resultMap>
+
+    <resultMap id="LevelResultMap" type="clb.core.channel.dto.CnlLevel">
+        <result column="ID" property="id" jdbcType="DECIMAL" />
+        <result column="LEVEL_NAME" property="levelName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="TermResultMap" type="clb.core.channel.dto.CnlPaymentTerm">
+        <id column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_TERM_CODE" property="paymentTermCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CLASS_CODE" property="channelClassCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+        <result column="BASIC_DATE" property="basicDate" jdbcType="VARCHAR" />
+        <result column="CALM_PERIOD_NUMBER" property="calmPeriodNumber" jdbcType="VARCHAR" />
+        <result column="CALM_PERIOD_TYPE" property="calmPeriodType" jdbcType="VARCHAR" />
+        <result column="BALANCE_NUMBER" property="balanceNumber" jdbcType="VARCHAR" />
+        <result column="BALANCE_DATE1" property="balanceDate1" jdbcType="VARCHAR" />
+        <result column="BALANCE_DATE2" property="balanceDate2" jdbcType="VARCHAR" />
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryContract" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+            FCCC.CHANNEL_ID,
+            FCCC.CONTRACT_CODE,
+            FCCC.CONTRACT_TYPE_CODE,
+            FCCC.PRODUCT_DIVISION,
+            FCCC.PARTY_ID,
+            FCCC.PARTY_TYPE,
+            FCCC.CHANNEL_TYPE_CODE,
+            FCCC.START_DATE,
+            FCCC.END_DATE,
+            FCCC.CONTRACT_APPROACH,
+            FCCC.DESCRIPTION,
+            FCCC.MERCHANT_PERSON,
+            FCCC.CHANNEL_PERSON,
+            FCCC.INTRODUCE_PERSON,
+            FCCC.MAKE_PERSON,
+            FCCC.PRODUCT_PERSON,
+            FCCC.BUSINESS_PERSON,
+            FCCC.MERCHANT_BENEFIT,
+            FCCC.CHANNEL_BENEFIT,
+            FCCC.INTRODUCE_BENEFIT,
+            FCCC.MAKE_BENEFIT,
+            FCCC.PRODUCT_BENEFIT,
+            FCCC.BUSINESS_BENEFIT,
+            FCCC.SETTLE_FLAG,
+            FCCC.SETTLE_TYPE_CODE,
+            FCCC.SPECIAL_TREATMENT,
+            FCCC.SETTLE_ACCOUNT,
+            FCCC.PAYMENT_TERM_ID,
+            FCCC.BUSINESS_STAFF,
+            FCCC.CLB_CLUB,
+            FCCC.RESERVE_SUPPLIER,
+            FCCC.SIGN_NOTICE,
+            FCCC.FILL,
+            FCCC.CONTRACT_SIGN,
+            FCCC.SITE_FOLLOW,
+            FCCC.POLICY_REVIEW,
+            FCCC.POLICY_SEND,
+            FCCC.POLICY_FOLLOW,
+            FCCC.BUSINESS_STAFF_USER_ID,
+            FCCC.CLB_CLUB_USER_ID,
+            FCCC.RESERVE_SUPPLIER_USER_ID,
+            FCCC.SIGN_NOTICE_USER_ID,
+            FCCC.FILL_USER_ID,
+            FCCC.CONTRACT_SIGN_USER_ID,
+            FCCC.SITE_FOLLOW_USER_ID,
+            FCCC.POLICY_REVIEW_USER_ID,
+            FCCC.POLICY_SEND_USER_ID,
+            FCCC.POLICY_FOLLOW_USER_ID,
+            FCCC.RATE_LEVEL_ID,
+            FCCC.RATE_LEVEL_NAME,
+            FCCC.DEFINE_RATE_FLAG,
+
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.BUSINESS_STAFF_USER_ID) BUSINESS_STAFF_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.CLB_CLUB_USER_ID) CLB_CLUB_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.RESERVE_SUPPLIER_USER_ID) RESERVE_SUPPLIER_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.SIGN_NOTICE_USER_ID) SIGN_NOTICE_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.FILL_USER_ID) FILL_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.CONTRACT_SIGN_USER_ID) CONTRACT_SIGN_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.SITE_FOLLOW_USER_ID) SITE_FOLLOW_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.POLICY_REVIEW_USER_ID) POLICY_REVIEW_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.POLICY_SEND_USER_ID) POLICY_SEND_USER_NAME,
+            (SELECT SU.USER_NAME
+            FROM SYS_USER SU
+            WHERE SU.USER_ID = FCCC.POLICY_FOLLOW_USER_ID) POLICY_FOLLOW_USER_NAME,
+
+            FCCC.PROGRAM_ID,
+            FCCC.REQUEST_ID,
+            CASE FCCC.PARTY_TYPE
+            WHEN 'SUPPLIER' THEN
+            FSS.NAME
+            WHEN 'CHANNEL' THEN
+            FCC.CHANNEL_NAME
+            END PARTY_NAME
+            FROM fms_cnl_channel_contract FCCC
+            LEFT JOIN fms_spe_supplier FSS
+            ON (FCCC.PARTY_ID = FSS.SUPPLIER_ID AND FCCC.PARTY_TYPE = 'SUPPLIER')
+            LEFT JOIN fms_cnl_channel fcc
+            ON (FCCC.PARTY_ID = fcc.CHANNEL_ID AND FCCC.PARTY_TYPE = 'CHANNEL')
+        WHERE 1=1
+        AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        <if test = "channelContractId != null"> AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL} </if>
+        <if test = "parentChannelId != null"> AND FCCC.PARTY_ID = #{parentChannelId , jdbcType=DECIMAL} </if>
+        <if test = "productDivision != null"> AND FCCC.PRODUCT_DIVISION = #{productDivision , jdbcType=VARCHAR} </if>
+        <if test = "partyType != null"> AND FCCC.PARTY_TYPE = #{partyType , jdbcType=VARCHAR} </if>
+        <if test = "partyName != null">
+            AND CASE FCCC.PARTY_TYPE
+            WHEN 'SUPPLIER' THEN
+            FSS.NAME
+            WHEN 'CHANNEL' THEN
+            FCC.CHANNEL_NAME
+            END = #{partyName , jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="queryContractPriv" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_CODE,
+        FCCC.CONTRACT_TYPE_CODE,
+        FCCC.PRODUCT_DIVISION,
+        FCCC.PARTY_ID,
+        FCCC.PARTY_TYPE,
+        FCCC.CHANNEL_TYPE_CODE,
+        FCCC.START_DATE,
+        FCCC.END_DATE,
+        FCCC.CONTRACT_APPROACH,
+        FCCC.DESCRIPTION,
+        FCCC.MERCHANT_PERSON,
+        FCCC.CHANNEL_PERSON,
+        FCCC.INTRODUCE_PERSON,
+        FCCC.MAKE_PERSON,
+        FCCC.PRODUCT_PERSON,
+        FCCC.BUSINESS_PERSON,
+        FCCC.MERCHANT_BENEFIT,
+        FCCC.CHANNEL_BENEFIT,
+        FCCC.INTRODUCE_BENEFIT,
+        FCCC.MAKE_BENEFIT,
+        FCCC.PRODUCT_BENEFIT,
+        FCCC.BUSINESS_BENEFIT,
+        FCCC.SETTLE_FLAG,
+        FCCC.SETTLE_TYPE_CODE,
+        FCCC.SPECIAL_TREATMENT,
+        FCCC.SETTLE_ACCOUNT,
+        FCCC.PAYMENT_TERM_ID,
+        FCCC.BUSINESS_STAFF,
+        FCCC.CLB_CLUB,
+        FCCC.RESERVE_SUPPLIER,
+        FCCC.SIGN_NOTICE,
+        FCCC.FILL,
+        FCCC.CONTRACT_SIGN,
+        FCCC.SITE_FOLLOW,
+        FCCC.POLICY_REVIEW,
+        FCCC.POLICY_SEND,
+        FCCC.POLICY_FOLLOW,
+        FCCC.BUSINESS_STAFF_USER_ID,
+        FCCC.CLB_CLUB_USER_ID,
+        FCCC.RESERVE_SUPPLIER_USER_ID,
+        FCCC.SIGN_NOTICE_USER_ID,
+        FCCC.FILL_USER_ID,
+        FCCC.CONTRACT_SIGN_USER_ID,
+        FCCC.SITE_FOLLOW_USER_ID,
+        FCCC.POLICY_REVIEW_USER_ID,
+        FCCC.POLICY_SEND_USER_ID,
+        FCCC.POLICY_FOLLOW_USER_ID,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.RATE_LEVEL_NAME,
+        FCCC.DEFINE_RATE_FLAG,
+
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.BUSINESS_STAFF_USER_ID) BUSINESS_STAFF_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.CLB_CLUB_USER_ID) CLB_CLUB_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.RESERVE_SUPPLIER_USER_ID) RESERVE_SUPPLIER_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.SIGN_NOTICE_USER_ID) SIGN_NOTICE_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.FILL_USER_ID) FILL_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.CONTRACT_SIGN_USER_ID) CONTRACT_SIGN_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.SITE_FOLLOW_USER_ID) SITE_FOLLOW_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_REVIEW_USER_ID) POLICY_REVIEW_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_SEND_USER_ID) POLICY_SEND_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_FOLLOW_USER_ID) POLICY_FOLLOW_USER_NAME,
+
+        FCCC.PROGRAM_ID,
+        FCCC.REQUEST_ID,
+        CASE FCCC.PARTY_TYPE
+        WHEN 'SUPPLIER' THEN
+        FSS.NAME
+        WHEN 'CHANNEL' THEN
+        FCC.CHANNEL_NAME
+        END PARTY_NAME
+        FROM fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_spe_supplier FSS
+        ON (FCCC.PARTY_ID = FSS.SUPPLIER_ID AND FCCC.PARTY_TYPE = 'SUPPLIER')
+        LEFT JOIN fms_cnl_channel fcc
+        ON (FCCC.PARTY_ID = fcc.CHANNEL_ID AND FCCC.PARTY_TYPE = 'CHANNEL')
+        WHERE 1=1
+        AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        <if test = "channelContractId != null"> AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL} </if>
+        <if test = "parentChannelId != null"> AND FCCC.PARTY_ID = #{parentChannelId , jdbcType=DECIMAL} </if>
+    </select>
+
+    <!--根据条件查询渠道合约信息-->
+    <select id="selectByCondition" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_CODE,
+        FCCC.CONTRACT_TYPE_CODE,
+        FCCC.PRODUCT_DIVISION,
+        FCCC.PARTY_ID,
+        FCCC.PARTY_TYPE,
+        FCCC.CHANNEL_TYPE_CODE,
+        FCCC.START_DATE,
+        FCCC.END_DATE,
+        FCCC.CONTRACT_APPROACH,
+        FCCC.DESCRIPTION,
+        FCCC.MERCHANT_PERSON,
+        FCCC.CHANNEL_PERSON,
+        FCCC.INTRODUCE_PERSON,
+        FCCC.MAKE_PERSON,
+        FCCC.PRODUCT_PERSON,
+        FCCC.BUSINESS_PERSON,
+        FCCC.MERCHANT_BENEFIT,
+        FCCC.CHANNEL_BENEFIT,
+        FCCC.INTRODUCE_BENEFIT,
+        FCCC.MAKE_BENEFIT,
+        FCCC.PRODUCT_BENEFIT,
+        FCCC.BUSINESS_BENEFIT,
+        FCCC.SETTLE_FLAG,
+        FCCC.SETTLE_TYPE_CODE,
+        FCCC.SPECIAL_TREATMENT,
+        FCCC.SETTLE_ACCOUNT,
+        FCCC.PAYMENT_TERM_ID,
+        FCCC.BUSINESS_STAFF,
+        FCCC.CLB_CLUB,
+        FCCC.RESERVE_SUPPLIER,
+        FCCC.SIGN_NOTICE,
+        FCCC.FILL,
+        FCCC.CONTRACT_SIGN,
+        FCCC.SITE_FOLLOW,
+        FCCC.POLICY_REVIEW,
+        FCCC.POLICY_SEND,
+        FCCC.POLICY_FOLLOW,
+        FCCC.BUSINESS_STAFF_USER_ID,
+        FCCC.CLB_CLUB_USER_ID,
+        FCCC.RESERVE_SUPPLIER_USER_ID,
+        FCCC.SIGN_NOTICE_USER_ID,
+        FCCC.FILL_USER_ID,
+        FCCC.CONTRACT_SIGN_USER_ID,
+        FCCC.SITE_FOLLOW_USER_ID,
+        FCCC.POLICY_REVIEW_USER_ID,
+        FCCC.POLICY_SEND_USER_ID,
+        FCCC.POLICY_FOLLOW_USER_ID,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.RATE_LEVEL_NAME,
+        FCCC.DEFINE_RATE_FLAG,
+
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.BUSINESS_STAFF_USER_ID) BUSINESS_STAFF_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.CLB_CLUB_USER_ID) CLB_CLUB_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.RESERVE_SUPPLIER_USER_ID) RESERVE_SUPPLIER_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.SIGN_NOTICE_USER_ID) SIGN_NOTICE_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.FILL_USER_ID) FILL_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.CONTRACT_SIGN_USER_ID) CONTRACT_SIGN_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.SITE_FOLLOW_USER_ID) SITE_FOLLOW_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_REVIEW_USER_ID) POLICY_REVIEW_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_SEND_USER_ID) POLICY_SEND_USER_NAME,
+        (SELECT SU.USER_NAME
+        FROM SYS_USER SU
+        WHERE SU.USER_ID = FCCC.POLICY_FOLLOW_USER_ID) POLICY_FOLLOW_USER_NAME,
+
+        FCCC.PROGRAM_ID,
+        FCCC.REQUEST_ID,
+        CASE FCCC.PARTY_TYPE
+        WHEN 'SUPPLIER' THEN
+        FSS.NAME
+        WHEN 'CHANNEL' THEN
+        FCC.CHANNEL_NAME
+        END PARTY_NAME
+        FROM fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_spe_supplier FSS
+        ON (FCCC.PARTY_ID = FSS.SUPPLIER_ID AND FCCC.PARTY_TYPE = 'SUPPLIER')
+        LEFT JOIN fms_cnl_channel fcc
+        ON (FCCC.PARTY_ID = fcc.CHANNEL_ID AND FCCC.PARTY_TYPE = 'CHANNEL')
+        WHERE 1=1
+        AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        <if test = "channelContractId != null and channelContractId != ''">
+            AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        </if>
+        <if test = "contractCode != null and contractCode != ''">
+            AND FCCC.CONTRACT_CODE = #{contractCode , jdbcType=VARCHAR}
+        </if>
+        <if test = "partyType != null and partyType != ''">
+            AND FCCC.PARTY_TYPE = #{partyType , jdbcType=VARCHAR}
+        </if>
+        <if test = "partyId != null and partyId != ''">
+            AND FCCC.PARTY_ID = #{partyId , jdbcType=DECIMAL}
+        </if>
+        <if test = "effectiveDate != null">
+            AND #{effectiveDate} BETWEEN FCCC.START_DATE AND FCCC.END_DATE
+        </if>
+    </select>
+
+    <select id="queryLevel" parameterType="clb.core.channel.dto.CnlLevel" resultMap="LevelResultMap" >
+        SELECT /*fcl.ID,*/
+			   DISTINCT fcl.level_name
+        FROM fms_cnl_level fcl
+        WHERE 1=1
+        /*AND CURDATE() BETWEEN fcl.EFFECTIVE_START_DATE AND fcl.EFFECTIVE_END_DATE*/
+        <if test = "channelClassCode != null"> AND fcl.CHANNEL_CLASS_CODE = #{channelClassCode , jdbcType=VARCHAR} </if>
+        <if test = "supplierId != null"> AND fcl.SUPPLIER_ID = #{supplierId , jdbcType=VARCHAR} </if>
+    </select>
+
+    <select id="queryPaymentTerm" parameterType="clb.core.channel.dto.CnlPaymentTerm" resultMap="TermResultMap">
+        SELECT
+        t.PAYMENT_TERM_ID,
+        t.PAYMENT_TERM_CODE,
+        t.CHANNEL_CLASS_CODE,
+        t.CHANNEL_ID,
+        fcc.CHANNEL_NAME,
+        t.CLASS_NAME,
+        t.BASIC_DATE,
+        t.CALM_PERIOD_NUMBER,
+        t.CALM_PERIOD_TYPE,
+        t.BALANCE_NUMBER,
+        t.BALANCE_DATE1,
+        t.BALANCE_DATE2,
+        t.ENABLED_FLAG,
+        t.REQUEST_ID,
+        t.PROGRAM_ID,
+        t.OBJECT_VERSION_NUMBER,
+        t.CREATED_BY,
+        t.CREATION_DATE,
+        t.LAST_UPDATED_BY,
+        t.LAST_UPDATE_DATE,
+        t.LAST_UPDATE_LOGIN
+        FROM
+        fms_cnl_payment_term t
+        LEFT JOIN fms_cnl_channel fcc
+        ON t.CHANNEL_ID = fcc.CHANNEL_ID
+        WHERE 1=1
+        AND t.ENABLED_FLAG = "Y"
+        and t.channel_id = #{channelId}
+        and t.CHANNEL_CLASS_CODE = #{channelClassCode}
+       union all
+        SELECT
+        t.PAYMENT_TERM_ID,
+        t.PAYMENT_TERM_CODE,
+        t.CHANNEL_CLASS_CODE,
+        t.CHANNEL_ID,
+        fcc.CHANNEL_NAME,
+        t.CLASS_NAME,
+        t.BASIC_DATE,
+        t.CALM_PERIOD_NUMBER,
+        t.CALM_PERIOD_TYPE,
+        t.BALANCE_NUMBER,
+        t.BALANCE_DATE1,
+        t.BALANCE_DATE2,
+        t.ENABLED_FLAG,
+        t.REQUEST_ID,
+        t.PROGRAM_ID,
+        t.OBJECT_VERSION_NUMBER,
+        t.CREATED_BY,
+        t.CREATION_DATE,
+        t.LAST_UPDATED_BY,
+        t.LAST_UPDATE_DATE,
+        t.LAST_UPDATE_LOGIN
+        FROM
+        fms_cnl_payment_term t
+        LEFT JOIN fms_cnl_channel fcc
+        ON t.CHANNEL_ID = fcc.CHANNEL_ID
+        WHERE 1=1
+        AND t.ENABLED_FLAG = "Y"
+        AND t.channel_id is null
+        AND t.CHANNEL_CLASS_CODE = #{channelClassCode}
+        and not EXISTS (SELECT 1 FROM fms_cnl_payment_term fcpt
+                         WHERE fcpt.channel_id = #{channelId}
+                           AND fcpt.CHANNEL_CLASS_CODE = #{channelClassCode}
+                           AND fcpt.ENABLED_FLAG = "Y")
+
+    </select>
+
+    <select id="queryByDate" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_TYPE_CODE,
+        CASE FCCC.PARTY_TYPE
+        WHEN 'SUPPLIER' THEN
+        FSS. NAME
+        WHEN 'CHANNEL' THEN
+        FCC.CHANNEL_NAME
+        END PARTY_NAME,
+        CASE FCCC.PARTY_TYPE
+        WHEN 'SUPPLIER' THEN
+        '供应商'
+        WHEN 'CHANNEL' THEN
+        '渠道'
+        END PARTY_TYPE,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.RATE_LEVEL_NAME,
+        FCCC.DEFINE_RATE_FLAG,
+        FCCR.RATE1
+        FROM
+        FMS_CNL_CONTRACT_RATE FCCR,
+        fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_spe_supplier FSS ON (
+        FCCC.PARTY_ID = FSS.SUPPLIER_ID
+        AND FCCC.PARTY_TYPE = 'SUPPLIER'
+        )
+        LEFT JOIN fms_cnl_channel fcc ON (
+        FCCC.PARTY_ID = fcc.CHANNEL_ID
+        AND FCCC.PARTY_TYPE = 'CHANNEL'
+        )
+        WHERE
+        1 = 1
+        AND FCCR.CHANNEL_CONTRACT_ID = FCCC.CHANNEL_CONTRACT_ID
+        AND FCCR.CREATION_DATE BETWEEN STR_TO_DATE(#{dateString}, '%Y-%m-%d')-1
+        AND STR_TO_DATE(#{dateString}, '%Y-%m-%d')
+    </select>
+    
+    <!-- 渠道导入程序 -->
+    <select id="queryChannelContractByPartCodeAndPartyName" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap">
+    		SELECT 
+				CHANNEL_CONTRACT_ID
+			from fms_cnl_channel_contract 
+			where 1 = 1
+			<if test="contractCode!=null and contractCode!=''">
+				 and CONTRACT_CODE = #{contractCode}
+			 </if>
+    </select>
+
+    <resultMap id="SimpleResultMap" type="clb.core.channel.dto.CnlChannelContractSimple">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="PARTY_ID" property="partyId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryContractSimple" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="SimpleResultMap">
+        SELECT
+        fccc.CHANNEL_ID,
+        fccc.PARTY_ID
+        FROM
+        fms_cnl_channel_contract fccc
+        WHERE 1=1
+        <if test = "productDivision != null"> AND FCCC.PRODUCT_DIVISION = #{productDivision , jdbcType=VARCHAR} </if>
+        <if test = "partyType != null"> AND FCCC.PARTY_TYPE = #{partyType , jdbcType=VARCHAR} </if>
+    </select>
+
+    <update id="updateRatioLevel" parameterType="clb.core.channel.dto.CnlChannelContract">
+        update fms_cnl_channel_contract fccc
+           set fccc.rate_level_name = #{rateLevelName},
+               fccc.RATE_LEVEL_ID = #{rateLevelId}
+         where fccc.CHANNEL_CONTRACT_ID = #{channelContractId}
+    </update>
+</mapper>

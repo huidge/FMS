@@ -1,0 +1,434 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?courseSupplier=COURSE.SUPPLIER_ID" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?productClass=PRD.PRODUCT_CLASS" type="text/javascript"></script>
+<script type="text/javascript">
+	//从上一个页面获取参数
+	var lineId = '${RequestParameters.lineId!}';
+	var fileNum = '${RequestParameters.fileNum!}';
+	
+    var viewModel = kendo.observable({
+        model: {
+        	/* lineId: '${RequestParameters.lineId!}',
+        	fileNum: '${RequestParameters.fileNum!}', */
+        },
+        preview : function(){
+        	previewData();
+        },
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        resetForm: function () {
+        	//debugger;
+        	window.parent.$("#dialog").data("kendoWindow").close();
+        },
+        save: function(){
+			if (viewModel.model) {
+					var url1;
+					if(viewModel.model.lineId){
+						url1 = '${base.contextPath}/fms/trn/course/file/submitTrain'
+					}else{
+						url1 = '${base.contextPath}/fms/trn/course/file/add'
+					};
+					//debugger;
+						Hap.submitForm({ 
+							url : url1,
+							formModel : viewModel.model,
+							//asArray : false,
+							success : function(data) {
+								if (data.success) {
+									kendo.ui.showInfoDialog({
+			                             title: $l('hap.tip.info'),
+			                             message: $l('hap.tip.success')
+			                         }).done(function (event) {
+			                             if (event.button == 'OK') {
+				                             	window.parent.location.reload();
+				                             	window.parent.$("#dialog").data("kendoWindow").close();
+				                             	//window.location.reload();
+				                            }
+				                         });
+								} else {
+									kendo.ui.showErrorDialog({
+										message : "失败"
+									});
+								}
+							}
+			       		})
+			}else{
+				kendo.ui.showErrorDialog({
+					message : "请填写要新增的相关资料信息"
+				});
+			}
+		},
+    });
+    
+	if(lineId){
+		viewModel.model.lineId = lineId;
+	    $.ajax({
+	        type: "POST",
+	        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+	        url: "${base.contextPath}/fms/trn/course/file/queryAll",
+	        data: {"lineId":lineId},
+	        success: function (json) {
+	             var row = json.rows[0] || {};
+	            for (var k in row) {
+	            	viewModel.model.set(k, row[k]);
+	            } 
+	        }
+	    });
+	};
+	if(fileNum){
+		viewModel.model.fileNum = fileNum;
+	};
+    
+    
+    //console.log(viewModel.model.courseId);
+    //console.log(viewModel.model.status);
+    //给学员列表用得id
+    console.log(viewModel.model);
+    //var courseId = viewModel.model;
+	
+    
+    
+    
+  /* //附件上传
+	var courseId = viewModel.model.courseId;
+	console.log(viewModel.model.courseId);
+	function addAttachment(consultId) {
+        var url = "trn_course_file.html?courseId="+courseId;
+        var dialog = $("#dialog").kendoWindow({
+            actions: ["Close"],
+            height: "50%",
+ 	        width: "50%",
+            title: '课程附件',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+        }).data("kendoWindow");
+        dialog.center().open();
+    }; */
+	
+    
+		  //上传附件
+	/* var fileId = viewModel.model.fileId;
+    console.log(fileId);
+    function upload (){
+    		if(fileId){
+    			kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: $l('资料已存在，是否要覆盖')
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+					    $("#photos").kendoUpload({
+							async : {
+								saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+							},
+							showFileList : false,
+							upload : onUpload,
+							success : onSuccess
+						});
+						function onUpload(e) {
+							e.data = {
+								modularName : 'TRN',
+								allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+								maxSize : 20480
+							}
+						};
+						function onSuccess(e) {
+							if (e.response.success) {
+								fileId = e.response.file.fileId;
+							} else {
+								kendo.ui.showErrorDialog({
+									message : e.response.message
+								})
+							}
+					    console.log(fileId);
+					    viewModel.model.fileId = fileId;
+					    console.log(viewModel.model);
+						};
+						 	console.log( viewModel.model);
+                    }else{
+                    	return
+                    }
+                })
+    		}
+    } */
+    
+  //产品大分类
+    $.ajax({
+    	type:"POST",
+    	url:"${base.contextPath}/clb/common/lov/PRD_DIVISION",
+    	data:{"statusCode":"Y"},
+    	success: function(e) {
+    		prdDivisionData = e.rows;
+    		viewModel.set("prdDivisionData", prdDivisionData);
+    	}
+    });
+  console.log(viewModel);
+</script>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+<div id="dialog"></div>
+<div id="page-content">
+	<div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+		<div id="form" >
+    		<form id="mainform" style="margin-button: 10%;" class="form-horizontal" ">
+                    <div class="panel-body">
+                        
+                        <div class="col-xs-12" >
+                            <div class="col-xs-12" >
+                               	<div class="form-group" >
+                               		<!-- <label class="col-xs-1 control-label"></label> -->
+                                    <label class="col-xs-12 control-label"
+                                           style="text-align: center"><font size="4" color="red"> 注意：本次上传的资料不会关联课程,如需关联课程，请至课程编辑中上传资料</font></label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12" style="margin-top:10px">
+							<div class="col-xs-6" >
+                                <div class="form-group">
+                                	<label class="col-xs-3 control-label"
+                                           style="text-align: right">  资料编号</label>
+                                    <div class="col-xs-9">
+                                    		<input style="width: 100%"  id="fileNum" name="fileNum"  readonly
+                                           		data-bind="value:model.fileNum"  data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="margin-top:10px">
+							<!-- <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"> 产品种类</label>
+                                    <div class="col-xs-9">
+                                    	<select id="itemClass" data-value-primitive="true" required style="width: 100%" data-bind="value: model.itemClass"></select>
+                                    	<input  style="width:100%" name="productClass" id="productClass" data-bind="value:model.productClass" >
+                                    </div>
+                                </div>
+                            </div> -->
+                            
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"> 产品大分类：</label>
+                                    <div class="col-xs-9">
+                                    	<select data-role="combobox" id="sel" data-value-primitive="true"  onchange="A(this)"
+												data-text-field="meaning" data-value-field="value" style="width:100%;"
+												data-bind="source:prdDivisionData, value:model.prdDivision"></select>
+												<script>
+										            var sel = document.getElementById('sel');
+										            //sel.value = 2;
+										            sel.addEventListener("change", A(sel), false);
+										            var prdDivision;
+										            function A(obj)
+										            {	
+										                console.log(obj.value);
+										                prdDivision = obj.value;
+										                if(prdDivision){
+										                	viewModel.model.set("prdClass","");
+										                }else{
+										            		prdDivision = viewModel.model.prdDivision
+										                }
+										                
+										                 if(viewModel.model.prdDivision){
+												            //产品中分类
+												            $.ajax({
+												            	type:"POST",
+												            	url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+												            	data:{"statusCode":"Y","className1":prdDivision},
+												            	success: function(e) {
+												            		prdClassData = e.rows;
+												            		viewModel.set("prdClassData", prdClassData);
+												            		//viewModel.model.set("prdClass","");
+												            		//document.getElementById('prdClassData').value='';
+												            		//document.getElementById('prdClassData').MEANING='';
+												            		//document.all.objSelect.options.length = 0; 
+												            	}
+												            }); 
+												           	console.log(viewModel);
+										                } 
+										            }
+										        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"> 产品中分类：</label>
+                                    <div class="col-xs-9">
+                                    	<select data-role="combobox" data-value-primitive="true" id="prdClassData" 
+												data-text-field="meaning" data-value-field="value" style="width:100%;"
+												data-bind="source:prdClassData, value:model.prdClass"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="margin-top:10px">
+							<div class="col-xs-6" >
+                                <div class="form-group">
+                                	<label class="col-xs-3 control-label"
+                                           style="text-align: right">  文件内容</label>
+                                    <div class="col-xs-9">
+                                    		<input style="width: 100%"  id="fileContent" name="fileContent"  
+                                           		data-bind="value:model.fileContent"  data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"> 产品公司</label>
+                                    <div class="col-xs-9">
+                                    	<!-- <select id="supplierId" data-value-primitive="true" style="width: 100%" data-bind="value: model.supplierId"></select> -->
+                                    	<!-- <input  style="width:100%" name="supplierId" id="supplierId" data-bind="value:model.supplierId" > -->
+                                    	<input type="text" style="width: 100%" name="supplierId"
+	                                           data-bind="value:model.supplierId,text:model.name" id="supplierId" >
+	                                    </div>
+	                                    <script>
+	                                        $("#supplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_SUPPLIER_NAME")}, {
+	                                            query: function (e) {}
+	                                        }));
+	                                    </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="margin-top:10px">
+                        	<div class="col-xs-6" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"> </label>
+                                    <div class="col-xs-9">
+			                            <button type="button" onclick="upload()" class="btn btn-info btn-xs" id="btn_reqUpload" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+			                            <label id="label" style="margin-left:10px;text-align: left;"></label>
+			                            <script type="text/javascript">
+			                            if(viewModel.model.fileName){
+			                            	document.getElementById("label").innerHTML=viewModel.model.fileName;
+			                            }
+			                            </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-sm-12" >
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="addAttachment()">选择文件</a></div>
+                                </label>
+                                <div class="col-sm-8">
+                                <div class="col-sm-2">   
+                                </div>
+                            </div>
+                        </div> -->
+                        
+                    </div>
+                </form>
+                 <div class="col-sm-12" style="margin-top:18px">
+                     <div class="form-group">
+                         <div class="col-sm-12" style="text-align: center">   
+		    	      		<span class="btn btn-default" style="margin-right:150px;" type="button" data-bind="click:resetForm">取消</span>
+		    	      		<span class="btn btn-success" id="saveGrid"  data-bind="click:save" type="submit">保存</span>
+                         </div>
+                     </div>
+                 </div>
+                
+		    <script>kendo.bind($('#page-content'), viewModel);</script>
+    	</div>
+		
+    </div>
+</div>
+
+<script type="text/javascript">
+	
+	//上传附件
+	function upload (){
+	  //debugger;
+	  if(viewModel.model.fileId){
+		  kendo.ui.showConfirmDialog({
+				message : "资料已存在，是否要覆盖"
+			}).done(function (event) {
+	            if (event.button == 'OK') {
+	            	window.reqWin = $("#reqWin").kendoWindow({
+	                    title: '<@spring.message "sysfile.upload"/>',
+	                    width: 400,
+	                    height: 250,
+	                    modal: true
+	                }).data("kendoWindow");
+	                reqWin.center().open();
+	            }
+	         });
+	  }else{
+		  window.reqWin = $("#reqWin").kendoWindow({
+              title: '<@spring.message "sysfile.upload"/>',
+              width: 400,
+              height: 250,
+              modal: true
+          }).data("kendoWindow");
+          reqWin.center().open();
+	  }
+	};
+	
+	$("#reqFiles").kendoUpload({
+		async : {
+			saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		},
+		showFileList : false,
+		upload : onUpload,
+		success : onSuccess
+	});
+	function onUpload(e) {
+		e.data = {
+			modularName : 'TRN',
+			allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+			maxSize : 20480
+		}
+	};
+	var fileName;
+	function onSuccess(e) {
+		if (e.response.success) {
+			viewModel.model.fileId = e.response.file.fileId;
+			fileName = e.response.file.fileName;
+			document.getElementById("label").innerHTML=fileName;
+	
+			reqWin.close();
+	        kendo.ui.showInfoDialog({
+	            message  : '<@spring.message "spe.pleasesavedata"/>'
+	        })
+		} else {
+			kendo.ui.showErrorDialog({
+				message : e.response.message
+			})
+		}
+	};
+	
+	//下拉框
+	 /* $("#supplierId").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: courseSupplier
+	});  */
+	$("#productClass").kendoComboBox({
+	valuePrimitive: true,
+	dataTextField: "meaning",
+	dataValueField: "value",
+	dataSource: productClass
+	}); 
+	
+	
+    
+
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.release.mapper.NtcArticleMapper">
+    <resultMap id="BaseResultMap" type="clb.core.release.dto.NtcArticle">
+        <result column="ARTICLE_ID" property="articleId" jdbcType="DECIMAL" />
+        <result column="RELEASE_POSITION" property="releasePosition" jdbcType="VARCHAR" />
+        <result column="AUTHOR_NAME" property="authorName" jdbcType="VARCHAR" />
+        <result column="NOTICE_TYPE" property="noticeType" jdbcType="VARCHAR" />
+        <result column="TOP" property="top" jdbcType="DECIMAL" />
+        <result column="COVER_FILE_ID" property="coverFileId" jdbcType="DECIMAL" />
+        <result column="AFFIX_FILE_ID" property="affixFileId" jdbcType="DECIMAL" />
+        <result column="TITLE" property="title" jdbcType="VARCHAR" />
+        <result column="INTRODUCE" property="introduce" jdbcType="VARCHAR" />
+        <result column="ALL_FLAG" property="allFlag" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_FALG" property="supplierFalg" jdbcType="VARCHAR" />
+        <result column="CHANNEL_FALG" property="channelFalg" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_FALG" property="customerFalg" jdbcType="VARCHAR" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="RELEASE_DATE" property="releaseDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="article_date" property="articleDate" jdbcType="VARCHAR" />
+		<result column="COVER_FILE_PATH" property="coverFilePath" jdbcType="VARCHAR" />
+		<result column="SHOW_DATE" property="showDate" jdbcType="VARCHAR" />
+		<result column="announcement_Id" property="announcementId" jdbcType="DECIMAL" />
+		<result column="AFFIX_NAME" property="affixName" jdbcType="VARCHAR" />
+		<result column="FILE_PATH" property="sfpFilePath" jdbcType="VARCHAR" />
+    </resultMap>
+
+<!-- 查询所有文章接口 -->
+<select id="selectAllArticle" parameterType="clb.core.release.dto.NtcArticle"  resultMap="BaseResultMap">
+		select   CONCAT("【",(select scvb.meaning
+						 from sys_code_b scb,
+							  sys_code_value_b scvb
+	 					 where scb.code_id = scvb.code_id
+						   and scb.code = "REA.NOTICE_TYPE"
+						   and scvb.value = fna.notice_type),"】",fna.TITLE) TITLE
+				,fna.article_id
+				,fna.release_position
+				,fna.author_name
+				,fna.notice_type
+				,fna.cover_file_id
+				,fna.AFFIX_FILE_ID
+				,fna.top
+				,fna.last_update_date
+				,sf.file_path COVER_FILE_PATH
+				,ifnull(fn.status,CASE WHEN su.creation_date > fna.LAST_UPDATE_DATE
+										THEN "READ"
+										ELSE "NEW" END) status
+		        ,date_format(fna.CREATION_DATE,'%m-%d') SHOW_DATE
+		        ,fn.announcement_Id
+		FROM fms_ntc_article fna
+		left join sys_file sf on sf.file_id = fna.cover_file_id
+		left join FMS_NTN_ANNOUNCEMENT fn on fn.source_header_id = fna.article_id and fn.source_code = "ANNOUNCEMENT"
+		AND fn.user_id = #{userId}
+		JOIN sys_user su ON su.USER_ID = #{userId}
+		where fna.status = "Y"
+		<if test="releasePosition != null">
+			AND fna.release_position = #{releasePosition}
+		</if>
+		<if test="title != null and title != '' ">
+			AND fna.TITLE like concat('%',#{title},'%')
+		</if>
+	order by ifnull(fn.status,CASE WHEN su.creation_date > fna.LAST_UPDATE_DATE
+							THEN "READ"
+							ELSE "NEW" END),fna.top desc,fna.last_update_date desc
+</select>
+
+<select id="queryByCondition" parameterType="clb.core.release.dto.NtcArticle" resultMap="BaseResultMap">
+	SELECT
+	fna.ARTICLE_ID,
+	fna.RELEASE_POSITION,
+	fna.AUTHOR_NAME,
+	fna.NOTICE_TYPE,
+	fna.TOP,
+	fna.COVER_FILE_ID,
+	(select file_path from sys_file where file_id = fna.COVER_FILE_ID) cover_file_path,
+	fna.AFFIX_FILE_ID,
+	fna.TITLE,
+	fna.INTRODUCE,
+	fna.ALL_FLAG,
+	fna.SUPPLIER_FALG,
+	fna.CHANNEL_FALG,
+	fna.CUSTOMER_FALG,
+	<if test="articleId != null">
+	fna.CONTENT,
+	</if>
+	fna.`STATUS`,
+	fna.RELEASE_DATE,
+	fna.PROGRAM_ID,
+	fna.REQUEST_ID,
+	sf.FILE_NAME AFFIX_NAME,
+	sfp.FILE_PATH as sfpFilePath
+FROM
+	fms_ntc_article fna 
+	LEFT JOIN sys_file sf ON fna.AFFIX_FILE_ID = sf.FILE_ID
+	LEFT JOIN sys_file sfp ON fna.COVER_FILE_ID = sfp.FILE_ID
+	WHERE
+	1=1
+	<if test="articleId != null">
+		AND fna.ARTICLE_ID = #{articleId}
+	</if> 
+	<if test="releasePosition != null  and releasePosition != ''">
+		AND fna.RELEASE_POSITION = #{releasePosition}
+	</if>
+	<if test="authorName != null and authorName != ''">
+		AND fna.AUTHOR_NAME LIKE concat("%",#{authorName},"%") 
+	</if>
+	<if test="noticeType != null">
+		AND fna.NOTICE_TYPE = #{noticeType}
+	</if>
+	<if test="status != null">
+		AND fna.`STATUS` = #{status}
+	</if>
+	<if test="title != null and title != ''">
+		AND fna.TITLE LIKE concat("%",#{title},"%")
+	</if>
+	<if test="startDate != null">
+		AND fna.RELEASE_DATE &gt;=#{startDate,jdbcType=DATE}
+	</if>
+	<if test="endDate != null">
+		AND fna.RELEASE_DATE &lt;=#{endDate,jdbcType=DATE}
+	</if>
+	<include refid="orderSql"/>
+ 
+</select>
+
+<sql id="orderSql">
+	<!-- ORDER BY TOP DESC,fna.LAST_UPDATE_DATE DESC,RELEASE_DATE DESC,ARTICLE_ID DESC --> 
+	ORDER BY CASE fna.`STATUS`
+		WHEN "N" THEN
+		1 ELSE 2 END,fna.TOP DESC,fna.RELEASE_DATE DESC,fna.ARTICLE_ID DESC
+</sql>
+</mapper>

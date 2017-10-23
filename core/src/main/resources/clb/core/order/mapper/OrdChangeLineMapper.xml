@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdChangeLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdChangeLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL" />
+        <result column="COLUMN_NAME" property="columnName" jdbcType="VARCHAR" />
+        <result column="NEW_VALUE" property="newValue" jdbcType="VARCHAR" />
+        <result column="OLD_VALUE" property="oldValue" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdChangeLineByHeaderId" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+        SELECT
+			ocl.LINE_ID,
+			ocl.HEADER_ID,
+			ocl.COLUMN_NAME,
+			ocl.NEW_VALUE,
+			ocl.OLD_VALUE
+		FROM
+			fms_ord_change_line ocl
+		WHERE ocl.HEADER_ID = #{headerId}
+    </select>
+</mapper>

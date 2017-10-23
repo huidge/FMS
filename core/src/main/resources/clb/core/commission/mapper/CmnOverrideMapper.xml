@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnOverrideMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnOverride">
+        <result column="OVERRIDE_ID" property="overrideId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="PARENT_OVERRIDE_ID" property="parentOverrideId"/>
+        <result column="SUPERIOR_SUPPLIER_ID" property="superiorSupplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE1" property="superiorOverride1" jdbcType="DECIMAL" />
+        <result column="OVERRIDE1" property="override1" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT1" property="adjustment1" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE2" property="superiorOverride2" jdbcType="DECIMAL" />
+        <result column="OVERRIDE2" property="override2" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT2" property="adjustment2" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE3" property="superiorOverride3" jdbcType="DECIMAL" />
+        <result column="OVERRIDE3" property="override3" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT3" property="adjustment3" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE4" property="superiorOverride4" jdbcType="DECIMAL" />
+        <result column="OVERRIDE4" property="override4" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT4" property="adjustment4" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE5" property="superiorOverride5" jdbcType="DECIMAL" />
+        <result column="OVERRIDE5" property="override5" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT5" property="adjustment5" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE6" property="superiorOverride6" jdbcType="DECIMAL" />
+        <result column="OVERRIDE6" property="override6" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT6" property="adjustment6" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE7" property="superiorOverride7" jdbcType="DECIMAL" />
+        <result column="OVERRIDE7" property="override7" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT7" property="adjustment7" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE8" property="superiorOverride8" jdbcType="DECIMAL" />
+        <result column="OVERRIDE8" property="override8" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT8" property="adjustment8" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE9" property="superiorOverride9" jdbcType="DECIMAL" />
+        <result column="OVERRIDE9" property="override9" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT9" property="adjustment9" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE10" property="superiorOverride10" jdbcType="DECIMAL" />
+        <result column="OVERRIDE10" property="override10" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT10" property="adjustment10" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="PARENT_SUPPLIER_NAME" property="parentSupplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryBasic" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnOverride">
+        SELECT fco.PARENT_OVERRIDE_ID,
+        fss.`NAME` "SUPPLIER_NAME",
+        fssp.`NAME` "PARENT_SUPPLIER_NAME",
+        fco.CHANNEL_TYPE_CODE,
+        fssi.`NAME` "ITEM_SUPPLIER_NAME",
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fco.CONTRIBUTION_PERIOD,
+        fco.CURRENCY,
+        fco.PAY_METHOD,
+        fco.POLICYHOLDERS_MIN_AGE,
+        fco.POLICYHOLDERS_MAX_AGE,
+        fco.SUPERIOR_OVERRIDE1,
+        fco.OVERRIDE1,
+        fco.ADJUSTMENT1,
+        fco.SUPERIOR_OVERRIDE2,
+        fco.OVERRIDE2,
+        fco.ADJUSTMENT2,
+        fco.SUPERIOR_OVERRIDE3,
+        fco.OVERRIDE3,
+        fco.ADJUSTMENT3,
+        fco.SUPERIOR_OVERRIDE4,
+        fco.OVERRIDE4,
+        fco.ADJUSTMENT4,
+        fco.SUPERIOR_OVERRIDE5,
+        fco.OVERRIDE5,
+        fco.ADJUSTMENT5,
+        fco.SUPERIOR_OVERRIDE6,
+        fco.OVERRIDE6,
+        fco.ADJUSTMENT6,
+        fco.SUPERIOR_OVERRIDE7,
+        fco.OVERRIDE7,
+        fco.ADJUSTMENT7,
+        fco.SUPERIOR_OVERRIDE8,
+        fco.OVERRIDE8,
+        fco.ADJUSTMENT8,
+        fco.SUPERIOR_OVERRIDE9,
+        fco.OVERRIDE9,
+        fco.ADJUSTMENT9,
+        fco.SUPERIOR_OVERRIDE10,
+        fco.OVERRIDE10,
+        fco.ADJUSTMENT10,
+        fco.VERSION,
+        fco.EFFECTIVE_START_DATE,
+        fco.EFFECTIVE_END_DATE
+        FROM
+        fms_cmn_override AS fco
+        LEFT JOIN fms_spe_supplier fss ON fco.SUPPLIER_ID = fss.SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier fssp ON fco.SUPERIOR_SUPPLIER_ID = fssp.SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi ON fco.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN fms_spe_supplier fssi ON fpi.SUPPLIER_ID = fssi.SUPPLIER_ID
+        WHERE 1=1
+            <if test="supplierId!=null and supplierId!=''">
+                AND fco.SUPPLIER_ID = #{supplierId}
+            </if>
+
+            <if test="itemSupplierId!=null and itemSupplierId!=''">
+                AND fssi.SUPPLIER_ID = #{itemSupplierId}
+            </if>
+            <if test="channelTypeCode!=null and channelTypeCode!=''">
+                AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+            </if>
+            <if test="itemName!=null and itemName!=''">
+                AND ITEM_NAME = #{itemName}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND PAY_METHOD = #{payMethod}
+            </if>
+            <if test="policyHoldersAge!=null and policyHoldersAge!=''">
+                AND POLICYHOLDERS_MIN_AGE &lt;= #{policyHoldersAge}
+                AND POLICYHOLDERS_MAX_AGE &gt;= #{policyHoldersAge}
+            </if>
+            <if test="version!=null and version!=''">
+                AND VERSION = #{version}
+            </if>
+    </select>
+
+    <select id="queryMaxVersion" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnOverride">
+        select * from fms_cmn_override
+        where
+        SUPPLIER_ID = #{supplierId}
+        <choose>
+	        <when test="superiorSupplierId!=null">
+	           AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+	        </when>
+	        <otherwise>
+	           AND SUPERIOR_SUPPLIER_ID is null
+	        </otherwise>
+	    </choose>
+        AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PAY_METHOD = #{payMethod}
+        <choose>
+	        <when test="parentOverrideId!=null">
+	          AND PARENT_OVERRIDE_ID = #{parentOverrideId}
+	        </when>
+	        <otherwise>
+	           AND PARENT_OVERRIDE_ID is null
+	        </otherwise>
+	    </choose>
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        order  by VERSION desc LIMIT 1 
+    </select>
+    
+    <select id="queryOverride" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnOverride">
+        select * from fms_cmn_override
+        where
+        SUPPLIER_ID = #{supplierId}
+        <choose>
+	        <when test="superiorSupplierId!=null">
+	           AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+	        </when>
+	        <otherwise>
+	           AND SUPERIOR_SUPPLIER_ID is null
+	        </otherwise>
+	    </choose>
+        AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PAY_METHOD = #{payMethod}
+        <choose>
+	        <when test="parentOverrideId!=null">
+	          AND PARENT_OVERRIDE_ID = #{parentOverrideId}
+	        </when>
+	        <otherwise>
+	           AND PARENT_OVERRIDE_ID is null
+	        </otherwise>
+	    </choose>
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        and VERSION=#{version}
+    </select>
+    
+    <select id="queryYTDate" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnOverride">
+        select * from fms_cmn_override
+        where
+        SUPPLIER_ID = #{supplierId}
+        AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+        AND CHANNEL_TYPE_CODE = 'YT'
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PAY_METHOD = #{payMethod}
+        AND PARENT_OVERRIDE_ID IS NULL
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        order  by VERSION desc LIMIT 1 
+    </select>
+    
+
+	<select id="queryOverrideBasic" resultMap="BaseResultMap">
+	      SELECT T.* FROM (
+			SELECT  fco.OVERRIDE_ID,
+					fss.SUPPLIER_ID SUPERIOR_SUPPLIER_ID,
+					fss.`NAME` PARENT_SUPPLIER_NAME,
+              		null SUPPLIER_ID,
+			        fssi.`NAME` ITEM_SUPPLIER_NAME,
+			        fco.CHANNEL_TYPE_CODE,
+					fpi.ITEM_ID,
+			        fpi.ITEM_CODE,
+			        fpi.ITEM_NAME,
+			        fco.CONTRIBUTION_PERIOD,
+			        fco.CURRENCY,
+			        fco.PAY_METHOD,
+			        fco.POLICYHOLDERS_MIN_AGE,
+			        fco.POLICYHOLDERS_MAX_AGE,
+			        fco.SUPERIOR_OVERRIDE1,
+			        fco.OVERRIDE1,
+			        fco.ADJUSTMENT1,
+			        fco.SUPERIOR_OVERRIDE2,
+			        fco.OVERRIDE2,
+			        fco.ADJUSTMENT2,
+			        fco.SUPERIOR_OVERRIDE3,
+			        fco.OVERRIDE3,
+			        fco.ADJUSTMENT3,
+			        fco.SUPERIOR_OVERRIDE4,
+			        fco.OVERRIDE4,
+			        fco.ADJUSTMENT4,
+			        fco.SUPERIOR_OVERRIDE5,
+			        fco.OVERRIDE5,
+			        fco.ADJUSTMENT5,
+			        fco.SUPERIOR_OVERRIDE6,
+			        fco.OVERRIDE6,
+			        fco.ADJUSTMENT6,
+			        fco.SUPERIOR_OVERRIDE7,
+			        fco.OVERRIDE7,
+			        fco.ADJUSTMENT7,
+			        fco.SUPERIOR_OVERRIDE8,
+			        fco.OVERRIDE8,
+			        fco.ADJUSTMENT8,
+			        fco.SUPERIOR_OVERRIDE9,
+			        fco.OVERRIDE9,
+			        fco.ADJUSTMENT9,
+			        fco.SUPERIOR_OVERRIDE10,
+			        fco.OVERRIDE10,
+			        fco.ADJUSTMENT10,
+			        fco.VERSION,
+			        fco.EFFECTIVE_START_DATE,
+			        fco.EFFECTIVE_END_DATE
+			        FROM
+			        fms_cmn_override AS fco
+			        LEFT JOIN fms_spe_supplier fss ON fco.SUPPLIER_ID = fss.SUPPLIER_ID
+			        LEFT JOIN fms_prd_items fpi ON fco.ITEM_ID = fpi.ITEM_ID
+			        LEFT JOIN fms_spe_supplier fssi ON fpi.SUPPLIER_ID = fssi.SUPPLIER_ID
+			        where fco.CHANNEL_TYPE_CODE='GYS' 
+			        <if test="itemSupplierId!=null and itemSupplierId!=''">
+		                AND fssi.SUPPLIER_ID = #{itemSupplierId}
+		            </if>
+			union all 
+			SELECT  null OVERRIDE_ID,
+					fcb.SUPPLIER_ID SUPERIOR_SUPPLIER_ID,
+					fss.`NAME` PARENT_SUPPLIER_NAME,
+               		null SUPPLIER_ID,
+		            fss.`NAME` ITEM_SUPPLIER_NAME,
+		            null CHANNEL_TYPE_CODE,
+		            fcb.ITEM_ID,
+		            fpi.ITEM_CODE,
+		            fpi.ITEM_NAME,
+		            fcb.CONTRIBUTION_PERIOD,
+		            fcb.CURRENCY,
+		            fcb.PAY_METHOD,
+		            fcb.POLICYHOLDERS_MIN_AGE,
+		            fcb.POLICYHOLDERS_MAX_AGE,
+		            0 SUPERIOR_OVERRIDE1,
+		            0 OVERRIDE1,
+		            0 ADJUSTMENT1,
+		            0 SUPERIOR_OVERRIDE2,
+		            0 OVERRIDE2,
+		            0 ADJUSTMENT2,
+		            0 SUPERIOR_OVERRIDE3,
+		            0 OVERRIDE3,
+		            0 ADJUSTMENT3,
+		            0 SUPERIOR_OVERRIDE4,
+		            0 OVERRIDE4,
+		            0 ADJUSTMENT4,
+		            0 SUPERIOR_OVERRIDE5,
+		            0 OVERRIDE5,
+		            0 ADJUSTMENT5,
+		            0 SUPERIOR_OVERRIDE6,
+		            0 OVERRIDE6,
+		            0 ADJUSTMENT6,
+		            0 SUPERIOR_OVERRIDE7,
+		            0 OVERRIDE7,
+		            0 ADJUSTMENT7,
+		            0 SUPERIOR_OVERRIDE8,
+		            0 OVERRIDE8,
+		            0 ADJUSTMENT8,
+		            0 SUPERIOR_OVERRIDE9,
+		            0 OVERRIDE9,
+		            0 ADJUSTMENT9,
+		            0 SUPERIOR_OVERRIDE10,
+		            0 OVERRIDE10,
+		            0 ADJUSTMENT10,
+		            fcb.VERSION,
+		            fcb.EFFECTIVE_START_DATE,
+		            fcb.EFFECTIVE_END_DATE
+		        FROM
+		        fms_cmn_basic AS fcb
+		        LEFT JOIN fms_spe_supplier fss
+		        ON fcb.SUPPLIER_ID = fss.SUPPLIER_ID
+		        LEFT JOIN fms_prd_items fpi
+		        ON fcb.ITEM_ID = fpi.ITEM_ID	
+		        where 1=1
+		         <if test="itemSupplierId!=null and itemSupplierId!=''">
+		                AND fss.SUPPLIER_ID = #{itemSupplierId}
+		            </if>
+		  ) T
+		   where T.EFFECTIVE_END_DATE>SYSDATE()  
+            <if test="itemName!=null and itemName!=''">
+                AND T.ITEM_NAME = #{itemName}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND T.CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND T.CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND T.PAY_METHOD = #{payMethod}
+            </if>
+            <!-- 当前用户不能看到自己的数据 -->
+            <if test="supplierId!=null">
+                AND T.SUPERIOR_SUPPLIER_ID &lt;&gt; #{supplierId}
+            </if>
+	</select>
+
+</mapper>

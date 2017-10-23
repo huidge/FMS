@@ -1,0 +1,335 @@
+<#--
+ * description:现金价值表/保费表导入
+ * version: 1.0 
+ * author:tiansheng.ye@hand-china.com
+ * -->
+<#include "../include/header.html">
+<style>
+	#progressBar {
+		display: block;
+		width: 60%;
+		margin: auto;
+		margin-top: 256.6px;
+	}
+	#exams {
+		display: none;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		background: #fff;
+		filter: alpha(opacity = 70);
+		opacity: 0.9;
+		background-image: url("${base.contextPath}/resources/images/loading.gif");
+		background-repeat:no-repeat; 
+		background-position: center;
+		background-size:100% 100%;
+		z-index:9999;
+	}
+</style>
+<body>
+    <script>
+        viewModel = kendo.observable({
+            model : {}
+        });
+    </script>
+    <div id="content-container">
+        <div id="page-content">
+            <div class="panel" style="padding:0px;">
+                <form class="form-horizontal">
+                    <div class="panel-body">
+                        <div class="row">
+                            <input type="file" name="file" id="importExcelFile">
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <span id="message" style="width: 30%">
+                        </span>
+                        <span id="showButton" style="display: none;">
+                        	<button class="btn btn-default k-grid-cancel-changes" type="button"  id="cancel" style="width:100px;margin-left:70%;margin-top: -45px;" onclick="closeWindow();">
+                        		<i class="fa " ></i>取消
+                        	</button>
+							<button class="btn btn-info" type="button" disabled="disabled" id="update" style="width:100px;margin-left:85%;margin-top: -80px;" onclick="importData();">
+								<i class="fa " ></i>数据导入
+							</button>
+                        </span>
+                    	<div>
+		                       <div id="verifyData" class="table"></div>
+		                </div>
+                        <div class="row">
+                            <span id="errorMessage"></span>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+     <div id="exams">
+	</div>
+    <script>
+
+	    function GetQueryString(name){
+	         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	         var r = window.location.search.substr(1).match(reg);
+	         if(r!=null)return  unescape(r[2]); return null;
+	    }
+	    
+        var baseUrl = "${base.contextPath}";
+        var type=GetQueryString("type");
+        var itemId=GetQueryString("itemId");
+        var importNum="";
+        
+        if(type=='premium'){
+        	baseUrl+="/production/prdPremium/verificationData?itemId="+itemId+"&${_csrf.parameterName}=${_csrf.token}";
+        }else if(type=='cashCost'){
+        	baseUrl+="/production/prdCashValue/verificationData?itemId="+itemId+"&${_csrf.parameterName}=${_csrf.token}";
+        }
+        $("#importExcelFile").kendoUpload({
+            async:{
+                saveUrl: baseUrl,
+                autoUpload: true
+            },
+             multiple: false,
+            localization: {
+                select: "请选择文件",
+                uploadSelectedFiles: "上传",
+                headerStatusUploading: "上传中...",
+                headerStatusUploaded: "文件上传成功!"
+            },
+            error:function (e) {
+                kendo.ui.showInfoDialog({
+                    title: '提示信息',
+                    message: '导入失败!'
+                });
+            },
+            success:function (e) {
+                if(e.response.success){
+                	$("#exams").show();
+                	importNum=e.response.message;
+                	console.log(importNum);
+                	setTimeout(getImportData,5000);
+                }else{
+                     kendo.ui.showErrorDialog({
+                         title: '提示信息',
+                         message: '导入失败!<br/>'
+                     }).done(function (event) {
+                         $("#errorMessage").html('<h5>失败信息:</h5>' + e.response.message)
+                     });
+                }
+            }
+        });
+        
+        function getImportData(){
+        	$.ajax({
+                url : '${base.contextPath}/clb/getVerificationData?importNum='+importNum,
+                type : "GET",
+    		    success : function(e) {
+    		    	if (e.success) {
+    		    		$("#exams").hide();
+    		    		console.log(e);
+    		    		$("#message").html('信息:' + e.message);
+                        if(e.code=='ERROR'){
+                        	$("#update").attr("disabled","true");
+                        }else{
+                        	$("#update").removeAttr("disabled");
+                        }
+                        loadVerify('${base.contextPath}/clb/getVerificationData?importNum='+importNum);
+    		    	}else{
+    		    		setTimeout(getImportData,10000);
+    		    	}
+    		    },
+    		    error : function(e) {
+    		    	$("#exams").hide();
+    		        kendo.ui.showInfoDialog({
+    		            message:e.message
+    		        })
+    		    }
+    		});
+        }
+        
+        function loadVerify(getVerifyUrl){
+        	$("#showButton").show();
+        	var verifyData=$("#verifyData").kendoGrid({
+            	dataSource: {
+    		        transport: {
+    		            read: {
+    		                url:getVerifyUrl ,
+    		                type: "POST",
+    		                dataType: "json"
+    		            },
+    		            parameterMap: function (options, type) {
+    		                if (type !== "read" && options.models) {
+    		                    var datas = Hap.prepareSubmitParameter(options, type)
+    		                    return kendo.stringify(datas);
+    		                } else if (type === "read") {
+    		                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+    		                }
+    		            }
+    		        },
+    		        batch: true,
+    		        serverPaging: false,
+    		        pageSize: 10,
+    		        schema: {
+    		            data: 'rows',
+    		            total: 'total',
+    		            model: {
+    		                id: "lineId",
+    		                fields: {
+    		                }
+    		            }
+    		        }
+    		    },
+    	        height: '350px',
+    	        resizable: true,
+    	        scrollable: true,
+    	        navigatable: false,
+    	        pageable:true,
+    	        columns: [
+    	            {
+    	                field: "lineId",
+    	                title: '行号',
+    	                width: 80,
+    	                headerAttributes: {
+    	                    'class':'table-header-cell',
+    	                    style:'text-align: center;vertical-align:middle;'
+    	                },
+    	                editor:function (container, options) {
+    	                    if (options.model.insuranceYear) {
+    	                        $('<span>'+ options.model.insuranceYear +'</span>').appendTo(container)
+    	                    }else {
+    	                        $('<span></span>').appendTo(container)
+    	                    }
+    	                }
+    	            },
+    	            {
+    	                field: "type",
+    	                title: '类型',
+    	                width: 80,
+    	                headerAttributes: {
+    	                    'class':'table-header-cell',
+    	                    style:'text-align: center;vertical-align:middle;'
+    	                },
+    	                editor:function (container, options) {
+    	                    if (options.model.surrenderDeposit) {
+    	                        $('<span>'+ options.model.surrenderDeposit +'</span>').appendTo(container)
+    	                    }else {
+    	                        $('<span></span>').appendTo(container)
+    	                    }
+    	                }
+    	            },
+    	            {
+    	                field: "fieldName",
+    	                title: '字段名',
+    	                width: 200,
+    	                headerAttributes: {
+    	                    'class':'table-header-cell',
+    	                    style:'text-align: center;vertical-align:middle;'
+    	                },
+    	                editor:function (container, options) {
+    	                    if (options.model.surrenderNotBonus) {
+    	                        $('<span>'+ options.model.surrenderNotBonus +'</span>').appendTo(container)
+    	                    }else {
+    	                        $('<span></span>').appendTo(container)
+    	                    }
+    	                }
+    	            },
+    	            {
+    	                field: "message",
+    	                title: '报错/警告详情',
+    	                width: 200,
+    	                headerAttributes: {
+    	                    'class':'table-header-cell',
+    	                    style:'text-align: center;vertical-align:middle;'
+    	                },
+    	                editor:function (container, options) {
+    	                    if (options.model.surrenderNotBonus) {
+    	                        $('<span>'+ options.model.surrenderNotBonus +'</span>').appendTo(container)
+    	                    }else {
+    	                        $('<span></span>').appendTo(container)
+    	                    }
+    	                }
+    	            }
+    	        ],
+    	        editable: false
+    	    }).data("kendoGrid");
+        }
+        
+        function importData(){
+        	$("#showButton").hide();
+        	var uUrl="${base.contextPath}";;
+        	if(type=='premium'){
+        		uUrl+="/production/prdPremium/uploadData?itemId="+itemId+"&importNum="+importNum;
+            }else if(type=='cashCost'){
+            	uUrl+="/production/prdCashValue/uploadData?itemId="+itemId+"&importNum="+importNum;
+            }
+        	$.post(uUrl, {}, function (e) {
+                if(e.success){
+                	$("#exams").show();
+                	importNum=e.message;
+                	console.log(importNum);
+                	setTimeout(getImportResult,5000);
+                	
+                }else{
+                	kendo.ui.showErrorDialog({
+                        title: '提示信息',
+                        message: '导入失败!<br/>'
+                    }).done(function (event) {
+                        $("#errorMessage").html('<h5>失败信息:</h5>' + e.message)
+                    });
+                }
+            });
+        }
+        
+        function getImportResult(){
+        	$.ajax({
+                url : '${base.contextPath}/clb/getImportResult?importNum='+importNum,
+                type : "GET",
+    		    success : function(e) {
+    		    	console.log(e);
+    		    	if (e.success) {
+    		    		$("#exams").hide();
+    		    		if(e.code=='ERROR'){
+                    		kendo.ui.showInfoDialog({
+                                title: '提示信息',
+                                message: '导入失败'
+                            }).done(function (event) {
+                            	$("#errorMessage").html('<h5>失败信息:</h5>' + e.message);
+                            })
+                    	}else{
+                    		kendo.ui.showInfoDialog({
+                                title: '提示信息',
+                                message: '导入成功'
+                            }).done(function (event) {
+                                if (event.button == 'OK') {
+                                	closeWindow();
+                                }
+                            })
+                    	}
+    		    	}else{
+    		    		setTimeout(getImportResult,10000);
+    		    	}
+    		    },
+    		    error : function(e) {
+    		    	$("#exams").hide();
+    		        kendo.ui.showInfoDialog({
+    		            message:e.message
+    		        })
+    		    }
+    		});
+        }
+        
+        function closeWindow(){
+        	$.ajax({
+                url : '${base.contextPath}/clb/removeImportResult?importNum='+importNum,
+                type : "GET",
+    		    success : function(e) {
+    		    },
+    		    error : function(e) {
+    		    }
+    		});
+        	window.parent.$("#excelWindow").data("kendoWindow").close();
+        }
+</script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+        	if(viewModel.model.productType == "ZQ"){
+        		$('#bondGrid').data('kendoGrid').addRow();
+            }
+            if(viewModel.model.productType == "BX"){
+            	$('#insuranceGrid').data('kendoGrid').addRow();
+            }
+            if(viewModel.model.productType == "DC"){
+            	$('#immigrationInvestmentGrid').data('kendoGrid').addRow();
+            }
+        },
+        saveFunction: function () {
+        	if(viewModel.model.productType == "ZQ"){
+        		$('#bondGrid').data('kendoGrid').saveChanges();
+            }
+            if(viewModel.model.productType == "BX"){
+            	$('#insuranceGrid').data('kendoGrid').saveChanges();
+            }
+            if(viewModel.model.productType == "DC"){
+            	$('#immigrationInvestmentGrid').data('kendoGrid').saveChanges();
+            }
+        },
+        queryResource: function (e) {
+            $('#insuranceGrid').data('kendoGrid').dataSource.page(1);
+        },
+        cancelFunction: function(e){
+            if(viewModel.model.productType == "ZQ"){
+                $('#bondGrid').data('kendoGrid').cancelChanges();
+            }
+            if(viewModel.model.productType == "BX"){
+                $('#insuranceGrid').data('kendoGrid').cancelChanges();
+            }
+            if(viewModel.model.productType == "DC"){
+                $('#immigrationInvestmentGrid').data('kendoGrid').cancelChanges();
+            }
+        }
+    });
+    
+    viewModel.model.set("productType","BX");
+    
+    function deleteData(){
+    	var grid;
+    	if(viewModel.model.productType == "ZQ"){
+    	   grid = $('#bondGrid').data('kendoGrid');
+        }
+    	if(viewModel.model.productType == "BX"){
+    	   grid = $('#insuranceGrid').data('kendoGrid');
+        }
+    	if(viewModel.model.productType == "DC"){
+    	   grid = $('#immigrationInvestmentGrid').data('kendoGrid');
+        }
+        var checked = grid.selectedDataItems();
+        if(grid.selectedDataItems().length){  
+            kendo.ui.showConfirmDialog({
+                title:$l('hap.tip.info'),
+                message: $l('hap.tip.delete_confirm')
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    $.each(checked,function(i,v){
+                        grid.dataSource.remove(v)
+                    })
+                    grid.dataSource.sync();
+                }
+            }) 
+        }
+    }
+</script>
+<body>
+<div id="page-content">
+    <!-- 操作功能 -->
+    <div class="pull-left" style="padding-bottom:10px;">
+       <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right: 3px;"></i><@spring.message "hap.new"/></span>
+       <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+       <span onclick="deleteData()" class="btn btn-danger" style="float:left;margin-right:5px;"><i class="fa fa-trash-o"></i><@spring.message "hap.delete"/></span>
+       <span class="btn btn-default k-grid-cancel-changes" style="float:left;margin-right:5px;" data-bind="click:cancelFunction"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+    </div>
+    <br><br><br>
+    <div class="demo-section k-content">
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active breadcrumb" style="font-size:16px;color:black" id="insurance"><strong>保险</strong></li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="bond"><strong>债券</strong></li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="immigrationInvestment"><strong>移民投资</strong></li>
+                </ul>
+                <div id="tabstrip-1">
+                    <form class="form-horizontal" >
+                        <div class="panel-body" id="insurance">
+                            <div>
+		                       <div id="insuranceGrid" class="table"></div>
+		                    </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="tabstrip-2">
+                    <form class="form-horizontal" >
+                        <div class="panel-body" id="bond">
+                             <div>
+		                       <div id="bondGrid" class="table"></div>
+		                    </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="tabstrip-3">
+                    <form class="form-horizontal" >
+                    	<div class="panel-body" id="immigrationInvestment">
+						    <div>
+		                       <div id="immigrationInvestmentGrid" class="table"></div>
+		                    </div>
+                    	</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+//数据绑定
+kendo.bind($('#page-content'), viewModel);
+
+//切换Tab页
+$(document).ready(function() {
+	//table页初始化
+    $("#tabstrip").kendoTabStrip({
+        animation:  {
+            open: {
+                effects: "fadeIn"
+            }
+        },
+        select: function(e) {
+        	var bondGrid = $('#bondGrid').data('kendoGrid');
+        	var insuranceGrid = $('#insuranceGrid').data('kendoGrid');
+        	var immigrationInvestmentGrid = $('#immigrationInvestmentGrid').data('kendoGrid');
+            if(e.item.id == "bond"){
+            	viewModel.model.set("productType","ZQ");
+            }
+            if(e.item.id == "insurance"){
+            	viewModel.model.set("productType","BX");
+            }
+            if(e.item.id == "immigrationInvestment"){
+            	viewModel.model.set("productType","DC");
+            }
+        }
+    });
+    
+    //grid和datasource定义
+    var BaseUrl = _basePath;
+    insuranceDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/prd/hot/recommend/query?productType=BX",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=BX",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/prd/hot/recommend/remove?productType=BX",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=BX",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "recommendId",
+                fields: {}
+            }
+        }
+    });
+    
+    bondDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/prd/hot/recommend/query?productType=ZQ",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=ZQ",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/prd/hot/recommend/remove?productType=ZQ",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=ZQ",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "recommendId",
+                fields: {}
+            }
+        }
+    });
+    
+    immigrationInvestmentDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/prd/hot/recommend/query?productType=DC",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=DC",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/prd/hot/recommend/remove?productType=DC",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/prd/hot/recommend/submit?productType=DC",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "recommendId",
+                fields: {}
+            }
+        }
+    });
+    
+    //保险
+    $("#insuranceGrid").kendoGrid({
+        dataSource: insuranceDataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "itemName",
+                title: '产品名称',
+                width: 120,
+                editor: function (container, options) {
+                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "PRD_ITEMS"/>, 
+                           {
+                                textField: 'itemName',
+                                model    : options.model,
+                                select : function(e){
+                            		options.model.set('itemCode', e.item.itemCode);
+                            		options.model.set('itemName', e.item.itemName);
+                            		options.model.set('itemId', e.item.itemId);
+                            	}
+                            },
+                            {
+                            	query: function (e) {
+                                   e.param['bigClass'] = viewModel.model.productType;
+                                 }
+                            }));
+                }
+            },
+            {
+                field: "seqNum",
+                title: '排序序号',
+                width: 120
+            },
+        ],
+        editable: true
+    });
+    
+    //债券
+    $("#bondGrid").kendoGrid({
+        dataSource: bondDataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "itemName",
+                title: '产品名称',
+                width: 120,
+                editor: function (container, options) {
+                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "PRD_ITEMS"/>, 
+                           {
+                                textField: 'itemName',
+                                model    : options.model,
+                                select : function(e){
+                            		options.model.set('itemCode', e.item.itemCode);
+                            		options.model.set('itemName', e.item.itemName);
+                            		options.model.set('itemId', e.item.itemId);
+                            	}
+                            },
+                            {
+                            	query: function (e) {
+                                   e.param['bigClass'] = viewModel.model.productType;
+                                 }
+                            }));
+                }
+            },
+            {
+                field: "seqNum",
+                title: '排序序号',
+                width: 120
+            },
+        ],
+        editable: true
+    });
+    
+    //移民护照海外投资
+    $("#immigrationInvestmentGrid").kendoGrid({
+        dataSource: immigrationInvestmentDataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "itemName",
+                title: '产品名称',
+                width: 120,
+                editor: function (container, options) {
+                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "PRD_ITEMS"/>, 
+                           {
+                                textField: 'itemName',
+                                model    : options.model,
+                                select : function(e){
+                            		options.model.set('itemCode', e.item.itemCode);
+                            		options.model.set('itemName', e.item.itemName);
+                            		options.model.set('itemId', e.item.itemId);
+                            	}
+                            },
+                            {
+                            	query: function (e) {
+                                   e.param['bigClass'] = viewModel.model.productType;
+                                 }
+                            }));
+                }
+            },
+            {
+                field: "seqNum",
+                title: '排序序号',
+                width: 120
+            },
+        ],
+        editable: true
+    });
+    
+    Hap.autoResizeGrid("#insuranceGrid");
+    Hap.autoResizeGrid("#immigrationInvestmentGrid");
+    Hap.autoResizeGrid("#bondGrid");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<#--
+ * description: 订单查看日志
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+    if(orderId !=-1) {
+        viewModel.model.set("orderId",orderId);
+    }
+
+</script>
+<body>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="hisGrid"></div>
+    </div>
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}";
+    hisDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/status/his/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/status/his/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/status/his/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/status/his/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 200,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "statusHisId",
+                fields: {}
+            }
+        }
+    });
+
+    var hisGrid = $("#hisGrid").kendoGrid({
+        dataSource: hisDataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable : false,
+        columns: [
+            {
+                field: "statusDate",
+                width: 150,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle; display:none;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            {
+                field: "meaning",
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;display:none;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            {
+                field: "operatorUserName",
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;display:none;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            {
+                field: "description",
+                width: 150,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle; display:none;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+        ],
+        editable: false
+    }).data("kendoGrid");
+
+    Hap.autoResizeGrid("#hisGrid");
+
+
+</script>
+</body>
+</html>

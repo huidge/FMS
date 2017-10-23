@@ -1,0 +1,471 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?workbenchStatus=SYS.WORKBENCH_STATUS" type="text/javascript"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+        },
+        cancel : function (e) {
+        	window.parent.$("#roleWin").data("kendoWindow").close();
+        	//parent.closeTab("course"+0);
+        },
+        save: function(){
+        	//debugger;
+        	console.log(viewModel.model);
+	    	var validator = $("#mainform").data("kendoValidator");
+			if (validator.validate()) {
+				if(viewModel.model.fileName){
+						Hap.submitForm({
+							url : '${base.contextPath}/fms/sys/workbench/module/cfg/add',
+							formModel : viewModel.model,
+							success : function(data) {
+								if (data.success) {
+									kendo.ui.showInfoDialog({
+			                             title: $l('hap.tip.info'),
+			                             message: $l('hap.tip.success')
+			                         }).done(function (event) {
+			                             if (event.button == 'OK') {
+			                             	window.parent.location.reload();
+			                             	window.parent.$("#roleWin").data("kendoWindow").close();
+			                             	//window.location.reload();
+			                            }
+			                         });
+								} else {
+									kendo.ui.showErrorDialog({
+										message : "失败"
+									});
+								}
+		
+							}
+						})
+						
+				}else{
+					kendo.ui.showErrorDialog({
+						message : "请上传图标"
+					});
+				}
+			}
+		},
+    });
+    
+    console.log(viewModel.model);
+	
+</script>
+<body>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<div id="roleWin"></div>
+<div class="content-container">
+	<div id="page-content">
+		<div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+	    	<div id="query-form" >
+	    		<form id="mainform" class="form-horizontal" >
+	                    <div class="panel-body">
+	                        
+	                        <div class="col-xs-12" style="margin-bottom: 15px">
+	                            <div class="col-xs-12" >
+	                               	<div class="form-group" >
+	                                    <label class="col-xs-3 control-label"
+	                                           style="text-align: right"> 功能显示名：</label>
+	                                    <div class="col-xs-5">
+	                                    	<input id="functionShowName" data-role="maskedtextbox" type="text" required style="width: 100%"  data-bind="value:model.functionShowName" class="k-textbox">
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-xs-12" style="margin-bottom: 15px">
+	                            <div class="col-xs-12" >
+	                               	<div class="form-group" >
+	                                    <label class="col-xs-3 control-label"
+	                                           style="text-align: right"> 功能英文名：</label>
+	                                    <div class="col-xs-5">
+	                                    	<input id="englishName" data-role="maskedtextbox" type="text" required style="width: 100%"  data-bind="value:model.englishName" class="k-textbox">
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-xs-12" style="margin-bottom: 15px">
+	                            <div class="col-xs-12" >
+	                                <div class="form-group" >
+	                                    <label class="col-xs-3 control-label"
+	                                           style="text-align: right;margin-top: 5px"> 本地上传：</label>
+	                                    <!-- 图片预览的窗口 -->
+										<div class="col-xs-5" ><img src=""  id="img" width="280" height="260" style="text-align:center;"/></div>
+										<script type="text/javascript">
+											$(document).ready(function() {
+												if(viewModel.model.filePath){
+													var filePath = viewModel.model.filePath;
+													var path = ossWebPath+filePath;
+													console.log(path);
+													$("#img").show().attr('src',path);
+												}
+											});
+										</script>
+	                                           
+	                                    <div  class="col-xs-1" style="margin-top:5px;" >
+			                                 <!-- <input type="file"  style="display:inline;" name="files" id="photos" onclick="upload()" ><span id=span></span> -->
+			                                 <button type="button" onclick="upload()" class="btn btn-info btn-xs" id="btn_reqUpload" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+	                                    </div>
+	                                    <div  class="col-xs-3" style="margin-top: 15px">
+			                                 <label id="label" style="text-align: left;"></label>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        
+	                        <div class="col-xs-12" style="margin-bottom: 15px">
+	                            <div class="col-xs-12" >
+	                                <div class="form-group" >
+	                                    <label class="col-xs-3 control-label"
+	                                           style="text-align: right"> 选择系统功能：</label>
+	                                    <div class="col-xs-8">
+	                                    	<input required style="width:100%"  type="text" name="functionId" id="functionId" data-bind="value:model.functionId,text:model.functionName" >
+											<script>
+											 $("#functionId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "WORK_FUNCTION")}, {
+												 /* change:function (e) {
+											            viewModel.model.set("functionId",functionId);
+											            viewModel.model.set("functionName",functionName);
+											        } */  
+											 }));
+											  
+						                    </script>                                    	
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-xs-12" style="margin-bottom: 20px">
+	                            <div class="col-xs-12" >
+	                               	<div class="form-group" >
+	                                    <label class="col-xs-3 control-label"
+	                                           style="text-align: right"> 状态：</label>
+	                                    <div class="col-xs-5">
+	                                    	<input required  style="width:100%" name="status" id="status" data-bind="value:model.status" >
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+                        </div>
+	                        
+	                </form>
+	                <div class="col-sm-12" style="margin-bottom: 15px">
+	                     <div class="form-group">
+	                         <div class="col-sm-12" style="text-align: center">   
+			                    <span class="btn btn-default" style="margin-right:200px;" id="preview"  data-bind="click:cancel" type="button">取消</span>
+			    	      		<span class="btn btn-success" style=" id="saveGrid"  data-bind="click:save" type="submit">保存</span>
+			                    <div style="clear:both"></div>
+			                    </div>
+	                         </div>
+	                     </div>
+	                 </div> 
+	                
+			    <script>kendo.bind($('#page-content'), viewModel);</script>
+	    	</div>
+	    </div>
+		
+	    <!-- <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+	        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+	        <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
+	        <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+	    </div>
+	    <script>kendo.bind($('#toolbar-btn'), viewModel);</script> -->
+	    <!-- <div style="clear:both;">
+	        <div id="Grid"></div>
+	    </div> -->
+	</div>
+</div>
+
+<script type="text/javascript">
+	//验证
+	$("#mainform").kendoValidator({
+		messages: {
+	        required: '{0}不能为空！'
+		},
+		invalidMessageType : "tooltip"
+	});
+	
+	//上传附件
+    function upload (){
+	  //debugger;
+	  if(viewModel.model.iconFileId){
+		  kendo.ui.showErrorDialog({
+				message : "不允许多次上传"
+			}).done(function (event) {
+                if (event.button == 'OK') {
+                	window.reqWin = $("#reqWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    reqWin.center().open();
+                }
+             });
+	  }else{
+		  window.reqWin = $("#reqWin").kendoWindow({
+              title: '<@spring.message "sysfile.upload"/>',
+              width: 400,
+              height: 250,
+              modal: true
+          }).data("kendoWindow");
+          reqWin.center().open();
+	  }
+    };
+    
+    var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+    $("#reqFiles").kendoUpload({
+		async : {
+			saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		},
+		showFileList : false,
+		upload : onUpload,
+		success : onSuccess
+	});
+	function onUpload(e) {
+		e.data = {
+			modularName : 'TRN',
+			allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+			maxSize : 20480
+		}
+	};
+	var iconFileId;
+	var fileName;
+	var _token;
+	var efilePath;
+	function onSuccess(e) {
+		if (e.response.success) {
+			iconFileId = e.response.file.fileId;
+			fileName = e.response.file.fileName;
+			_token = e.response.file._token;
+			efilePath = e.response.file.filePath;
+			document.getElementById("label").innerHTML=fileName;
+			
+			var epath = ossWebPath+efilePath;
+			console.log(epath);
+			$("#img").show().attr('src',epath);
+
+			reqWin.close();
+            kendo.ui.showInfoDialog({
+                message  : '<@spring.message "spe.pleasesavedata"/>'
+            })
+		} else {
+			kendo.ui.showErrorDialog({
+				message : e.response.message
+			})
+		}
+    console.log(iconFileId);
+    viewModel.model.iconFileId = iconFileId;
+    viewModel.model.fileName = fileName;
+    viewModel.model._token = _token;
+    console.log(viewModel.model);
+	};
+	
+	$("#status").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: workbenchStatus
+	});
+	//$("#contactPerson").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "CNL_CONTACT_PERSON")}, {}));
+	
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/sys/workbench/module/cfg/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/sys/workbench/module/cfg/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/sys/workbench/module/cfg/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/sys/workbench/module/cfg/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "cfgId",
+                fields: {}
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        sortable: true,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "cfgId",
+                title: '<@spring.message "SysWorkbenchModuleCfg.cfgId"/>',
+                width: 120,
+                hidden:true
+            },
+                    {
+                field: "functionShowName",
+                title: '功能显示名',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                }, 
+            },
+                    {
+                field: "iconFileId",
+                title: '功能显示图标',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                }, 
+            },
+					{
+            	
+	            field: "functionName",
+	            title: "系统功能",
+	            width: 120,
+	            attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                }, 
+	            editor : function(container, options){
+	            	$('<input required data-required-msg="必输" name="' + options.field + '"/>').appendTo(container).kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_FUNCTION")}, 
+	                	{
+	                	model: options.model,
+	                	textField: 'functionName',
+	                	select : function(e){
+	                		options.model.set('functionName', e.item.functionName);
+	                		options.model.set('functionId', e.item.functionId);
+	                	}
+	                }))
+	            },
+            },
+                    {
+                field: "status",
+                title: '状态',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                }, 
+            },
+                    {
+                field: "programId",
+                title: '<@spring.message "SysWorkbenchModuleCfg.programId"/>',
+                width: 120,
+                hidden:true
+            },
+                    {
+                field: "requestId",
+                title: '<@spring.message "SysWorkbenchModuleCfg.requestId"/>',
+                width: 120,
+                hidden:true
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (rowdata) {
+                	 if (!!rowdata.cfgId) {
+                         return '<a href="#" onclick="openClassSetManagerWin('+rowdata.cfgId+')">编辑</a>'
+                     }else return ''
+                }
+            },
+          //弹出window 选择角色
+            { title:'<@spring.message "user.allocationrole"/>',
+                width : 120,
+                attributes: {style: "text-align:center"},
+                template : function (rowdata) {
+                    if (!!rowdata.cfgId) {
+                        return '<a href="#" onclick="choiceRole(' + rowdata.cfgId + ')"><@spring.message "user.allocationrole"/></a>'
+                    }else return ''
+                },
+            },
+        ],
+        editable: true
+    });
+	
+    function choiceRole(cfgId) {
+	    var dialog = $("#roleWin").kendoWindow({
+	        actions: ["Maximize", "Minimize", "Close"],
+	        width: "60%",
+	        height: "45%",
+	        modal: true,
+	        title: '角色分配',
+	        visible: false,
+	        iframe: true,
+	        content: 'sys_workbench_role.html?cfgId='+cfgId
+	    }).data("kendoWindow");
+	    dialog.center().open();
+	}
+    
+    
+    function choiceRole(cfgId) {
+	    var dialog = $("#roleWin").kendoWindow({
+	        actions: ["Maximize", "Minimize", "Close"],
+	        width: "60%",
+	        height: "45%",
+	        modal: true,
+	        title: '角色分配',
+	        visible: false,
+	        iframe: true,
+	        content: 'sys_workbench_role.html?cfgId='+cfgId
+	    }).data("kendoWindow");
+	    dialog.center().open();
+	}
+    
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+    
+    $("#Grid thead>tr th").css("text-align","center");
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

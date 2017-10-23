@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="clb.core.fnd.mapper.ImportTempMapper">
+  <resultMap id="BaseResultMap" type="clb.core.fnd.dto.ImportTemp" extends="com.hand.hap.mapper.StdMapper.STD">
+    <id column="IMPORT_TEMP_ID" jdbcType="DECIMAL" property="importTempId" />
+    <result column="IMPORT_BATCH_ID" jdbcType="DECIMAL" property="importBatchId" />
+    <result column="IMPORT_CODE" jdbcType="VARCHAR" property="importCode" />
+    <result column="LINE_NUMBER" jdbcType="DECIMAL" property="lineNumber" />
+    <result column="ORIG_FILE_NAME" jdbcType="VARCHAR" property="origFileName" />
+    <result column="IMPORT_STATUS" jdbcType="VARCHAR" property="importStatus" />
+    <result column="IMPORT_MESSAGE" jdbcType="VARCHAR" property="importMessage" />
+    <result column="SHEET" jdbcType="VARCHAR" property="sheet" />
+    <result column="ATTRIBUTE_CATEGORY" jdbcType="VARCHAR" property="attributeCategory" />
+    <result column="ATTRIBUTE1" jdbcType="VARCHAR" property="attribute1" />
+    <result column="ATTRIBUTE2" jdbcType="VARCHAR" property="attribute2" />
+    <result column="ATTRIBUTE3" jdbcType="VARCHAR" property="attribute3" />
+    <result column="ATTRIBUTE4" jdbcType="VARCHAR" property="attribute4" />
+    <result column="ATTRIBUTE5" jdbcType="VARCHAR" property="attribute5" />
+    <result column="ATTRIBUTE6" jdbcType="VARCHAR" property="attribute6" />
+    <result column="ATTRIBUTE7" jdbcType="VARCHAR" property="attribute7" />
+    <result column="ATTRIBUTE8" jdbcType="VARCHAR" property="attribute8" />
+    <result column="ATTRIBUTE9" jdbcType="VARCHAR" property="attribute9" />
+    <result column="ATTRIBUTE10" jdbcType="VARCHAR" property="attribute10" />
+    <result column="ATTRIBUTE11" jdbcType="VARCHAR" property="attribute11" />
+    <result column="ATTRIBUTE12" jdbcType="VARCHAR" property="attribute12" />
+    <result column="ATTRIBUTE13" jdbcType="VARCHAR" property="attribute13" />
+    <result column="ATTRIBUTE14" jdbcType="VARCHAR" property="attribute14" />
+    <result column="ATTRIBUTE15" jdbcType="VARCHAR" property="attribute15" />
+    <result column="ATTRIBUTE16" jdbcType="VARCHAR" property="attribute16" />
+    <result column="ATTRIBUTE17" jdbcType="VARCHAR" property="attribute17" />
+    <result column="ATTRIBUTE18" jdbcType="VARCHAR" property="attribute18" />
+    <result column="ATTRIBUTE19" jdbcType="VARCHAR" property="attribute19" />
+    <result column="ATTRIBUTE20" jdbcType="VARCHAR" property="attribute20" />
+    <result column="ATTRIBUTE21" jdbcType="VARCHAR" property="attribute21" />
+    <result column="ATTRIBUTE22" jdbcType="VARCHAR" property="attribute22" />
+    <result column="ATTRIBUTE23" jdbcType="VARCHAR" property="attribute23" />
+    <result column="ATTRIBUTE24" jdbcType="VARCHAR" property="attribute24" />
+    <result column="ATTRIBUTE25" jdbcType="VARCHAR" property="attribute25" />
+    <result column="ATTRIBUTE26" jdbcType="VARCHAR" property="attribute26" />
+    <result column="ATTRIBUTE27" jdbcType="VARCHAR" property="attribute27" />
+    <result column="ATTRIBUTE28" jdbcType="VARCHAR" property="attribute28" />
+    <result column="ATTRIBUTE29" jdbcType="VARCHAR" property="attribute29" />
+    <result column="ATTRIBUTE30" jdbcType="VARCHAR" property="attribute30" />
+      <result column="ATTRIBUTE31" jdbcType="VARCHAR" property="attribute31" />
+      <result column="ATTRIBUTE32" jdbcType="VARCHAR" property="attribute32" />
+      <result column="ATTRIBUTE33" jdbcType="VARCHAR" property="attribute33" />
+      <result column="ATTRIBUTE34" jdbcType="VARCHAR" property="attribute34" />
+      <result column="ATTRIBUTE35" jdbcType="VARCHAR" property="attribute35" />
+      <result column="ATTRIBUTE36" jdbcType="VARCHAR" property="attribute36" />
+      <result column="ATTRIBUTE37" jdbcType="VARCHAR" property="attribute37" />
+      <result column="ATTRIBUTE38" jdbcType="VARCHAR" property="attribute38" />
+      <result column="ATTRIBUTE39" jdbcType="VARCHAR" property="attribute39" />
+      <result column="ATTRIBUTE40" jdbcType="VARCHAR" property="attribute40" />
+      <result column="ATTRIBUTE41" jdbcType="VARCHAR" property="attribute41" />
+      <result column="ATTRIBUTE42" jdbcType="VARCHAR" property="attribute42" />
+      <result column="ATTRIBUTE43" jdbcType="VARCHAR" property="attribute43" />
+      <result column="ATTRIBUTE44" jdbcType="VARCHAR" property="attribute44" />
+      <result column="ATTRIBUTE45" jdbcType="VARCHAR" property="attribute45" />
+      <result column="ATTRIBUTE46" jdbcType="VARCHAR" property="attribute46" />
+      <result column="ATTRIBUTE47" jdbcType="VARCHAR" property="attribute47" />
+      <result column="ATTRIBUTE48" jdbcType="VARCHAR" property="attribute48" />
+      <result column="ATTRIBUTE49" jdbcType="VARCHAR" property="attribute49" />
+      <result column="ATTRIBUTE50" jdbcType="VARCHAR" property="attribute50" />
+      <result column="ATTRIBUTE51" jdbcType="VARCHAR" property="attribute51" />
+      <result column="ATTRIBUTE52" jdbcType="VARCHAR" property="attribute52" />
+      <result column="ATTRIBUTE53" jdbcType="VARCHAR" property="attribute53" />
+      <result column="ATTRIBUTE54" jdbcType="VARCHAR" property="attribute54" />
+      <result column="ATTRIBUTE55" jdbcType="VARCHAR" property="attribute55" />
+      <result column="ATTRIBUTE56" jdbcType="VARCHAR" property="attribute56" />
+      <result column="ATTRIBUTE57" jdbcType="VARCHAR" property="attribute57" />
+      <result column="ATTRIBUTE58" jdbcType="VARCHAR" property="attribute58" />
+      <result column="ATTRIBUTE59" jdbcType="VARCHAR" property="attribute59" />
+      <result column="ATTRIBUTE60" jdbcType="VARCHAR" property="attribute60" />
+      <result column="ATTRIBUTE61" jdbcType="VARCHAR" property="attribute61" />
+      <result column="ATTRIBUTE62" jdbcType="VARCHAR" property="attribute62" />
+      <result column="ATTRIBUTE63" jdbcType="VARCHAR" property="attribute63" />
+      <result column="ATTRIBUTE64" jdbcType="VARCHAR" property="attribute64" />
+      <result column="ATTRIBUTE65" jdbcType="VARCHAR" property="attribute65" />
+      <result column="ATTRIBUTE66" jdbcType="VARCHAR" property="attribute66" />
+      <result column="ATTRIBUTE67" jdbcType="VARCHAR" property="attribute67" />
+      <result column="ATTRIBUTE68" jdbcType="VARCHAR" property="attribute68" />
+      <result column="ATTRIBUTE69" jdbcType="VARCHAR" property="attribute69" />
+      <result column="ATTRIBUTE70" jdbcType="VARCHAR" property="attribute70" />
+      <result column="ATTRIBUTE71" jdbcType="VARCHAR" property="attribute71" />
+      <result column="ATTRIBUTE72" jdbcType="VARCHAR" property="attribute72" />
+      <result column="ATTRIBUTE73" jdbcType="VARCHAR" property="attribute73" />
+      <result column="ATTRIBUTE74" jdbcType="VARCHAR" property="attribute74" />
+      <result column="ATTRIBUTE75" jdbcType="VARCHAR" property="attribute75" />
+      <result column="ATTRIBUTE76" jdbcType="VARCHAR" property="attribute76" />
+      <result column="ATTRIBUTE77" jdbcType="VARCHAR" property="attribute77" />
+      <result column="ATTRIBUTE78" jdbcType="VARCHAR" property="attribute78" />
+      <result column="ATTRIBUTE79" jdbcType="VARCHAR" property="attribute79" />
+      <result column="ATTRIBUTE80" jdbcType="VARCHAR" property="attribute80" />
+      <result column="ATTRIBUTE81" jdbcType="VARCHAR" property="attribute81" />
+      <result column="ATTRIBUTE82" jdbcType="VARCHAR" property="attribute82" />
+      <result column="ATTRIBUTE83" jdbcType="VARCHAR" property="attribute83" />
+      <result column="ATTRIBUTE84" jdbcType="VARCHAR" property="attribute84" />
+      <result column="ATTRIBUTE85" jdbcType="VARCHAR" property="attribute85" />
+      <result column="ATTRIBUTE86" jdbcType="VARCHAR" property="attribute86" />
+      <result column="ATTRIBUTE87" jdbcType="VARCHAR" property="attribute87" />
+      <result column="ATTRIBUTE88" jdbcType="VARCHAR" property="attribute88" />
+      <result column="ATTRIBUTE89" jdbcType="VARCHAR" property="attribute89" />
+      <result column="ATTRIBUTE90" jdbcType="VARCHAR" property="attribute90" />
+      <result column="ATTRIBUTE91" jdbcType="VARCHAR" property="attribute91" />
+      <result column="ATTRIBUTE92" jdbcType="VARCHAR" property="attribute92" />
+      <result column="ATTRIBUTE93" jdbcType="VARCHAR" property="attribute93" />
+      <result column="ATTRIBUTE94" jdbcType="VARCHAR" property="attribute94" />
+      <result column="ATTRIBUTE95" jdbcType="VARCHAR" property="attribute95" />
+      <result column="ATTRIBUTE96" jdbcType="VARCHAR" property="attribute96" />
+      <result column="ATTRIBUTE97" jdbcType="VARCHAR" property="attribute97" />
+      <result column="ATTRIBUTE98" jdbcType="VARCHAR" property="attribute98" />
+      <result column="ATTRIBUTE99" jdbcType="VARCHAR" property="attribute99" />
+      <result column="ATTRIBUTE100" jdbcType="VARCHAR" property="attribute100" />
+      <result column="ATTRIBUTE101" jdbcType="VARCHAR" property="attribute101" />
+      <result column="ATTRIBUTE102" jdbcType="VARCHAR" property="attribute102" />
+      <result column="ATTRIBUTE103" jdbcType="VARCHAR" property="attribute103" />
+      <result column="ATTRIBUTE104" jdbcType="VARCHAR" property="attribute104" />
+      <result column="ATTRIBUTE105" jdbcType="VARCHAR" property="attribute105" />
+      <result column="ATTRIBUTE106" jdbcType="VARCHAR" property="attribute106" />
+      <result column="ATTRIBUTE107" jdbcType="VARCHAR" property="attribute107" />
+      <result column="ATTRIBUTE108" jdbcType="VARCHAR" property="attribute108" />
+      <result column="ATTRIBUTE109" jdbcType="VARCHAR" property="attribute109" />
+      <result column="ATTRIBUTE110" jdbcType="VARCHAR" property="attribute110" />
+      <result column="ATTRIBUTE111" jdbcType="VARCHAR" property="attribute111" />
+      <result column="ATTRIBUTE112" jdbcType="VARCHAR" property="attribute112" />
+      <result column="ATTRIBUTE113" jdbcType="VARCHAR" property="attribute113" />
+      <result column="ATTRIBUTE114" jdbcType="VARCHAR" property="attribute114" />
+      <result column="ATTRIBUTE115" jdbcType="VARCHAR" property="attribute115" />
+      <result column="ATTRIBUTE116" jdbcType="VARCHAR" property="attribute116" />
+      <result column="ATTRIBUTE117" jdbcType="VARCHAR" property="attribute117" />
+      <result column="ATTRIBUTE118" jdbcType="VARCHAR" property="attribute118" />
+      <result column="ATTRIBUTE119" jdbcType="VARCHAR" property="attribute119" />
+      <result column="ATTRIBUTE120" jdbcType="VARCHAR" property="attribute120" />
+      <result column="ATTRIBUTE121" jdbcType="VARCHAR" property="attribute121" />
+      <result column="ATTRIBUTE122" jdbcType="VARCHAR" property="attribute122" />
+      <result column="ATTRIBUTE123" jdbcType="VARCHAR" property="attribute123" />
+      <result column="ATTRIBUTE124" jdbcType="VARCHAR" property="attribute124" />
+      <result column="ATTRIBUTE125" jdbcType="VARCHAR" property="attribute125" />
+      <result column="ATTRIBUTE126" jdbcType="VARCHAR" property="attribute126" />
+      <result column="ATTRIBUTE127" jdbcType="VARCHAR" property="attribute127" />
+      <result column="ATTRIBUTE128" jdbcType="VARCHAR" property="attribute128" />
+      <result column="ATTRIBUTE129" jdbcType="VARCHAR" property="attribute129" />
+      <result column="ATTRIBUTE130" jdbcType="VARCHAR" property="attribute130" />
+      <result column="ATTRIBUTE131" jdbcType="VARCHAR" property="attribute131" />
+      <result column="ATTRIBUTE132" jdbcType="VARCHAR" property="attribute132" />
+      <result column="ATTRIBUTE133" jdbcType="VARCHAR" property="attribute133" />
+      <result column="ATTRIBUTE134" jdbcType="VARCHAR" property="attribute134" />
+      <result column="ATTRIBUTE135" jdbcType="VARCHAR" property="attribute135" />
+      <result column="ATTRIBUTE136" jdbcType="VARCHAR" property="attribute136" />
+      <result column="ATTRIBUTE137" jdbcType="VARCHAR" property="attribute137" />
+      <result column="ATTRIBUTE138" jdbcType="VARCHAR" property="attribute138" />
+      <result column="ATTRIBUTE139" jdbcType="VARCHAR" property="attribute139" />
+      <result column="ATTRIBUTE140" jdbcType="VARCHAR" property="attribute140" />
+      <result column="ATTRIBUTE141" jdbcType="VARCHAR" property="attribute141" />
+      <result column="ATTRIBUTE142" jdbcType="VARCHAR" property="attribute142" />
+      <result column="ATTRIBUTE143" jdbcType="VARCHAR" property="attribute143" />
+      <result column="ATTRIBUTE144" jdbcType="VARCHAR" property="attribute144" />
+      <result column="ATTRIBUTE145" jdbcType="VARCHAR" property="attribute145" />
+      <result column="ATTRIBUTE146" jdbcType="VARCHAR" property="attribute146" />
+      <result column="ATTRIBUTE147" jdbcType="VARCHAR" property="attribute147" />
+      <result column="ATTRIBUTE148" jdbcType="VARCHAR" property="attribute148" />
+      <result column="ATTRIBUTE149" jdbcType="VARCHAR" property="attribute149" />
+      <result column="ATTRIBUTE150" jdbcType="VARCHAR" property="attribute150" />
+
+      <result column="OBJECT_VERSION_NUMBER" jdbcType="DECIMAL" property="objectVersionNumber" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="clb.core.fnd.dto.ImportTemp">
+    <result column="LINE_CONTENT" jdbcType="CLOB" property="lineContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    IMPORT_TEMP_ID, IMPORT_BATCH_ID, IMPORT_CODE, LINE_NUMBER, ORIG_FILE_NAME, IMPORT_STATUS, 
+    IMPORT_MESSAGE, SHEET, ATTRIBUTE_CATEGORY, ATTRIBUTE1, ATTRIBUTE2, ATTRIBUTE3, ATTRIBUTE4, 
+    ATTRIBUTE5, ATTRIBUTE6, ATTRIBUTE7, ATTRIBUTE8, ATTRIBUTE9, ATTRIBUTE10, ATTRIBUTE11, 
+    ATTRIBUTE12, ATTRIBUTE13, ATTRIBUTE14, ATTRIBUTE15, ATTRIBUTE16, ATTRIBUTE17, ATTRIBUTE18, 
+    ATTRIBUTE19, ATTRIBUTE20, ATTRIBUTE21, ATTRIBUTE22, ATTRIBUTE23, ATTRIBUTE24, ATTRIBUTE25, 
+    ATTRIBUTE26, ATTRIBUTE27, ATTRIBUTE28, ATTRIBUTE29, ATTRIBUTE30, 
+    CONVERTED_ATTRIBUTE1, CONVERTED_ATTRIBUTE2, CONVERTED_ATTRIBUTE3, CONVERTED_ATTRIBUTE4, 
+    CONVERTED_ATTRIBUTE5, CONVERTED_ATTRIBUTE6, CONVERTED_ATTRIBUTE7, CONVERTED_ATTRIBUTE8, 
+    CONVERTED_ATTRIBUTE9, CONVERTED_ATTRIBUTE10, CONVERTED_ATTRIBUTE11, CONVERTED_ATTRIBUTE12, 
+    CONVERTED_ATTRIBUTE13, CONVERTED_ATTRIBUTE14, CONVERTED_ATTRIBUTE15, CONVERTED_ATTRIBUTE16, 
+    CONVERTED_ATTRIBUTE17, CONVERTED_ATTRIBUTE18, CONVERTED_ATTRIBUTE19, CONVERTED_ATTRIBUTE20, 
+    CONVERTED_ATTRIBUTE21, CONVERTED_ATTRIBUTE22, CONVERTED_ATTRIBUTE23, CONVERTED_ATTRIBUTE24, 
+    CONVERTED_ATTRIBUTE25, CONVERTED_ATTRIBUTE26, CONVERTED_ATTRIBUTE27, CONVERTED_ATTRIBUTE28, 
+    CONVERTED_ATTRIBUTE29, CONVERTED_ATTRIBUTE30, 
+    OBJECT_VERSION_NUMBER, CREATION_DATE, CREATED_BY, LAST_UPDATED_BY, LAST_UPDATE_DATE, 
+    LAST_UPDATE_LOGIN
+  </sql>
+  <sql id="Blob_Column_List">
+    LINE_CONTENT
+  </sql>
+  
+  	<select id="selectErrorMessage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+            wfit.sheet,
+            wfit.line_number,
+            wfit.import_message,
+            wfit.IMPORT_BATCH_ID,
+            wfit.object_version_number
+		FROM 
+		    fnd_import_temp wfit
+		WHERE 
+		    wfit.IMPORT_BATCH_ID =  #{importBatchId,jdbcType=DECIMAL}	
+		AND wfit.import_status = 'E'
+	</select>
+	
+	<select id="selectErrorCount" parameterType="java.lang.Long" resultType="Long">
+        SELECT 
+            count(1)
+		FROM 
+		    fnd_import_temp wfit
+		WHERE 
+		    wfit.IMPORT_BATCH_ID =  #{importBatchId,jdbcType=DECIMAL}	
+		AND wfit.import_status = 'E'
+	</select>
+
+	<select id="selectImportData" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT wfit.IMPORT_TEMP_ID,
+	       wfit.IMPORT_BATCH_ID,
+	       wfit.import_code,
+	       wfit.line_number,
+	       wfit.line_content,
+	       wfit.orig_file_name,
+	       wfit.import_status,
+	       wfit.import_message,
+	       wfit.sheet,
+	       wfit.attribute_category,
+	       wfit.attribute1,
+	       wfit.attribute2,
+	       wfit.attribute3,
+	       wfit.attribute4,
+	       wfit.attribute5,
+	       wfit.attribute6,
+	       wfit.attribute7,
+	       wfit.attribute8,
+	       wfit.attribute9,
+	       wfit.attribute10,
+	       wfit.attribute11,
+	       wfit.attribute12,
+	       wfit.attribute13,
+	       wfit.attribute14,
+	       wfit.attribute15,
+	       wfit.attribute16,
+	       wfit.attribute17,
+	       wfit.attribute18,
+	       wfit.attribute19,
+	       wfit.attribute20,
+	       wfit.attribute21,
+	       wfit.attribute22,
+	       wfit.attribute23,
+	       wfit.attribute24,
+	       wfit.attribute25,
+	       wfit.attribute26,
+	       wfit.attribute27,
+	       wfit.attribute28,
+	       wfit.attribute29,
+	       wfit.attribute30,
+	       wfit.attribute31,
+            wfit.attribute32,
+            wfit.attribute33,
+            wfit.attribute34,
+            wfit.attribute35,
+            wfit.attribute36,
+            wfit.attribute37,
+            wfit.attribute38,
+            wfit.attribute39,
+            wfit.attribute40,
+            wfit.attribute41,
+            wfit.attribute42,
+            wfit.attribute43,
+            wfit.attribute44,
+            wfit.attribute45,
+            wfit.attribute46,
+            wfit.attribute47,
+            wfit.attribute48,
+            wfit.attribute49,
+            wfit.attribute50,
+            wfit.attribute51,
+            wfit.attribute52,
+            wfit.attribute53,
+            wfit.attribute54,
+            wfit.attribute55,
+            wfit.attribute56,
+            wfit.attribute57,
+            wfit.attribute58,
+            wfit.attribute59,
+            wfit.attribute60,
+            wfit.attribute61,
+            wfit.attribute62,
+            wfit.attribute63,
+            wfit.attribute64,
+            wfit.attribute65,
+            wfit.attribute66,
+            wfit.attribute67,
+            wfit.attribute68,
+            wfit.attribute69,
+            wfit.attribute70,
+            wfit.attribute71,
+            wfit.attribute72,
+            wfit.attribute73,
+            wfit.attribute74,
+            wfit.attribute75,
+            wfit.attribute76,
+            wfit.attribute77,
+            wfit.attribute78,
+            wfit.attribute79,
+            wfit.attribute80,
+            wfit.attribute81,
+            wfit.attribute82,
+            wfit.attribute83,
+            wfit.attribute84,
+            wfit.attribute85,
+            wfit.attribute86,
+            wfit.attribute87,
+            wfit.attribute88,
+            wfit.attribute89,
+            wfit.attribute90,
+            wfit.attribute91,
+            wfit.attribute92,
+            wfit.attribute93,
+            wfit.attribute94,
+            wfit.attribute95,
+            wfit.attribute96,
+            wfit.attribute97,
+            wfit.attribute98,
+            wfit.attribute99,
+            wfit.attribute100,
+            wfit.attribute101,
+            wfit.attribute102,
+            wfit.attribute103,
+            wfit.attribute104,
+            wfit.attribute105,
+            wfit.attribute106,
+            wfit.attribute107,
+            wfit.attribute108,
+            wfit.attribute109,
+            wfit.attribute110,
+            wfit.attribute111,
+            wfit.attribute112,
+            wfit.attribute113,
+            wfit.attribute114,
+            wfit.attribute115,
+            wfit.attribute116,
+            wfit.attribute117,
+            wfit.attribute118,
+            wfit.attribute119,
+            wfit.attribute120,
+            wfit.attribute121,
+            wfit.attribute122,
+            wfit.attribute123,
+            wfit.attribute124,
+            wfit.attribute125,
+            wfit.attribute126,
+            wfit.attribute127,
+            wfit.attribute128,
+            wfit.attribute129,
+            wfit.attribute130,
+            wfit.attribute131,
+            wfit.attribute132,
+            wfit.attribute133,
+            wfit.attribute134,
+            wfit.attribute135,
+            wfit.attribute136,
+            wfit.attribute137,
+            wfit.attribute138,
+            wfit.attribute139,
+            wfit.attribute140,
+            wfit.attribute141,
+            wfit.attribute142,
+            wfit.attribute143,
+            wfit.attribute144,
+            wfit.attribute145,
+            wfit.attribute146,
+            wfit.attribute147,
+            wfit.attribute148,
+            wfit.attribute149,
+            wfit.attribute150,
+	       wfit.object_version_number,
+	       wfit.creation_date,
+	       wfit.created_by,
+	       wfit.last_updated_by,
+	       wfit.last_update_date,
+	       wfit.last_update_login
+	 	 FROM fnd_import_temp wfit
+		 WHERE wfit.IMPORT_BATCH_ID  =  #{importBatchId,jdbcType=DECIMAL}
+		 ORDER BY wfit.IMPORT_TEMP_ID
+	</select>
+	
+	<select id="selectImportBactIdIsExist" parameterType="java.lang.Long" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM
+            fnd_import_temp
+        WHERE
+            import_batch_id = #{importBatchId,jdbcType=DECIMAL}	
+	</select>
+	
+	<delete id="deleteAll">
+		DELETE FROM fnd_import_temp WHERE CREATION_DATE &lt; CAST(NOW() AS DATE)
+	</delete>
+	
+	<select id="selectCountNeedDelete"  resultType="int">
+		SELECT COUNT(1) FROM fnd_import_temp WHERE CREATION_DATE &lt; CAST(NOW() AS DATE)
+	</select>
+</mapper>

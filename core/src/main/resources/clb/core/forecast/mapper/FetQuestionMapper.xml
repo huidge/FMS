@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetQuestionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetQuestion">
+        <result column="QUESTION_ID" property="questionId" jdbcType="DECIMAL" />
+        <result column="CHECK_PERIOD" property="checkPeriod" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="QUESTION_NUMBER" property="questionNumber" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_NAME" property="paymentCompanyName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="getData" parameterType="clb.core.forecast.dto.FetQuestion" resultMap="BaseResultMap">
+     			SELECT
+					ffq.*,
+					(CASE
+						WHEN pfss. NAME != '' THEN
+							pfss. NAME
+						WHEN pfcc.CHANNEL_NAME != '' THEN
+							pfcc.CHANNEL_NAME
+						END
+					) PAYMENT_COMPANY_NAME,
+					rfcc.CHANNEL_NAME
+				FROM
+					fms_fet_question ffq
+				LEFT JOIN fms_cnl_channel pfcc on pfcc.CHANNEL_ID = ffq.PAYMENT_COMPANY_ID and ffq.PAYMENT_COMPANY_TYPE = 'CHANNEL'
+				LEFT JOIN fms_cnl_channel rfcc on rfcc.CHANNEL_ID = ffq.CHANNEL_ID
+				LEFT JOIN fms_spe_supplier pfss on pfss.SUPPLIER_ID = ffq.PAYMENT_COMPANY_ID and ffq.PAYMENT_COMPANY_TYPE = 'SUPPLIER'
+				<where>
+				<if test="status != null">
+					AND ffq.STATUS = #{status}
+				</if>
+				<if test="paymentCompanyName != null">
+					AND (pfss.NAME like CONCAT(CONCAT('%',#{paymentCompanyName}),'%') or pfcc.CHANNEL_NAME like CONCAT(CONCAT('%',#{paymentCompanyName}),'%'))
+				</if>
+				<if test="channelName != null">
+					AND rfcc.CHANNEL_NAME like CONCAT(CONCAT('%',#{channelName}),'%')
+				</if>
+				<if test="questionNumber != null">
+					AND ffq.QUESTION_NUMBER like CONCAT(CONCAT('%',#{questionNumber}),'%')
+				</if>
+				</where>
+     </select>
+
+
+</mapper>

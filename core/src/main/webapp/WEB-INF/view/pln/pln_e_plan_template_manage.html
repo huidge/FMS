@@ -1,0 +1,710 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+//获取电子计划书模板页面  传递过来的id
+var templateId = '${RequestParameters.templateId!0}';
+
+    var viewModel = kendo.observable({
+        model: {},
+       	/* createFunction: function () {
+            $('#Grid1').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid1').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid1').data('kendoGrid').dataSource.page(1);
+        }  */
+    });
+    
+	if (templateId != 0) {
+		viewModel.model.set("templateId", templateId);
+		$.ajax({
+			type : "POST",
+			async : false,
+			url : "${base.contextPath}/fms/pln/e/plan/template/query",
+			data : {
+				templateId : templateId
+			},
+			success : function(json) {
+				var row = json.rows[0] || {};
+				for ( var k in row) {
+					viewModel.model.set(k, row[k]);
+				}
+			}
+		});
+	}
+</script>
+<body>
+	<div id="page-content">
+		<div class="panel">
+			<form class="form-horizontal">
+				<div class="panel-body">
+					<div class="row" style="margin-bottom: 20px;">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">产品公司</label>
+								<div class="col-sm-6">
+									<input name="supplierName" id="supplierName"
+										style="width: 100%" data-bind="value:model.supplierName"
+										class="k-textbox" disabled gray>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">产品名称</label>
+								<div class="col-sm-6">
+									<input name="itemName" id="itemName" style="width: 100%"
+										data-bind="value:model.itemName" class="k-textbox" disabled
+										gray>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">投保币种</label>
+								<div class="col-sm-6">
+									<input style="width: 100%" id="currency" name="currency"
+										data-bind="value:model.currency" class="k-textbox" disabled
+										gray>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">计划书模板名</label>
+								<div class="col-sm-6">
+									<input style="width: 100%" id="templateName"
+										name="templateName" style="width: 100%"
+										data-bind="value:model.templateName" class="k-textbox"
+										disabled gray>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div id="example">
+		<div style="clear: both">
+			<div id="Grid1" class="table"></div>
+		</div>
+	</div>
+
+	<div id="dialog1" style="display: none;"></div>
+	<div id="dialog2" style="display: none;"></div>
+	<div id="dialog3" style="display: none;"></div>
+	<div id="dialog4" style="display: none;"></div>
+	<div id="dialog5" style="display: none;"></div>
+	<div id="dialog6" style="display: none;"></div>
+
+	<script type="text/javascript">
+	kendo.bind($('#page-content'), viewModel);
+	
+    var BaseUrl = _basePath;
+    
+    var smallId;
+    function detailInit2(e2) {
+    	smallId = e2.data.smallId;
+    	e2.detailRow.find("#Grid3").kendoGrid({
+           dataSource: {
+               /* type: "odata", */
+               transport: {
+                   read: "${base.contextPath}/fms/pln/e/plan/template/detail/query?smallId="+smallId,
+                   type: "POST",
+                   dataType: "json"
+               },
+               schema: {
+                   data: 'rows',
+                   total: 'total',
+                   model: {
+                       id: "detailId",
+                       fields: {
+                    	   smallId:{defaultValue:smallId}
+                       }
+                   }
+               },
+               // filter: { field: "smallId", operator: "eq", value: e2.data.smallId },
+               pageSize: 5,
+               serverPaging: true,
+               serverSorting: true
+           },
+           scrollable: false,
+           sortable: false,
+           navigatable: true,
+           //pageable: true,
+           pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+       },
+           dataBound: function() {
+               //this.expandRow(this.tbody.find("tr.k-master-row").first());
+           },
+           toolbar: [
+ 		            {
+ 		                template: '<button type="button"  onclick="newGrid3Data()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+ 		                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+ 		            },
+ 		        ],
+           columns: [
+				 {
+                title: '操作',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.detailId) {
+                        return '<a href="#" onclick="editGrid3Data('+dataItem.detailId+')">编辑</a>&nbsp;&nbsp;<a href="#" onclick="deleteGrid3Data('+dataItem.detailId+')">删除</a>';
+                    } else {
+                        return '<a href="#">请先保存</a>';
+                    }
+                }
+            },
+                {
+               field: "detailId",
+               title: "detailId",
+               hidden:true
+           }, 
+                {
+               field: "smallId",
+               title: "smallId",
+               hidden:true
+           }, 
+           {
+                field: "seqNum",
+               title: "序号",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           },
+           {
+                field: "detailItem",
+               title: "明细项",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center;'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:left;"
+               }
+           },
+           {
+                field: "amountFormula",
+               title: "金额公式",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           },
+           {
+                field: "fixedValue",
+               title: "固定值或文字描述",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           }
+           ],
+       });
+   	} 
+    
+    var bigId;
+    function detailInit1(e1) {
+    	bigId = e1.data.bigId;
+       e1.detailRow.find("#Grid2").kendoGrid({
+           dataSource: {
+               /* type: "odata", */
+               transport: {
+                   read: "${base.contextPath}/fms/pln/e/plan/template/small/query?bigId="+bigId,
+                   type: "POST",
+                   dataType: "json"
+               },
+               schema: {
+                   data: 'rows',
+                   total: 'total',
+                   model: {
+                       id: "smallId",
+                       fields: {
+                    	   bigId:{defaultValue:bigId}
+                       }
+                   }
+               },
+               // filter: { field: "bigId", operator: "eq", value: e1.data.bigId },
+              	 pageSize: 5,
+               serverPaging: true,
+               serverSorting: true  
+           },
+           scrollable: true,
+           sortable: false,
+           navigatable: true,
+           //pageable: true,
+           pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+       		},
+           detailTemplate: kendo.template('<div id="Grid3" class="table"></div>'),
+           detailInit: detailInit2,
+           dataBound: function() {
+               //this.expandRow(this.tbody.find("tr.k-master-row").first());
+           },
+           toolbar: [
+ 		            {
+ 		                template: '<button type="button"  onclick="newGrid2Data()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+ 		                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+ 		            },
+ 		           /* {
+ 		            	  template: '<button type="button"  onclick="editGrid2Data()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+ 			                '<i class="fa fa-edit" style="margin-right:3px;"></i><@spring.message "hap.edit"/></button>'
+ 		            }, */
+ 		            /* {
+ 		                template: '<span onclick="deleteGrid2Data()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+ 		                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+ 		            } */
+ 		        ],
+           columns: [
+				 {
+                title: '操作',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.smallId) {
+                        return '<a href="#" onclick="editGrid2Data('+dataItem.smallId+')">编辑</a>&nbsp;&nbsp;<a href="#" onclick="deleteGrid2Data('+dataItem.smallId+')">删除</a>';
+                    } else {
+                        return '<a href="#">请先保存</a>';
+                    }
+                }
+            },
+                {
+               field: "smallId",
+               title: "smallId",
+               width: "110px",
+               hidden:true
+           },
+                {
+               field: "bigId",
+               title: "bigId",
+               width: "110px",
+               hidden:true
+           },
+           {
+                field: "seqNum",
+               title: "序号",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           },
+           {
+                field: "title",
+               title: "小标题",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center;'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:left;"
+               }
+           },
+           {
+                field: "amountFormula",
+               title: "金额公式",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           },
+           {
+                field: "fixedValue",
+               title: "固定值或文字描述",
+               width: "110px",
+               headerAttributes: {
+                   'class':'table-header-cell',
+                   style:'text-align: center'
+               },
+               attributes: {
+                   "class": "table-cell",
+                   style: "text-align:center;"
+               }
+           }
+           ],
+       });
+   	} 
+    
+    var grid1 = $("#Grid1").kendoGrid({
+     	dataSource: {
+         /* type: "odata", */
+         transport: {
+             read: "${base.contextPath}/fms/pln/e/plan/template/big/query?templateId="+templateId,
+             update: {
+                 url: "${base.contextPath}/fms/pln/e/plan/template/big/submit",
+                 type: "POST",
+                 contentType: "application/json"
+             },
+             create: {
+                 url: "${base.contextPath}/fms/pln/e/plan/template/big/submit",
+                 type: "POST",
+                 contentType: "application/json"
+             }
+         },
+         schema: {
+             data: 'rows',
+             total: 'total',
+             model: {
+                 id: "bigId",
+                 fields: {
+                	 seqNum:{type:'number',nullable:false},
+                	 templateId:{defaultValue:templateId},
+                	 bigTitle:{}
+                 }
+             }
+         },
+         // filter: { field: "templateId", operator: "eq", value: templateId },
+          pageSize: 5,
+         serverPaging: true,
+         serverSorting: true 
+     } , 
+     height: '450px',
+     navigatable:true,
+     //pageable: true, 
+     pageable: {
+            pageSizes: [ 5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+       },
+     detailTemplate: kendo.template('<div id="Grid2" class="table"></div>'),
+     detailInit: detailInit1,
+     dataBound: function() {
+    	 //this.collapseRow(this.tbody.find("tr.k-master-row"));
+         //this.expandRow(this.tbody.find("tr.k-master-row").first());
+     },
+     toolbar: [
+	            {
+	                template: '<button type="button"  onclick="newGrid1Data()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+	                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+	            },
+	            {
+	                name: "cancel",
+	                template: '<span class="btn btn-default k-grid-cancel-changes">' +
+	                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+	            }
+	        ],
+     columns: [
+           {
+                title: '操作',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.bigId) {
+                        return '<a href="#" onclick="editGrid1Data('+dataItem.bigId+')">编辑</a>&nbsp;&nbsp;<a href="#" onclick="deleteGrid1Data('+dataItem.bigId+')">删除</a>';
+                    } else {
+                        return '<a href="#">请先保存</a>';
+                    }
+                }
+            },
+            {
+                field: "bigId",
+                title: "bigId",
+                width: "110px",
+                hidden:true
+            },
+         {
+             field: "templateId",
+             title: "templateId",
+             width: "110px",
+             hidden:true
+         },
+         {
+             field: "seqNum",
+             title: "序号",
+             width: "110px",
+             headerAttributes: {
+                 'class':'table-header-cell',
+                 style:'text-align: center'
+             },
+             attributes: {
+                 "class": "table-cell",
+                 style: "text-align:center;"
+             }
+         },
+         {
+              field: "bigTitle",
+             title: "大标题",
+             width: "110px",
+             headerAttributes: {
+                 'class':'table-header-cell',
+                 style:'text-align: center'
+             },
+             attributes: {
+                 "class": "table-cell",
+                 style: "text-align:left;"
+             }
+         }
+     ],
+     // editable: {mode: "inline"}
+ }).data('kendoGrid');
+    /* $("#Grid1").data('kendoGrid').collapseRow(".k-master-row"); */
+    
+    //对表格数据的CRUD
+    //最外层的表  大标题
+    function newGrid1Data() {
+     	var url = 'pln_e_plan_template_big.html?templateId='+templateId;
+  		 var dialog =  $("#dialog1").kendoWindow({
+            	//actions: ["Close"],
+               width: "60%",
+	           height: "55%",  
+               title: "新建大标题",
+               content: url,                  
+               iframe:  true,
+               visible: false,
+               modal:true,
+                close: function(){
+       			//关闭之后刷新页面
+       			 	//window.location.reload();
+                	//grid1.refresh();
+                	var dataSource = $("#Grid1").data('kendoGrid').dataSource;
+					dataSource.read();
+           	 }
+            }).data("kendoWindow");
+ 		  	 dialog.center().open(); 
+ 		  	//$("#Grid1").data('kendoGrid').addRow();
+	}
+    function editGrid1Data(bigId) {
+    	var url = 'pln_e_plan_template_big.html?templateId='+templateId+'&bigId='+bigId;
+ 		 var dialog =  $("#dialog2").kendoWindow({
+ 			 width: "60%",
+              height: "55%", 
+              title: "编辑大标题",
+              content: url,                  
+              iframe:  true,
+              visible: false,
+              modal:true,
+              close: function(){
+      			//关闭之后刷新页面
+      			//window.location.reload();
+      			//grid1.refresh();
+      			//var dataSource = $("#Grid1").data('kendoGrid').dataSource;
+      			//$('#Grid').data('kendoGrid').dataSource.page(dataSource._page);
+					var dataSource = $("#Grid1").data('kendoGrid').dataSource;
+					dataSource.read();
+          	 }
+           }).data("kendoWindow");
+		  	 dialog.center().open();
+    	
+	} 
+	//保存最外层的数据  用$("#Grid1").data('kendoGrid').saveChangs(); 无效
+    function saveGrid1Data(seqNum) {
+		//alert(dataItem.seqNum);
+		// alert(seqNum);
+    	$("#Grid1").data('kendoGrid').saveChanges();
+	}
+	
+    function deleteGrid1Data(bigId) {
+      	 kendo.ui.showConfirmDialog({
+               title: $l('hap.tip.info'),
+               message: $l('hap.tip.delete_confirm')
+           }).done(function(event){
+          	 if (event.button == 'OK') {
+           	 $.ajax({
+					url:"${base.contextPath}/fms/pln/e/plan/template/big/deleteById?bigId="+bigId,
+					success:function(data){
+						//删除之后重新加载页面
+						 //window.location.reload();
+						//grid1.refresh();
+						var dataSource = $("#Grid1").data('kendoGrid').dataSource;
+						dataSource.read();
+					}
+				}) 
+          	 }
+           })
+	} 
+    //第二层的表  小标题
+    function newGrid2Data() {
+    	 var url = 'pln_e_plan_template_small.html?bigId='+bigId;
+   		 var dialog =  $("#dialog3").kendoWindow({
+             	//actions: ["Close"],
+                width: "60%",
+	               height: "70%",  
+                title: "新建小标题",
+                content: url,                  
+                iframe:  true,
+                visible: false,
+                modal:true,
+                 close: function(){
+        			//关闭之后刷新页面
+        			 //window.location.reload();
+                	 //grid1.refresh();
+                	 var dataSource = $("#Grid2").data('kendoGrid').dataSource;
+					dataSource.read();
+            	 }
+             }).data("kendoWindow");
+  		  	 dialog.center().open(); 
+    	//$("#Grid2").data('kendoGrid').addRow();
+  		  	 
+    	
+	} 
+    function editGrid2Data(smallId) {
+        var url = 'pln_e_plan_template_small.html?bigId='+bigId+'&smallId='+smallId;
+	  		 var dialog =  $("#dialog4").kendoWindow({
+	  			 width: "60%",
+	               height: "70%", 
+	               title: "编辑小标题",
+	               content: url,                  
+	               iframe:  true,
+	               visible: false,
+	               modal:true,
+	                close: function(){
+	       			//关闭之后刷新页面
+	       			 //window.location.reload();
+	                	//grid1.refresh();
+	                	var dataSource = $("#Grid2").data('kendoGrid').dataSource;
+						dataSource.read();
+	           	 }
+	            }).data("kendoWindow");
+	 		  	 dialog.center().open();
+			
+		}
+  		
+    	
+    function deleteGrid2Data(smallId) {
+     	 kendo.ui.showConfirmDialog({
+              title: $l('hap.tip.info'),
+              message: $l('hap.tip.delete_confirm')
+          }).done(function(event){
+         	 if (event.button == 'OK') {
+          	 $.ajax({
+					url:"${base.contextPath}/fms/pln/e/plan/template/small/deleteById?smallId="+smallId,
+					success:function(data){
+						//删除之后重新加载页面
+						//window.location.reload();
+						var dataSource = $("#Grid2").data('kendoGrid').dataSource;
+						dataSource.read();
+					}
+				}) 
+         	 }
+          })
+	} 
+    //最里层的表  明细表
+    function newGrid3Data() {
+    	 var url = 'pln_e_plan_template_detail.html?smallId='+smallId;
+  		 var dialog =  $("#dialog5").kendoWindow({
+            	//actions: ["Close"],
+                 width: "60%",
+	               height: "70%", 
+               title: "新建明细项",
+               content: url,                  
+               iframe:  true,
+               visible: false,
+               modal:true,
+                close: function(){
+       			//关闭之后刷新页面
+       			 //window.location.reload();
+                	//grid1.refresh();
+                	var dataSource = $("#Grid3").data('kendoGrid').dataSource;
+					dataSource.read();
+           	 }
+            }).data("kendoWindow");
+ 		  	 dialog.center().open(); 
+    	//$("#Grid3").data('kendoGrid').addRow();
+    	
+	} 
+    function editGrid3Data(detailId) {
+    	var url = 'pln_e_plan_template_detail.html?smallId='+smallId+'&detailId='+detailId;
+	  		 var dialog =  $("#dialog6").kendoWindow({
+	  			width: "60%",
+	               height: "70%",  
+	               title: "编辑明细项",
+	               content: url,                  
+	               iframe:  true,
+	               visible: false,
+	               modal:true,
+	                close: function(){
+	       			//关闭之后刷新页面
+	                var dataSource = $("#Grid3").data('kendoGrid').dataSource;
+					dataSource.read();
+	           	 }
+	            }).data("kendoWindow");
+	 		  	 dialog.center().open();
+		}
+    
+    function deleteGrid3Data(detailId) {
+     	 kendo.ui.showConfirmDialog({
+              title: $l('hap.tip.info'),
+              message: $l('hap.tip.delete_confirm')
+          }).done(function(event){
+         	 if (event.button == 'OK') {
+          	 $.ajax({
+					url:"${base.contextPath}/fms/pln/e/plan/template/detail/deleteById?detailId="+detailId,
+					success:function(data){
+						var dataSource = $("#Grid3").data('kendoGrid').dataSource;
+						dataSource.read();
+					}
+				}) 
+         	 }
+          })
+	}  
+    
+    /* Hap.autoResizeGrid("#Grid1");
+    Hap.autoResizeGrid("#Grid2");
+    Hap.autoResizeGrid("#Grid3"); */
+</script>
+</body>
+</html>

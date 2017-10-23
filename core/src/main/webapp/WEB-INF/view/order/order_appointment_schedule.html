@@ -1,0 +1,379 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?appointMentType=ORD.APPOINTMENT_TYPE" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+ <style>
+
+   #calendar {
+        width: 100%;
+   }
+
+   /* Template Days */
+
+   .exhibition,
+   .party,
+   .cocktail {
+       font-weight: 20%;
+   }
+
+   .cocktail {
+       color: black;
+   }
+   
+   .k-widget.k-calendar .k-nav-fast{
+   		display: inline-block;
+   		width: 18%;
+   		height: 1.8333em;
+   		line-height: 1.8333em;
+   		margin: .16666em -.08333em .3333em 0;
+   }
+   
+   .k-widget.k-calendar .k-nav-prev{
+   		left:43%;
+   }
+   
+   .k-widget.k-calendar .k-nav-next{
+   		right:43%;
+   }
+   
+   td{ text-align:center;}
+   
+   .dropDownList >span{
+   		float:right
+   }
+   
+   .dropDownList{
+   		width:300px;
+   		left: calc((100% + 300px) / 2);
+   		float:right;
+   		z-index:100;
+   		position:absolute;
+   		margin-top:70px
+   }
+   
+
+</style> 
+<body>
+
+   <div id="test" class="dropDownList">
+   			<input id="levelTwoType" type="text" data-bind="value:model.levelTwoType" width="50px" > 
+	   		<input id="levelOneType" type="text" data-bind="value:model.levelOneType" width="50px" > 
+   </div>
+<div class="panel" style="margin:0 auto;max-width:900px;margin-top:100px">
+	<span style="text-align:center"><h1><@spring.message "fms.ordorder.appointment_schedule"/></h1></span>
+     <div id="parent" style="margin:0 auto;max-width:900px;">
+     <div id="calendar" style="position:relative"></div> 
+	</div>
+   <div class="panel-footer text-right">
+<!--            <span class="btn btn-success" onclick="requestData()" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+ -->           <span class="btn btn-success" onclick="resetForm()" data-bind="click:resetForm" type="button"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+   </div>
+ </div>  
+   <div id="dialog" style="position:absolute;background:#FFFCEC; color:	#000000;border:1px solid #000">
+   		<span id="morning"></span><br>
+   		<span id="afternoon"></span>
+   </div>
+   
+   <div id="viewdialog"></div>
+   <script>
+   				
+			   var viewModel = kendo.observable({
+			       model: {
+			       }
+			   });
+			   kendo.bind($('#test'), viewModel);
+			   
+			   $("#levelOneType").kendoDropDownList({
+			       valuePrimitive: true,
+			       dataTextField: "meaning",
+			       dataValueField: "value",
+			       open:function(){
+			    	   var dropDownList = $("#levelOneType").data('kendoDropDownList');
+			    	   dropDownList.dataSource.read();
+			       },
+			       dataBound:function(){
+			    	   var drop =  $("#levelOneType").data('kendoDropDownList');
+	                   var data = drop.dataSource.data();
+	                   if(data.length == 1){
+	                	   drop.value(data[0].value);
+	                	   drop.enable(false);
+	                	   viewModel.model.set('levelOneType',data[0].value);
+	                	   requestData();
+	                   }
+			       },
+			       change:function(){
+			    	   var drop = $("#levelTwoType").data('kendoDropDownList');
+			    	   drop.text('');
+			    	   drop.value('');
+			    	   viewModel.model.set('levelTwoType','');
+			    	   requestData();
+			       },
+			       dataSource : {
+              			transport: {
+              			   read: {
+                             		type:"POST",
+                              		url: _basePath+'/ord/appointmentschedule/queryLevelOneData'
+                              }
+                         },
+                         schema: {
+                         	data:'rows'
+                         }
+     				},
+			       optionLabel:"--请选择--",
+			   });
+   
+			   $("#levelTwoType").kendoDropDownList({
+			       valuePrimitive: true,
+			       dataTextField: "meaning",
+			       dataValueField: "value",
+			       open:function(){
+			    	   var dropDownList = $("#levelTwoType").data('kendoDropDownList');
+			    	   dropDownList.dataSource.read();
+			       },
+			       change:function(){
+			    	   requestData();
+			       },
+			       dataSource : {
+               			transport: {
+               			   read: {
+                              		type:"POST",
+                               		url: _basePath+'/ord/appointmentschedule/getLevelTwo'
+                               },
+              		            parameterMap: function (data,type) {
+           		            	if (type === "read") {
+           		            		var param = {"levelOneType":viewModel.model.levelOneType};
+           		                    return Hap.prepareQueryParameter(param, data)
+           		                }
+           		            }
+                          },
+                          schema: {
+                          	data:'rows'
+                          }
+      				},
+			       optionLabel:"--请选择--",
+			   });
+			   
+			    var index1 = 1;
+			    var index2 = 1;
+			    var isBegin = true;
+			    var maxDate = '2099/11/31';
+			    var minDate = '1900/1/1';
+			    var dateData = [];
+			    var dates = [];
+			    var index = 0;
+			    var date = new Date();
+			    viewModel.model.set('appointmentTime',new Date());
+			    sendRequest();
+                $(document).ready(function() {
+                    var calendar = $("#calendar").kendoCalendar({
+                    	dates: dates,
+                    	min: new Date(minDate),
+                        max: new Date(maxDate),
+                        navigate:function(e){
+                        	if(!isBegin){
+                        		if(e.sender._index == 0){
+                            		if(index1 == index2){
+                            			requestData();
+                            		}else{
+                            			index1 = index2;
+                            		}
+                            	}
+                        	}else{
+                        		isBegin = false;
+                        	}
+                        	$(document).find("th").css("text-align","center");
+                        },
+                    	month: {
+                            content: '# if (isCurrentMonth(data.date,dates)) { #' +
+			                            '<div class="cocktail">#=data.value #</div>' +
+			                            '# if (validateDateData(data.date,dateData) != -1) { #'+
+			                            '<div id="date#=data.value #"  style="color:red" onclick="showDetail(\'#=data.value #\')">#=dateData[index].totalDataNumber#张签约单</div>' +
+			                            '# } else { #' +
+			                            '<div>无签约单</div>' +
+			                            '# } #'+
+                                     '# } else { #' +
+                                     '<div></div>' +
+                                     '# } #'
+                            	  
+                        },
+                        footer: false
+                    }).data('kendoCalendar');
+                    $("#dialog").hide();	
+                    
+                    bindEnvent();
+                });
+                
+                  function isCurrentMonth(date,dates){
+                	  for(var i=0;i<dates.length;i++){
+                		  var date1 = new Date(dates[i].replace(/-/g, "/"));
+                		  if(date.getTime() == date1.getTime()){
+                			  return true;
+                		  }
+                	  }
+                	  return false;
+                  }
+                  
+                  function showDetail(id){
+                	  var index = id-1;
+                	  window.response = dateData[index].appointmentData;
+                	  window.requestType = viewModel.model.levelOneType;
+                	  var url = '${base.contextPath}/order/order_appointment_schedule_detail.html';
+		 	             var dialog =  $("#viewdialog").kendoWindow({
+		   		            width: 700,
+		   		            height: 700,
+		   		            title: '预约详情', 
+		   		            content: url,                  
+		   		            iframe:  true,
+		   		            visible: false,
+		   		            modal:true
+		   		         }).data("kendoWindow");
+		   		         dialog.maximize();
+		   				 dialog.open();
+                  }
+                
+                  function validateDateData(date,dateData){
+                	  for(var i=0;i<dateData.length;i++){
+                		  var date1 = new Date(dateData[i].appointmentTime.replace(/-/g, "/"));
+                		  console.log(date1);
+                		  if(date.getTime() == date1.getTime() && dateData[i].totalDataNumber != 0 && dateData[i].totalDataNumber != null){
+                			  index = i;
+                			  return i;
+                		  }
+                	  }
+                	  return -1;
+                  }
+                  
+                  function sendRequest(){
+                	  var unique = zeroModal.loading(6);
+                	  $.ajax({
+      		            url: '${base.contextPath}/ord/appointmentschedule/query',
+      		            type : "POST",
+      		            async:false,
+      		            dataType : "json",
+                        contentType : "application/json",
+      		            data:JSON.stringify(viewModel.model),
+      		            success: function (args) {
+							zeroModal.close(unique);  
+      		            	dateData = args.rows;
+      		            	var length = dateData.length;
+      		            	dates = [];
+      		                for(var i=0;i<length;i++){
+      							dates.push(dateData[i].appointmentTime);
+      	                	}
+							var calendar = $("#calendar").data('kendoCalendar');
+      		                if(calendar != undefined){
+      		                	calendar.setOptions({dates:dates});
+      		                }
+      		             },
+      		             error:function(e){
+      		            	zeroModal.close(unique);
+      		             }
+      		        });
+					$("#calendar_cell_selected").removeClass("k-state-selected");
+                  }
+                  
+                  
+                  function requestData(){
+                	  var calendar = $("#calendar").data('kendoCalendar');
+                	  var current = calendar.current();
+                	  viewModel.model.set('appointmentTime',calendar.current());
+                	  if(viewModel.model.levelOneType != undefined && viewModel.model.levelOneType != ''){
+                		  index1 = index1+1;
+                		  sendRequest();
+                		  bindEnvent();
+					 }else{
+						 kendo.ui.showInfoDialog({
+				            	message: '参数不能为空！'
+				            })
+				         return;
+					 }
+                  }
+                  
+                  function bindEnvent(){
+                	  for(var i=1;i<=31;i++){
+                    	  $("#date"+i).mouseover(function(e){
+                          	  var pageX = e.pageX,
+                                  pageY = e.pageY;
+                          	  var id = e.target.id;
+                          	  var index = id.substring(4,id.length)-1;
+                          	  var morningDataNumber = dateData[index].morningDataNumber;
+                          	  var afternoonDataNumber = dateData[index].afternoonDataNumber;
+                          	  
+                          	  $("#morning").html('上午 : '+ morningDataNumber+"张签约单");
+                          	  $("#afternoon").html('下午 : '+ afternoonDataNumber+"张签约单");
+                          	 
+                          	  $("#dialog").css({
+                                    top: pageY,
+                                    left: pageX
+                                });                    
+          					  $("#dialog").show();
+                            });
+                          
+                            $("#date"+i).mouseout(function(){
+                          	  $("#dialog").hide();
+                            });
+                    }
+                  }
+                  
+                  function resetForm() {
+                    var drop =  $("#levelOneType").data('kendoDropDownList');
+	                var data = drop.dataSource.data();
+	                if(data.length != 1){
+                    	viewModel.model.set('levelOneType', null);
+	                }
+                    viewModel.model.set('levelTwoType', null);
+                    var calendar = $("#calendar").data('kendoCalendar');
+              	    var current = calendar.current();
+              	    viewModel.model.set('appointmentTime',calendar.current());
+              	    isBegin = true;
+                    sendRequest();
+                }
+                
+                function myBrowser(){
+              	    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+              	    var isOpera = userAgent.indexOf("Opera") > -1;
+              	    if (isOpera) {
+              	        return "Opera"
+              	    }; //判断是否Opera浏览器
+              	    if (userAgent.indexOf("Firefox") > -1) {
+              	        return "FF";
+              	    } //判断是否Firefox浏览器
+              	    if (userAgent.indexOf("Chrome") > -1){
+              	  	return "Chrome";
+              	 }
+              	    if (userAgent.indexOf("Safari") > -1) {
+              	        return "Safari";
+              	    } //判断是否Safari浏览器
+              	    if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera) {
+              	        return "IE";
+              	    }; //判断是否IE浏览器
+              	}
+                  
+                  
+                Date.prototype.format = function(format) {
+                    var date = {
+                       "M+": this.getMonth() + 1,
+                       "d+": this.getDate(),
+                       "h+": this.getHours(),
+                       "m+": this.getMinutes(),
+                       "s+": this.getSeconds(),
+                       "q+": Math.floor((this.getMonth() + 3) / 3),
+                       "S+": this.getMilliseconds()
+                    };
+                    if (/(y+)/i.test(format)) {
+                       format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in date) {
+                       if (new RegExp("(" + k + ")").test(format)) {
+                           format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                              ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+                       }
+                    }
+                    return format;
+                }
+              
+            </script>
+  
+  			
+</body>
+</html>

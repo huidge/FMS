@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdTradeRouteShowMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdTradeRouteShow">
+        <result column="TRADE_ROUTE_SHOW_ID" property="tradeRouteShowId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_COUNT" property="channelCount" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_COUNT" property="supplierCount" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID1" property="channelId1" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID2" property="channelId2" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID3" property="channelId3" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID4" property="channelId4" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID5" property="channelId5" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID6" property="channelId6" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID7" property="channelId7" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID8" property="channelId8" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID9" property="channelId9" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID10" property="channelId10" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID11" property="channelId11" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID12" property="channelId12" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID13" property="channelId13" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID14" property="channelId14" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID15" property="channelId15" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID16" property="channelId16" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID17" property="channelId17" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID18" property="channelId18" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID19" property="channelId19" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID20" property="channelId20" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME1" property="channelName1" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME2" property="channelName2" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME3" property="channelName3" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME4" property="channelName4" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME5" property="channelName5" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME6" property="channelName6" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME7" property="channelName7" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME8" property="channelName8" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME9" property="channelName9" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME10" property="channelName10" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME11" property="channelName11" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME12" property="channelName12" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME13" property="channelName13" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME14" property="channelName14" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME15" property="channelName15" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME16" property="channelName16" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME17" property="channelName17" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME18" property="channelName18" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME19" property="channelName19" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME20" property="channelName20" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_ID1" property="supplierId1" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID2" property="supplierId2" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID3" property="supplierId3" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID4" property="supplierId4" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID5" property="supplierId5" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID6" property="supplierId6" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID7" property="supplierId7" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID8" property="supplierId8" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID9" property="supplierId9" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID10" property="supplierId10" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID11" property="supplierId11" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID12" property="supplierId12" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID13" property="supplierId13" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID14" property="supplierId14" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID15" property="supplierId15" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID16" property="supplierId16" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID17" property="supplierId17" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID18" property="supplierId18" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID19" property="supplierId19" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID20" property="supplierId20" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME1" property="supplierName1" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME2" property="supplierName2" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME3" property="supplierName3" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME4" property="supplierName4" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME5" property="supplierName5" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME6" property="supplierName6" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME7" property="supplierName7" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME8" property="supplierName8" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME9" property="supplierName9" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME10" property="supplierName10" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME11" property="supplierName11" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME12" property="supplierName12" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME13" property="supplierName13" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME14" property="supplierName14" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME15" property="supplierName15" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME16" property="supplierName16" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME17" property="supplierName17" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME18" property="supplierName18" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME19" property="supplierName19" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME20" property="supplierName20" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+</mapper>

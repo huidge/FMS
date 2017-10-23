@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpKeywordMapper">
+    <resultMap id="allKeywordByRuleId" type="clb.core.wecorp.dto.WecorpKeyword">
+        <result column="keyword_id" property="keywordId" jdbcType="VARCHAR" />
+        <result column="keyword_value" property="keywordValue" jdbcType="VARCHAR" />
+        <result column="rule_id" property="ruleId" jdbcType="VARCHAR" />
+        <result column="matching_flag" property="matchingFlag" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getKeywordByRuleId" resultMap="allKeywordByRuleId">
+        select keyword_id,keyword_value,rule_id,matching_flag from woa_account_cr_keyword
+        where rule_id = #{ruleId}
+    </select>
+
+    <delete id="delRule" parameterType="String">
+        delete
+        from woa_account_cr_keyword
+        where rule_id = #{ruleId}
+    </delete>
+</mapper>

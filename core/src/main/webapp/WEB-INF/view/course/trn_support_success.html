@@ -1,0 +1,967 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supportType=COURSE.SUPPORT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?status=COURSE.SUPPORT_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?employeeGender=HR.EMPLOYEE_GENDER" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var newViewModel = kendo.observable({
+        model: {
+        	supportId: '${RequestParameters.supportId!0}',
+        	status: '${RequestParameters.status!}',
+        	amount: '${RequestParameters.amount!}',
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        /* cancelFunction: function () {
+            $("#familyGrid").data("kendoGrid").cancelChanges();
+        }, */
+    });
+    
+    $.ajax({
+	    type: "POST",
+	    async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+	    url: "${base.contextPath}/fms/trn/support/query",
+	    data: {"supportId":newViewModel.model.supportId},
+	    success: function (json) {
+	         var row = json.rows[0] || {};
+	        for (var k in row) {
+	        	newViewModel.model.set(k, row[k]);
+	        } 
+	    }
+	});
+    var amount=newViewModel.model.amount;
+    var status=newViewModel.model.status;
+    var supportId=newViewModel.model.supportId;
+    console.log(newViewModel.model);
+
+    var viewModel = kendo.observable({
+        model: {
+        supportId: '${RequestParameters.supportId!}',
+        },
+        createFunction: function () {
+            $('#teacherGrid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#teacherGrid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#teacherGrid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+    function createFunction(){
+    	$('#teacherGrid').data('kendoGrid').addRow();
+    };
+    function saveFunction() {
+        $('#teacherGrid').data('kendoGrid').saveChanges();
+    }
+</script>
+<body>
+<div id="userWin" style="display: none;"></div>
+<div id="page-content">
+    <div class="panel">
+            <div id="query_form">
+                <form class="form-horizontal" style="margin-top: 15px;">
+                    <div class="panel-body">
+                    	<div class="col-xs-12" >
+                            <div class="col-xs-4" >
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:5px">
+				                    <div style="text-align: center"><font size="4">申请</font><font size="4"><span id="titleSpan"></span></font><font size="4">支援</font></div>
+				                    <script type="text/javascript">
+				                    	if(newViewModel.model.supportType=="TRAIN"){
+				                    		document.getElementById("titleSpan").innerText = "培训";
+				                    	}else if(newViewModel.model.supportType=="COST"){
+				                    		document.getElementById("titleSpan").innerText = "会销";
+				                    	}else{
+				                    		document.getElementById("titleSpan").innerText = "会客";
+				                    	}
+				                    </script>
+                                </div>
+                            </div>
+							
+                            <div class="col-xs-4" >
+                            </div>
+                        </div>
+                    	
+                        <div class="col-xs-12" style="margin-top: 20px;">
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">申请人：</label>
+                                    <div class="col-xs-8">
+                                        <input id="createrName" readonly name="createrName" type="text" data-bind="value:model.createrName" style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">会销主题：</label>
+                                    <div class="col-xs-8">
+                                    	<input id="costTopic" readonly data-role="maskedtextbox" name="costTopic" type="text" data-bind="value:model.costTopic" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">参与人群主要类型：</label>
+                                    <div class="col-xs-8">
+                                    	<input id="trainMainTYPE" readonly data-role="maskedtextbox" name="trainMainTYPE" type="text" data-bind="value:model.trainMainTYPE" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12" style="margin-top: 10px;">
+	                       	 <div class="col-xs-4" >
+	                               <div class="form-group" style="margin-bottom:10px">
+	                                   <label class="col-xs-4 control-label"
+	                                          style="text-align: right">参与人数：</label>
+	                                   <div class="col-xs-8">
+	                                   	<input id="trainPeopleNum" readonly data-role="maskedtextbox" name="trainPeopleNum" type="text" data-bind="value:model.trainPeopleNum" style="width: 100%;" class="k-textbox">
+	                                   </div>
+	                               </div>
+                            </div>
+                        	
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">会销开始时间：</label>
+                                    <div class="col-xs-8">
+                                        <input type="date" readonly style="width: 100%"  id="trainStartDate" name="trainStartDate"  
+                                           		data-bind="value:model.trainStartDate"  data-role="datepicker" class="k-datepicker">
+                                           	<script>
+		                                     	$("#trainStartDate").kendoDatePicker({
+		                                         	format: "yyyy-MM-dd",
+		                                     	});
+                             		 		</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">会销结束时间：</label>
+                                    <div class="col-xs-8">
+                                        <input type="date" readonly style="width: 100%"  id="trainEndDate" name="trainEndDate" 
+                                           		data-bind="value:model.trainEndDate"  data-role="datepicker" class="k-datepicker">
+                                           	 <script>
+		                                     	$("#trainEndDate").kendoDatePicker({
+		                                         	format: "yyyy-MM-dd",
+		                                     	});
+                             		 		</script>
+                                    </div>
+                                </div>
+                            </div>
+							
+                        </div>
+                        
+                        <div class="col-xs-12" style="margin-top: 10px;">
+                        	<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">详细地址：</label>
+                                    <div class="col-xs-4">
+                                        <input id="province" readonly name="province" type="text" data-bind="value:model.province" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input id="city" readonly name="city" type="text" data-bind="value:model.city" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">指定培训讲师：</label>
+                                    <div class="col-xs-8">
+                                        <input id="trainTeacher" readonly name="trainTeacher" type="text" data-bind="value:model.trainTeacher" style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">联系人手机：</label>
+                                    <div class="col-xs-8">
+                                        <input id="contactPhone" readonly name="contactPhone" type="text" data-bind="value:model.contactPhone" style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12" style="margin-top: 10px;">
+                        	<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">联系人邮箱：</label>
+                                    <div class="col-xs-8">
+                                        <input id="contactEmail" readonly name="contactEmail" type="text" data-bind="value:model.contactEmail" style="width: 100%;" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        	
+                        	<div class="col-xs-1" >
+                            </div>
+                            
+                            <div class="col-xs-3" id="spanid" style="display:none;">
+	                            <div class="col-xs-4" style="text-align: right">
+	                            	<label style="text-align: center;padding-top: 8px">支援价格：</label>
+	                            </div>
+	                        
+	                            <div class="col-xs-4" style="text-align: center">
+	                            	<label style="text-align: center;padding-top: 8px" id="label"></label><label style="text-align: center;padding-top: 8px">元</label>
+	                            </div>
+								
+								<div class="col-xs-4" style="text-align: left">
+									<label style="text-align: center;color:#40E0D0;padding-top: 8px" id="label1" >未支付</label>
+	                            </div>
+                            </div>
+                            	<script type="text/javascript">
+                            		document.getElementById("label").innerText = amount;
+		                    		 if(newViewModel.model.status == "PAYMENT" ){
+		                    			document.getElementById("spanid").style.display="block";
+		                    		};
+		                    		 if(newViewModel.model.status == "AMOUNT" || newViewModel.model.status == "SUCCESS"){
+		                    			 document.getElementById("label1").innerText = "已支付";
+		                    			document.getElementById("spanid").style.display="block";
+		                    		};  
+		                    	</script>
+                        </div>
+                        
+                        <div class="col-xs-12" style="margin-top: 25px;margin-bottom: 20px">
+                        	<div class="col-xs-6" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right">会销目标：</label>
+	                                <div class="col-sm-9">
+		                                <textarea readonly id="costTarget" type="text" style="width:100%;height:150px;"
+		                                           data-bind="value:model.costTarget" ></textarea>
+	                                </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-xs-6" >
+                            	<div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right">其他要求：</label>
+	                                <div class="col-sm-9">
+		                                <textarea readonly id="other" type="text" style="width:100%;height:150px;"
+		                                           data-bind="value:model.other" ></textarea>
+	                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="panel-footer text-right" style="text-align: right">
+                        <span class="btn btn-primary"  onclick="cancelSupport(supportId,status)" type="submit">取消申请</span>
+                        <!-- <span class="btn btn-primary" style="margin-right: 65px" onclick="fileContent(supportId)" type="submit">申请失败</span> -->
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- <div style="clear:both">
+            <div id="Grid"></div>
+        </div> -->
+</div>
+<script>kendo.bind($('#page-content'), newViewModel);</script>
+
+<div id="content-container" style="margin-top: 35px">
+    <div id="page-content1">
+        <div style="clear:both">
+            <div id="teacherGrid" class="table"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	kendo.bind($('#page-content1'), viewModel);
+	//添加支援讲师
+    function add(){
+    	$("#userWin").kendoWindow({
+ 	       actions: ["Close"],
+ 	       draggable: false,
+ 	       height: "100%",
+ 	       width: "100%",
+ 	       content: "${base.contextPath}/course/trn_support_teacher.html?supportId="+supportId,
+ 	       iframe: true,
+ 	       modal: true,
+ 	       visible: false,
+ 	   });
+ 	   var win = $("#userWin").data("kendoWindow");
+ 	   win.toggleMaximization();
+ 	   win.maximize();
+ 	   win.center().open();
+    }
+	
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/trn/support/teacher/selectLecturer",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/trn/support/teacher/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/trn/support/teacher/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/trn/support/teacher/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "teacherId",
+                fields: {
+                	supportId:{defaultValue:viewModel.model.supportId},
+                	name:{validation:{required:true}},
+                	phone:{validation:{required:true}},
+                	transprotType:{validation:{required:true}},
+                	arrivePlace:{validation:{required:true}},
+                	tollStandard:{validation:{required:true}},
+                	arriveTime:{type: "date",defaultValue:new Date()},
+                	leaveTime:{type: "date",defaultValue:new Date()},
+                	gender:{validation:{required:true} ,defaultValue:"F"},
+                	phoneCode:{type:'string', defaultValue:'86'},
+                }
+            }
+        }
+    });
+
+    $("#teacherGrid").kendoGrid({
+        dataSource: dataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+			{
+			    template: '<span onclick="createFunction()" class="btn btn-primary k-grid-add">'+
+			  		'<i class="fa fa-plus-square"></i>'+
+			  		'<@spring.message "hap.new"/></span>'
+			},
+			{
+			    template: '<span  onclick="saveFunction" class="btn btn-success k-grid-save-changes">'+
+					'<i class="fa fa-save"></i>'+
+				'<@spring.message "hap.save"/></span>'
+			},
+			{
+			    template: '<span onclick="deleteData()" class="btn btn-danger" style="margin-right:5px;">' +
+			    '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "解除支援"/></span>'
+			},
+			/*{
+	            template: '<span class="btn btn-default k-grid-cancel-changes" style="float:right;" onclick="add();">'+
+	            '<i class="fa fa-plus-square"></i>'+
+	    		'添加支援</span>'
+	    	}*/
+			], 
+        columns: [
+            {
+                field: "teacherId",
+                title: '<@spring.message "TrnSupportTeacher.teacherId"/>',
+                width: 120,
+                hidden:true
+            },
+                    {
+                field: "supportId",
+                title: '<@spring.message "TrnSupportTeacher.supportId"/>',
+                width: 120,
+                hidden:true
+            },
+            {
+                field: "name",
+                title: '安排讲师',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                editor: function (container, options) {
+                    $('<input id="relatedPartyIdLov" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoLov($.extend(<@lov "SYS_SUPPORT_LECTURER_SELECT"/>, {
+                        textField: 'name',
+                        model: options.model,
+                        select : function(e){
+                            options.model.set('name', e.item.keyName);
+                            options.model.set('userId', e.item.keyId);
+                        }
+                    }));
+                }
+                /* editor: function(container, options){
+                    $('<input  name="' + options.field + '"/>').appendTo(container).kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_ATTR_SET")},
+                            {
+                                model: options.model,
+                                textField: 'attSetName',
+                                select : function(e){
+                                    options.model.set('attSetName', e.item.setName);
+                                    options.model.set('attSetId', e.item.keyId);
+                                }
+                            }))
+                } */
+            },
+                    {
+                field: "gender",
+                title: '讲师性别',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                template: function(dataItem){
+                    var v = dataItem.gender;
+                    $.each(employeeGender,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: employeeGender
+                        });
+                },
+            },
+            		{ 
+            	field: "phoneCode",
+                title: '<@spring.message "ClbEmployee.phoneCode"/>',
+                width: 120,
+                headerAttributes: {style:'text-align: center;'},
+                attributes: {style: "text-align:center;"},
+                template: function (dataItem) {
+                      var v = dataItem.phoneCode;
+                      $.each(phoneCodeData, function (i, n) {
+                          if ((n.value || '').toLowerCase() === (v || '').toLowerCase()) {
+                              v = n.meaning;
+                              return v;
+                          }
+                      });
+                      return v;
+                },
+                editor: function (container, options) {
+                      $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>').appendTo(container).kendoDropDownList({
+                              valuePrimitive: true,
+                              dataTextField: "meaning",
+                              dataValueField: "value",
+                              dataSource: phoneCodeData
+                          });
+                }
+              },
+            
+                    {
+                field: "phone",
+                title: '联系方式',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "arriveTime",
+                title: '到达时间',
+                width: 200,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                format: "{0: yyyy-MM-dd HH:mm:ss}",
+                editor: function(container, options){
+                	var end = options.model.arriveTime;
+               	  	var opts={
+                   		format:"yyyy-MM-dd HH:mm:ss"
+                    }
+               	  	if(end){
+               		  	opts.max=end;
+               	  	}
+           		  	$('<input required data-required-msg="必输" name="' + options.field + '" required />')
+                      .appendTo(container)
+                      .kendoDateTimePicker(opts);
+            	}
+            },
+                    {
+                field: "transprotType",
+                title: '交通方式',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "arrivePlace",
+                title: '到达地点',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "leaveTime",
+                title: '离开时间',
+                width: 200,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                format: "{0: yyyy-MM-dd HH:mm:ss}",
+                editor: function(container, options){
+                	var end = options.model.leaveTime;
+               	  	var opts={
+                   		format:"yyyy-MM-dd HH:mm:ss"
+                    }
+               	  	if(end){
+               		  	opts.max=end;
+               	  	}
+           		  	$('<input required data-required-msg="必输"  name="' + options.field + '" required />')
+                      .appendTo(container)
+                      .kendoDateTimePicker(opts);
+            	}
+            },
+                    {
+                field: "tollStandard",
+                title: '收费标准',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "remarks",
+                title: '备注',
+                width: 120,
+                headerAttributes: {style:'text-align: center'},
+                attributes: {style: "text-align:center;"},
+            },
+        ],
+        editable: true
+    });
+
+    function deleteData() {
+        Hap.deleteGridSelection({
+        	grid: $('#teacherGrid')
+        }); 
+        
+    	/* //定义ids  存储多个id
+    	var ids=[];
+    	//debugger;
+    	var grid = $('#teacherGrid').data("kendoGrid");
+    	var checked = grid.selectedDataItems();
+   		 if(checked.length){
+       		 for (var i = 0; i < checked.length; i++) {
+       			 	var teacherId = checked[i].teacherId;
+       			 	ids.push(teacherId);
+       		 }
+       		 	$.ajax({
+                    type: "POST",
+                    url: "${base.contextPath}/fms/trn/support/teacher/deleteLecturer",
+                    data: {"ids":ids},
+                    dataType: "json",
+                    success: function(data){
+                   	 kendo.ui.showInfoDialog({
+                            title: $l('hap.tip.info'),
+                            message: $l('hap.tip.success')
+                        }).done(function (event) {
+                            if (event.button == 'OK') {
+                            	//window.location.reload();
+			                   	 window.location.reload();
+                           }
+                        });
+                    }
+                });
+         } else {
+             kendo.ui.showInfoDialog({
+                 title:$l('hap.tip.info'),
+                 message:'你未选中任何要添加的讲师!'
+             });
+         } */
+    	
+    }
+
+    //Hap.autoResizeGrid("#teacherGrid");
+	
+	
+
+	//审核通过
+	function shenheOk(supportId) {
+		$("#userWin").kendoWindow({
+	       actions: ["Close"],
+	       draggable: false,
+	       height: "30%",
+	       width: "30%",
+	       content: "${base.contextPath}/course/trn_support_examine_ok.html?supportId="+supportId,
+	       iframe: true,
+	       modal: true,
+	       visible: false,
+	   });
+	   var win = $("#userWin").data("kendoWindow");
+	   //win.toggleMaximization();
+	   //win.maximize();
+	   win.center().open();
+	}
+	
+	//取消支援弹框
+    function cancelSupport(supportId,status) {
+    	var ids=[];
+    	var status;
+    	ids.push(supportId);
+    	if(status=="CANCEL"){
+    		kendo.ui.showErrorDialog({
+				message : "支援已取消"
+			});
+    	}else{
+	    	//利用对话框返回的值 （true 或者 false） 
+	        kendo.ui.showConfirmDialog({
+                 title: $l('hap.tip.info'),
+                 message: $l('你确定取消'+document.getElementById("titleSpan").innerText+'吗？')
+             }).done(function (event) {
+                 if (event.button == 'OK') {  
+		        	$.ajax({
+	                    type: "POST",
+	                    url: "${base.contextPath}/fms/trn/support/cancelSupport",
+	                    data: {"ids":ids,"status":status},
+	                    dataType: "json",
+	                    success: function(data){
+	                   	 kendo.ui.showInfoDialog({
+	                   		 //alert:"成功",
+	                            title: $l('hap.tip.info'),
+	                            message: $l('hap.tip.success')
+	                        });
+	                   	 window.location.reload();
+	                    }
+	                });
+	        	}
+          	})
+    	}
+    }
+	
+	//调整价格
+	function amountAdjust(supportId,status) {
+		$("#userWin").kendoWindow({
+	       actions: ["Close"],
+	       draggable: false,
+	       height: "30%",
+	       width: "30%",
+	       content: "${base.contextPath}/course/trn_support_examine_ok.html?supportId="+supportId+"&status="+status,
+	       iframe: true,
+	       modal: true,
+	       visible: false,
+	   });
+	   var win = $("#userWin").data("kendoWindow");
+	   //win.toggleMaximization();
+	   //win.maximize();
+	   win.center().open();
+	}
+	
+	//申请成功
+	function success(supportId) {
+		$("#userWin").kendoWindow({
+	       actions: ["Close"],
+	       draggable: false,
+	       height: "100%",
+	       width: "100%",
+	       content: "${base.contextPath}/course/trn_support_teacher.html?supportId="+supportId,
+	       iframe: true,
+	       modal: true,
+	       visible: false,
+	   });
+	   var win = $("#userWin").data("kendoWindow");
+	   win.toggleMaximization();
+	   win.maximize();
+	   win.center().open();
+	}
+	
+	//申请失败
+	function fileContent(supportId) {
+		$("#userWin").kendoWindow({
+	       actions: ["Close"],
+	       draggable: false,
+	       height: "40%",
+	       width: "30%",
+	       content: "${base.contextPath}/course/trn_support_examine_fail.html?supportId="+supportId,
+	       iframe: true,
+	       modal: true,
+	       visible: false,
+	   });
+	   var win = $("#userWin").data("kendoWindow");
+	   //win.toggleMaximization();
+	   //win.maximize();
+	   win.center().open();
+	}
+	
+	$("#province").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.PROVICE";
+	    },
+	    change:function () {
+	        newViewModel.model.set("city",null);
+	        newViewModel.model.set("cityMeaning",null);
+	    }
+	}));
+	
+	$("#city").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.CITY";
+	        e.param['parentValue'] = newViewModel.model.province;
+	    },
+	}));
+	
+	$("#supportType").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: supportType
+	});
+	$("#status").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: status
+	});
+	
+    /* var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/trn/support/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/trn/support/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(newViewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "supportId",
+                fields: {}
+            }
+        }
+    }); */
+
+    /* $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "supportId",
+                title: '<@spring.message "TrnSupport.supportId"/>',
+                width: 120,
+                hidden:true
+            },
+            	{
+                field: "supportNum",
+                title: '渠道编号',
+                width: 120
+            },
+            
+                    {
+                field: "channelName",
+                title: '渠道',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "contactPhone",
+                title: '手机',
+                width: 120
+            },
+            {
+                field: "supportType",
+                title: '申请类型',
+                width: 120
+            },
+            	{
+                field: "submitDate",
+                title: '评价时间',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "trainStartDate",
+                title: '开始时间',
+                width: 120
+            },
+                    {
+                field: "trainEndDate",
+                title: '结束时间',
+                width: 120
+            },
+            		{
+                field: "area",
+                title: '城市',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "status",
+                title: '状态',
+                width: 120
+            },
+            	{
+                title: '<@spring.message "hap.action"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.supportId) {
+                        if(dataItem.status=="APPROVAL"){
+                    	openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+')">编辑</a>';
+                        }else if(dataItem.status=="PAYMENT"){
+                        	
+                        }else if(dataItem.status=="AMOUNT"){
+                        	
+                        }else if(dataItem.status=="SUCCESS"){
+                        	
+                        }else if(dataItem.status=="FAIL"){
+                        	
+                        }else if(dataItem.status=="CANCEL"){
+                        	
+                        }
+                        return openDetail;
+                    } else {
+                        openDetail = '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                        return openDetail;
+                    }
+                }
+            }
+        ],
+        editable: false
+    }); */
+	
+    function openDetailWin(supportId) {
+
+        if (supportId != null) {
+            parent.openTab("channelDetail" + channelId,channelName + " " + '<@spring.message "fms.cnlchannel.channel_detail"/>',"channel/channel_detail.html?channelId="+channelId)
+        }
+
+    }
+    
+    
+    
+    /* function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    } */
+
+    //Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

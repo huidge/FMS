@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by Rex.Hua on 17/4/12.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdItemLabelsMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdItemLabels">
+        <result column="LABEL_ID" property="labelId" jdbcType="DECIMAL" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="LABEL_NAME" property="labelName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectLabelId" parameterType="clb.core.production.dto.PrdItemLabels" resultType="java.lang.String">
+        SELECT LABEL_ID
+        FROM   fms_prd_item_labels pil
+        WHERE  pil.big_class = #{bigClass}
+        AND    pil.LABEL_NAME = #{labelName}
+    </select>
+</mapper>

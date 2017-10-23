@@ -1,0 +1,347 @@
+<#--
+ * description: 订单详情页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+
+<script type="text/javascript">
+    var channelId = <#if RequestParameters.channelId?exists> ${RequestParameters.channelId} <#else>-1</#if>;
+    var businessScope = '${RequestParameters.businessScope!}';
+    var bigClass = '${RequestParameters.bigClass!}';
+
+    var viewModel = kendo.observable({
+        model: {
+            statusCode : "CREATED"
+        }
+    });
+
+//    var supplierRows;
+//    $.ajax({
+//        type: "POST",
+//        async: false,
+//        url: "${base.contextPath}/supplier/main/queryByChannel?channelId=" + channelId + '&businessScope=' + businessScope,
+//        data: {},
+//        success: function (json) {
+//            supplierRows = json.rows;
+//        }
+//    });
+//
+//    var itemRows;
+//    $.ajax({
+//        type: "POST",
+//        async: false,
+//        url: "${base.contextPath}/production/items/queryByChannel?channelId=" + channelId + '&bigClass=' + bigClass,
+//        data: {},
+//        success: function (json) {
+//            itemRows = json.rows;
+//        }
+//    });
+//
+//    var sublineRows;
+//    $.ajax({
+//        type: "POST",
+//        async: false,
+//        url: "${base.contextPath}/production/items/querySublineByChannel?channelId=" + channelId,
+//        data: {},
+//        success: function (json) {
+//            sublineRows = json.rows;
+//        }
+//    });
+
+
+</script>
+
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.item"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.productsupplier"/></label>
+                        <div class="col-xs-8">
+                            <input id="productSupplierId" name="productSupplierId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.productSupplierId,text:model.productSupplierName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.item"/></label>
+                        <div class="col-xs-8">
+                            <input id="itemId" name="itemId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.itemId,text:model.itemName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.subline"/></label>
+                        <div class="col-xs-8">
+                            <input id="sublineId" name="sublineId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.sublineId,text:model.sublineItemName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "clb.add"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#productSupplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "CMN_PRODUCT_COMPANY")}, {
+        query: function(e) {
+            e.param['businessScope'] = businessScope;
+        },
+        change:function (e) {
+            viewModel.model.set("itemId",null);
+            viewModel.model.set("itemName",null);
+            viewModel.model.set('stockCode', null);
+            viewModel.model.set('annualInterest', null);
+            viewModel.model.set('dividendPeriod', null);
+            viewModel.model.set('subscriptionFee', null);
+            viewModel.model.set('custodyFee', null);
+
+//            var flag = "N";
+//            if (viewModel.model.productSupplierId != null ) {
+//                for (var i = 0; i < supplierRows.length; i++) {
+//                    if (supplierRows[i].supplierId == viewModel.model.productSupplierId) {
+//                        flag = "Y";
+//                    }
+//                }
+//                if (flag == "N") {
+//                    viewModel.model.set("productSupplierId",null);
+//                    viewModel.model.set("productSupplierName",null);
+//                    kendo.ui.showInfoDialog({
+//                        title: $l('hap.tip.info'),
+//                        message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+//                    });
+//                }
+//            }
+
+        },
+        select: function(e) {
+            viewModel.model.set('productSupplierName', e.item.name);
+
+        }
+    }));
+
+    $("#itemId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_ITEM")}, {
+        query: function(e) {
+            e.param['bigClass'] = bigClass;
+            if(viewModel.model.productSupplierId != null){
+                e.param['supplierId'] = viewModel.model.productSupplierId;
+            }
+        },
+        change:function (e) {
+            viewModel.model.set("sublineId",null);
+            viewModel.model.set("sublineItemName",null);
+
+//            var flag = "N";
+//            if (viewModel.model.itemId != null ) {
+//                for (var i = 0; i < itemRows.length; i++) {
+//                    if (itemRows[i].itemId == viewModel.model.itemId) {
+//                        flag = "Y";
+//                    }
+//                }
+//                if (flag == "N") {
+//                    viewModel.model.set("itemId",null);
+//                    viewModel.model.set("itemName",null);
+//                    kendo.ui.showInfoDialog({
+//                        title: $l('hap.tip.info'),
+//                        message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+//                    });
+//                }
+//            }
+
+        },
+        select: function(e) {
+            viewModel.model.set('itemName', e.item.itemName);
+            viewModel.model.set('stockCode', e.item.stockCode);
+            viewModel.model.set('annualInterest', e.item.annualInterest);
+            viewModel.model.set('dividendPeriod', e.item.dividendPeriod);
+            viewModel.model.set('subscriptionFee', e.item.subscriptionFee);
+            viewModel.model.set('custodyFee', e.item.custodyFee);
+            viewModel.model.set('minClass', e.item.minClass);
+            viewModel.model.set('fullyear', e.item.fullyear);
+            viewModel.model.set('oneyear', e.item.oneyear);
+            viewModel.model.set('halfyear', e.item.halfyear);
+            viewModel.model.set('quarter', e.item.quarter);
+            viewModel.model.set('onemonth', e.item.onemonth);
+        }
+    }));
+
+    $("#sublineId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SUBLINE")}, {
+        query: function(e) {
+            e.param['channelId'] = channelId;
+            if(viewModel.model.itemId != null){
+                e.param['itemId'] = viewModel.model.itemId;
+            }
+        },
+        select: function(e) {
+            viewModel.model.set('sublineItemName', e.item.sublineItemName);
+        },
+        <!--change: function (e) {-->
+
+            <!--var flag = "N";-->
+            <!--if (viewModel.model.sublineId != null ) {-->
+                <!--for (var i = 0; i < sublineRows.length; i++) {-->
+                    <!--if (sublineRows[i].sublineId == viewModel.model.sublineId) {-->
+                        <!--flag = "Y";-->
+                    <!--}-->
+                <!--}-->
+                <!--if (flag == "N") {-->
+                    <!--viewModel.model.set("sublineId",null);-->
+                    <!--viewModel.model.set("sublineItemName",null);-->
+                    <!--kendo.ui.showInfoDialog({-->
+                        <!--title: $l('hap.tip.info'),-->
+                        <!--message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"-->
+                    <!--});-->
+                <!--}-->
+            <!--}-->
+
+        <!--}-->
+    }));
+
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+            var trRows;
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "${base.contextPath}/fms/ord/order/validateTradeRoute?channelId=" + channelId
+                            + '&itemId=' + viewModel.model.itemId + '&contributionPeriod' + viewModel.model.sublineItemName,
+                data: {},
+                success: function (json) {
+                    trRows = json.rows;
+                }
+            });
+
+            if (trRows.length == 0) {
+                kendo.ui.showInfoDialog({
+                    title: $l('hap.tip.info'),
+                    message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+                });
+            } else {
+                window.parent.viewModel.model.set("productSupplierId", viewModel.model.productSupplierId);
+                window.parent.viewModel.model.set("itemId", viewModel.model.itemId);
+                window.parent.viewModel.model.set("sublineId", viewModel.model.sublineId);
+
+                window.parent.viewModel.model.set("productSupplierName", viewModel.model.productSupplierName);
+                window.parent.viewModel.model.set("itemName", viewModel.model.itemName);
+                window.parent.viewModel.model.set("sublineItemName", viewModel.model.sublineItemName);
+
+                window.parent.viewModel.model.set("stockCode", viewModel.model.stockCode);
+                window.parent.viewModel.model.set("annualInterest", viewModel.model.annualInterest);
+                window.parent.viewModel.model.set("dividendPeriod", viewModel.model.dividendPeriod);
+                window.parent.viewModel.model.set("subscriptionFee", viewModel.model.subscriptionFee);
+                window.parent.viewModel.model.set("custodyFee", viewModel.model.custodyFee);
+
+                window.parent.viewModel.model.set("minClass", viewModel.model.minClass);
+
+                window.parent.viewModel.model.set('fullyear', viewModel.model.fullyear);
+                window.parent.viewModel.model.set('oneyear', viewModel.model.oneyear);
+                window.parent.viewModel.model.set('halfyear', viewModel.model.halfyear);
+                window.parent.viewModel.model.set('quarter', viewModel.model.quarter);
+                window.parent.viewModel.model.set('onemonth', viewModel.model.onemonth);
+
+                window.parent.$("#item").val(viewModel.model.productSupplierName + "-" + viewModel.model.itemName + "-" + viewModel.model.sublineItemName);
+
+                window.parent.currencyRows = [];
+                for (var i=0;i<window.parent.currencyAllRows.length;i++) {
+                    if (window.parent.currencyAllRows[i].itemId == viewModel.model.itemId) {
+                        window.parent.currencyRows.push(window.parent.currencyAllRows[i]);
+                    }
+                }
+
+                window.parent.$("#currency").kendoDropDownList({
+                    valuePrimitive: true,
+                    dataTextField: "currency",
+                    dataValueField: "currencyCode",
+                    dataSource: window.parent.currencyRows
+                });
+
+                window.parent.payMethodRows = [];
+                for (var i=0;i<window.parent.payMethodData.length;i++) {
+                    if (window.parent.payMethodData[i].value == "AP" && viewModel.model.oneyear == "Y") {
+                        window.parent.payMethodRows.push(window.parent.payMethodData[i]);
+                    }
+
+                    if (window.parent.payMethodData[i].value == "WP" && viewModel.model.fullyear == "Y") {
+                        window.parent.payMethodRows.push(window.parent.payMethodData[i]);
+                    }
+
+                    if (window.parent.payMethodData[i].value == "SAP" && viewModel.model.halfyear == "Y") {
+                        window.parent.payMethodRows.push(window.parent.payMethodData[i]);
+                    }
+
+                    if (window.parent.payMethodData[i].value == "QP" && viewModel.model.quarter == "Y") {
+                        window.parent.payMethodRows.push(window.parent.payMethodData[i]);
+                    }
+
+                    if (window.parent.payMethodData[i].value == "MP" && viewModel.model.onemonth == "Y") {
+                        window.parent.payMethodRows.push(window.parent.payMethodData[i]);
+                    }
+                }
+
+                window.parent.$("#payMethod").kendoDropDownList({
+                    valuePrimitive: true,
+                    dataTextField: "meaning",
+                    dataValueField: "value",
+                    dataSource: window.parent.payMethodRows
+                });
+
+
+                window.parent.$("#securityDiv").hide();
+                if (viewModel.model.minClass == "GD") {
+                    window.parent.$("#securityDiv").show();
+                } else {
+                    window.parent.$("#securityDiv").hide();
+                    window.parent.viewModel.model.set("securityLevel", null);
+                    window.parent.viewModel.model.set("securityRegion", null);
+                    window.parent.viewModel.model.set("selfpay", null);
+                }
+
+                window.parent.$("#proWin").data("kendoWindow").close();
+            }
+
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#proWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

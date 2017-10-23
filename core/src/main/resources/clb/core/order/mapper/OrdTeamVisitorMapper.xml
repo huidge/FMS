@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdTeamVisitorMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdTeamVisitor">
+        <result column="TEAM_VISITOR_ID" property="teamVisitorId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="SEX" property="sex" jdbcType="VARCHAR" />
+        <result column="BIRTH_DATE" property="birthDate" jdbcType="DATE" />
+        <result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+        <result column="PASS_NUMBER" property="passNumber" jdbcType="VARCHAR" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
+        <result column="FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdTeamVisitor" parameterType="clb.core.order.dto.OrdTeamVisitor" resultMap="BaseResultMap" >
+        SELECT
+        fotv.TEAM_VISITOR_ID,
+        fotv.ORDER_ID,
+        fotv.NAME,
+        fotv.SEX,
+        fotv.BIRTH_DATE,
+        fotv.SIGN_ADDRESS,
+        fotv.PASS_NUMBER,
+        fotv.FILE_ID,
+        fotv.PROGRAM_ID,
+        fotv.REQUEST_ID,
+        sf.FILE_PATH,
+        SF.FILE_NAME,
+        SF.FILE_SIZE,
+        SF.FILE_TYPE
+        FROM
+        fms_ord_team_visitor AS fotv
+        LEFT JOIN SYS_FILE SF
+        ON fotv.FILE_ID = SF.FILE_ID
+        WHERE 1=1
+        <if test = "orderId != null"> AND fotv.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+</mapper>

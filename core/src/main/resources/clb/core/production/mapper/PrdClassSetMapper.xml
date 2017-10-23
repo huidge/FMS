@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wanjun.feng on 17/4/12.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdClassSetMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdClassSet">
+        <id column="SET_ID" property="setId" jdbcType="DECIMAL" />
+        <result column="SET_CODE" property="setCode" jdbcType="VARCHAR" />
+        <result column="SET_NAME" property="setName" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME1_CODE" property="className1Code" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME2_CODE" property="className2Code" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME3_CODE" property="className3Code" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME4_CODE" property="className4Code" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME5_CODE" property="className5Code" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME1_NAME" property="className1Name" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME2_NAME" property="className2Name" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME3_NAME" property="className3Name" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME4_NAME" property="className4Name" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME5_NAME" property="className5Name" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <select id="selectClassSets" resultMap="BaseResultMap">
+       SELECT 
+		  fpcs.SET_ID,
+		  fpcs.SET_CODE,
+		  fpcs.SET_NAME,
+		  fpcs.COMMENTS,
+		  fpcs.STATUS_CODE,
+		  fpcs.CLASS_NAME1_CODE,
+		  fpcs.CLASS_NAME2_CODE,
+		  fpcs.CLASS_NAME3_CODE,
+		  fpcs.CLASS_NAME4_CODE,
+		  fpcs.CLASS_NAME5_CODE,
+		  scb1.DESCRIPTION CLASS_NAME1_NAME,
+		  scb2.DESCRIPTION CLASS_NAME2_NAME,
+		  scb3.DESCRIPTION CLASS_NAME3_NAME,
+		  scb4.DESCRIPTION CLASS_NAME4_NAME,
+		  scb5.DESCRIPTION CLASS_NAME5_NAME,
+		  fpcs.REQUEST_ID,
+		  fpcs.PROGRAM_ID,
+		  fpcs.OBJECT_VERSION_NUMBER,
+		  fpcs.CREATED_BY,
+		  fpcs.CREATION_DATE,
+		  fpcs.LAST_UPDATED_BY,
+		  fpcs.LAST_UPDATE_DATE,
+		  fpcs.LAST_UPDATE_LOGIN 
+		FROM
+		  fms_prd_class_set fpcs 
+		  LEFT JOIN sys_code_b scb1 
+		    ON fpcs.CLASS_NAME1_CODE = scb1.CODE 
+		  LEFT JOIN sys_code_b scb2 
+		    ON fpcs.CLASS_NAME2_CODE = scb2.CODE 
+		  LEFT JOIN sys_code_b scb3 
+		    ON fpcs.CLASS_NAME3_CODE = scb3.CODE 
+		  LEFT JOIN sys_code_b scb4 
+		    ON fpcs.CLASS_NAME4_CODE = scb4.CODE 
+		  LEFT JOIN sys_code_b scb5 
+		    ON fpcs.CLASS_NAME5_CODE = scb5.CODE 
+		<where>
+			<if test="classSet !=null and classSet.setName !=null and classSet.setName !=''">
+				and fpcs.set_name like concat('%',concat(#{classSet.setName},'%'))
+			</if>
+		</where>
+		ORDER BY set_id ASC
+	</select>
+    
+</mapper>

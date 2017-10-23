@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdTradeRouteMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdTradeRoute">
+        <result column="TRADE_ROUTE_ID" property="tradeRouteId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+        <result column="PARENT_ROUTE_ID" property="parentRouteId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_TYPE" property="supplierType" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="PRE_USER_ID" property="preUserId" jdbcType="DECIMAL" />
+        <result column="PRE_NAME" property="preName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryPreUserId" parameterType="clb.core.order.dto.OrdTradeRoute" resultMap="BaseResultMap">
+        SELECT
+        fccr.ROLE_USER_ID PRE_USER_ID,
+        rpt.key_name PRE_NAME
+        FROM
+        fms_ord_trade_route foc
+        JOIN fms_cnl_contract_role fccr
+        ON fccr.CHANNEL_CONTRACT_ID = foc.CHANNEL_CONTRACT_ID AND fccr.ROLE = 'ADMINISTRATION'
+
+        LEFT JOIN sys_user su
+        ON su.user_id = fccr.ROLE_USER_ID
+
+        LEFT JOIN (
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'OPERATOR' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        UNION
+        SELECT
+        CHANNEL_ID,
+        CHANNEL_NAME,
+        'CHANNEL',PHONE_CODE,CONTACT_PHONE PHONE,EMAIL
+        FROM
+        fms_cnl_channel
+        UNION
+        SELECT
+        SUPPLIER_ID,
+        NAME,
+        'SUPPLIER', PHONE_CODE,CONTACT_NUM PHONE,EMAIL
+        FROM
+        fms_spe_supplier
+        UNION
+        SELECT
+        CUSTOMER_ID,
+        CHINESE_NAME,
+        'CUSTOMER',PHONE_CODE ,PHONE, EMAIL
+        FROM
+        fms_ctm_customer
+        UNION
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'ADMINISTRATION' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        ) rpt ON (
+        su.RELATED_PARTY_ID = rpt.key_id
+        AND su.USER_TYPE = rpt.key_type
+        )
+        WHERE 1=1
+        AND fccr.ROLE_USER_ID IS NOT NULL
+        <if test="orderId != null">
+            AND foc.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+        </if>
+        ORDER BY foc.SEQ_NUM
+    </select>
+    
+    <select id="queryStairSellByOrderId" parameterType="java.lang.Long" resultType="java.lang.String">
+    	SELECT
+			fcc.CHANNEL_NAME
+		FROM
+			fms_cnl_channel fcc
+		WHERE
+			fcc.CHANNEL_ID = (
+				SELECT
+					fotr.COMPANY_ID
+				FROM
+					fms_ord_trade_route fotr
+				WHERE
+					fotr.COMPANY_TYPE = "CHANNEL"
+				AND fotr.ORDER_ID = #{orderId}
+				AND fotr.CHANNEL_LEVEL = 1
+			)
+    
+    </select>
+
+</mapper>

@@ -1,0 +1,1212 @@
+<#--
+        * description: 客户管理明细界面
+        * version: 1.0
+        * author:xiaoyong.luo@hand-china.com
+        *
+        -->
+<#include "../include/header.html">
+<script>
+    //获取"客户查询界面"传过来的 customerId
+    var customerId = '${RequestParameters.customerId!0}';
+    var status = '${RequestParameters.status!0}';
+    var phoneErrorFlag = false, phoneErrorMsg = '电话号码和区号不能为空';
+    if(status === 'update'){
+        phoneErrorFlag = true, phoneErrorMsg = '';
+    }
+    var healythFields = [
+        {
+            fieldId: 'smokeFlag',
+            fieldDesc: 'smokeDesc',
+            content: '是否吸烟'
+        },
+        {
+            fieldId: 'drinkFlag',
+            fieldDesc: 'drinkDesc',
+            content: '是否饮酒'
+        },
+        {
+            fieldId: 'drugFlag',
+            fieldDesc: 'drugDesc',
+            content: '您是否服用任何成瘾药物或毒品'
+        },
+        {
+            fieldId: 'dangerousFlag',
+            fieldDesc: 'dangerousDesc',
+            content: '您是否出于因工作或娱乐目的，参与或计划参与任何危险性活动？例如潜水、赛车、飞行（以乘客身份搭乘商业性民航客机除外）'
+        },
+        {
+            fieldId: 'abroadFlag',
+            fieldDesc: 'abroadDesc',
+            content: '过去12月内，您是否曾在居住地址以外的国家逗留？'
+        },
+        {
+            fieldId: 'disabilityFlag',
+            fieldDesc: 'disabilityDesc',
+            content: '是否有任何缺陷、断肢、先天及/或后天的身体残疾？'
+        },
+        {
+            fieldId: 'spiritFlag',
+            fieldDesc: 'spiritDesc',
+            content: '是否有大脑性麻痹、癫痫、中风、抑郁或其他精神失常？'
+        },
+        {
+            fieldId: 'endocrineFlag',
+            fieldDesc: 'endocrineDesc',
+            content: '是否 糖尿病、甲状腺或其他内分泌失调？'
+        },
+        {
+            fieldId: 'faceFlag',
+            fieldDesc: 'faceDesc',
+            content: '是否有眼睛、鼻子、喉或耳朵之疾病/功能失常？'
+        },
+        {
+            fieldId: 'respirationFlag',
+            fieldDesc: 'respirationDesc',
+            content: '是否有哮喘、肺炎、肺结核或呼吸系统疾病？'
+        },
+        {
+            fieldId: 'threeFlag',
+            fieldDesc: 'threeDesc',
+            content: '是否有血脂高或高血压？三高症状？'
+        },
+        {
+            fieldId: 'cycleFlag',
+            fieldDesc: 'cycleDesc',
+            content: '是否有胸痛、心悸、心脏血管或循环系统疾病？'
+        },
+        {
+            fieldId: 'digestionFlag',
+            fieldDesc: 'digestionDesc',
+            content: '是否有溃疡、疝气、痔疮、肠胃不适或消化系统疾病？'
+        },
+        {
+            fieldId: 'liverFlag',
+            fieldDesc: 'liverDesc',
+            content: '是否有肝炎或带菌、胆囊、胆管及其他肝脏之疾病/功能失常？'
+        },
+        {
+            fieldId: 'reproductionFlag',
+            fieldDesc: 'reproductionDesc',
+            content: '是否有肾脏、膀胱、前列腺或生殖系统之疾病/功能失常或结石？'
+        },
+        {
+            fieldId: 'jointFlag',
+            fieldDesc: 'jointDesc',
+            content: '是否有神经炎、关节炎、通风症、脊柱裂、其他肢体关节、脊柱或肌肉骨骼疾病？'
+        },
+        {
+            fieldId: 'tumorFlag',
+            fieldDesc: 'tumorDesc',
+            content: '是否有任何囊肿、肿瘤或癌症？'
+        },
+        {
+            fieldId: 'bloodFlag',
+            fieldDesc: 'bloodDesc',
+            content: '是否有任何种类之贫血症或血友病或其他有关血液之疾病？'
+        },
+        {
+            fieldId: 'aidsFlag',
+            fieldDesc: 'aidsDesc',
+            content: '您曾否接受/想接受爱滋病有关或任何性传染病的医药建议辅导或治疗？'
+        },
+        {
+            fieldId: 'aidsTestFlag',
+            fieldDesc: 'aidsTestDesc',
+            content: '您曾否接受艾滋病抗体测试？如有，请注明日期及原因。'
+        },
+        {
+            fieldId: 'skinFlag',
+            fieldDesc: 'skinDesc',
+            content: '过去三个月内有否连续一星期以上出现疲倦、体重下降、腹泻、淋巴肿大或不正常的皮肤破损？'
+        },
+        {
+            fieldId: 'otherFlag',
+            fieldDesc: 'otherDesc',
+            content: '您是否患有任何上文未有提及的心理或生理疾病、或意外？'
+        },
+        {
+            fieldId: 'otherTreatFlag',
+            fieldDesc: 'otherTreatDesc',
+            content: '您有否因上述疾病及/或意外而正在接受诊治或药物治疗？'
+        },
+        {
+            fieldId: 'examinationFlag',
+            fieldDesc: 'examinationDesc',
+            content: '在过去五年内您曾否因疾病或不适而接受X光、超声波检查、磁力共振、电脑扫描、细胞组织化验、心电图、血液或小便检查？'
+        },
+        {
+            fieldId: 'hereditaryFlag',
+            fieldDesc: 'hereditaryDesc',
+            content: '您的父母、兄弟姊妹或子女曾否被诊断患有心脏病、中风、高血压、糖尿病、肝病、肾病、精神病、肿瘤或癌症、唐氏综合症、脊柱裂、系统性红斑狼疮、先天的身体残疾或任何遗传疾病？'
+        },
+        {
+            fieldId: 'pregnancyFlag',
+            fieldDesc: 'pregnancyDesc',
+            content: '您现在是否怀孕？'
+        },
+        {
+            fieldId: 'downTestFlag',
+            fieldDesc: 'downTestDesc',
+            content: '曾否或将接受唐氏综合症的测试？'
+        },
+        {
+            fieldId: 'gynecologyFlag',
+            fieldDesc: 'gynecologyDesc',
+            content: '您曾否因为妇科问题而看医生，例如：两次经期间之出血、盆腔炎疾病、子宫颈部或乳房异常？'
+        },
+        {
+            fieldId: 'complicationFlag',
+            fieldDesc: 'complicationDesc',
+            content: '在过去十年内，您曾否在怀孕期间患有并发症(例如：宫外孕、弥漫性血管内凝血、糖尿病或高血压等)？'
+        },
+        {
+            fieldId: 'gynecologyOthFlag',
+            fieldDesc: 'gynecologyOthDesc',
+            content: '您曾否接受或被建议接受或打算接受乳房X光像、乳房或盆腔超声波检查、子宫颈细胞涂片检查、锥形切片检查或阴道镜检查？'
+        }];
+
+    //定义视图模型(针对输入框字段)
+    var viewModel = kendo.observable({
+        model: {
+            customerId: customerId,
+        },
+        save: function () {
+//            (viewModel.model.income + '').replace(/\,/g, "");
+//            (viewModel.model.amountPerMonth + '').replace(/\,/g, "");
+//            (viewModel.model.currentAssets + '').replace(/\,/g, "");
+//            (viewModel.model.fixedAssets + '').replace(/\,/g, "");
+//            (viewModel.model.liabilities + '').replace(/\,/g, "");
+
+            if(viewModel.model.englishName){
+                viewModel.model.englishName = viewModel.model.englishName.toUpperCase();
+            }
+            if(viewModel.model.premiumRate){
+                viewModel.model.premiumRate = parseFloat(viewModel.model.premiumRate/100);
+            }
+
+            viewModel.model.set("__status", status);
+            var validator = $("#page-content").data("kendoValidator");
+            if (validator.validate() && phoneErrorFlag) {
+                Hap.submitForm({
+                    url: '${base.contextPath}/fms/ctm/customer/submit',
+                    formModel: viewModel.model,
+                    success: function (data) {
+                        if (data.success) {
+                            customerId = data.rows[0].customerId;
+//                            $.clbFormatNum('#income');
+//                            $.clbFormatNum('#amountPerMonth');
+//                            $.clbFormatNum('#currentAssets');
+//                            $.clbFormatNum('#fixedAssets');
+//                            $.clbFormatNum('#liabilities');
+
+                            kendo.ui.showInfoDialog({
+                                message: "成功"
+                            });
+                            if(status == 'add'){
+                                parent.openTab('CUSTOMER_EDIT'+customerId,'<@spring.message "fms.ctmcustomer.detailpage"/>' , '${base.contextPath}/customer/ctm_customer_detail.html?status=update&customerId='+customerId);
+                                parent.closeTab("CUSTOMER_EDIT0");
+                            }
+                        } else {
+                            kendo.ui.showErrorDialog({
+                                message: "失败"
+                            });
+                        }
+                    }
+                });
+            } else {
+                kendo.ui.showErrorDialog({
+                    message: "请填写完整正确信息"
+                });
+                if(!phoneErrorFlag){
+                    var html='<span id="phoneError" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" role="alert"><span class="k-icon k-warning"> </span>'+phoneErrorMsg+'</span>';
+                    $("#phoneCode").parent().append(html);
+                }
+            }
+        },
+        closeWin: function () {
+            if(status == 'add'){
+                parent.closeTab("CUSTOMER_EDIT0");
+            }else{
+                parent.closeTab("CUSTOMER_EDIT" + customerId);
+            }
+        }
+    });
+    //家庭成员
+    var familyVM = kendo.observable({
+        model: {
+            customerId: customerId,
+        },
+        //新建
+        createFunction: function () {
+            $('#familyGrid').data('kendoGrid').addRow();
+        },
+        //保存
+        saveFunction: function () {
+
+            if(customerId == '' || customerId <= 0){
+                kendo.ui.showErrorDialog({
+                    message: "请先保存基本信息"
+                });
+            }else{
+                $('#familyGrid').data('kendoGrid').saveChanges();
+            }
+        },
+        //删除
+        deleteFunction: function () {
+            Hap.deleteGridSelection({
+                grid: $('#familyGrid')
+            });
+        },
+        //取消
+        cancelFunction: function () {
+            $("#familyGrid").data("kendoGrid").cancelChanges();
+        },
+    });
+
+</script>
+
+<!-- 为什么这种引入方式 有时候在IE中无效 -->
+<script src="${base.contextPath}/lib/clb/js/clb_public.js"></script>
+
+<body>
+    <div id="content-container">
+        <div id="page-content">
+            <fieldset style="border:0px solid #B5B8C8;margin-left:1%;display:block;">
+                <legend>个人信息</legend>
+                <div style="width:98%;margin-top: 5px;">
+                    <form class="form-horizontal">
+                        <div class="row" style="margin-left: 5px;">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.customercode"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" disabled style="width:100%;background:#DDDDDD" name="customerCode"
+                                                       data-bind="value:model.customerCode" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.chinesename"/><span style="color:red">*</span>:</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" required style="width:100%" name="chineseName" validationMessage='中文姓名为必填项'
+                                                       data-bind="value:model.chineseName" class="k-textbox">
+                                                <span data-for="employeeCode" class=".k-invalid-msg"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.englishname"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" style="width:100%" name="name"
+                                                       pattern="^([A-Za-z])+\ ([A-Za-z ])+$" validationMessage='请输入英文字母，姓名之间用空格隔开'
+                                                       data-bind="value:model.englishName" class="k-textbox">
+                                                <span data-for="name" class=".k-invalid-msg"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.birthdate"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="birthDate" name="birthDate"
+                                                       data-bind="value:model.birthDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.sex"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" type="text" id="sex" name="sex"
+                                                       data-bind="source: genderList, value: model.sex" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.nationality"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="nationality" name="nationality"
+                                                       data-bind="value:model.nationality">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.height"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="height" name="height"
+                                                       data-bind="value:model.height">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.weight"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="weight" name="weight"
+                                                       data-bind="value:model.weight">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.education"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="education" name="education"
+                                                       data-bind="source: diplomaList, value: model.education" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.marriageStatus"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="marriageStatus" name="marriageStatus"
+                                                       data-bind="source: maritalList, value: model.marriageStatus" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.phone"/><span style="color:red">*</span>:</label>
+
+                                            <div class="col-sm-2">
+                                                <input type="text" style="width:100%" id="phoneCode"
+                                                       data-bind="source: phoneCodes, value: model.phoneCode">
+                                            </div>
+
+                                            <div class="col-sm-2">
+                                                <input type="text" style="width:100%;" id="phone"
+                                                       data-bind="value:model.phone" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.email"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" type="email" id="email" name="Email"
+                                                       data-bind="value:model.email" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.americanCitizenFlag"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" style="width:100%" id="americanCitizenFlag" name="americanCitizenFlag"
+                                                       data-bind="source: YNList, value: model.americanCitizenFlag" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.identitynumber"/><span style="color:red">*</span>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" required validationMessage="<@spring.message "fms.validate.identifynumber"/>" style="width:100%" id="identityNumber" name="identityNumber"
+                                                       data-bind="value:model.identityNumber" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.identityeffectivedate"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="identityEffectiveDate"
+                                                       name="identityeffectivedate"
+                                                       data-bind="value:model.identityEffectiveDate" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.certificatetype"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="certificateType" name="certificateType"
+                                                       data-bind="source: cartificateList, value: model.certificateType" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.certificatenumber"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" name="certificateNumber"
+                                                       data-bind="value:model.certificateNumber" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.certificateeffectivedate"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="certificateEffectiveDate"
+                                                       name="certificateeffectivedate"
+                                                       data-bind="value:model.certificateEffectiveDate" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.identityaddress"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:34%;float:left" id="identityNation" data-bind="value:model.identityNation" class=".k-invalid-msg">
+                                                <input style="width:32%;float:left" id="identityProvince" data-bind="value:model.identityProvince" class=".k-invalid-msg">
+                                                <input style="width:34%;float:left" id="identityCity" data-bind="value:model.identityCity" class=".k-invalid-msg">
+                                                <input style="width:100%" id="identityAddress" placeholder="详细地址"
+                                                       data-bind="value:model.identityAddress" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.identityflag"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="identityFlag" name="identityFlag"
+                                                       data-bind="source: YNList, value: model.identityFlag" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.postaddress"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:34%;float:left" id="postNation" data-bind="value:model.postNation" class=".k-invalid-msg">
+                                                <input style="width:32%;float:left" id="postProvince" data-bind="value:model.postProvince" class=".k-invalid-msg">
+                                                <input style="width:34%;float:left" id="postCity" data-bind="value:model.postCity" class=".k-invalid-msg">
+                                                <input style="width:100%" id="postAddress" class="k-textbox" placeholder="详细地址"
+                                                       data-bind="value:model.postAddress">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.companyname"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" name="companyName"
+                                                       data-bind="value:model.companyName" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.industry"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" name="industry"
+                                                       data-bind="value:model.industry" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.companyaddress"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:34%;float:left" id="companyNation" data-bind="value:model.companyNation" class=".k-invalid-msg">
+                                                <input style="width:32%;float:left" id="companyProvince" data-bind="value:model.companyProvince" class=".k-invalid-msg">
+                                                <input style="width:34%;float:left" id="companyCity" data-bind="value:model.companyCity" class=".k-invalid-msg">
+                                                <input style="width:100%" id="companyAddress" class="k-textbox" placeholder="详细地址"
+                                                       data-bind="value:model.companyAddress">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.job"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" name="job" data-bind="value:model.job"
+                                                       class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.position"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" name="position"
+                                                       data-bind="value:model.position" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message
+                                                "fms.ctmcustomer.income"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="income" name="income"
+                                                       data-bind="value:model.income">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <legend>财力证明</legend>
+                <div style="width:98%;margin-top: 5px;">
+                    <form class="form-horizontal">
+                        <div class="row" style="margin-left: 5px;">
+                            <div class="form-group">
+                                <div class="col-sm-12" style="float: left;">
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.premiumsource"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" name="premiumSource" data-bind="value:model.premiumSource" class="k-textbox">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.amountpermonth"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" type="text" id="amountPerMonth" name="amountPerMonth"
+                                                       data-bind="value:model.amountPerMonth" >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.currentassets"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="currentAssets" name="currentAssets"
+                                                       data-bind="value:model.currentAssets" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.fixedassets"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="fixedAssets" name="fixedAssets"
+                                                       data-bind="value:model.fixedAssets" >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.premiumrate"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="premiumRate" name="premiumRate"
+                                                       data-bind="value:model.premiumRate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.liabilities"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="liabilities" name="liabilities"
+                                                       data-bind="value:model.liabilities">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <legend>保单信息</legend>
+                <div style="width:98%;margin-top: 5px;">
+                    <form class="form-horizontal">
+                        <div class="row" style="margin-left: 5px;">
+                            <div class="form-group">
+                                <div class="col-sm-12" style="float: left;">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-1"></div>
+                                            <label class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.secure1"/>:</label>
+                                            <div class="col-sm-4" style="text-align: left">
+                                                <input type="text" style="width:100%" id="badFlag" data-bind="value:model.badFlag" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-1"></div>
+                                            <label class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.secure2"/>:</label>
+                                            <div class="col-sm-4">
+                                                <input style="width:100%" id="compensateFlag" data-bind="value:model.compensateFlag" class=".k-invalid-msg">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="secureallFlag" style="display:none">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.badinsurancename"/>:</label>
+                                                <div class="col-sm-4" style="text-align: left">
+                                                    <input type="text" style="width:100%" id="badInsuranceName" name="badinsurancename"
+                                                           data-bind="value:model.badInsuranceName" class="k-textbox">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.badinsurancetype"/>:</label>
+                                                <div class="col-sm-4">
+                                                    <input style="width:100%" id="badInsuranceType" name="badInsuranceType"
+                                                           data-bind="value:model.badInsuranceType" class="k-textbox">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-4 control-label"><@spring.message "fms.ctmcustomer.badeffactivedate"/>:</label>
+                                                <div class="col-sm-4" style="text-align: left">
+                                                    <input type="text" style="width:100%" id="badEffactiveDate" name="badEffactiveDate"
+                                                           data-bind="value:model.badEffactiveDate">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 用于初始化时间控件 -->
+                <script>
+                    $("#birthDate").kendoDatePicker();
+//                    $("#identityEffectiveDate").kendoDatePicker();
+//                    $("#certificateEffectiveDate").kendoDatePicker();
+                    $("#badEffactiveDate").kendoDatePicker();
+                </script>
+
+                <legend>健康信息</legend>
+                <div style="width:98%;margin-top: 5px;">
+                    <form class="form-horizontal">
+                        <div class="row" style="margin-left: 5px;">
+                            <div class="form-group">
+                                <div class="col-sm-12" style="float: left;">
+                                    <table id='tables' class="table table-bordered table-striped"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center" style="margin-top:10px">
+                            <span class="btn btn-success" data-bind="click:save" type="submit">
+                                <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                            <span class="btn btn-danger" data-bind="click:closeWin" type="button">
+                                <i class="fa fa-reply" aria-hidden="true"></i><@spring.message "hap.cancel"/></span>
+                        </div>
+                    </form>
+                </div>
+                <!-- 动态生成 html 健康信息  -->
+                <script>
+                    healthCreate();
+                    function healthCreate(){
+                        for(var i in healythFields){
+                            var fieldId =  healythFields[i].fieldId;
+                            var fieldDesc = healythFields[i].fieldDesc;
+                            var content = healythFields[i].content;
+                            var html = "<tr>" +
+                                "<td class='col-xs-10'>"+
+                                    "<label style='text-align: left' class='col-xs-12 control-label'>"+content+"</label>" +
+                                    "<div class='col-xs-12'> <input id='"+fieldDesc+"' type='text' placeholder='请详述' style='width:100%' class='k-textbox' data-bind=\"value:model."+fieldDesc+"\"></div></td>" +
+                                "<td class='col-xs-2'>" +
+                                    "<input type='radio' name='"+fieldId+"' id='"+fieldId+"1' value='Y' data-bind=\"checked:model."+fieldId+"\" style='margin-left: 20px' class='k-radio' > <label onclick=\"itemChange('"+fieldDesc+"','Y')\" class='k-radio-label' for='"+fieldId+"1'>是</label>"+
+                                    "<input type='radio' name='"+fieldId+"' id='"+fieldId+"2' value='N' data-bind=\"checked:model."+fieldId+"\" style='margin-left: 20px' class='k-radio' > <label onclick=\"itemChange('"+fieldDesc+"','N')\" class='k-radio-label' for='"+fieldId+"2'>否</label>"+
+                                "</td></tr>";
+
+                            //添加到表格
+                            $('#tables').append(html)
+                        }
+                    }
+                </script>
+
+
+                <legend>家庭成员</legend>
+                <div style="width:100%;margin-top: 5px;" id="family">
+                    <div class="pull-left" id="toolbar-btn" style="padding-bottom:20px;">
+                        <!--新建-->
+                        <span type="button" data-bind="click:createFunction" class="btn btn-primary"
+                              style="float:left;margin-right:5px"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+                        <!--保存-->
+                        <span data-bind="click:saveFunction" class="btn btn-success"
+                              style="float:left;margin-right:5px"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                        <!--取消-->
+                        <span type="button" data-bind="click:cancelFunction" class="btn btn-default"
+                              style="float:left;margin-right:5px"><i class="fa fa-reply" aria-hidden="true"></i><@spring.message "hap.cancel"/></span>
+                        <!--删除-->
+                        <span type="button" data-bind="click:deleteFunction" class="btn btn-danger"
+                              style="float:left;"><i class="fa fa-trash-o" aria-hidden="true"></i><@spring.message "hap.delete"/></span>
+                    </div>
+                    <script>kendo.bind($('#toolbar-btn'), familyVM);</script>
+                    <div class="table" style="clear: both;font-size: 10px">
+                        <div id="familyGrid" style="bottom: 10px"></div>
+                    </div>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?genderList=HR.EMPLOYEE_GENDER"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?YNList=SYS.YES_NO"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?cartificateList=CTM.CERTIFICATE_TYPE"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?nationList=PUB.NATION&provinceList=PUB.PROVICE&cityList=PUB.CITY"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?diplomaList=PUB.EDUCATION"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?maritalList=CTM.MARITAL_STATUS"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?phoneCodes=PUB.PHONE_CODE"></script>
+
+
+    <script>
+    //获取主数据
+    $.ajax({
+        url:"${base.contextPath}/fms/ctm/customer/query?customerId="+customerId,
+//      sync:false,
+        dataType:"json",
+        contentType:"application/json",
+        success:function (data) {
+            for (var k in data.rows[0]) {
+                if(k == 'premiumRate' && data.rows[0][k]) {
+                    var premiumRate = parseFloat(data.rows[0][k]) * 100;
+                    viewModel.model.set(k, premiumRate);
+                }else{
+                    viewModel.model.set(k, data.rows[0][k]);
+                }
+            }
+            //当界面价加载的时候
+//            $.clbFormatNum('#income');
+//            $.clbFormatNum('#amountPerMonth');
+//            $.clbFormatNum('#currentAssets');
+//            $.clbFormatNum('#fixedAssets');
+//            $.clbFormatNum('#liabilities');
+
+            //保单信息是否显示
+            badInsurance(viewModel.model);
+
+            //健康信息初始化
+            healthInit();
+        }
+    });
+
+    //校验
+    $("#page-content").kendoValidator({
+        messages: {
+            email: '<@spring.message "fms.ctmcustomer.emailvali"/>',
+        }
+    });
+
+    /**
+     * 下拉列表 kendoDropDownList
+     *
+     * 性别
+     * 国籍
+     * 是否美国居民
+     * 证据类型
+     * 是否以身份证作地址
+     * 文凭
+     * 婚姻状况
+     * 电话
+     *
+     */
+    $('#sex').kendoDropDownList({
+//        optionLabel: "-请选择-",
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: genderList,
+    });
+    $('#nationality').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: nationList,
+    });
+    $('#americanCitizenFlag').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: YNList,
+    });
+    $('#certificateType').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: cartificateList,
+    });
+    $('#identityFlag').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: YNList,
+    });
+    $('#education').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: diplomaList,
+    });
+    $('#marriageStatus').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: maritalList,
+    });
+    $("#phoneCode").kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: phoneCodes,
+        change: function(e) {
+            $('#phone').val('');
+        },
+    });
+
+    /**
+     * 数据类型 kendoNumericTextBox
+     *
+     * 身高
+     * 体重
+     * 月收入
+     * 百分比
+     *
+     */
+    $("#height").kendoNumericTextBox({
+        format: "#.00 cm",
+        decimals: 3,
+        min:1,
+        max: 300,
+
+    });
+    $("#weight").kendoNumericTextBox({
+        format: "#.00 kg",
+        decimals: 3,
+        min:1,
+        max: 300,
+    });
+    $("#premiumRate").kendoNumericTextBox({
+        format: "#.00 '%'",
+        step:0.1,
+        min:0,
+        max:100
+    });
+
+
+    /**
+     * 替换掉的
+     */
+    $("#income").kendoNumericTextBox({
+        decimals: 0,
+        step:1,
+    });
+    $("#amountPerMonth").kendoNumericTextBox({
+        decimals: 0,
+        step:1,
+    });
+    $("#currentAssets").kendoNumericTextBox({
+        decimals: 0,
+        step:1,
+    });
+    $("#fixedAssets").kendoNumericTextBox({
+        decimals: 0,
+        step:1,
+    });
+    $("#liabilities").kendoNumericTextBox({
+        decimals: 0,
+        step:1,
+    });
+
+    //三级联动延迟300毫秒执行
+    setTimeout(function(){
+        var identityNation = {elementId: '#identityNation', source: nationList, },
+            identityProvince = {elementId: '#identityProvince', source: provinceList, },
+            identityCity = {elementId: '#identityCity', source: cityList, };
+        $.clbCascade(identityNation, identityProvince, identityCity);
+
+        var postNation = {elementId: '#postNation', source: nationList, },
+            postProvince = {elementId: '#postProvince', source: provinceList, },
+            postCity = {elementId: '#postCity', source: cityList, };
+        $.clbCascade(postNation, postProvince, postCity);
+
+        var companyNation = {elementId: '#companyNation', source: nationList, },
+            companyProvince = {elementId: '#companyProvince', source: provinceList, },
+            companyCity = {elementId: '#companyCity', source: cityList, };
+        $.clbCascade(companyNation, companyProvince, companyCity);
+    },500);
+
+    //保费资金以规定格式呈现
+//    $("#income").bind("blur", function () { $.clbFormatNum('#income');return false; });
+//    $("#amountPerMonth").bind("blur", function () { $.clbFormatNum('#amountPerMonth');return false; });
+//    $("#currentAssets").bind("blur", function () { $.clbFormatNum('#currentAssets');return false; });
+//    $("#fixedAssets").bind("blur", function () { $.clbFormatNum('#fixedAssets');return false; });
+//    $("#liabilities").bind("blur", function () { $.clbFormatNum('#liabilities');return false; });
+
+    //电话号码校验
+    $("#phone").on("blur", function(){
+        var phone = viewModel.model.phone, phoneCode = viewModel.model.phoneCode;
+        var reg = /^[0-9]{11}$/;
+        switch(phoneCode){
+            case '86': reg = /^[0-9]{11}$/; break;
+            case '00852': reg = /^[0-9]{8}$/; break;
+            case '00853': reg = /^[0-9]{8}$/; break;
+            case '00886': reg = /^[0-9]{9}$/; break;
+            default: break;
+        }
+        if(!phone || !phoneCode){
+            $("#phoneError").remove();
+            phoneErrorMsg = '电话号码和区号不能为空';
+            var html='<span id="phoneError" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" role="alert"><span class="k-icon k-warning"> </span>'+phoneErrorMsg+'</span>';
+            $("#phone").parent().append(html);
+            phoneErrorFlag = false;
+        }else if(!reg.test(phone)){
+            $("#phoneError").remove();
+            phoneErrorMsg = '电话号码格式不正确';
+            var html='<span id="phoneError" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" role="alert"><span class="k-icon k-warning"> </span>'+phoneErrorMsg+'</span>';
+            $("#phone").parent().append(html);
+            phoneErrorFlag = false;
+        }else{
+            $("#phoneError").remove();
+            phoneErrorMsg = '';
+            phoneErrorFlag = true;
+        }
+    });
+
+    /**
+     * 保单隐藏或展示
+     */
+    function badInsurance(item){
+        if(item.badFlag == 'Y' || item.compensateFlag == 'Y'){
+            $("#secureallFlag").show();
+        }
+        $('#badFlag').kendoDropDownList({
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: YNList,
+            change:function(e){
+                if($('#badFlag').val() == 'N' && $('#compensateFlag').val()=='N'){
+                    $("#secureallFlag").hide();
+                    viewModel.model.set('badInsuranceName',null);
+                    viewModel.model.set('badInsuranceType',null);
+                    viewModel.model.set('badEffactiveDate',null);
+                }else{
+                    $("#secureallFlag").show();
+                }
+            }
+        });
+        $('#compensateFlag').kendoDropDownList({
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: YNList,
+            change:function(e){
+                if($('#badFlag').val() == 'N' && $('#compensateFlag').val()=='N'){
+                    $("#secureallFlag").hide();
+                    viewModel.model.set('badInsuranceName',null);
+                    viewModel.model.set('badInsuranceType',null);
+                    viewModel.model.set('badEffactiveDate',null);
+                }else{
+                    $("#secureallFlag").show();
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 健康问题初始化
+     */
+    function healthInit(){
+        for(var i in healythFields){
+            var fieldId =  healythFields[i].fieldId;
+            var fieldDesc = healythFields[i].fieldDesc;
+            if (viewModel.model[fieldId] == "Y") {
+                $('#'+fieldDesc).show();
+            } else {
+                $('#'+fieldDesc).hide();
+                viewModel.model.set(fieldId,"N");
+            }
+        }
+    }
+
+    /**
+     * 健康问题 显示或隐藏
+     * @param fieldDesc
+     * @param flag
+     */
+    function itemChange(fieldDesc,flag){
+        if (flag == "Y") {
+            $('#'+fieldDesc).show();
+        } else {
+            $('#'+fieldDesc).hide();
+            viewModel.model.set(fieldDesc,null);
+        }
+    }
+
+
+    //主表数据
+    kendo.bind($('#page-content'), viewModel);
+    //家庭成员数据
+    kendo.bind($('#family'), familyVM);
+
+
+    var subBaseUrl = "${base.contextPath}/fms/ctm/customer/family";
+    var familyDS = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: subBaseUrl+"/query",
+                dataType: "json"
+            },
+            create: {
+                url: subBaseUrl+"/submit",
+                contentType: "application/json",
+                type: "POST"
+            },
+            update: {
+                url: subBaseUrl+"/submit",
+                contentType: "application/json",
+                type: "POST"
+            },
+            destroy: {
+                url: subBaseUrl+"/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    for (var i = 0 ; i < options.models.length; i++) {
+                        options.models[i].customerId = customerId;
+                    }
+                    var datas = Hap.prepareSubmitParameter(options, type);
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(familyVM.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "customerFamilyId",
+                fields: {
+                    memberName: {  validation: { required: true } },
+                    relationship: {  validation: { required: true } },
+                    age: {validation: {required: true } , defaultValue:0},
+                    birthday:{editable:true,type:'date'},
+                    identityNumber:{validation: true}
+                },
+            }
+        }
+    });
+
+    var familyGrid = $("#familyGrid").kendoGrid({
+        dataSource : familyDS,
+        navigatable: true,
+        height: '240px',
+        resizable: true,
+        scrollable: true,
+//      rownumber: true,    //序号
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "memberName",
+                title: '<@spring.message "fms.CtmCustomerFamily.memberName"/>',
+                width: 120
+            }, {
+                field: "relationship",
+                title: '<@spring.message "fms.CtmCustomerFamily.relationship"/>',
+                width: 120,
+            }, {
+                field: "age",
+                title: '<@spring.message "fms.CtmCustomerFamily.age"/>',
+                width: 120,
+                editor: function(container, options){
+                    $('<input  name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            step: 1,
+                            min:0,
+                            max:200
+                        });
+                }
+            }, {
+                field: "birthday",
+                title: '<@spring.message "fms.ctmcustomer.birthdate"/>',
+                format:"{0:yyyy-MM-dd}",
+                width: 120,
+            },{
+                field: "identityNumber",
+                title: '<@spring.message "fms.CtmCustomerFamily.identityNumber"/>',
+                width: 120,
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" validationMessage="<@spring.message "fms.validate.identifynumber"/>" name="' + options.field + '"/>').appendTo(container)
+                }
+
+            },
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+//    Hap.autoResizeGrid("#familyGrid");
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<#include "../include/header.html">
+
+
+<script type="text/javascript">
+	json = '${RequestParameters.json!}';
+	console.log(json);
+	if(json){
+		var morePictrueTextTemp = JSON.parse( json );
+	}
+	
+	/* morePictrueTextTemp = [{"media_id":"MpFoRCXPbDRRazrQWPNDt67sONiwGF9fu2DUIeXOJVk",
+		"thumbUrl":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afCKQKI1UcW5oicXv90ThCjpu6iaQdEoiaxYG0FsnSxARzBwA39JAkehyBjvMyiaibW0qRnmjW4VydkYjGw/0",
+			"title":"多图werfw"},
+	                       {"media_id":"MpFoRCXPbDRRazrQWPNDt67sONiwGF9fu2DUIeXOJVk",
+				"thumbUrl":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afCKQKI1UcW5oicXv90ThCjpu6iaQdEoiaxYG0FsnSxARzBwA39JAkehyBjvMyiaibW0qRnmjW4VydkYjGw/0",
+				"title":"多图无色无符文地方"},
+	                       {"media_id":"MpFoRCXPbDRRazrQWPNDt67sONiwGF9fu2DUIeXOJVk",
+					"thumbUrl":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afCKQKI1UcW5oicXv90ThCjpu6iaQdEoiaxYG0FsnSxARzBwA39JAkehyBjvMyiaibW0qRnmjW4VydkYjGw/0",
+					"title":"多图"}];
+					console.log(morePictrueTextTemp); */
+		function morePictrueText(){
+			if(morePictrueTextTemp){
+				for(var j =0;j<morePictrueTextTemp.length;j++){
+					var title = morePictrueTextTemp[j].title;
+					var thumbUrl = morePictrueTextTemp[j].thumbUrl;
+					tempArr = thumbUrl.split("?");
+				    var tempUrl = tempArr[0];
+					if(title.length>6){
+						var temp = title.substring(0,6);
+						temp += "...";
+						title = temp;
+					}
+					if(j==0){
+						$("#previewImg").show().attr('src',tempUrl);
+						document.getElementById("previewSpan").innerText = title;
+					}else{
+						var html ='';
+						html += '<div class="previewMoveDiv"><HR style="FILTER: alpha(opacity=100,finishopacity=0,style=2);border:1px solid #7FFF00" width="83%" color=#7FFF00 SIZE=2>'+
+								'<div style="position:relative;margin: 25px;margin-top: 0px;height:93px;margin-bottom: 0px;border: 1px solid #FF00FF;">'+
+									'<span style="position:absolute;top:25px;width: 135px;height: 20px;padding-bottom: 50px;margin: 5px;">'+title+'</span>'+
+									'<div style="position:absolute;top:0px;left:155px;display: inline-block;width: 80px;height: 80px;margin: 5px;">'+
+										'<img width="80px" height="80px" src="'+tempUrl+'"/>'+
+									'</div>'+
+								'</div></div>';
+						$("#previewTags").append(html);
+					}
+				}
+			}
+		}
+</script>
+<body onload="morePictrueText()">
+<div ><!-- style="background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;" -->
+	<div style="height: 100px;text-align:right;">
+		<span class="btn btn-default" type="button" style="margin-top: 50px;margin-right: 500px" onclick="quxiaoAttachment2()"><i class="fa fa-reply" style="margin-right:5px;"></i>返回</span>
+	</div>
+	<div style="display: inline-block;width: 550px;">
+	</div>
+	<div style="display: inline-block;width: 300px;position:relative;border: 1px solid #7FFF00"><!-- height: 500px; -->
+		<div style="margin: 25px;margin-bottom: 0px;">
+			<img width="250px" height="180px" id="previewImg" src="" />
+			<span id="previewSpan" style="position:absolute;top:170px;height:30px;width: 250px;border: red;background:#000;color:#fff;text-align: center;filter:alpha(opacity=80);-moz-opacity:0.5;opacity:0.5;">
+				
+			</span>
+		</div>
+		<!--<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=1)" width="83%" color=#987cb9 SIZE=1>
+		<div style="position:relative;margin: 25px;margin-top: 0px;height:93px;margin-bottom: 0px;border: 1px solid blue;">
+			<span style="position:absolute;top:10px;border: 1px solid red;width: 135px;height: 20px;padding-bottom: 50px;margin: 5px;">
+				隔热sdfwesgwewefwefwe
+			</span>
+			<div style="position:absolute;top:0px;left:155px;display: inline-block;border: 1px solid blue;width: 80px;height: 80px;margin: 5px;">
+				<img width="80px" height="80px" src="http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afCKQKI1UcW5oicXv90ThCjpu6iaQdEoiaxYG0FsnSxARzBwA39JAkehyBjvMyiaibW0qRnmjW4VydkYjGw/0" />
+			</div>
+		</div>-->
+		<div id="previewTags"></div>
+	</div>
+</div>
+<script type="text/javascript">
+
+
+</script>
+</body>
+</html>

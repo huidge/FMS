@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetPeriodHeadMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetPeriodHead">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL" />
+        <result column="ACCOUNTANT_NAME" property="accountantName" jdbcType="VARCHAR" />
+        <result column="PARTY_ID" property="partyId" jdbcType="DECIMAL" />
+        <result column="PARTY_TYPE" property="partyType" jdbcType="VARCHAR" />
+        <result column="PARTY_NAME" property="partyName" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<select id="selectAllFiled" parameterType="clb.core.forecast.dto.FetPeriodHead" resultMap="BaseResultMap">
+		SELECT * FROM (SELECT
+			ffph.HEAD_ID,
+			ffph.ACCOUNTANT_NAME,
+			ffph.PARTY_ID,
+			ffph.PARTY_TYPE,
+			CASE ffph.PARTY_TYPE
+		WHEN 'SUPPLIER' THEN
+			FSS. NAME
+		WHEN 'CHANNEL' THEN
+			FCC.CHANNEL_NAME
+		END PARTY_NAME 
+		FROM 
+			fms_fet_period_head ffph
+		LEFT JOIN fms_spe_supplier FSS ON (
+			ffph.PARTY_ID = FSS.SUPPLIER_ID
+			AND ffph.PARTY_TYPE = 'SUPPLIER'
+		)
+		LEFT JOIN fms_cnl_channel fcc ON (
+			ffph.PARTY_ID = fcc.CHANNEL_ID
+			AND ffph.PARTY_TYPE = 'CHANNEL'
+		)) ccc 
+		<where>
+			<if test="headId != null">
+				ccc.HEAD_ID = #{headId}
+			</if>
+			<if test="accountantName != null and accountantName != ''">
+				ccc.ACCOUNTANT_NAME LIKE concat("%",#{accountantName},"%")
+			</if>
+			<if test="partyName != null and partyName != ''">
+				ccc.PARTY_NAME LIKE concat("%",#{partyName},"%")
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectPeriodHeadByPeriod" parameterType="clb.core.forecast.dto.FetPeriod" resultType="clb.core.forecast.dto.FetPeriodHead">
+		SELECT
+			ffph.PARTY_TYPE partyType,
+			ffph.PARTY_ID partyId
+		FROM
+			fms_fet_period_head ffph,
+			fms_fet_period ffp
+		WHERE
+			ffp.HEAD_ID = ffph.HEAD_ID
+		AND ffp.PERIOD_ID = #{periodId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wzl on 2017/6/15.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpVerificationCodeMapper">
+    <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpVerificationCode">
+        <result column="VERIFICATION_CODE_ID" property="verificationCodeId" jdbcType="VARCHAR" />
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <update id="disableOtherCode" parameterType="java.lang.String">
+        UPDATE woa_verification_code wvc SET wvc.ENABLE_FLAG = 'N' WHERE wvc.PHONE = #{phone}
+    </update>
+
+    <select id="findByPhoneAndEnableFlag" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM woa_verification_code WHERE PHONE = #{phone} AND ENABLE_FLAG = 'Y'
+    </select>
+</mapper>

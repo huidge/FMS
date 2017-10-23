@@ -1,0 +1,869 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/lib/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="${base.contextPath}/clb/common/clbCode?userType=NOTIFICATION.USER_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?demoStatus=NOTIFICATION.DEMO_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?redirectPage=NOTIFICATION.REDIRECT_PAGE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?webchatApi=NOTIFICATION.WEBCHAT_API" type="text/javascript"></script>
+
+<script type="text/javascript">
+    
+    //var isedit = '0' == '1';
+    viewModel = kendo.observable({
+        model: {
+        },
+    	userType: userType,
+    	demoStatus: demoStatus,
+    	redirectPage: redirectPage,
+    	//webchatApi: webchatApi,
+    	
+	    save: function(){
+	    	if(document.getElementById("platformFlag").checked){
+	    		//debugger;
+	    		viewModel.model.platformFlag = "Y" ;
+	    		if(viewModel.model.platformContent==''||viewModel.model.platformContent==null){
+	                kendo.ui.showInfoDialog({
+	                    message:'平台内推送内容不能为空'
+	                })
+	                return;
+	    		}
+	    		console.log(viewModel.model.platformFlag);
+	    	}else{
+	    		viewModel.model.platformFlag = "N" ;
+	    		viewModel.model.platformContent = "";
+	    		viewModel.model.redirectPage = "";
+	    	}
+	    	if(document.getElementById("messageFlag").checked){
+	    		viewModel.model.messageFlag = "Y" ;
+	    		if(viewModel.model.messageContent==''||viewModel.model.messageContent==null){
+	                kendo.ui.showInfoDialog({
+	                    message:'短信推送内容不能为空'
+	                })
+	                return;
+	    		}
+	    	}else{
+	    		viewModel.model.messageFlag = "N" ;
+	    		viewModel.model.messageContent = "";
+	    	}
+	    	if(document.getElementById("emailFlag").checked){
+	    		viewModel.model.emailFlag = "Y" ;
+                if(viewModel.model.emailSubject==''||viewModel.model.emailSubject==null){
+                    kendo.ui.showInfoDialog({
+                        message:'邮件主题不能为空'
+                    })
+                    return;
+                }
+	    		if(viewModel.model.emailContent==''||viewModel.model.emailContent==null){
+	                kendo.ui.showInfoDialog({
+	                    message:'邮件内容不能为空'
+	                })
+	                return;
+	    		}
+	    	}else{
+	    		viewModel.model.emailFlag = "N" ;
+	    		viewModel.model.emailSubject = "";
+	    		viewModel.model.emailContent = "";
+	    	}
+	    	if(document.getElementById("importantFlag").checked){
+	    		viewModel.model.importantFlag = "Y" ;
+	    	}else{
+	    		viewModel.model.importantFlag = "N" ;
+	    	}
+	    	if(document.getElementById("webchatFlag").checked){
+	    		viewModel.model.webchatFlag = "Y" ;
+	    		if(viewModel.model.originalId==''||viewModel.model.originalId==null){
+	                kendo.ui.showInfoDialog({
+	                    message:'微信公众号不能为空'
+	                })
+	                return;
+	    		};
+	    		if(viewModel.model.webchatApi==''||viewModel.model.webchatApi==null){
+	                kendo.ui.showInfoDialog({
+	                    message:'微信推送API不能为空'
+	                })
+	                return;
+	    		};
+	    		if($(".dataDiv")){
+	    			var num = document.getElementsByName("dataDiv").length;
+			        if(num>0){
+			        	var whtContent = "{";
+				        for(var i=0;i< num;i++){
+				        	var dataName = document.getElementsByName("dataDiv")[i].getElementsByTagName("span")[0].innerText;
+				        	var dataValue = document.getElementsByName("dataDiv")[i].getElementsByTagName("input")[0].value;
+				        	var dataColor = document.getElementsByName("dataDiv")[i].getElementsByTagName("input")[1].value;
+				        	if(!dataValue){
+				        		alert(
+					                '第一列的模板推送内容不能为空'
+					         	);
+				        		return;
+				        	}else{
+				        		var dataString = dataTemp(dataName,dataValue,dataColor);
+				        		whtContent += dataString;
+				        		if((i+1) != num){
+				        			whtContent += ','
+				        		}
+				        	}
+				        }
+				        whtContent += "}";
+				        console.log(whtContent);
+				        viewModel.model.webchatContent = whtContent;
+				        
+			        }
+			        function dataTemp(dataName,dataValue,dataColor){
+			        	var dataString =   '"'+ dataName +'":{'+
+								           '"value":"'+ dataValue +'"';
+			            if(dataColor){
+			            	dataString +=  ',"color":"'+ dataColor +'"';	
+			            };
+		        			dataString +=  '}';
+	        			return dataString;
+			        }
+	    		};
+	    		if(viewModel.model.whtContent){
+		    		if(viewModel.model.webchatContent==''||viewModel.model.webchatContent==null){
+		                kendo.ui.showInfoDialog({
+		                    message:'微信推送内容编辑有误，请重新选择公众号配置好的模板或取消微信推送'
+		                })
+		                return;
+		    		};
+	    		}
+	    	}else{
+	    		viewModel.model.webchatFlag = "N" ;
+	    		viewModel.model.originalId = "";
+	    		viewModel.model.webchatApi ="";
+	    		viewModel.model.webchatContent = "";
+	    		viewModel.model.whtContent = "";
+	    	} 
+	    	console.log(viewModel.model);
+	    	
+	    	var validator = $("#mainform").data("kendoValidator");
+			if (validator.validate()) {
+		    	//判断是新建还是修改
+				if (viewModel.model.templateId) {
+					//修改
+					Hap.submitForm({
+						url : '${base.contextPath}/fms/ntn/notification/template/submit',
+						formModel : viewModel.model,
+						success : function(data) {
+							if (data.success) {
+								kendo.ui.showInfoDialog({
+		                             title: $l('hap.tip.info'),
+		                             message: $l('hap.tip.success')
+		                         }).done(function (event) {
+		                             if (event.button == 'OK') {
+		                            	 // window.parent.location.reload();
+		                            	 window.parent.$("#dialog").data("kendoWindow").close();
+		                            }
+		                         });
+							} else {
+								kendo.ui.showErrorDialog({
+									message : "失败"
+								});
+							}
+	
+						}
+					})
+				} else {
+					//添加
+					//debugger;
+					console.log(viewModel.model);
+					$.ajax({
+			           type: "POST",
+			           async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+			           url: "${base.contextPath}/fms/ntn/notification/template/selectAll",
+			           data: {templateCode: viewModel.model.templateCode},
+			           success: function (json) {
+			           	//jsons=json;
+			           	console.log(json);
+			           	if(json.rows.length != 0){
+			           		kendo.ui.showErrorDialog({
+								message : "模板代码不能重复"
+							});
+	           				return;
+			           	}else{
+			           		Hap.submitForm({
+								url : '${base.contextPath}/fms/ntn/notification/template/add',
+								formModel : viewModel.model,
+								success : function(data) {
+									if (data.success) {
+										kendo.ui.showInfoDialog({
+				                             title: $l('hap.tip.info'),
+				                             message: $l('hap.tip.success')
+				                         }).done(function (event) {
+				                             if (event.button == 'OK') {
+				                            	 // window.parent.location.reload();
+				                            	 window.parent.$("#dialog").data("kendoWindow").close();
+				                            }
+				                         });
+									} else {
+										kendo.ui.showErrorDialog({
+											message : "失败"
+										});
+									}
+								}
+							})
+			           	  }
+			           }
+			       });
+				} 
+			}
+		},
+		closeWin: function(e){
+	    	window.parent.$("#dialog").data("kendoWindow").close(); 
+	    } 
+    });
+    
+    var backgroundAppid = "";
+    var text = "";
+    function selectAccountLov(){
+        $.ajax({
+        	type:"POST",
+        	url:"${base.contextPath}/clb/common/lov/WHT_ACCOUNT",
+        	data:{},
+        	success: function(e) {
+        		accountData = e.rows;
+        		viewModel.set("accountData", accountData);
+        	}
+        }); 
+	}
+	function selectTemplateLov(){
+		$.ajax({
+            type: "POST",
+            url: "${base.contextPath}/fms/wht/official/account/cfg/selectcfgId",
+            data: {"originalId":viewModel.model.originalId},
+            dataType: "json",
+            success: function(json){
+            	console.log(json);
+           		if(json.rows){
+           			var cfgId = json.rows[0].cfgId;
+           			backgroundAppid = json.rows[0].backgroundAppid;
+	                if(cfgId){
+			             $.ajax({
+			            	type:"POST",
+			            	url:"${base.contextPath}/clb/common/lov/WHT_TEMPLATE?pagesize="+100,
+			            	data:{"cfgId":cfgId},
+			            	success: function(e) {
+			            		whtTemplateData = e.rows;
+			            		viewModel.set("whtTemplateData", whtTemplateData);
+			            	}
+			            }); 
+	                }
+           		}
+            }
+        });
+	}
+	
+    function selectTemplateContentLov(){
+        $.ajax({
+        	type:"POST",
+        	url:"${base.contextPath}/fms/wht/msg/template/editTemplateContent",
+        	data:{"whtTemplateId":viewModel.model.webchatApi,"backgroundAppid":backgroundAppid,"templateId":templateId},
+        	success: function(e) {
+        		console.log(e);
+        		if(e.rows){
+        			if(e.rows[0].templateId){
+        				viewModel.model.whtContent = e.rows[0].whtContent;
+        				text = e.rows[0].whtContent;
+       				    var json = e.rows[0].webchatContent;
+       				    addOk1(json);
+       				    addOpenData();
+        			}else{
+	        			viewModel.model.whtContent = e.rows[0].detailContent;
+	        			text = e.rows[0].detailContent;
+	        			console.log(text);
+	        			openData();
+        			}
+        		}
+        	}
+       });  
+	}
+    
+    var templateId = '${RequestParameters.templateId!}';
+    var templateCode=[];
+    var a = [];
+    if(templateId){
+    	viewModel.model.templateId = templateId;
+        $.ajax({
+           type: "POST",
+           async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+           url: "${base.contextPath}/fms/ntn/notification/template/query",
+           data: {templateId: viewModel.model.templateId},
+           success: function (json) {
+           	jsons=json;
+           	console.log(json);
+               var row = json.rows[0] || {};
+               for (var k in row) {
+                   viewModel.model.set(k, row[k]);
+               }
+           	   for(var i=0;i<json.rows.length;i++){
+           		   templateCode.push(json.rows[i].templateCode);
+           		   if(json.rows[i].webchatFlag=="Y"){
+           		   	   selectAccountLov();
+           		   };
+           		   if(json.rows[i].originalId && json.rows[i].webchatApi){
+           			   selectTemplateLov();
+        		   };
+			   }  
+           }
+       });
+    };
+    
+</script>
+
+<body>
+    <div id="page-content" >
+        <form id="mainform"  class="form-horizontal" method="post" enctype="application/json;charset=UTF-8">
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">模板代码</label>
+                    <div class="col-xs-5">
+                        <input id="templateCode" name="templateCode" type="text"  required  
+                        data-bind="value:model.templateCode" class="k-textbox" style="width: 100%;">
+                        <script type="text/javascript">
+                        	if(viewModel.model.templateId){
+                        		$("#templateCode").attr({'disabled':'disabled'});
+                        	}
+                        </script>
+                    </div>
+                    <div class="col-xs-4" >
+                        <span class="k-invalid-msg" data-for="templateCode"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">模板名称</label>
+                    <div class="col-xs-5">
+                        <input id="name" type="text" data-bind="value:model.name" class="k-textbox" required
+                               style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+			
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">通知对象</label>
+                    <div class="col-xs-5">
+                        <!-- <select data-role="combobox" data-value-primitive="true" id="object" required
+						data-text-field="meaning" data-value-field="value" style="width:100%;"
+						data-bind="source:userType, value:model.object"></select>   -->  
+						<input required style="width:100%" name="object" id="object" data-bind="value:model.object" >
+						<span data-for="certificateType" class=".k-invalid-msg"></span>   
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xs-12" style="margin-bottom: 13px">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">模板状态</label>
+                    <div class="col-xs-5">
+                        <!-- <select data-role="combobox" data-value-primitive="true" id="status" required
+						data-text-field="meaning" data-value-field="value" style="width:100%;"
+						data-bind="source:demoStatus, value:model.status"></select>  --> 
+						<input required style="width:100%" name="status" id="status" data-bind="value:model.status" >
+						<span data-for="certificateType" class=".k-invalid-msg"></span>      
+                    </div>
+                </div>
+            </div>
+			
+			<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="50%" color=#987cb9 SIZE=3>
+			
+			<div class="col-xs-12"  >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">平台内推送</label>
+                    <div class="col-xs-5">
+                       <!--  <input id="platformFlag" type="text" data-bind="value:model.platformFlag" class="k-textbox"
+                               style="width: 100%;"> -->
+                        <input type="checkbox" id="platformFlag" class="chkbx" style="margin-top:8px"  name="platformFlag" data-bind="checked:model.platformFlag" >
+                    </div>
+                </div>
+            </div>
+			
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">平台内推送内容</label>
+                    <div class="col-xs-5">
+                        <input id="platformContent" type="text" data-bind="value:model.platformContent" class="k-textbox"
+                               style="width: 100%;"> 
+                    </div>
+                </div>
+            </div>
+            
+			<div class="col-xs-12" style="margin-bottom: 13px">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">跳转页面</label>
+                    <div class="col-xs-5">
+                        <select data-role="combobox" data-value-primitive="true" id="redirectPage"
+						data-text-field="meaning" data-value-field="value" style="width:100%;"
+						data-bind="source:redirectPage, value:model.redirectPage"></select>       
+                    </div>
+                </div>
+            </div>
+			
+			<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="50%" color=#987cb9 SIZE=3>
+			
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">短信推送</label>
+                    <div class="col-xs-5">
+                        <input type="checkbox" id="messageFlag" class="chkbx" style="margin-top:8px"  name="messageFlag" data-bind="checked:model.messageFlag" >
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xs-12" style="margin-bottom: 13px">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">短信推送内容</label>
+                    <div class="col-xs-5">
+                        <input id="messageContent" type="text" data-bind="value:model.messageContent" class="k-textbox"
+                               style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+			
+			<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="50%" color=#987cb9 SIZE=3>
+			
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">微信推送</label>
+                    <div class="col-xs-5">
+                        <!-- <input id="webchatFlag" type="text" data-bind="value:model.webchatFlag" class="k-textbox"
+                               style="width: 100%;"> -->
+                        <input type="checkbox" id="webchatFlag" class="chkbx" style="margin-top:8px"  name="webchatFlag" data-bind="checked:model.webchatFlag" >
+                    </div>
+                </div>
+            </div>
+			<div class="col-xs-12" >
+                <div class="form-group" id="webchatHideDiv3" style="display: none">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">微信跳转url</label>
+                    <div class="col-xs-5">
+                        <input id="whtJumpUrl" type="text" data-bind="value:model.whtJumpUrl" class="k-textbox"
+                               style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+            
+			<div class="col-xs-12" >
+                <div class="form-group" id="webchatHideDiv1" style="display: none">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">微信公众号</label>
+                    <div class="col-xs-5">
+                        <!-- <input type="text" style="width: 100%;" id="tags" data-bind="value:model.originalId" > -->
+                        <select data-role="combobox" id="sel" data-value-primitive="true"  onchange="A(this)"
+											data-text-field="accountName" data-value-field="originalId" style="width:100%;"
+											data-bind="source:accountData, value:model.originalId"></select>
+                        <script type="text/javascript">
+	                        $("#webchatFlag").blur(function(){  // 失去焦点
+	                    		if(document.getElementById("webchatFlag").checked){
+	                    			selectAccountLov();
+	                    			$("#webchatHideDiv1").show();
+	                    			$("#webchatHideDiv2").show();
+	                    			$("#webchatHideDiv3").show();
+	                    		}else{
+	                    			//viewModel.set("accountData", "");
+	                    			viewModel.set("accountData", "");
+	                    			viewModel.set("whtTemplateData", "");
+	                    			viewModel.model.originalId = "";
+	                    			viewModel.model.webchatApi = "";
+	                    			viewModel.model.whtJumpUrl = "";
+	                    			document.getElementById("whtJumpUrl").value = "";
+	                    			cancleData();
+	                    			$("#webchatHideDiv1").hide();
+	                    			$("#webchatHideDiv2").hide();
+	                    			$("#webchatHideDiv3").hide();
+	                    		}
+	                    	});
+                        	
+	                        var sel = document.getElementById('sel');
+				            sel.addEventListener("change", A(sel), false);
+				            var originalId;
+				            function A(obj)
+				            {
+				                console.log(obj.value);
+				                originalId = obj.value;
+				                if(originalId){
+				                	cancleData();
+				                	viewModel.model.originalId = originalId;
+				                	selectTemplateLov();  
+				                }
+				                console.log(viewModel);
+				            }
+				            
+                        </script>
+                    </div>
+                </div>
+            </div>
+			
+			<div class="col-xs-12" >
+                <div class="form-group" id="webchatHideDiv2" style="display: none">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">微信推送API</label>
+                    <div class="col-xs-5">
+                        <!-- <select data-role="combobox" data-value-primitive="true" id="webchatApi"
+						data-text-field="meaning" data-value-field="value" style="width:100%;"
+						data-bind="source:webchatApi, value:model.webchatApi"></select>  -->
+						<select data-role="combobox" data-value-primitive="true" id="selB" onchange="B(this)"
+								data-text-field="templateName" data-value-field="whtTemplateId" style="width:100%;"
+								data-bind="source:whtTemplateData, value:model.webchatApi"></select>
+						<script type="text/javascript">
+							if(viewModel.model.webchatFlag=="Y"){
+	     	           		    $("#webchatHideDiv1").show();
+	     	        		    $("#webchatHideDiv2").show();
+	     	        		    $("#webchatHideDiv3").show();
+	                		};
+							var selB = document.getElementById('selB');
+							selB.addEventListener("change", B(selB), false);
+				            var whtTemplateId;
+				            function B(obj)
+				            {
+				                console.log(obj.value);
+				                whtTemplateId = obj.value;
+				                if(whtTemplateId){
+				                	cancleData();
+				                	viewModel.model.webchatApi = whtTemplateId;
+				                	if(backgroundAppid){
+				                		selectTemplateContentLov();  
+				                	}
+				                }
+				                console.log(viewModel);
+				            }
+						</script>      
+                    </div>
+                </div>
+            </div>
+			
+			<div class="col-xs-12" style="">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">微信推送内容:</label>
+                    <div class="col-xs-5">
+                    	<!-- <div id="content" style="text-align: right;display: inline-block;width: 500px;">
+						</div> -->
+                        <script type="text/javascript">
+	                        function openData() {
+	                    		if(text){
+	                    			document.getElementById("contentText").innerText = text;
+	                    			dataDiv();
+	                    		}
+	                    	}
+	                    	function ok(text) {
+	                    	  	var i = text.indexOf('{{');
+	                    	  	var newText = text.substr(i + 2);
+	                    	  	var j = newText.indexOf('.DATA}}');
+	                    	  	var t = newText.substr(0, j);
+	                    	  	a.push(t);
+	                    	  	console.log(a);
+	                    	  	if (newText.substr(j + 7).length > 0) {
+	                    	    	ok(newText.substr(j + 7))
+	                    	  	}
+	                    	}
+	                    	function dataDiv(){
+	                    		a.splice(0,a.length)
+	                    		ok(text);
+	                    		if(a.length>0){
+	                    			for (var i = 0; i < a.length; i++) {
+	                    				html = '';
+	                    				html += '<div name="dataDiv" class="dataDiv">'+
+	                    							'<span style="width:100px;text-alight:right" id="dataName">'+a[i]+'</span><span>  </span><input width="200px" id="dataValue" style="margin-right:4px;margin-left:4px" placeholder="内容 （必填）"/><input width="130px" id="dataColor" onblur="isYes(this)" placeholder="颜色（非必填）"/>'+
+	                    						'</div>';
+	                    				$("#content").append(html);
+	                    			}
+	                    		}
+	                    	}
+	                    	
+	                    	function cancleData() {
+	                    		viewModel.model.webchatContent = "";
+	                    		viewModel.model.whtContent = "";
+	                    		document.getElementById("contentText").innerText = "";
+	                    		if(document.getElementsByName("dataDiv").length>0){
+	                    			for(var i=0;i< document.getElementsByName("dataDiv").length;i++){
+	                    	    		$(".dataDiv")[i].remove();
+	                    	    		i--;
+	                               };
+	                    		};
+	                    	}
+                        
+	            			//颜色校验
+	            			function isYes(e){ 
+	            				if(e.value){
+	            					var firstText = e.value.substr(0,1);
+	            					if(firstText != "#"){
+	            						e.value = "";
+	            						kendo.ui.showErrorDialog({
+	        								message : "请输入类似'#90EE90'的标准颜色值"
+	        							});
+	            						return;
+	            					}
+	            					var otherText = e.value.substr(1);
+	            					if(otherText.length != 6){
+	            						e.value = "";
+	            						kendo.ui.showErrorDialog({
+	        								message : "请输入类似'#90EE90'的标准颜色值"
+	        							});
+	            						return;
+	            					}else{
+	            						var temp = otherText.replace(/[^\w\.\/]/ig,'');
+	            						if(otherText != temp){
+	            							e.value = "";
+	            							kendo.ui.showErrorDialog({
+		        								message : "请输入类似'#90EE90'的标准颜色值"
+		        							});
+	            							return;
+	            						}
+	            					}
+	            				}
+	            		    }
+                        </script>
+                    </div>
+                    <div class="col-xs-3">
+                    	<!-- <div id="dataHideDiv2" style="display: none;text-align: left;display: inline-block;width: 300px;margin-left: 20px;">
+							<span id="contentText"></span>
+						</div> -->
+                    </div>
+                </div>
+            </div>
+			<div class="col-xs-12" style="margin-bottom: 10px">
+                <div class="form-group">
+                	<div id="content" style="text-align: right;display: inline-block;width: 470px;">
+					</div>
+                	<div id="dataHideDiv2" style="display: none;text-align: left;display: inline-block;width: 250px;margin-left: 20px;">
+						<span id="contentText"></span>
+					</div>
+                </div>
+            </div>
+			
+            <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="50%" color=#987cb9 SIZE=3>
+
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">邮件推送</label>
+                    <div class="col-xs-5">
+                        <input type="checkbox" id="emailFlag" class="chkbx" style="margin-top:8px"  name="emailFlag" data-bind="checked:model.emailFlag" >
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12" style="margin-bottom: 13px">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">邮件标题</label>
+                    <div class="col-xs-5">
+                        <input id="emailSubject" type="text" data-bind="value:model.emailSubject" class="k-textbox"
+                               style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12" style="margin-bottom: 13px">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">邮件内容</label>
+                    <div class="col-xs-5">
+                        <input id="emailContent" type="text" data-bind="value:model.emailContent" class="k-textbox"
+                               style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+            
+            <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="50%" color=#987cb9 SIZE=3>
+
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">重要</label>
+                    <div class="col-xs-5">
+                        <input type="checkbox" id="importantFlag" class="chkbx" style="margin-top:8px"  name="importantFlag" data-bind="checked:model.importantFlag" >
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+        <div class="col-xs-12" style="margin-top: 20px;text-align: center">
+            <div class="form-group">
+                <span class="btn btn-danger" id="closeWin" data-bind="click:closeWin" style="margin-right: 100px" type="button">取消</span>
+	      		<span class="btn btn-success" id="saveGrid"  data-bind="click:save" type="submit">保存</span>
+            </div>
+        </div>
+    </div>
+
+<script>
+	kendo.bind($('#page-content'), viewModel);
+	
+	//验证
+	$("#mainform").kendoValidator({
+    	messages: {
+            required: '{0}不能为空！'
+    	},
+		invalidMessageType : "tooltip"
+    });
+	
+	if (viewModel.model.templateId == "0"){
+	    viewModel.model.webchatFlag = "Y" ;
+		document.getElementById("webchatFlag").checked=true;
+    }
+	
+	var value = [];
+    if(viewModel.model.whtContent && viewModel.model.webchatContent){
+	   text = viewModel.model.whtContent;
+	   var json = viewModel.model.webchatContent;
+	   addOk1(json);
+	   addOpenData();
+    };
+   function addOpenData() {
+   		if(text){
+   			document.getElementById("contentText").innerText = text;
+   			addDataDiv();
+   		}
+   	}
+   	function addOk(text) {
+   	  	var i = text.indexOf('{{');
+   	  	var newText = text.substr(i + 2);
+   	  	var j = newText.indexOf('.DATA}}');
+   	  	var t = newText.substr(0, j);
+   	  	a.push(t);
+   	  	console.log(a);
+   	  	if (newText.substr(j + 7).length > 0) {
+   	  		addOk(newText.substr(j + 7))
+   	  	}
+   	}
+   	function addOk1(textb){
+   		var valueObj = {};
+   		var i = textb.indexOf('":"');
+	  	var newText = textb.substr(i + 3);
+	  	var j = newText.indexOf('"}');
+	  	var colorIndex = newText.indexOf('","');
+	  	if(colorIndex > 0){
+	  		if(j < colorIndex){
+			  	var t = newText.substr(0, j);
+			  	textb = newText.substr(j);
+			  	valueObj.value = t;
+			  	valueObj.color = "";
+	  		}else{
+	  			var t = newText.substr(0, colorIndex);
+	  			var v = newText.substr(colorIndex+11,7);
+	  			textb = newText.substr(j);
+	  			valueObj.value = t;
+	  			valueObj.color = v;
+	  		}
+	  	}else{
+	  		var t = newText.substr(0, j);
+		  	textb = newText.substr(j);
+		  	valueObj.value = t;
+		  	valueObj.color = "";
+	  	}
+	  	value.push(valueObj);
+	  	if(textb.indexOf('":"')>0){
+	  		addOk1(textb)
+	  	}
+   	}
+   	function addDataDiv(){
+   		a.splice(0,a.length)
+   		addOk(text);
+   		if(a.length>0){
+   			for (var i = 0; i < a.length; i++) {
+   				html = '';
+   				html += '<div name="dataDiv" class="dataDiv">'+
+   							'<span style="width:100px;text-alight:right" id="dataName">'+a[i]+'</span><span>  </span><input width="200px" id="dataValue" value="'+ value[i].value +'" style="margin-right:4px;margin-left:4px" placeholder="内容 （必填）"/><input width="130px" id="dataColor" value="'+ value[i].color +'"  onblur="isYes(this)" placeholder="颜色（非必填）"/>'+
+   						'</div>';
+   				$("#content").append(html);
+   			}
+   		}
+   	}
+	
+	//对象下拉框
+	$("#object").kendoComboBox({
+		dataSource:userType,
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value"
+	});
+	
+	//模板状态下拉框
+	$("#status").kendoComboBox({
+		dataSource:demoStatus,
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value"
+	});
+	
+	//复选框的判断
+	if(document.getElementById("platformFlag").checked){
+		//debugger;
+		if(viewModel.model.platformFlag == "N"){
+			document.getElementById("platformFlag").checked = false;
+		}
+	}
+	if(document.getElementById("messageFlag").checked){
+		if(viewModel.model.messageFlag == "N"){
+			document.getElementById("messageFlag").checked = false;
+		}
+	}
+	if(document.getElementById("emailFlag").checked){
+		if(viewModel.model.emailFlag == "N"){
+			document.getElementById("emailFlag").checked = false;
+		}
+	}
+	if(document.getElementById("importantFlag").checked){
+		if(viewModel.model.importantFlag == "N"){
+			document.getElementById("importantFlag").checked = false;
+		}
+	}
+	if(document.getElementById("webchatFlag").checked){
+		if(viewModel.model.webchatFlag == "N"){
+			document.getElementById("webchatFlag").checked = false;
+		}
+	}
+	
+	if(document.getElementById("platformFlag").checked){
+		
+	}
+	
+    /* $("#page-content").kendoValidator();
+    $("#closeWin").click(function(){
+    	if (isedit) {
+            window.parent.$("#editWin").data("kendoWindow").close();
+        } else {
+            window.parent.$("#newWin").data("kendoWindow").close();
+        }
+    });
+     $("#saveGrid").click(function () {
+        if(newViewModel.model.templateCode==''||newViewModel.model.templateCode==null){
+            kendo.ui.showInfoDialog({
+                message:'通知模板代码不能为空'
+            })
+        }else if(newViewModel.model.name==''||newViewModel.model.name==null){
+            kendo.ui.showInfoDialog({
+                message:'模板名称不能为空'
+            })
+        }else {
+            newViewModel.model.__status = isedit ? 'update' : 'add';
+            Hap.submitForm({
+                url: '${base.contextPath}/fms/ntn/notification/template/submit',
+                formModel: newViewModel.model,
+                success: function (data) {
+                    window.parent.$('#grid').data('kendoGrid').dataSource.page(1);
+                    if (isedit) {
+                        window.parent.$("#editWin").data("kendoWindow").close();
+                    } else {
+                        window.parent.$("#newWin").data("kendoWindow").close();
+                    }
+                }
+            });
+        }
+    });  */
+    
+</script>
+</body>
+</html>

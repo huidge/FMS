@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.IfInvokeOutboundMapper">
+    <resultMap id="BaseResultMap" type="clb.core.sys.dto.IfInvokeOutbound">
+        <result column="OUTBOUND_ID" property="outboundId" jdbcType="DECIMAL" />
+        <result column="INTERFACE_NAME" property="interfaceName" jdbcType="VARCHAR" />
+        <result column="INTERFACE_URL" property="interfaceUrl" jdbcType="VARCHAR" />
+        <result column="REQUEST_TIME" property="requestTime" jdbcType="DATE" />
+        <result column="REQUEST_PARAMETER" property="requestParameter" jdbcType="VARCHAR" />
+        <result column="REQUEST_STATUS" property="requestStatus" jdbcType="VARCHAR" />
+        <result column="RESPONSE_CONTENT" property="responseContent" jdbcType="VARCHAR" />
+        <result column="RESPONSE_TIME" property="responseTime" jdbcType="DECIMAL" />
+        <result column="RESPONSE_CODE" property="responseCode" jdbcType="VARCHAR" />
+        <result column="STACKTRACE" property="stacktrace" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<delete id="truncateTable" parameterType="java.lang.String">
+		${sql}
+	</delete>
+
+</mapper>

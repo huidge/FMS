@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.notification.mapper.NtnTemplateConcernMapper">
+    <resultMap id="BaseResultMap" type="clb.core.notification.dto.NtnTemplateConcern">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="BACKGROUND_APPID" property="backgroundAppid" jdbcType="VARCHAR" />
+        <result column="WECHAT_OPENID" property="wechatOpenid" jdbcType="VARCHAR" />
+        <result column="WECHAT_SECRET_KEY" property="wechatSecretKey" jdbcType="VARCHAR" />
+        <result column="WECHAT_BIND_DATE" property="wechatBindDate" jdbcType="DATE" />
+        <result column="WECHAT_BIND_TYPE" property="wechatBindType" jdbcType="VARCHAR" />
+        <result column="WECHAT_CONCERN_TYPE" property="wechatConcernType" jdbcType="VARCHAR" />
+        <result column="APP_ACCOUNT_ID" property="appAccountId" jdbcType="DECIMAL" />
+        <result column="APP_SECRET_KEY" property="appSecretKey" jdbcType="VARCHAR" />
+        <result column="APP_BIND_DATE" property="appBindDate" jdbcType="DATE" />
+        <result column="AQUMON_ACCOUNT_ID" property="aqumonAccountId" jdbcType="DECIMAL" />
+        <result column="AQUMON_SECRET_KEY" property="aqumonSecretKey" jdbcType="VARCHAR" />
+        <result column="AQUMON_BIND_DATE" property="aqumonBindDate" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+    <select id="existOpenIdAndAppId" resultType="java.lang.Integer">
+        select count(1) from FMS_NTN_TEMPLATE_CONCERN where WECHAT_OPENID=#{openId} and BACKGROUND_APPID=#{appId}
+    </select>
+
+    <update id="subscribe">
+      update FMS_NTN_TEMPLATE_CONCERN set WECHAT_CONCERN_TYPE='Y' where  WECHAT_OPENID = #{openId,jdbcType=VARCHAR} AND
+      BACKGROUND_APPID = #{appId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="unsubscribe">
+        update FMS_NTN_TEMPLATE_CONCERN set WECHAT_CONCERN_TYPE='N' where  WECHAT_OPENID = #{openId,jdbcType=VARCHAR} AND
+        BACKGROUND_APPID = #{appId,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

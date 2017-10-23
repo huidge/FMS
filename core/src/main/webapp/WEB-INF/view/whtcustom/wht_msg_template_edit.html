@@ -1,0 +1,225 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+    var datailViewModel = kendo.observable({
+        model: {
+        	whtTemplateId: '${RequestParameters.whtTemplateId!}',
+        	templateName: '${RequestParameters.templateName!}',
+        	primaryIndustry: '${RequestParameters.primaryIndustry!}',
+        	secondaryIndustry: '${RequestParameters.secondaryIndustry!}',
+        	detailContent: '${RequestParameters.detailContent!}',
+        	contentSample: '${RequestParameters.contentSample!}',
+        },
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        returnFunction: function () {
+        	window.parent.$("#dialog").data("kendoWindow").close();
+        },
+    });
+    console.log(datailViewModel.model);
+    /* templateId = '${RequestParameters.templateId!}';
+    if(templateId){
+    	datailViewModel.model.templateId = templateId;
+		status="update";
+		 $.ajax({
+	        type: "POST",
+	        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+	        url: "${base.contextPath}/fms/wht/msg/template/query",
+	        data: {"templateId":templateId},
+	        success: function (json) {
+	             var row = json.rows[0] || {};
+	            for (var k in row) {
+	            	datailViewModel.model.set(k, row[k]);
+	            } 
+	        }
+	    }); 
+	}; */
+</script>
+<body>
+<div id="dialog"></div>
+<div id="page-content2" style="margin-top: 20px">
+	<div class="panel panel-default" >
+    	<div id="query-form" >
+    		<form id="mainform" class="form-horizontal" >
+                   <div class="panel-body">
+                       <div class="col-xs-12" style="margin-bottom: 10px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right"> 模板ID：</label>
+                                   <div class="col-xs-8">
+                                   	<input id="whtTemplateId" readonly data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.whtTemplateId" class="k-textbox">
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-xs-12" style="margin-bottom: 10px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right">标题：</label>
+                                   <div class="col-xs-8">
+                                   	<input id="templateName" data-role="maskedtextbox" readonly type="text" style="width: 100%"  data-bind="value:model.templateName" class="k-textbox">
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-xs-12" style="margin-bottom: 10px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right">一级行业：</label>
+                                   <div class="col-xs-8">
+                                   	<input id="primaryIndustry" readonly data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.primaryIndustry" class="k-textbox">
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-xs-12" style="margin-bottom: 10px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right">二级行业：</label>
+                                   <div class="col-xs-8">
+                                   	<input id="secondaryIndustry" readonly data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.secondaryIndustry" class="k-textbox">
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-xs-12" style="margin-bottom: 10px" >
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right">详情内容：</label>
+                                   <div class="col-xs-8">
+                                   	<!-- <input id="detailContent" readonly data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.detailContent" class="k-textbox"> -->
+                                   	<textarea id="detailContent" readonly type="text" style="width:100%;height:80px" 
+                                               data-bind="value:model.detailContent" ></textarea>
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-xs-12" style="margin-bottom: 10px">
+                           <div class="col-xs-12" >
+                              	<div class="form-group" >
+                                   <label class="col-xs-2 control-label"
+                                          style="text-align: right">内容示例：</label>
+                                   <div class="col-xs-8">
+                                   	<!-- <input id="contentSample" readonly data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.contentSample" class="k-textbox"> -->
+                                   	<textarea id="contentSample" readonly type="text" style="width:100%;height:80px" 
+                                               data-bind="value:model.contentSample" ></textarea>
+                                   </div>
+                                   <div class="col-xs-2">
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                    </div>
+                    <div class="col-xs-12" style="margin-top:20px;text-align: right">
+	                    <span class="btn btn-default" style="margin-right:50px;" type="button" data-bind="click:returnFunction"><i class="fa fa-reply" style="text-align: right"></i><@spring.message "确定"/></span>
+		            </div>
+             </form>
+    	</div>
+    </div>
+
+    <script>kendo.bind($('#page-content2'), datailViewModel);</script>
+    <!-- <div style="clear:both">
+        <div id="Grid"></div>
+    </div> -->
+</div>
+
+<script type="text/javascript">
+	
+	
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/api/public/fms/wht/msg/template/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/wht/msg/template/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/wht/msg/template/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/wht/msg/template/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(datailViewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "templateId",
+                fields: {}
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+        ],
+        editable: true
+    });
+
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

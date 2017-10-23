@@ -1,0 +1,571 @@
+<#include "../include/header.html">
+<script src="../lib/clb/js/clb.kendo.editor.js"></script>
+<script src="${base.contextPath}/clb/common/clbCode?statusData=REA.RELEASE_STUTAS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?positionData=REA.RELEASE_POSITION" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?noticeTypeData=REA.NOTICE_TYPE" type="text/javascript"></script>
+<script type="text/javascript">
+	//获取"文章列表页面"传过来的 参数
+	var articleId = '${RequestParameters.articleId!0}';
+	
+	var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+	
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+	
+</script>
+
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;">
+				<legend>
+					<div class="col-xs-9" style="text-align: left"><span class="panel-title">文章维护</span></div>
+            	
+	            	<div class="col-xs-1" style="text-align: right">
+	            		<span class="btn btn-default" style="width:120px" onclick="closeWin()">
+						    <i class="fa fa-reply" style="margin-right:3px;"></i>返回上一页
+						</span>
+	            	</div> 
+				</legend>
+				<div style="width: 98%; margin-top: 5px;">
+					<form class="form-horizontal">
+						<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">发布位置:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="releasePosition" 
+													data-bind="value:model.releasePosition"  onchange="changeValue(this.value)">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">公告类型:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="noticeType" 
+													data-bind="value:model.noticeType" >
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">作者:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" 
+													data-bind="value:model.authorName"
+													class="k-textbox" required
+													validationMessage='<@spring.message "hap.error.nullexception"/>'>
+											</div>
+										</div>
+									</div>
+									<div class="form-group" id="photosDiv">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">封面图片:</label>
+											<div class="col-sm-9" style="text-align: left; width: 270px">
+												<!-- data-bind="value:model.coverFileId" -->
+												<input type="file" name="files" id="photos" 
+													style="width: 240px" />
+											</div> 
+											<!-- <div class="col-xs-3" style="margin-left:10px;margin-bottom:10px;margin-top:15px;width:250px" >
+				                                <input type="file" name="files" id="photos" onclick="ok()" >
+		                                    </div>
+											图片预览的窗口
+											<div class="col-xs-3" id="picture" ><img src="" width="200" height="180" id="img" /></div>
+		                                    
+		                                    <div  class="col-xs-3" style="margin-top: 5px;">
+				                                 <label id="label" style="text-align: right;"></label>
+		                                    </div> -->
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">文章标题:</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.title"
+													class="k-textbox" required 
+													validationMessage='<@spring.message "hap.error.nullexception"/>'>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group" id="introduceDiv">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">文章简介:</label>
+											<div class="col-sm-9" style="text-align: left">
+												<textarea style="width: 240px" id="introduce"
+													 data-bind="value:model.introduce"
+													class="k-textbox">
+                                                       </textarea>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group" id="affixFileIdDiv">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">附件:</label>
+											<!-- <div class="col-sm-9" style="text-align: left; width: 270px"> -->
+												<!-- data-bind="value:model.affixFileId" -->
+												<!-- <input type="file" name="affixFileId" id="affixFileId" 
+													style="width: 240px" /> -->
+													<div id="updatePicture" class="col-sm-9" style="text-align: left; width: 270px">
+														<a style="text-decoration:underline" href="javascript:void(0)" onclick="affixUpload()">上传附件</a>
+														<span id="affixName"></span>
+													</div>
+													<div id="reqWin" style="display: none;">
+													     <input type="file" id="affixFileId" name="affixFileId"></input>
+													</div>
+											</div> 
+									</div>
+										
+								</div>
+									
+									 <div class="col-sm-6" style="margin-left: -14%;" id="imgDiv">
+										<div class="form-group">
+			                                <div class="col-sm-9" style="border: 1px">
+			                                	<img src=""  id="img" width="305" height="197" style="text-align:center;"/>
+			                                	<div>推荐尺寸:305*197</div>
+			                                </div>
+                            			</div>
+									</div>
+									
+							</div>
+									
+								<div class="row" style="margin-left: -14%;">
+									<div class="form-group" >
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">文章内容:</label>
+											<div class="col-sm-9" style="text-align: left">
+												<textarea id="editor" required rows="80" cols="90" 
+                                                data-bind="value:model.content" ></textarea>
+												<!-- <div id="myEditor" id="content" data-bind="value:model.content"></div>  --> 
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<!-- <label class="col-sm-3 control-label">谁可以看:</label> -->
+											<div class="col-sm-9" style="text-align: left">
+												<!-- 后续补充 -->
+											</div>
+										</div>
+									</div>
+								</div>
+							
+						<div class="text-center" style="margin-top: 10px">
+							<span class="btn btn-success" onclick="saveData()" type="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span> 
+							
+							<!-- <span onclick="closeWin()" class="btn btn-default"
+								id="btn_cancel" style="width: 80px; margin-right: 5px;">
+								<i class="fa fa-reply" style="margin-right: 3px;"></i><@spring.message
+								"hap.cancel"/>
+							</span> -->
+						</div>
+						
+						</form>
+					</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+		
+		//判断上一个页面传递过来的值
+		if (articleId != 0) {
+			viewModel.model.set("articleId", articleId);
+			$.ajax({
+				type : "POST",
+				async : false,
+				url : "${base.contextPath}/release/article/query",
+				data : {
+					articleId : articleId
+				},
+				success : function(json) {
+					var row = json.rows[0] || {};
+					/* for ( var k in row) {
+						viewModel.model.set(k, row[k]);
+						console.log(row);
+						if(row["sysFile"]){
+		            		var pictureFilePath=row["sysFile"]["filePath"];
+		            		console.log(pictureFilePath);
+		            		if(pictureFilePath !=""){
+		        				$("#img").show().attr('src',ossWebPath+"${base.contextPath}"+pictureFilePath);
+		        			}
+		            	}
+					} */
+					viewModel.model.set("releasePosition",row["releasePosition"]);
+					viewModel.model.set("noticeType",row["noticeType"]);
+					viewModel.model.set("authorName",row["authorName"]);
+					viewModel.model.set("title",row["title"]);
+					viewModel.model.set("introduce",row["introduce"]);
+					viewModel.model.set("content",row["content"]);
+					viewModel.model.set("coverFileId",row["coverFileId"]);
+					viewModel.model.set("affixFileId",row["affixFileId"]);
+					$("#affixName").html(row["affixName"]);
+					if(row["sysFile"]){
+	            		var pictureFilePath=row["sysFile"]["filePath"];
+	            		console.log(pictureFilePath);
+	            		if(pictureFilePath !=""){
+	        				$("#img").show().attr('src',ossWebPath+"${base.contextPath}"+pictureFilePath);
+	        			}
+	            	}
+					
+				}
+			});
+		}
+		
+		//选择不同的发布位置  会对后面的编辑有影响
+		 $(function(){
+			 var releasePosition = $("#releasePosition").val();
+			 if(releasePosition == "GGL"){
+					$("#photos").attr({'disabled':'disabled'});
+					$("#photos").css({'background-color':'#F5F5F5'});
+					
+					$("#introduce").attr({'disabled':'disabled'});
+					$("#introduce").css({'background-color':'#F5F5F5'});
+					
+					$("#noticeType").data("kendoDropDownList").enable(false);
+					
+					$("#photosDiv").hide();
+					$("#imgDiv").hide();
+					$("#introduceDiv").hide();
+					$("#affixFileIdDiv").show();
+				}else if(releasePosition == "WQHG"){
+					$("#noticeType").data("kendoDropDownList").enable(false);
+					viewModel.model.set("noticeType",null);
+					
+					$("#photosDiv").show();
+					$("#imgDiv").show();
+					$("#introduceDiv").show();
+					$("#affixFileIdDiv").hide();
+				}else{
+					$("#introduce").attr({'disabled':'disabled'});
+					$("#introduce").css({'background-color':'#F5F5F5'});
+					
+					$("#noticeType").data("kendoDropDownList").enable(false);
+					
+					$("#photosDiv").hide();
+					$("#imgDiv").hide();
+					$("#introduceDiv").hide();
+					$("#affixFileIdDiv").hide();
+				}
+		 });
+		function changeValue(releasePosition){
+			 if(releasePosition == "GGL"){
+					 $("#photos").attr({'disabled':'disabled'});
+					 $("#photos").css({'background-color':'#F5F5F5'});
+					$("#introduce").attr({'disabled':'disabled'});
+					$("#introduce").css({'background-color':'#F5F5F5'});
+					
+					$("#noticeType").data("kendoDropDownList").enable(true);
+					viewModel.model.set("noticeType","OnShelves");
+					
+					$("#photosDiv").hide();
+					$("#imgDiv").hide();
+					$("#introduceDiv").hide();
+					$("#affixFileIdDiv").show();
+				}else if(releasePosition == "WQHG"){
+					$("#introduce").removeAttr("disabled");
+					$("#introduce").css({'background-color':'#FFF'}); 
+					$("#photos").removeAttr("disabled");
+					$("#photos").css({'background-color':'#FFF'}); 
+					
+					$("#noticeType").data("kendoDropDownList").enable(false);
+					viewModel.model.set("noticeType",null);
+					
+					$("#photosDiv").show();
+					$("#imgDiv").show();
+					$("#introduceDiv").show();
+					$("#affixFileIdDiv").hide();
+				}else{
+					
+					$("#introduce").attr({'disabled':'disabled'});
+					$("#introduce").css({'background-color':'#F5F5F5'});
+					
+					$("#noticeType").data("kendoDropDownList").enable(false);
+					viewModel.model.set("noticeType",null);
+					
+					$("#photosDiv").hide();
+					$("#imgDiv").hide();
+					$("#introduceDiv").hide();
+					$("#affixFileIdDiv").hide();
+				}
+		};
+		
+		$('#noticeType').kendoDropDownList({
+	         /* optionLabel: "-请选择-", */
+	         /* filter: "contains", */
+	         valuePrimitive: true,
+	         dataTextField : "meaning",
+	         dataValueField : "value",
+	         dataSource:noticeTypeData
+	     });
+
+		//富文本编辑
+		$(document).ready(function() {
+			       
+			$('#releasePosition').kendoDropDownList({
+				/* optionLabel: "-请选择-",
+				 filter : "contains", */
+				valuePrimitive : true,
+				dataTextField : "meaning",
+				dataValueField : "value",
+				dataSource : positionData
+			});
+			
+			if(articleId != 0){
+				//修改的时候  发布位置不让修改
+				$("#releasePosition").data("kendoDropDownList").enable(false);
+			}
+			
+                   /* $("#editor").kendoEditor({
+                       tools: [
+                           "fontName",
+                           "fontSize",
+                           "formatting",
+                           "bold",
+                           "italic",
+                           "underline",
+                           "strikethrough",
+                           "justifyLeft",
+                           "justifyCenter",
+                           "justifyRight",
+                           "justifyFull",
+                           "insertUnorderedList",
+                           "insertOrderedList",
+                           "indent",
+                           "outdent",
+                           "insertImage",
+                           "subscript",
+                           "superscript",
+                           "foreColor",
+                           "backColor",
+                       ],
+                   }); */
+                   
+			$.clbKendoEditor("editor");
+			$.clbKendoUpload('<@spring.message "fms.pub.oss_web_path"/>','ARTICLE',"${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}");
+                   
+     });
+		
+		//点击取消的时候  关闭页面
+		function closeWin() {
+			//parent.closeTab('ARTICLE_EDIT' + articleId);
+			window.parent.$("#editWin").data("kendoWindow").close();
+		};
+		
+
+		 $("#photos").kendoUpload({
+			async : {
+				saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+			},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+
+		//封面图片的上传
+		function onUpload(e) {
+			e.data = {
+				modularName :'NTC',
+				allowType :'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+			
+			var prevDiv = document.getElementById('img');
+			if (e.files[0].rawFile){
+				var reader = new FileReader();
+				reader.onload = function(evt){
+					$('#img').show().attr('src', evt.target.result);
+				}
+				reader.readAsDataURL(e.files[0].rawFile);
+			}
+		};
+
+		var fileId;
+		function onSuccess(e) {
+			if (e.response.success) {
+				fileId = e.response.file.fileId;
+				viewModel.model.set("coverFileId",fileId);
+			} else {
+				kendo.ui.showErrorDialog({
+					message : e.response.message
+				})
+			}
+		} 
+		
+		//上传图片
+		function affixUpload(){
+			  if(viewModel.model.affixFileId){
+				  kendo.ui.showConfirmDialog({
+						message : "附件已存在，是否要覆盖"
+					}).done(function (event) {
+			            if (event.button == 'OK') {
+			            	window.reqWin = $("#reqWin").kendoWindow({
+			                    title: '<@spring.message "sysfile.upload"/>',
+			                    width: 400,
+			                    height: 250,
+			                    modal: true
+			                }).data("kendoWindow");
+			                reqWin.center().open();
+			            }
+			         });
+			  }else{
+				  window.reqWin = $("#reqWin").kendoWindow({
+			          title: '<@spring.message "sysfile.upload"/>',
+			          width: 400,
+			          height: 250,
+			          modal: true
+			      }).data("kendoWindow");
+			      reqWin.center().open();
+			  };
+		};
+		
+		//附件上传
+		 $("#affixFileId").kendoUpload({
+			async : {
+				saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+			},
+			showFileList : false,
+			upload : onUpload2,
+			success : onSuccess2
+		});
+
+		//封面图片的上传
+		function onUpload2(e) {
+			e.data = {
+				modularName :'NTC',
+				allowType :'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+
+		var affixFileId;
+		function onSuccess2(e) {
+			if (e.response.success) {
+				affixFileId = e.response.file.fileId;
+				console.log(e.response.file);
+				viewModel.model.set("affixFileId",affixFileId);
+				$("#affixName").html(e.response.file.fileName);
+				
+				reqWin.close();
+		        kendo.ui.showInfoDialog({
+		            message  : '上传成功!'
+		        })
+			} else {
+				kendo.ui.showErrorDialog({
+					message : e.response.message
+				})
+			}
+		} 
+
+		//点击保存
+	function saveData() {
+	   //将上传的文件的id绑定在文章上
+	   if(fileId != null && fileId != undefined && viewModel.model.releasePosition == "WQHG"){
+		   viewModel.model.set("coverFileId",fileId);
+	   }/* else{
+		   viewModel.model.set("coverFileId",null);
+	   } */
+	   if(affixFileId != null && affixFileId != undefined && viewModel.model.releasePosition == "GGL"){
+		   viewModel.model.set("affixFileId",affixFileId);
+	   }/* else{
+		   viewModel.model.set("affixFileId",null);
+	   } */
+	   if(viewModel.model.releasePosition == "WQHG" && viewModel.model.coverFileId == undefined){
+		   kendo.ui.showErrorDialog({
+				message : "请上传封面图片!"
+			});
+		  
+	   }else{
+			//判断是新建还是修改
+			if (articleId != 0) {
+				//修改
+				Hap.submitForm({
+					url : '${base.contextPath}/release/article/submit',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "失败"
+							});
+						}
+
+					}
+				})
+			} else if(articleId == 0){
+				viewModel.model.set("articleId",null);
+				//添加
+				Hap.submitForm({
+					url : '${base.contextPath}/release/article/addValidation',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							Hap.submitForm({
+								url : '${base.contextPath}/release/article/add',
+								formModel : viewModel.model,
+								success : function(data) {
+									if (data.success) {
+										kendo.ui.showInfoDialog({
+				                             title: $l('hap.tip.info'),
+				                             message: $l('hap.tip.success')
+				                         });
+										window.parent.$("#editWin").data("kendoWindow").close();
+									} else {
+										kendo.ui.showErrorDialog({
+											title    : '校验失败',
+											message : data.message
+										});
+									}
+
+								}
+							})
+						} else {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: "记录存在,是否确认添加?"
+	                         }).done(function(event){
+	                        	 if (event.button == 'OK') {
+	                        		 Hap.submitForm({
+	                 					url : '${base.contextPath}/release/article/add',
+	                 					formModel : viewModel.model,
+	                 					success : function(data) {
+	                 						if (data.success) {
+	                 							kendo.ui.showInfoDialog({
+	                 	                             title: $l('hap.tip.info'),
+	                 	                             message: $l('hap.tip.success')
+	                 	                         });
+	                 							window.parent.$("#editWin").data("kendoWindow").close();
+	                 						} else {
+	                 							kendo.ui.showErrorDialog({
+	                 								message : "失败"
+	                 							});
+	                 						}
+
+	                 					}
+	                 				})
+	                        	 }
+	                         })
+						}
+					}
+				})
+			}
+		 }
+	}
+	</script>
+</body>
+</html>

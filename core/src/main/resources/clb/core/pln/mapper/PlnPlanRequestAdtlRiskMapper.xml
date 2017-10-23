@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnPlanRequestAdtlRiskMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnPlanRequestAdtlRisk">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="PLAN_ID" property="planId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="VARCHAR" />
+    </resultMap>
+ 
+    <!-- 查询附加险 -->
+    <select id="selectAdtlRisk" parameterType="java.lang.Long" resultMap="BaseResultMap">
+         select fpprar.*, 
+                fpi.ITEM_NAME 
+         from fms_pln_plan_request_adtl_risk fpprar, fms_prd_items fpi
+         where fpprar.ITEM_ID = fpi.ITEM_ID
+           and fpprar.PLAN_ID = #{planId}
+    </select> 
+
+</mapper>

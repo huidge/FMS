@@ -1,0 +1,486 @@
+<#--
+        * description: 客户管理界面
+        * version: 1.0
+        * author:xiaoyong.luo@hand-china.com
+        *
+        -->
+<#include "../include/header.html">
+
+
+<script src="http://kendo.cdn.telerik.com/2017.1.118/js/jszip.min.js"></script>
+<script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.js"></script>
+<link rel="stylesheet" href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-loading-bar.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.css">
+
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+            incomeLevel : '',
+            sortIncome : '',
+            sortOrder : '',
+            sortTotal : '',
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            var orderBy = '';
+            if(viewModel.model.sortIncome)
+                orderBy = orderBy + ' INCOME ' + viewModel.model.sortIncome + ',';
+            if(viewModel.model.sortOrder)
+                orderBy = orderBy + ' ORDER_COUNT ' + viewModel.model.sortOrder +  ',';
+            if(viewModel.model.sortTotal)
+                orderBy = orderBy + ' MONEY_SUM ' + viewModel.model.sortTotal +  ',';
+            if(orderBy)
+                orderBy = orderBy.substring(1, orderBy.length -1);
+
+            viewModel.model.set('orderBy', orderBy);
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        //重置
+        resetForm:function (e) {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        },
+        //取消
+        cancelFunction: function () {
+            $("#Grid").data("kendoGrid").cancelChanges();
+        },
+    });
+</script>
+
+<body>
+<div id="content-container">
+    <div id="page-content">
+        <div class="panel">
+            <form id="query-form" class="form-horizontal">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.screen"/></label>
+                                <div class="col-sm-9">
+                                    <input id="city" type="text" style="width:100%"  placeholder='<@spring.message "fms.CtmCustomer.city"/>'
+                                           data-bind="value:model.city" class=".k-invalid-msg">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input id="income" type="text" style="width:100%" placeholder='<@spring.message "fms.CtmCustomer.income"/>'
+                                           data-bind="value:model.incomeLevel" class=".k-invalid-msg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input id="searchText" type="text" style="width:100%" placeholder='<@spring.message "fms.ctmcustomer.nameposition"/>'
+                                           data-bind="value:model.chineseName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.sort"/></label>
+                                <div class="col-sm-9">
+                                    <input id="sortIncome" type="text" style="width:100%"
+                                           data-bind="value:model.sortIncome" class=".k-invalid-msg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input id="sortOrder" type="text" style="width:100%"
+                                           data-bind="value:model.sortOrder" class=".k-invalid-msg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input id="sortTotal" type="text" style="width:100%"
+                                           data-bind="value:model.sortTotal" class=".k-invalid-msg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel-footer text-right">
+                    <span class="btn btn-primary" data-bind="click:queryResource" type="submit">
+                        <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                    <span class="btn btn-default" style="width:70px" data-bind="click:resetForm">
+                        <i class="fa fa-refresh" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                </div>
+            </form>
+        </div>
+
+        <div style="clear:both">
+            <div id="Grid"></div>
+        </div>
+    </div>
+
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+</div>
+
+
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?incomeLevel=CTM.INCOME_LEVEL"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?sortStatus=SYS.SORT_ORDER"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?citylist=PUB.CITY"></script>
+<script type="text/javascript">
+    // 城市列表
+    $('#city').kendoDropDownList({
+        optionLabel: '-<@spring.message "fms.CtmCustomer.city"/>-',
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: citylist
+    });
+    // 收入等級列表
+    $('#income').kendoDropDownList({
+        optionLabel: '-<@spring.message "fms.ctmcustomer.incomemonth"/>-',
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: incomeLevel
+    });
+
+    // 收入排序列表
+    $('#sortIncome').kendoDropDownList({
+        optionLabel: '-<@spring.message "fms.CtmCustomer.incomesimple"/>-',
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: sortStatus
+    });
+    // 订单排序列表
+    $('#sortOrder').kendoDropDownList({
+        optionLabel: '-<@spring.message "fms.ctmcustomer.ordercount"/>-',
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: sortStatus
+    });
+    // 总金额排序列表
+    $('#sortTotal').kendoDropDownList({
+        optionLabel: '-<@spring.message "fms.CtmCustomer.moneysum"/>-',
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: sortStatus
+    });
+
+
+    var BaseUrl = '${base.contextPath}/fms/ctm/customer';
+    var dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/queryAll",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "customerId",
+                fields: {
+                    customerCode: {},
+                    chineseName: { validation: {required:true} },
+                    phoneCode: { validation: {required:true} },
+                    phone: { validation:{required:true} },
+                    birthDate: {type:'date', },
+                    position: {},
+                    income: { type:'number' },
+                    postCity: {},
+                    canal: {},
+                    orderCount: {},
+                    moneySum: {},
+                },
+                editable:function () {
+                    if(this.customerId!=""){
+                        return false;
+                    }else {
+                        return true;
+                    }
+                }
+            }
+        }
+    });
+
+    var grid = $("#Grid").kendoGrid({
+        excelExport: function (e) {
+            //阻止默认事件冒泡
+            e.preventDefault();
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: '<@spring.message "fms.ctmcustomer.excelexport"/>',
+            }).done(function (event) {
+                if (event.button == "OK") {
+                    NProgress.start();
+                    $('<a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>导出 Excel中..<i class="fa fa-spinner faa-spin animated" style="font-size: 14px;"></i></a>').replaceAll("#Grid .k-grid-excel");
+
+                    var workbook = new kendo.ooxml.Workbook(e.workbook);
+                    kendo.saveAs({
+                        dataURI: workbook.toDataURL(),
+                        fileName: '<@spring.message "fms.ctmcustomer.list"/>'
+                    });
+                    NProgress.done();
+                    $('<a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>导出 Excel</a>').replaceAll("#Grid .k-grid-excel");
+                }
+            });
+        },
+        excel: {
+            allPages: true,
+        },
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        toolbar: [
+            {
+                template: '<button type="button"  onclick="create()" class="btn btn-primary">' +
+                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+            },
+            {
+                name: "delete",
+                template: '<span type="button" onclick="remove()" class="btn btn-danger">' +
+                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+            },
+            {
+                template: '<span type="button" onclick="exportExcel()" class="btn btn-primary">' +
+                '<i class="fa fa-file-excel-o" style="margin-right:3px;"></i><@spring.message "hap.exportexcel"/></span>'
+            },
+            {
+                template: '<span type="button" id="importExcelBtn" onclick="importExcel()" class="btn btn-primary">' +
+                '<i class="fa fa-file-excel-o" style="margin-right:3px;"></i><@spring.message "hap.importexcel"/></span>'
+            }
+        ],
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "customerCode",
+                title: '<@spring.message "fms.ctmcustomer.customercode"/>',
+                width: 120
+            },
+            {
+                field: "chineseName",
+                title: '<@spring.message "fms.CtmCustomer.customer"/>',
+                width: 120
+            },
+            {
+                field: "phoneCode",
+                title: '<@spring.message "fms.CtmCustomer.phoneCode"/>',
+                width: 120
+            },
+                    {
+                field: "phone",
+                title: '<@spring.message "fms.CtmCustomer.phone"/>',
+                width: 120
+            },
+                    {
+                field: "birthDate",
+                title: '<@spring.message "fms.CtmCustomer.birthDate"/>',
+                width: 100,
+                format:"{0:yyyy/MM/dd}",
+            },
+                    {
+                field: "position",
+                title: '<@spring.message "fms.CtmCustomer.position"/>',
+                width: 120
+            },
+                    {
+                field: "income",
+                title: '<@spring.message "fms.CtmCustomer.income"/>',
+                width: 120,
+                editor: function(container, options){
+                    $('<input  name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            filter: "contains",
+                            step: 100,
+                        });
+                }
+            },
+                    {
+                field: "postCity",
+                title: '<@spring.message "fms.CtmCustomer.city"/>',
+                width: 80,
+                template: function (dataItem) {
+                    if(dataItem.postCity == undefined || dataItem.postCity == ''){
+                        return '';
+                    }
+                    var v = dataItem.postCity;
+                    $.each(citylist,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                        }
+                    });
+                    return v;
+                },
+                editor: function(container, options) {
+                    $('<input  name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            valuePrimitive: true,
+                            dataSource: citylist
+                        });
+                    }
+                },
+                    {
+                field: "canal",
+                title: '<@spring.message "fms.CtmCustomer.canal"/>',
+                width: 180,
+                editor:function(){
+                    $('<input disabled="disabled" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "orderCount",
+                title: '<@spring.message "fms.CtmCustomer.ordercount"/>',
+                width: 120,
+                editor:function(){
+                    $('<input disabled="disabled" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                field: "moneySum",
+                title: '<@spring.message "fms.CtmCustomer.moneysum"/>',
+                width: 120,
+                editor:function(){
+                    $('<input disabled="disabled" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+                    {
+                title: '<@spring.message "hap.action"/>',
+                width: 80 ,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                template: function (dataItem) {
+                    if (!dataItem.customerId)
+                        return '';
+                    if (!!dataItem) {
+                        return '<a style="cursor:pointer" class="btn-sm btn-info k-grid-remove" onclick="detail('+dataItem.customerId+')">明细</a>';
+                    }
+                }
+            },
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+
+    //创建--跳转到客户详情界面
+    function create(){
+        parent.openTab('CUSTOMER_EDIT'+0,'<@spring.message "fms.ctmcustomer.detailpage"/>' , '${base.contextPath}/customer/ctm_customer_detail.html?status=add&customerId='+0);
+    }
+    //删除
+    function remove() {
+        Hap.deleteGridSelection( {grid: $('#Grid')} );
+    }
+    //导出excel
+    function exportExcel(){
+        grid.saveAsExcel();
+    }
+
+    //导入excel
+    function importExcel(){
+        var url = '${base.contextPath}/fnd/import/import_upload.html?className=clb.core.customer.service.impl.CtmCustomerImport';
+        var importDialog = $("#importDialog").kendoWindow({
+            actions: ["Close"],
+            width: '100%',
+            height: '100%',
+            title: '<@spring.message "fms.data_import"/>',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+            close: function () {
+                //window 关闭  刷新本页面的grid
+                $('#Grid').data('kendoGrid').dataSource.page(1);
+            }
+        }).data("kendoWindow");
+        importDialog.maximize();
+        importDialog.center().open();
+    }
+
+    $.ajax({
+        url:"${base.contextPath}/clb/sys/user/isImporter",
+        method:"POST",
+        contentType:"application/json",
+        dataType:"json",
+        data:{},
+        success:function (data) {
+            if(data){
+                $("#importExcelBtn").show();
+            }else{
+                $("#importExcelBtn").hide();
+            }
+        }
+    });
+
+    //明细--跳转到客户详情界面
+    function detail(customerId) {
+        parent.openTab('CUSTOMER_EDIT'+customerId,'<@spring.message "fms.ctmcustomer.detailpage"/>' , '${base.contextPath}/customer/ctm_customer_detail.html?status=update&customerId='+customerId);
+    }
+
+    Hap.autoResizeGrid("#Grid");
+</script>
+<div id="importDialog"></div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdAfterLogMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdAfterLog">
+        <result column="LOG_ID" property="logId" jdbcType="DECIMAL" />
+        <result column="GENERAL_ID" property="generalId" jdbcType="DECIMAL" />
+        <result column="ID_TYPE" property="idType" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="STATUS_MEANING" property="statusMeaning" jdbcType="VARCHAR" />
+        <result column="STATUS_DATE" property="statusDate" jdbcType="TIMESTAMP" />
+        <result column="COMMENT" property="comment" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <select id="query" parameterType="clb.core.order.dto.OrdAfterLog" resultMap="BaseResultMap">
+		SELECT
+			foal.LOG_ID,
+			foal.GENERAL_ID,
+			foal.ID_TYPE,
+			foal.STATUS_DATE,
+			foal.`STATUS`,
+			scvb.MEANING STATUS_MEANING,
+			foal.`COMMENT`
+		FROM
+			fms_ord_after_log AS foal
+			LEFT JOIN sys_code_b sc
+	        ON sc.code = 'ORD.AFTER_LOG'
+	        LEFT JOIN sys_code_value_b scvb
+	        ON scvb.code_id=sc.code_id
+		WHERE foal.`STATUS` = scvb.`VALUE`
+			<if test="generalId != null">
+					AND foal.GENERAL_ID = #{generalId} 
+			</if>
+			<if test="idType != null and idType != ''">
+					AND foal.ID_TYPE = #{idType} 
+			</if>
+			ORDER BY foal.LOG_ID DESC LIMIT 50
+	</select>
+	
+</mapper>

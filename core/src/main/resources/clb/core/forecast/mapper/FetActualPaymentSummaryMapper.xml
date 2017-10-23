@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetActualPaymentSummaryMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetActualPaymentSummary">
+        <result column="PAYMENT_SUMMARY_ID" property="paymentSummaryId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_PERIOD" property="paymentPeriod" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_TYPE" property="receiveCompanyType" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_ID" property="receiveCompanyId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_SUPPLIER_ID" property="paymentSupplierId" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="CERTIFICATE_FILE_ID" property="certificateFileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_COMPANY_NAME" property="receiveCompanyName" jdbcType="VARCHAR" />
+        <result column="PATMENT_SUPPLIER_NAME" property="paymentSupplierName" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+
+	<select id="getData" parameterType="clb.core.forecast.dto.FetActualReceiptSummary" resultMap="BaseResultMap">
+		SELECT
+			ffaps.*,
+			(CASE WHEN rfss.NAME != '' THEN rfss.NAME  
+	              WHEN rfcc.CHANNEL_NAME != '' THEN rfcc.CHANNEL_NAME
+					END)RECEIVE_COMPANY_NAME,
+			pfss.Name PATMENT_SUPPLIER_NAME
+		FROM 
+			fms_fet_actual_payment_summary ffaps
+			LEFT JOIN fms_spe_supplier rfss on (rfss.SUPPLIER_ID = ffaps.RECEIVE_COMPANY_ID and ffaps.RECEIVE_COMPANY_TYPE = 'SUPPLIER')
+			LEFT JOIN fms_cnl_channel  rfcc on (rfcc.CHANNEL_ID = ffaps.RECEIVE_COMPANY_ID and ffaps.RECEIVE_COMPANY_TYPE = 'CHANNEL')
+			LEFT JOIN fms_spe_supplier pfss on pfss.SUPPLIER_ID = ffaps.PAYMENT_SUPPLIER_ID
+		<where>
+			<!-- (rfss.STATUS_CODE = 'APPROVED' or rfcc.STATUS_CODE = 'APPROVED')
+			AND pfss.STATUS_CODE = 'APPROVED' -->
+			<if test="paymentPeriod != null">
+				AND ffaps.PAYMENT_PERIOD = #{paymentPeriod}
+			</if>
+			<if test="receiveCompanyType != null">
+				AND ffaps.RECEIVE_COMPANY_TYPE = #{receiveCompanyType}
+			</if>
+			<if test="receiveCompanyId != null">
+				AND ffaps.RECEIVE_COMPANY_ID = #{receiveCompanyId}
+			</if>
+			<if test="paymentSupplierId != null">
+				AND ffaps.PAYMENT_SUPPLIER_ID = #{paymentSupplierId}
+			</if>
+			<if test="receiveCompanyName != null">
+				AND (rfss.NAME like  CONCAT(CONCAT('%',#{receiveCompanyName}),'%') or rfcc.CHANNEL_NAME like  CONCAT(CONCAT('%',#{receiveCompanyName}),'%'))
+				
+			</if>
+			<if test="paymentSupplierName != null">
+				AND pfss.NAME like  CONCAT(CONCAT('%',#{paymentSupplierName}),'%')
+			</if>
+		</where>
+		order by ffaps.version desc
+	</select>
+
+</mapper>

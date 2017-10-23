@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnCourseEvaluateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnCourseEvaluate">
+        <result column="EVALUATE_ID" property="evaluateId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+        <result column="COURSE_CONTENT" property="courseContent" jdbcType="DECIMAL" />
+        <result column="COURSE_USABILITY" property="courseUsability" jdbcType="DECIMAL" />
+        <result column="COURSE_ENVIRONMENT" property="courseEnvironment" jdbcType="DECIMAL" />
+        <result column="LECTURER_PRESENTATION" property="lecturerPresentation" jdbcType="DECIMAL" />
+        <result column="LECTURER_PROFESSIONAL" property="lecturerProfessional" jdbcType="DECIMAL" />
+        <result column="LECTURER_APPETENCY" property="lecturerAppetency" jdbcType="DECIMAL" />
+        <result column="EVALUATE_CONTENT" property="evaluateContent" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<resultMap id="AllFieldsMap" type="clb.core.course.dto.TrnCourseEvaluate">
+        <result column="EVALUATE_ID" property="evaluateId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+        <result column="COURSE_CONTENT" property="courseContent" jdbcType="DECIMAL" />
+        <result column="COURSE_USABILITY" property="courseUsability" jdbcType="DECIMAL" />
+        <result column="COURSE_ENVIRONMENT" property="courseEnvironment" jdbcType="DECIMAL" />
+        <result column="LECTURER_PRESENTATION" property="lecturerPresentation" jdbcType="DECIMAL" />
+        <result column="LECTURER_PROFESSIONAL" property="lecturerProfessional" jdbcType="DECIMAL" />
+        <result column="LECTURER_APPETENCY" property="lecturerAppetency" jdbcType="DECIMAL" />
+        <result column="EVALUATE_CONTENT" property="evaluateContent" jdbcType="VARCHAR" />
+        <result column="CREATION_DATE" property="evaluateDate" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnCourseEvaluate"
+		resultMap="AllFieldsMap">
+		SELECT
+		ftce.EVALUATE_ID,
+		ftce.COURSE_ID,
+		ftce.CHANNEL_ID,
+		c.CHANNEL_NAME,
+		ftce.PHONE_CODE,
+		ftce.MOBILE,
+		ftce.COURSE_CONTENT,
+		ftce.COURSE_USABILITY,
+		ftce.COURSE_ENVIRONMENT,
+		ftce.LECTURER_PRESENTATION,
+		ftce.LECTURER_PROFESSIONAL,
+		ftce.LECTURER_APPETENCY,
+		(
+        select round((sum(COURSE_CONTENT+COURSE_USABILITY+COURSE_ENVIRONMENT)/3),1) as total from fms_trn_course_evaluate where EVALUATE_ID=ftce.EVALUATE_ID
+        ) courseEvaluate,
+        (
+        select round((sum(LECTURER_PRESENTATION+LECTURER_PROFESSIONAL+LECTURER_APPETENCY)/3),1) as total from fms_trn_course_evaluate where EVALUATE_ID=ftce.EVALUATE_ID
+        ) lecturerEvaluate,
+		ftce.EVALUATE_CONTENT,
+		ftce.CREATION_DATE
+		FROM fms_trn_course_evaluate ftce , fms_cnl_channel c 
+		where  c.CHANNEL_ID = ftce.CHANNEL_ID
+		<if test="evaluateId!=null and evaluateId!=''">
+			and ftce.EVALUATE_ID = #{evaluateId}
+		</if>
+		<if test="channelName!=null and channelName!=''">
+			and c.CHANNEL_NAME like CONCAT('%', #{channelName}, '%')
+		</if>
+		
+		<if test="contentFlag !=null and contentFlag !=''">
+			and ftce.EVALUATE_CONTENT IS NOT NULL
+		</if>
+		
+		<if test="mobile!=null and mobile!=''">
+			and ftce.MOBILE like CONCAT('%', #{mobile}, '%')
+		</if>
+		
+		<if test = "contactPhoneComb != null"> 
+			AND CONCAT(ftce.PHONE_CODE,' ',ftce.MOBILE) like CONCAT('%', #{contactPhoneComb}, '%')
+		</if>
+		
+		<if test="evaluateDate!=null and evaluateDate!=''">
+			and ftce.CREATION_DATE like CONCAT('%', #{evaluateDate}, '%')
+		</if>
+		
+		<if test="courseId!=null and courseId!=''">
+			and ftce.COURSE_ID = #{courseId}
+		</if>
+	</select>	
+	
+	
+	<select id="selectEvaluateByParams" parameterType="clb.core.course.dto.TrnCourseEvaluate"
+		resultMap="AllFieldsMap">
+		SELECT * from fms_trn_course_evaluate where 1=1
+		<if test="courseId!=null ">
+			and COURSE_ID =#{courseId}
+		</if>
+		<if test="mobile!=null and mobile!='' and channelId!=null">
+			and (MOBILE =#{mobile} OR CHANNEL_ID =#{channelId}) 
+		</if>
+		<if test="mobile!=null and mobile!='' and channelId==null">
+			and (MOBILE =#{mobile} ) 
+		</if>
+		<if test="mobile==null and channelId!=null">
+			and CHANNEL_ID =#{channelId}
+		</if>
+		<if test="createdBy!=null">
+			and created_by =#{createdBy}
+		</if>
+	</select>
+	
+</mapper>

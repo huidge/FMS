@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.workbench.mapper.SysWorkbenchRoleMapper">
+    <resultMap id="BaseResultMap" type="clb.core.workbench.dto.SysWorkbenchRole">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <resultMap id="AllFieldsMap" type="clb.core.workbench.dto.SysWorkbenchRole">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<select id="selectAllFields" parameterType="clb.core.workbench.dto.SysWorkbenchRole" resultMap="AllFieldsMap">
+        SELECT
+        fswr.LINE_ID,
+        fswr.CFG_ID,
+        fswr.ROLE_ID,
+        srb.ROLE_NAME,
+        fswr.STATUS
+        FROM
+        fms_sys_workbench_role fswr
+        LEFT JOIN 
+        sys_role_b srb
+        on srb.ROLE_ID = fswr.ROLE_ID
+        where 1=1
+        <if test="cfgId != null and cfgId != ''">
+            AND fswr.CFG_ID = #{cfgId}
+        </if >
+    </select>
+</mapper>

@@ -1,0 +1,64 @@
+<#--
+ * description: 订单查看变更
+ * version: 1.0
+ * #copyright#
+ * author wanjun.feng@hand-china.com    2017/9/21
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+        	orderId: ${RequestParameters.orderId}
+        }
+    });
+</script>
+<body>
+	<div class="content-container" id="ordChangeHis">
+	
+	</div>
+	
+	<script type="text/javascript">
+	$.ajax({
+        type:"POST",
+        url:"${base.contextPath}/fms/ord/change/query",
+        data:{"orderId":viewModel.model.orderId},
+        success: function(e) {
+        	var resultHtml = "";
+            for (var k=0; k<e.rows.length; k++) {
+            	if (e.rows[k].ordChangeLineList != null && e.rows[k].ordChangeLineList.length > 0) {
+	            	resultHtml += '<div class="col-sm-12" style="padding: 20px 0 5px 0;">'+
+					                '<div class="col-sm-12" style="text-align:center;padding-left:0;padding-right:0;">'+
+						           		'--- '+e.rows[k].updateTime+'<span style="margin-left:20px;">'+e.rows[k].userName+'</span>'+' ---'+
+						           	'</div>'+
+						           	'<div class="col-sm-12" style="padding-left:0;padding-right:0;margin-top:5px;">';
+					for (var i in e.rows[k].ordChangeLineList) {
+						if (e.rows[k].ordChangeLineList[i].newValue==null) {
+							e.rows[k].ordChangeLineList[i].newValue = "记录被删除";
+						}
+						if (e.rows[k].ordChangeLineList[i].newValue=="") {
+							e.rows[k].ordChangeLineList[i].newValue = "无";
+						}
+						if (e.rows[k].ordChangeLineList[i].oldValue==null||e.rows[k].ordChangeLineList[i].oldValue=="") {
+							e.rows[k].ordChangeLineList[i].oldValue = "无";
+						}
+						resultHtml += '<div class="col-sm-12" style="padding-left:0;padding-right:0;"><div class="col-sm-2" style="padding-top:5px;padding-bottom:5px;border-right:1px #000 dashed;color:#000;">'+
+						           			e.rows[k].ordChangeLineList[i].columnName +
+						           		'</div>'+
+						           		'<div class="col-sm-5" style="padding-top:5px;padding-bottom:5px;border-right:1px #000 dashed;color:#555;">'+
+						           			e.rows[k].ordChangeLineList[i].oldValue +
+						           		'</div>'+
+						           		'<div class="col-sm-5" style="padding-top:5px;padding-bottom:5px;color:blue;">'+
+						           			e.rows[k].ordChangeLineList[i].newValue +
+						           		'</div></div>';
+					}
+					resultHtml += '</div></div>';
+            	}
+            }
+            $("#ordChangeHis").append(resultHtml);
+        }
+    });
+	</script>
+</body>
+</html>

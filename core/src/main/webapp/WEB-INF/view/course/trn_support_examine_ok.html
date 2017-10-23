@@ -1,0 +1,354 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supportType=COURSE.SUPPORT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?status=COURSE.SUPPORT_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+        	supportId: '${RequestParameters.supportId!0}',
+        	status: '${RequestParameters.status!}',
+        },
+    });
+  
+    function saveFunction(){
+    	//定义ids  存储多个id
+    	var ids=[];
+    	var amount;
+    	//发布
+		 if(viewModel.model.amount){
+			 //debugger;
+	   			 ids.push(viewModel.model.supportId);
+	   			 amount = viewModel.model.amount;
+	   		 $.ajax({
+	                type: "POST",
+	                url: "${base.contextPath}/fms/trn/support/updataAmout",
+	                data: {"ids":ids,"amount":amount},
+	                dataType: "json",
+	                success: function(data){
+	               	 kendo.ui.showInfoDialog({
+	               		 //alert:"成功",
+	                        title: $l('hap.tip.info'),
+	                        message: $l('hap.tip.success')
+	                    }).done(function (event) {
+                            if (event.button == 'OK') {
+                            	window.parent.parent.location.reload();
+                            	window.parent.parent.$("#userWin").data("kendoWindow").close();
+                            	//window.location.reload();
+                           }
+                        });
+	               	 //window.location.reload();
+	                }
+	            });
+	        } 
+    	
+    }
+    
+    function cancelFunction() {
+    	window.parent.$("#userWin").data("kendoWindow").close();
+    }; 
+    console.log(viewModel.model);
+    
+</script>
+<body>
+<div id="userWin" style="display: none;"></div>
+<div id="page-content">
+    <div class="panel">
+            <div id="query_form">
+                <form class="form-horizontal" style="margin-top: 5px;">
+                    <div class="panel-body">
+                    	<div class="col-xs-12" >
+							<div class="col-xs-12" >
+                                <div style="text-align: center"><font size="4" id="font">审核通过,请输入支援价格</font></div>
+                                <script type="text/javascript">
+	                                if(viewModel.model.status == "PAYMENT" ){
+			                    			document.getElementById("font").innerText = "请修改价格";
+			                    	};	
+                                </script>
+                            </div>
+                        </div>
+                    	
+                        <div class="col-xs-12" style="margin-top: 25px">
+                            <div class="col-xs-3" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-12 control-label"
+                                           style="text-align: right">支援价格：</label>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-6" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <div class="col-xs-12">
+                                    	<input id="amount" data-role="maskedtextbox" name="amount" type="text" data-bind="value:model.amount" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+                            <div class="col-xs-3" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-12 control-label"
+                                           style="text-align: left">元</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                    <div class="panel-footer text-right" style="text-align: center">
+                        <span class="btn btn-primary" style="margin-right: 50px" onclick="cancelFunction()" type="submit">取消</span>
+                        <span class="btn btn-primary" onclick="saveFunction()" type="submit">确认</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- <div style="clear:both">
+            <div id="Grid"></div>
+        </div> -->
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+	//审核通过
+	function shenheOk(supportId) {
+		$("#userWin").kendoWindow({
+	       actions: ["Close"],
+	       draggable: true,
+	       height: "50%",
+	       width: "50%",
+	       content: "${base.contextPath}/course/trn_support_examine.html?supportId="+supportId,
+	       iframe: true,
+	       modal: true,
+	       visible: false,
+	   });
+	   var win = $("#userWin").data("kendoWindow");
+	   win.toggleMaximization();
+	   win.maximize();
+	   win.center().open();
+	}
+	
+	$("#province").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.PROVICE";
+	    },
+	    change:function () {
+	        viewModel.model.set("city",null);
+	        viewModel.model.set("cityMeaning",null);
+	    }
+	}));
+	
+	$("#city").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.CITY";
+	        e.param['parentValue'] = viewModel.model.province;
+	    },
+	}));
+	
+	$("#supportType").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: supportType
+	});
+	$("#status").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: status
+	});
+	
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/trn/support/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/trn/support/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "supportId",
+                fields: {}
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "supportId",
+                title: '<@spring.message "TrnSupport.supportId"/>',
+                width: 120,
+                hidden:true
+            },
+            	{
+                field: "supportNum",
+                title: '渠道编号',
+                width: 120
+            },
+            
+                    {
+                field: "channelName",
+                title: '渠道',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    /* 
+                    {
+                field: "createrName",
+                title: '<@spring.message "TrnSupport.createrName"/>',
+                width: 120
+            }, */
+                    {
+                field: "contactPhone",
+                title: '手机',
+                width: 120
+            },
+            {
+                field: "supportType",
+                title: '申请类型',
+                width: 120
+            },
+            	{
+                field: "submitDate",
+                title: '评价时间',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "trainStartDate",
+                title: '开始时间',
+                width: 120
+            },
+                    {
+                field: "trainEndDate",
+                title: '结束时间',
+                width: 120
+            },
+            		{
+                field: "area",
+                title: '城市',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "status",
+                title: '状态',
+                width: 120
+            },
+            	{
+                title: '<@spring.message "hap.action"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.supportId) {
+                        if(dataItem.status=="APPROVAL"){
+                    	openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+')">编辑</a>';
+                        }else if(dataItem.status=="PAYMENT"){
+                        	
+                        }else if(dataItem.status=="AMOUNT"){
+                        	
+                        }else if(dataItem.status=="SUCCESS"){
+                        	
+                        }else if(dataItem.status=="FAIL"){
+                        	
+                        }else if(dataItem.status=="CANCEL"){
+                        	
+                        }
+                        return openDetail;
+                    } else {
+                        openDetail = '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                        return openDetail;
+                    }
+                }
+            }
+        ],
+        editable: false
+    });
+	
+    function openDetailWin(supportId) {
+
+        if (supportId != null) {
+            parent.openTab("channelDetail" + channelId,channelName + " " + '<@spring.message "fms.cnlchannel.channel_detail"/>',"channel/channel_detail.html?channelId="+channelId)
+        }
+
+    }
+    
+    
+    
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

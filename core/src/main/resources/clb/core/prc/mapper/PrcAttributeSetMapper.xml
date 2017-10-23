@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.prc.mapper.PrcAttributeSetMapper">
+    <resultMap id="BaseResultMap" type="clb.core.prc.dto.PrcAttributeSet">
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL" />
+        <result column="SET_NAME" property="setName" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="ENABLE" property="enable" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="selectSetName" resultMap="BaseResultMap">
+         select set_name from fms_prd_attribute_set
+    </select>
+    
+    <!-- 通过条件查询产品属性组信息  -->
+    <select id="selectByCondition" parameterType="clb.core.prc.dto.PrcAttributeSet" resultMap="BaseResultMap">
+          select * from fms_prd_attribute_set fpas 
+          <where>
+             <if test="compDimName != null and compDimName != ''">
+                and exists (select 1 from fms_prc_radar_line fprl  where fpas.ATT_SET_ID = fprl.ATT_SET_ID and fprl.COMP_DIM_NAME like CONCAT('%',#{compDimName},'%') )
+             </if>  
+              <if test="statusCode != null and statusCode != ''">
+                and fpas.status_code = #{statusCode}
+             </if>  
+             <if test="setName != null and setName != ''">
+                and fpas.set_name = #{setName}
+             </if>
+          </where> 
+    </select>
+</mapper>

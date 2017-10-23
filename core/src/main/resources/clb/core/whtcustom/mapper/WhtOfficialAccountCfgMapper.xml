@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtOfficialAccountCfgMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtOfficialAccountCfg">
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_NAME" property="accountName" jdbcType="VARCHAR" />
+        <result column="ORIGINAL_ID" property="originalId" jdbcType="VARCHAR" />
+        <result column="WECHAT_TOKEN" property="wechatToken" jdbcType="VARCHAR" />
+        <result column="BACKGROUND_APPID" property="backgroundAppid" jdbcType="VARCHAR" />
+        <result column="BACKGROUND_APP_SECRET" property="backgroundAppSecret" jdbcType="VARCHAR" />
+        <result column="SECRET_KEY" property="secretKey" jdbcType="VARCHAR" />
+        <result column="ACCESST_TOKEN" property="accesstToken" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_TYPE" property="accountType" jdbcType="VARCHAR" />
+        <result column="MERCHANT_ID" property="merchantId" jdbcType="VARCHAR" />
+        <result column="PAYMENT_SECRET_KEY" property="paymentSecretKey" jdbcType="VARCHAR" />
+        <result column="PAYMENT_FILE_ID" property="paymentFileId" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_DATE_FROM" property="effectiveDateFrom" jdbcType="DATE" />
+        <result column="EFFECTIVE_DATE_TO" property="effectiveDateTo" jdbcType="DATE" />
+        <result column="FILE_NAME" property="fileName" />
+        <result column="ENCODING_AESKEY" property="encodingAeskey" />
+        <result column="ACCOUNT_PATTERN" property="accountPattern" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	<select id="selectAllField"  resultMap="BaseResultMap">
+		select
+		fwoac.*,
+		sf.FILE_NAME
+		from fms_wht_official_account_cfg fwoac
+			LEFT JOIN sys_file sf 
+			ON sf.FILE_ID = fwoac.PAYMENT_FILE_ID 
+		where 1=1
+        <if test="cfgId != null and cfgId != ''">
+            AND fwoac.CFG_ID = #{cfgId}
+        </if >
+        
+        <if test="backgroundAppid != null and backgroundAppid != ''">
+            AND fwoac.BACKGROUND_APPID = #{backgroundAppid}
+        </if >
+        
+        <if test="originalId != null and originalId != ''">
+            AND fwoac.ORIGINAL_ID = #{originalId}
+        </if >
+        
+        <if test="enableFlag != null and enableFlag != ''">
+            AND fwoac.ENABLE_FLAG = #{enableFlag}
+        </if >
+        
+        <if test="accountName != null and accountName != ''">
+            AND fwoac.ACCOUNT_NAME LIKE CONCAT('%', #{accountName}, '%')
+        </if >
+        
+	</select>
+	
+	<select id="selectAccountName"  resultMap="BaseResultMap">
+		select
+		fwoac.*,
+		sf.FILE_NAME
+		from fms_wht_official_account_cfg fwoac
+			LEFT JOIN sys_file sf 
+			ON sf.FILE_ID = fwoac.PAYMENT_FILE_ID 
+		where 1=1
+        <if test="cfgId != null and cfgId != ''">
+            AND fwoac.CFG_ID = #{cfgId}
+        </if >
+        
+        <if test="originalId != null and originalId != ''">
+            AND fwoac.ORIGINAL_ID LIKE CONCAT('%', #{originalId}, '%')
+        </if >
+        
+        <if test="enableFlag != null and enableFlag != ''">
+            AND fwoac.ENABLE_FLAG = #{enableFlag}
+        </if >
+        
+        <if test="accountName != null and accountName != ''">
+            AND fwoac.ACCOUNT_NAME = #{accountName}
+        </if >
+        
+	</select>
+
+    <select id="selectAppId"  resultMap="BaseResultMap">
+        select
+        fwoac.*,
+        sf.FILE_NAME
+        from fms_wht_official_account_cfg fwoac
+        LEFT JOIN sys_file sf
+        ON sf.FILE_ID = fwoac.PAYMENT_FILE_ID
+        where 1=1
+        <if test="cfgId != null and cfgId != ''">
+            AND fwoac.CFG_ID = #{cfgId}
+        </if >
+
+        <if test="originalId != null and originalId != ''">
+            AND fwoac.ORIGINAL_ID = #{originalId}
+        </if >
+
+        <if test="enableFlag != null and enableFlag != ''">
+            AND fwoac.ENABLE_FLAG = #{enableFlag}
+        </if >
+
+        <if test="backgroundAppid != null and backgroundAppid != ''">
+            AND fwoac.BACKGROUND_APPID = #{backgroundAppid}
+        </if >
+
+    </select>
+
+</mapper>

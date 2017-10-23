@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.system.mapper.ClbCommonMapper">
+    
+    <resultMap id="FilesResultMap" type="com.hand.hap.system.dto.Profile" extends="com.hand.hap.mapper.StdMapper.STD" >
+    <id column="PROFILE_ID" property="profileId" jdbcType="DECIMAL" />
+    <result column="PROFILE_NAME" property="profileName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+  	</resultMap>
+    
+    <select id="queryProfiles" resultMap="FilesResultMap">
+    select * from SYS_PROFILE 
+    <where>
+    	<if test="profileName != null and profileName != ''">
+            AND PROFILE_NAME LIKE CONCAT('%', #{profileName}, '%')
+        </if >
+        <if test="description != null and description != ''">
+            AND DESCRIPTION LIKE CONCAT('%', #{description}, '%')
+        </if >
+    </where>
+  </select>
+    
+
+</mapper>

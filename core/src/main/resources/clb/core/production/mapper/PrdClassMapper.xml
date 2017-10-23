@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Created by wanjun.feng on 17/4/12. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdClassMapper">
+	<resultMap id="BaseResultMap" type="clb.core.production.dto.PrdClass">
+		<id column="SET_ID" property="setId" jdbcType="DECIMAL" />
+		<result column="SET_NAME" property="setName" jdbcType="VARCHAR" />
+		<result column="class_name1" property="className1" jdbcType="VARCHAR" />
+		<result column="class_name2" property="className2" jdbcType="VARCHAR" />
+		<result column="class_name3" property="className3" jdbcType="VARCHAR" />
+		<result column="class_name4" property="className4" jdbcType="VARCHAR" />
+		<result column="class_name5" property="className5" jdbcType="VARCHAR" />
+		<result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+		<result column="query_flag" property="queryFlag" jdbcType="VARCHAR" />
+		<result column="update_flag" property="updateFlag" jdbcType="VARCHAR" />
+		<result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+		<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber"
+			jdbcType="DECIMAL" />
+	</resultMap>
+
+	<!-- 查询一级目录 -->
+	<select id="queryBySetId" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		SELECT distinct(fpc.CLASS_NAME1) CLASS_NAME1 from fms_prd_class fpc
+		where fpc.set_id =#{setId}
+	</select>
+
+	<!-- 查询二级目录 -->
+	<select id="queryClassTwoInfo" resultMap="BaseResultMap">
+		SELECT  distinct(fpc.CLASS_NAME2) CLASS_NAME2 from fms_prd_class fpc
+		where fpc.set_id =#{setId}
+		and fpc.CLASS_NAME1 = #{className1}
+	</select>
+
+	<!-- 查询三级目录 -->
+	<select id="queryClassThreeInfo" resultMap="BaseResultMap">
+		SELECT  fpc.CLASS_NAME3 CLASS_NAME3,
+		fpc.query_flag,
+		fpc.update_flag
+		from fms_prd_class fpc
+		where fpc.set_id =#{setId}
+		and fpc.CLASS_NAME1 = #{className1}
+		and fpc.CLASS_NAME2 = #{className2}
+	</select>
+
+	<!-- 通过值列表代码查看代码id -->
+	<select id="selectCodeValue"  resultType="java.util.Map">
+		select  concat(scvb.CODE_VALUE_ID,"") CODE_VALUE_ID,scvb.MEANING from sys_code_b scb, sys_code_value_b
+		scvb
+		where scb.CODE_ID = scvb.CODE_ID
+		and scb.`CODE` = #{code}
+		and scvb.`VALUE` = #{value}
+	</select>
+
+
+</mapper>

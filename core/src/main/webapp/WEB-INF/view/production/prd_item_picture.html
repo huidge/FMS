@@ -1,0 +1,206 @@
+<#-- * description:操作指引管理列表.html * version: 1.0 * --> 
+<#include "../include/header.html">
+<script type="text/javascript">
+	//获取从上一个页面传递过来的参数
+	var pictureFileId = '${RequestParameters.pictureFileId!0}';
+	var pictureFilePath = '${RequestParameters.pictureFilePath!0}';
+	var token = '${RequestParameters.token!0}';
+</script>
+<div id="fileWin" style="display: none;">
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+	<div id="page-content">
+		<div class="panel">
+			<form class="form-horizontal" id="baseMessage">
+				<div class="panel-footer text-right">
+                    <span class="btn btn-info" data-bind="click:queryFunction" type="submit" id="upload" onclick=upload(pictureFileId)>
+                        <i class="fa fa-upload"
+						   style="margin-right:3px;"></i><@spring.message "sysfile.upload"/></span>
+                    <span class="btn btn-info" type="button" data-bind="click:resetForm" id="download" onclick=downloadFile(pictureFileId)>
+                        <i class="fa fa-download"
+						   style="margin-right:3px;"></i><@spring.message "hap.download"/></span>
+				</div>
+				<iframe id="ifile" style="display:none"></iframe>
+			</form>
+		</div>
+		<!-- 图片预览的窗口 -->
+		<img src=""  id="img" width="300" height="280" style="text-align:center;"/>
+	<script type="text/javascript">
+		var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+		var uidData;
+		$(document).ready(function() {
+			if(pictureFilePath !="null"){
+				$("#img").show().attr('src',ossWebPath+"${base.contextPath}"+pictureFilePath);
+			}
+		});
+		function upload(fileId){
+			if(fileId != 0 & fileId != "" & fileId != undefined  & fileId != "undefined" & fileId != "null"  ){
+				kendo.ui.showConfirmDialog({
+					title:'确认框',
+					message:'<@spring.message "spe.recoverfile"/>',
+				}).done(function (e) {
+					if (e.button == 'OK') {
+						window.fileWin = $("#fileWin").kendoWindow({
+							title: '<@spring.message "sysfile.upload"/>',
+							width: 400,
+							height: 250,
+							modal: true
+						}).data("kendoWindow");
+						fileWin.center().open();
+					}
+				});
+			}
+			else{
+				window.fileWin = $("#fileWin").kendoWindow({
+					title: '<@spring.message "sysfile.upload"/>',
+					width: 400,
+					height: 250,
+					modal: true
+				}).data("kendoWindow");
+				fileWin.center().open();
+			}
+		}
+		$("#files").kendoUpload({
+			async        : {
+				saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+			},
+			showFileList : false,
+			upload       : onUpload,
+			success      : onSuccess
+		});
+
+		function onUpload(e){
+			e.data = {
+				modularName:'PRD',
+				allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize:20480
+			}
+			var prevDiv = document.getElementById('img');
+			if (e.files[0].rawFile){
+				var reader = new FileReader();
+				reader.onload = function(evt){
+					$('img').attr('src', evt.target.result);
+				}
+				reader.readAsDataURL(e.files[0].rawFile);
+			}
+		};
+		function onSuccess(e){
+			if(e.response.success){
+				var fileId = e.response.file.fileId;
+				pictureFileId = fileId;
+				window.parent.parentFileId = fileId;
+				console.log("window.parent.parentFileId:",window.parent.parentFileId)
+				fileWin.close();
+				kendo.ui.showInfoDialog({
+					title    : '成功',
+					message  : '<@spring.message "spe.pleasesavedata"/>'
+				}).done(function (event) {
+					if (event.button == 'OK') {
+//						window.parent.$('#itemsGrid').data('kendoGrid').saveChanges()
+						window.parent.$("#pictureWin").data("kendoWindow").close();
+					}
+				});
+
+			}else{
+				kendo.ui.showErrorDialog({
+					title    : '错误',
+					message  : e.response.message
+				})
+			}
+		};
+
+
+		function deleteFile(uid){
+			kendo.ui.showConfirmDialog({
+				title:'确认框',
+				message:'<@spring.message "hap.tip.delete_confirm"/>',
+			}).done(function (e) {
+				if (e.button == 'OK') {
+					var grid = $("#grid").data("kendoGrid");
+					var data = dataSource.getByUid(uid);
+					if(data.fileId != "" && data._token != "" && data.fileId != undefined && data._token != undefined){
+						$.ajax({
+							url:"${base.contextPath}/supplier/archives/attach/remove",
+							type : "POST",
+							data:{
+								fileId:data.fileId,
+								token:data._token
+							},
+							success : function(res) {
+								if(res.message == "success"){
+									datas = dataSource.data();
+									for(var i = 0;i < datas.length; i ++){
+										if(datas[i].fileId == data.fileId){
+											dataSource.remove(datas[i]);
+											grid.refresh();
+										}
+									}
+								}else{
+									kendo.ui.showErrorDialog({
+										title    : '错误',
+										message  : res.message
+									})
+								}
+							},
+						})
+					}else{
+						datas = dataSource.data();
+						for(var i = 0;i < datas.length; i ++){
+							if(datas[i].uid == data.uid){
+								dataSource.remove(datas[i]);
+								grid.refresh();
+							}
+						}
+					}
+
+				}
+			});
+		};
+
+		function downloadFile(uid)
+		{
+			$.ajax({
+				url: '${base.contextPath}/production/items/fms/sys/attach/file/queryFiles?fileId='+pictureFileId,
+				type: "POST",
+				dataType: "json",
+				success : function(e) {
+					$.ajax({
+						url : '${base.contextPath}/commons/attach/validateFile',
+						type : "POST",
+						dataType : "json",
+						data : {
+							fileId:pictureFileId,
+							token:e._token
+						},
+						success : function(json) {
+							if(json.success == true){
+								url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+pictureFileId+'&token='+e._token;
+								var iframe = document.getElementById("ifile");
+								iframe.src=url;
+							}else{
+								if(json.message != "" && json.message != undefined && json.message != null){
+									kendo.ui.showErrorDialog({
+										title    : '错误',
+										message  : json.message
+									})
+								}else{
+									kendo.ui.showErrorDialog({
+										title    : '错误',
+										message  : '<@spring.message "fms.file_not_exists"/>'
+									})
+								}
+
+							}
+						},
+					})
+				}
+			});
+		};
+
+	</script>
+</div>
+</body>
+</html>

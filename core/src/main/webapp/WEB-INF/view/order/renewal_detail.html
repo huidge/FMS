@@ -1,0 +1,1073 @@
+<#--
+ * description: 续保清单详情页面
+ * version: 1.0
+ * #copyright#
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?renewalStatusData=ORD.RENEWAL_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?yesNoData=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?payMethodData=CMN.PAY_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?orderStatusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?balancePaymentMethodData=ORD.BALANCE_PAY_METHOD" type="text/javascript"></script>
+<script type="text/javascript">
+  
+	//保单信息的viewModel
+	var orderVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//续保信息的viewModel
+	var renewalVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//续保表格的viewModel
+	var renewalGridVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//最外层的viewModel
+	 var viewModel = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	//获取上一个页面传递过来的值
+	var orderId = '${RequestParameters.orderId!0}';
+	var renewalStatus = '<#if RequestParameters.renewalStatus?exists> ${RequestParameters.renewalStatus} <#else>''</#if>';
+	
+    viewModel.model.set("orderId",orderId);
+    viewModel.model.set("renewalStatus",renewalStatus);
+    renewalVM.model.set("orderId",orderId);
+    
+  //跳转页面查询
+    if(orderId != 0) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/OrderRenewal/queryOrderByOrdOrderId",
+            data: {orderId: orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                        orderVM.model.set(k, row[k]);
+                }
+            }
+        });
+        
+        //查询续保信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/OrderRenewal/queryOrderByOrderId",
+            data: {orderId: orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                        renewalVM.model.set(k, row[k]);
+                }
+            }
+        });
+        
+    }
+  
+</script>
+
+<div id="fileWin" style="display: none;">
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading col-xs-12">
+            	<div class="col-xs-9" style="text-align: left"><span class="panel-title"> 续保详情 </span></div>
+            	
+            	<div class="col-xs-1" style="text-align: right">
+            		<span class="btn btn-default" style="width:100px" onclick="cancelData()">
+					    <i class="fa fa-reply" style="margin-right:3px;"></i>返回上一页
+					</span>
+            	</div> 
+            </div>
+            
+            <div class="panel-body">   
+
+                <div class="col-xs-12" >
+
+                    <!--保单信息-->
+                    <div class="col-xs-12" id="policyInfoDiv">
+                        <p class="bord-btm pad-ver text-main text-bold">
+                            		保单信息
+                        </p>
+
+                        <div class="col-xs-12" >
+
+                            <div class="col-xs-4" id="policyNumberDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保单号码</label> 
+                                    <div class="col-xs-8">
+                                        <input id="policyNumber" name="policyNumber" type="text" data-bind="value:model.policyNumber" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#policyNumber'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                          
+
+                            <div class="col-xs-4" id="itemDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">订单信息</label>
+                                    <div class="col-xs-8">
+                                        <input id="item" name="item" type="text" data-bind="value:model.item" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#item'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" id="channelNameDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">渠道</label>
+                                    <div class="col-xs-8">
+                                        <input id="channelName" name="channelName" type="text" class="k-textbox" data-bind="value:model.channelName,text:model.channelName" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#channelName'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-12">
+
+                            
+                            
+							<div class="col-xs-4" id="applicantDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">投保人</label>
+                                    <div class="col-xs-8">
+                                        <input id="applicant" name="applicant" type="text" data-bind="value:model.applicant,text:model.applicant" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#applicant'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" id="insurantDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">受保人</label>
+                                    <div class="col-xs-8">
+                                        <input id="insurant" name="insurant" type="text" data-bind="value:model.insurant,text:model.insurant" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#insurant'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" id="currencyDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">币种</label>
+                                     <div class="col-xs-8">
+                                        <input id="currency" name="currency" type="text" data-bind="value:model.currency" style="width: 100%;">
+                                        <script>kendo.bind($('#currency'), orderVM);</script>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-xs-12">
+                            
+                            <div class="col-xs-4" id="yearPayAmountDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保费</label>
+                                     <div class="col-xs-8">
+                                        <input id="yearPayAmount" name="yearPayAmount" type="text" data-bind="value:model.yearPayAmount" style="width: 100%;">
+                                        <script>kendo.bind($('#yearPayAmount'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-4" id="policyAmountDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保额</label>
+                                     <div class="col-xs-8">
+                                        <input id="policyAmount" name="policyAmount" type="text" data-bind="value:model.policyAmount" style="width: 100%;">
+                                        <script>kendo.bind($('#policyAmount'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">状态</label>
+                                    <div class="col-xs-8">
+                                        <input id="renewalStatus" name="renewalStatus" type="text" data-bind="value:model.renewalStatus" style="width: 100%;">
+                                        <script>kendo.bind($('#renewalStatus'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                
+                 <!--续保信息-->
+                 <div class="col-xs-12" id="afterFollowGridDiv">
+	                   <p class="bord-btm pad-ver text-main text-bold">续保信息</p>
+	                            	<!-- <button onclick="saveData()">保存</button>
+	                            	<button onclick="resetData()">重置</button> -->
+                   </div> 
+                   
+                <div class="col-xs-12">
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">客户编号</label>
+                            <div class="col-xs-9">
+                                <input id="customerNumber" name="customerNumber" type="text" data-bind="value:model.customerNumber" class=" k-textbox" style="width: 100%;">
+                                <script>kendo.bind($('#customerNumber'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">缴费编号</label>
+                            <div class="col-xs-9">
+                                <input id="payNumber" name="payNumber" type="text" data-bind="value:model.payNumber"  class=" k-textbox" style="width: 100%;">
+                                <script>kendo.bind($('#payNumber'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保费递增</label>
+                            <div class="col-xs-9">
+                                        <input id="increaseFlag" name="increaseFlag" type="checkbox" style="top:6px;" data-bind="value:model.increaseFlag">
+                                        <script>kendo.bind($('#increaseFlag'), renewalVM);</script>
+                             </div>
+                        </div>
+                    </div>
+
+                </div>
+                    <div class="col-xs-12">
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">已提交DDA</label>
+                            <div class="col-xs-9">
+                                        <input id="ddaFlag" name="ddaFlag" type="checkbox" style="top:6px;" data-bind="value:model.ddaFlag">
+                                        <script>kendo.bind($('#ddaFlag'), renewalVM);</script>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">DDA提交日期</label>
+                            <div class="col-xs-9">
+                                <input id="ddaSubmitDate" name="ddaSubmitDate" type="datetime" data-bind="value:model.ddaSubmitDate" style="width: 100%;">
+                                <script>kendo.bind($('#ddaSubmitDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">DDA生效日期</label>
+                            <div class="col-xs-9">
+                                <input id="ddaEffectiveDate" name="ddaEffectiveDate" type="datetime" data-bind="value:model.ddaEffectiveDate" style="width: 100%;">
+                                <script>kendo.bind($('#ddaEffectiveDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12">
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">首期保费日</label>
+                            <div class="col-xs-9">
+                                <input id="firstPayDate" name="firstPayDate" type="datetime" data-bind="value:model.firstPayDate" style="width: 100%;">
+                                <script>kendo.bind($('#firstPayDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保单生效日</label>
+                            <div class="col-xs-9">
+                                <input id="effectiveDate" name="effectiveDate" type="datetime" data-bind="value:model.effectiveDate" style="width: 100%;">
+                                <script>kendo.bind($('#effectiveDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12">
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保费到期日</label>
+                            <div class="col-xs-9">
+                                <input id="renewalDueDate" name="renewalDueDate" type="datetime" data-bind="value:model.renewalDueDate" style="width: 100%;">
+                                <script>kendo.bind($('#renewalDueDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">宽限期</label>
+                            <div class="col-xs-9">
+                                <input id="graceDate" name="graceDate" type="datetime" data-bind="value:model.graceDate"  style="width: 100%;">
+                                <script>kendo.bind($('#graceDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">行政期</label>
+                            <div class="col-xs-9">
+                                <input id="administrativeDate" name="administrativeDate" type="datetime" data-bind="value:model.administrativeDate" style="width: 100%;">
+                                <script>kendo.bind($('#administrativeDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xs-12">
+                
+               	 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">供款方式</label>
+                            <div class="col-xs-9">
+                                <input id="payMethod" name="payMethod" type="text" data-bind="value:model.payMethod" style="width: 100%;">
+                                <script>kendo.bind($('#payMethod'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">付款方法</label>
+                            <div class="col-xs-9">
+                                <input id="balancePaymentMethod" name="balancePaymentMethod" type="text" data-bind="value:model.balancePaymentMethod" style="width: 100%;">
+                                <script>kendo.bind($('#balancePaymentMethod'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                  	 <div class="col-xs-4" id="payPeriodsDiv">
+                             <div class="form-group" style="margin-bottom:10px">
+                                 <label class="col-xs-3 control-label"
+                                        style="text-align: right">当前期数</label>
+                                 <div class="col-xs-9">
+                                     <input id="payPeriods" name="payPeriods" type="text" class="k-textbox" data-bind="value:model.payPeriods" style="display: none;">
+                                     <script>kendo.bind($('#payPeriods'), renewalVM);</script>
+                                	<input id="tempPayPeriods" name="tempPayPeriods" type="text" class="k-textbox" style="width: 100%;">
+                                     <script>
+                                     	$("#tempPayPeriods").val(parseInt($("#payPeriods").val()) + 1);
+                                     </script>
+                                 </div>
+                             </div>
+                   	</div>
+
+                </div>
+                <div class="col-xs-12">
+                
+                	<div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">回馈余额</label>
+                            <div class="col-xs-9">
+                                <input id="feedbackBalance" name="feedbackBalance" type="text" data-bind="value:model.feedbackBalance" style="width: 100%;">
+                                <script>kendo.bind($('#feedbackBalance'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">账户余额</label>
+                            <div class="col-xs-9">
+                                <input id="accountBalance" name="accountBalance" type="text" data-bind="value:model.accountBalance" style="width: 100%;">
+                                <script>kendo.bind($('#accountBalance'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                	<div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">续保成功日期</label>
+                            <div class="col-xs-9">
+                                <input id="renewalSuccessDate" name="renewalSuccessDate" type="text" data-bind="value:model.renewalSuccessDate" style="width: 100%;">
+                                <script>kendo.bind($('#renewalSuccessDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                	<div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">预计续保保费</label>
+                            <div class="col-xs-9">
+                                <input id="nextPolicyAmount" name="nextPolicyAmount" type="text" data-bind="value:model.nextPolicyAmount" style="width: 100%;">
+                                <script>kendo.bind($('#nextPolicyAmount'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--续保表格-->
+                <div class="col-xs-12" id="renewalGridDiv">
+                    <p class="bord-btm pad-ver text-main text-bold">
+                       		续保表格
+                    </p>
+
+                    <div style="clear:both;margin-bottom:20px;">
+                        <div id="renewalGrid"></div>
+                    </div>
+                </div>
+           
+            </div>
+
+            <!-- <div class="panel-footer text-center">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i>申请续保</span>
+                 <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div> -->
+            <iframe id="ifile" style="display:none"></iframe>
+        </form>
+        </div>
+    </div>
+    <!--<script>kendo.bind($('#page-content'), viewModel);</script>-->
+
+<script type="text/javascript">
+
+    /* $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    }); */
+
+    $("#afterNum").attr("disabled",true).css("background", "#DDDDDD");
+    $("#policyNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#item").attr("disabled",true).css("background", "#DDDDDD");
+    $("#channelName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#applicant").attr("disabled",true).css("background", "#DDDDDD");
+    $("#insurant").attr("disabled",true).css("background", "#DDDDDD");
+    $("#currency").attr("disabled",true).css("background", "#DDDDDD");
+    $("#yearPayAmount").attr("disabled",true).css("background", "#DDDDDD");
+    $("#policyAmount").attr("disabled",true).css("background", "#DDDDDD");
+    $("#reserveSupplierName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#roleName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#followUserId").attr("disabled",true).css("background", "#DDDDDD");
+    $("#renewalStatus").attr("disabled",true).css("background", "#DDDDDD");
+    
+    $("#increaseFlag").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaFlag").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaSubmitDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaEffectiveDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#firstPayDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#effectiveDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#renewalDueDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#graceDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#administrativeDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#balancePaymentMethod").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payPeriods").attr("disabled",true).css("background", "#DDDDDD");
+    $("#tempPayPeriods").attr("disabled",true).css("background", "#DDDDDD");
+    $("#feedbackBalance").attr("disabled",true).css("background", "#DDDDDD");
+    $("#accountBalance").attr("disabled",true).css("background", "#DDDDDD");
+    
+    $("#customerNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payMethod").attr("disabled",true).css("background", "#DDDDDD");
+    $("#nextPolicyAmount").attr("disabled",true).css("background", "#DDDDDD");
+    $("#renewalSuccessDate").attr("disabled",true).css("background", "#DDDDDD");
+    
+    
+    $('#renewalStatus').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: renewalStatusData
+    });
+    
+    $('#balancePaymentMethod').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: balancePaymentMethodData,
+    });
+    
+    $('#payMethod').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: payMethodData,
+    });
+
+    $("#currency").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: currencyData
+    });
+    
+    $("#policyAmount").kendoNumericTextBox({
+        format:"#,###",
+        decimals: 0,
+        min:0,
+    });
+    $("#yearPayAmount").kendoNumericTextBox({
+        format:"#,###",
+        decimals: 0,
+        min:0,
+    });
+    $("#feedbackBalance").kendoNumericTextBox({
+        format:"#,###",
+        decimals: 0,
+        min:0,
+    });
+    $("#accountBalance").kendoNumericTextBox({
+        format:"#,###",
+        decimals: 0,
+        min:0,
+    });
+    $("#nextPolicyAmount").kendoNumericTextBox({
+        format:"#,###",
+        decimals: 0,
+        min:0,
+    });
+    
+    $("#increaseFlag").kendoCheckbox({
+        checkedValue: 'Y',
+        uncheckedValue: 'N'
+    });
+
+    $("#ddaFlag").kendoCheckbox({
+        checkedValue: 'Y',
+        uncheckedValue: 'N'
+    });
+    $("#ddaSubmitDate").kendoDatePicker();
+    $("#ddaEffectiveDate").kendoDatePicker();
+    $("#firstPayDate").kendoDatePicker();
+    $("#effectiveDate").kendoDatePicker();
+    $("#renewalDueDate").kendoDatePicker();
+    $("#nextPolicyDueDate").kendoDatePicker();
+    $("#graceDate").kendoDatePicker();
+    $("#administrativeDate").kendoDatePicker();
+    $("#renewalSuccessDate").kendoDatePicker();
+    
+    var BaseUrl = _basePath;
+    
+    //续保表格
+  /*   XBDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/after/queryRenewalInfoByOrderId?orderId="+orderId,
+                type: "POST",
+                dataType: "json"
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "renewalId",
+                fields: {
+                	
+                }
+            }
+        }
+    }); */
+    
+    
+    
+  //续保Grid
+    XBDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/OrderRenewal/queryRenewalGrid?orderId="+orderId,
+                type: "POST",
+                dataType: "json"
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "renewalId",
+                fields: {
+                    renewalDate2 : {type : "date"},
+                    renewalDate3 : {type : "date"},
+                    renewalDate4 : {type : "date"},
+                    renewalDate5 : {type : "date"},
+                    renewalDate6 : {type : "date"},
+                    renewalDate7 : {type : "date"},
+                    renewalDate8 : {type : "date"},
+                    renewalDate9 : {type : "date"},
+                    renewalDate10 : {type : "date"},
+                    renewalDate11 : {type : "date"},
+                    renewalDate12 : {type : "date"},
+                    renewalDate13 : {type : "date"},
+                    renewalDate14 : {type : "date"},
+                    renewalDate15 : {type : "date"},
+                    renewalDate16 : {type : "date"},
+                    renewalDate17 : {type : "date"},
+                    renewalDate18 : {type : "date"},
+                    renewalDate19 : {type : "date"},
+                    renewalDate20 : {type : "date"},
+                    renewalDate21 : {type : "date"},
+                    renewalDate22 : {type : "date"},
+                    renewalDate23 : {type : "date"},
+                    renewalDate24 : {type : "date"},
+                    renewalDate25 : {type : "date"},
+                    renewalDate26 : {type : "date"},
+                    renewalDate27 : {type : "date"},
+                    renewalDate28 : {type : "date"},
+                    renewalDate29 : {type : "date"},
+                    renewalDate30 : {type : "date"},
+                    renewalDate31 : {type : "date"},
+                    renewalDate32 : {type : "date"},
+                    renewalDate33 : {type : "date"},
+                    renewalDate34 : {type : "date"},
+                    renewalDate35 : {type : "date"},
+                    renewalDate36 : {type : "date"},
+                    renewalDate37 : {type : "date"},
+                    renewalDate38 : {type : "date"},
+                    renewalDate39 : {type : "date"},
+                    renewalDate40 : {type : "date"},
+                    renewalDate41 : {type : "date"},
+                    renewalDate42 : {type : "date"},
+                    renewalDate43 : {type : "date"},
+                    renewalDate44 : {type : "date"},
+                    renewalDate45 : {type : "date"},
+                    renewalDate46 : {type : "date"},
+                    renewalDate47 : {type : "date"},
+                    renewalDate48 : {type : "date"},
+                    renewalDate49 : {type : "date"},
+                    renewalDate50 : {type : "date"},
+                    renewalDate51 : {type : "date"},
+                    renewalDate52 : {type : "date"},
+                    renewalDate53 : {type : "date"},
+                    renewalDate54 : {type : "date"},
+                    renewalDate55 : {type : "date"},
+                    renewalDate56 : {type : "date"},
+                    renewalDate57 : {type : "date"},
+                    renewalDate58 : {type : "date"},
+                    renewalDate59 : {type : "date"},
+                    renewalDate60 : {type : "date"},
+                    renewalDate61 : {type : "date"},
+                    renewalDate62 : {type : "date"},
+                    renewalDate63 : {type : "date"},
+                    renewalDate64 : {type : "date"},
+                    renewalDate65 : {type : "date"},
+                    renewalDate66 : {type : "date"},
+                    renewalDate67 : {type : "date"},
+                    renewalDate68 : {type : "date"},
+                    renewalDate69 : {type : "date"},
+                    renewalDate70 : {type : "date"},
+                    renewalDate71 : {type : "date"},
+                    renewalDate72 : {type : "date"},
+                    renewalDate73 : {type : "date"},
+                    renewalDate74 : {type : "date"},
+                    renewalDate75 : {type : "date"},
+                    renewalDate76 : {type : "date"},
+                    renewalDate77 : {type : "date"},
+                    renewalDate78 : {type : "date"},
+                    renewalDate79 : {type : "date"},
+                    renewalDate80 : {type : "date"},
+                    renewalDate82 : {type : "date"},
+                    renewalDate83 : {type : "date"},
+                    renewalDate84 : {type : "date"},
+                    renewalDate85 : {type : "date"},
+                    renewalDate86 : {type : "date"},
+                    renewalDate87 : {type : "date"},
+                    renewalDate88 : {type : "date"},
+                    renewalDate89 : {type : "date"},
+                    renewalDate90 : {type : "date"},
+                    renewalDate91 : {type : "date"},
+                    renewalDate92 : {type : "date"},
+                    renewalDate93 : {type : "date"},
+                    renewalDate94 : {type : "date"},
+                    renewalDate95 : {type : "date"},
+                    renewalDate96 : {type : "date"},
+                    renewalDate97 : {type : "date"},
+                    renewalDate98 : {type : "date"},
+                    renewalDate99 : {type : "date"},
+                    renewalDate100 : {type : "date"},
+
+                },
+            }
+        }
+    });
+    
+ 	var year = orderVM.model.payPeriods + 1;
+	
+	//动态生成续保列
+    function dynamicColumns(){
+
+        var gridColumns = [];
+
+        var itemColumn = {
+            field: "itemName",
+            title: '<@spring.message "fms.ordorder.item"/>',
+            attributes: {style: "text-align:center"},
+            width: 120,
+            headerAttributes: {
+                "class": "table-header-cell",
+                style: "text-align: center"
+            },
+            editor:function (container, options) {
+                $('<span>'+options.model.itemName+'</span>')
+                    .appendTo(container)
+            }
+        }
+
+        gridColumns.push(itemColumn);
+
+        //构建Column
+        //标题为后台返回，字段为field+index
+        for(var i=2;i<=year;i++){
+            var yearColumns = [];
+            var j = i;
+            var column = {
+                field: "renewalDate"+i,
+                title: '<@spring.message "fms.OrdOrderRenewal.renewalDate"/>',
+                width: 120,
+                format: "{0: yyyy-MM-dd}" ,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                editor: function(container, options) {
+                    if (options.model.itemName != "总计") {
+                        $('<input name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDatePicker({
+                                format: "yyyy-MM-dd"
+                            });
+                    }
+                }
+            }
+            yearColumns.push(column);
+
+            column = {
+                field: "currency"+i,
+                title: '<@spring.message "fms.ordorder.currency"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                template: function(dataItem){
+
+                    var v = dataItem["currency"+j];
+                    $.each(currencyData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined" || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    if (options.model.itemName != "总计") {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: currencyData
+                            });
+                    }
+                },
+            }
+            yearColumns.push(column);
+
+            column = {
+                field: "renewalFlag"+i,
+                title: '<@spring.message "fms.OrdOrderRenewal.renewalFlag"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                template: function(dataItem){
+
+                    var v = dataItem["renewalFlag"+j];
+                    $.each(yesNoData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined" || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    if (options.model.itemName != "总计") {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: yesNoData
+                            });
+                    }
+                },
+            }
+            yearColumns.push(column);
+
+            column = {
+                field: "renewalStatus"+i,
+                title: '<@spring.message "fms.ordorder.status"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                template: function(dataItem){
+
+                    var v = dataItem["renewalStatus"+j];
+                    $.each(renewalStatusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined"  || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    if (options.model.itemName != "总计") {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: renewalStatusData
+                            });
+                    }
+                },
+            }
+            yearColumns.push(column);
+
+            column = {
+                field: "totalAmount"+i,
+                title: '预计金额',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                },
+                editor: function(container, options){
+                    if (options.model.itemName == "总计") {
+                        $('<input name="' + options.field + '" >')
+                            .appendTo(container)
+                            .kendoNumericTextBox({
+                            });   
+                    }
+                },
+                /* template: function(dataItem){
+                    var v = dataItem["totalAmount"+i];
+                    v = toThousands(v);
+                    return v == 0 ? '' : v;
+                }, */
+            }
+
+            yearColumns.push(column);
+
+            var yearColumn = {
+                field: "year",
+                title: "第" + i + "期",
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                columns: yearColumns
+            }
+
+            gridColumns.push(yearColumn);
+
+        }
+
+        return gridColumns;
+    }
+	
+    var columns = dynamicColumns();
+	
+	var renewalGrid = $("#renewalGrid").kendoGrid({
+        dataSource: XBDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: columns,
+        editable: false,
+    }).data("kendoGrid");
+
+    //页面提交保存
+   /*  function saveData(){
+    	Hap.submitForm({
+            url: BaseUrl+"/fms/ord/OrderRenewal/save",
+            formModel: renewalVM.model,
+            success: function (data) {
+                if(data.success){
+                	kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: '保存成功！'
+                    }).done(function(event){
+                   	 if (event.button == 'OK') {
+                   		//resetData();
+                   		window.location.reload();
+                	 }
+                 });
+                	
+                }else{
+                	kendo.ui.showErrorDialog({
+                        title: $l('hap.tip.error'),
+                        message: "保存失败"
+                    });
+                }
+             }
+        });
+    }  */
+    
+    /* function resetData(){
+    	//查询续保信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: BaseUrl+"/fms/ord/OrderRenewal/queryOrderByOrderId",
+            data: {orderId: orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                        renewalVM.model.set(k, row[k]);
+                }
+            }
+        });
+    	
+      //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/OrderRenewal/queryOrderByOrdOrderId",
+            data: {orderId: orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                        orderVM.model.set(k, row[k]);
+                }
+            }
+        });
+      
+        XBDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: BaseUrl + "/fms/ord/after/queryRenewalInfoByOrderId?orderId="+orderId,
+                    type: "POST",
+                    dataType: "json"
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "renewalId",
+                    fields: {
+                    	
+                    }
+                }
+            }
+        });
+    } */
+	//千分位RMB
+    function toThousands(num) {
+        var num = (num || 0).toString(), result = '';
+        while (num.length > 3) {
+            result = ',' + num.slice(-3) + result;
+            num = num.slice(0, num.length - 3);
+        }
+        if (num) { result = num + result; }
+        return result;
+    }
+    //返回按钮
+    function cancelData() {
+        parent.closeTab("renewal_detail"+orderId);
+    }
+    
+</script>
+</body>
+</html>

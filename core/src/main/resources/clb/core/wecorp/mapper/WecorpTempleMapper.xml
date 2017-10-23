@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clb.core.wecorp.mapper.WecorpTempleMapper">
+
+        <resultMap id="templeMap" type="clb.core.wecorp.dto.WecorpTemple">
+            <id column="id" property="id" jdbcType="VARCHAR"/>
+            <result column="appid" property="appid" jdbcType="VARCHAR"/>
+            <result column="temple_code" property="templeCode" jdbcType="VARCHAR"/>
+            <result column="temple_id" property="templeId" jdbcType="VARCHAR"/>
+        </resultMap>
+    
+    <select id="findByTempleCodeAndAppId" resultMap="templeMap">
+        SELECT * FROM woa_temple WHERE temple_code=#{templeCode} AND appid=#{appid}
+    </select>
+
+    <delete id="delByTempleIdAndAppId">
+        DELETE FROM woa_temple WHERE temple_id=#{templeId} AND appid=#{appid}
+    </delete>
+
+</mapper>

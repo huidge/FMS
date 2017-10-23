@@ -1,0 +1,242 @@
+<#--
+ * description: 售后跟进续保成功弹窗页面
+ * version: 1.0
+ * #copyright#
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?payMethodData=ORD.BALANCE_PAY_METHOD" type="text/javascript"></script>
+<script type="text/javascript">
+	
+	var orderId = '<#if RequestParameters.orderId?exists>${RequestParameters.orderId}<#else>-1</#if>';
+	var payMethod = '<#if RequestParameters.payMethod?exists>${RequestParameters.payMethod}<#else>null</#if>';
+	
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+	
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 10%; display: block;">
+				<div style="width: 98%; margin-top: 5px;">
+					<form class="form-horizontal">
+						<div class="text-center" style="margin-top: 10px">
+							 <p class="bord-btm pad-ver text-main text-bold">
+	                            		<h4>续保成功</h4>
+	                        </p>
+	                      </div>
+						<div class="row" style="margin-left: 5px;">
+							<div class="form-group">
+							
+								<div class="col-sm-12">
+								
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">回馈余额:</label>
+												<div class="col-sm-9">
+													<input data-bind="value:model.feedbackBalance" id="feedbackBalance" style="width: 240px" required>
+												</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">账户余额:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.accountBalance" id="accountBalance" style="width: 240px"  required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">当前期数:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.payPeriods" id="payPeriods" class="k-textbox" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">续保成功日期:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.renewalSuccessDate" id="renewalSuccessDate" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">保费到期日:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.renewalDueDate" id="renewalDueDate" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group" id="graceDateDiv">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">宽限期:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.graceDate" id="graceDate" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group" id ="administrativeDateDiv">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">行政期:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.administrativeDate" id="administrativeDate" style="width: 240px">
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">下期保费金额:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.nextPolicyAmount" id="nextPolicyAmount" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">付款方法:</label>
+											<div class="col-sm-9">
+													<input data-bind="value:model.balancePaymentMethod" id="balancePaymentMethod" style="width: 240px" required>
+											</div>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<div class="text-center" style="margin-top: 10px">
+							<span class="btn btn-success" onclick="saveData()" type="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span> 
+						</div>
+					</form>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+		var validatable = $("#page-content").kendoValidator().data("kendoValidator");
+		
+		if(orderId != -1){
+			viewModel.model.set("orderId", orderId);
+			viewModel.model.set("payMethod", payMethod);
+			$.ajax({
+	            type: "POST",
+	            async: false,
+	            url: "${base.contextPath}/fms/ord/after/queryOrderInfoByOrderId",
+	            data: {"orderId": orderId,"payMethod":payMethod},
+	            success: function (json) {
+	                var row = json.rows[0] || {};
+	                
+	                viewModel.model.set("feedbackBalance",row["feedbackBalance"]);
+	                viewModel.model.set("accountBalance",row["accountBalance"]);
+	                viewModel.model.set("renewalDueDate",row["renewalDueDate"]);
+	                viewModel.model.set("graceDate",row["graceDate"]);
+	                viewModel.model.set("administrativeDate",row["administrativeDate"]);
+	                viewModel.model.set("nextPolicyAmount",row["nextPolicyAmount"]);
+	                viewModel.model.set("balancePaymentMethod",row["balancePaymentMethod"]);
+	                viewModel.model.set("payPeriods",row["payPeriods"]);
+	                viewModel.model.set("renewalSuccessDate",row["renewalSuccessDate"]);
+	            }
+	        });
+		}
+		
+		if(viewModel.model.graceDate == null || typeof(viewModel.model.graceDate) == "undefined"){
+			$("#graceDateDiv").hide();
+		}
+		if(viewModel.model.renewalSuccessDate == null || typeof(viewModel.model.renewalSuccessDate) == "undefined"){
+			$("#administrativeDateDiv").hide();
+		}
+		
+		$('#balancePaymentMethod').kendoComboBox({
+	        valuePrimitive: true,
+	        dataTextField: "meaning",
+	        dataValueField: "value",
+	        dataSource: payMethodData,
+	    });
+		
+	    $("#renewalDueDate").kendoDatePicker();
+	    $("#graceDate").kendoDatePicker();
+	    $("#administrativeDate").kendoDatePicker();
+	    $("#renewalSuccessDate").kendoDatePicker();
+
+	    $("#feedbackBalance").kendoNumericTextBox({
+	        format:"#,###",
+	        decimals: 0,
+	        min:0,
+	    });
+	    $("#accountBalance").kendoNumericTextBox({
+	        format:"#,###",
+	        decimals: 0,
+	        min:0,
+	    });
+	    $("#nextPolicyAmount").kendoNumericTextBox({
+	        format:"#,###",
+	        decimals: 0,
+	        min:0,
+	    });
+		//点击保存
+		function saveData() {
+			if(!validatable.validate()){
+				kendo.ui.showErrorDialog({
+					message : "校验失败,请将信息填写完整!"
+				});
+				return;
+			}
+			if (orderId != 0) {
+				window.parent.orderRenewalSuccessInfoVM.model.orderId = viewModel.model.orderId;
+				window.parent.orderRenewalSuccessInfoVM.model.payMethod = viewModel.model.payMethod;
+				window.parent.orderRenewalSuccessInfoVM.model.feedbackBalance = viewModel.model.feedbackBalance;
+				window.parent.orderRenewalSuccessInfoVM.model.accountBalance = viewModel.model.accountBalance;
+				window.parent.orderRenewalSuccessInfoVM.model.renewalDueDate = viewModel.model.renewalDueDate;
+				window.parent.orderRenewalSuccessInfoVM.model.graceDate = viewModel.model.graceDate;
+				window.parent.orderRenewalSuccessInfoVM.model.administrativeDate = viewModel.model.administrativeDate;
+				window.parent.orderRenewalSuccessInfoVM.model.nextPolicyAmount = viewModel.model.nextPolicyAmount;
+				window.parent.orderRenewalSuccessInfoVM.model.balancePaymentMethod = viewModel.model.balancePaymentMethod;
+				window.parent.orderRenewalSuccessInfoVM.model.payPeriods = viewModel.model.payPeriods;
+				window.parent.orderRenewalSuccessInfoVM.model.renewalSuccessDate = viewModel.model.renewalSuccessDate;
+				window.parent.orderRenewalSuccessInfoVM.model.flag = true;
+				window.parent.$("#dialog").data("kendoWindow").close();
+				/* Hap.submitForm({
+					url : '${base.contextPath}/fms/ord/after/updateOrder',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         }).done(function(event){
+	                        	 if (event.button == 'OK') {
+	                        		 window.parent.$("#dialog").data("kendoWindow").close();
+	                        	 }
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "提交失败!"
+							});
+						}
+
+					}
+				}) */
+			}
+		}
+		 // Hap.autoResizeGrid("#Grid");
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.question.mapper.QaGuidelineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.question.dto.QaGuideline">
+        <result column="GUIDELINE_ID" property="guidelineId" jdbcType="DECIMAL" />
+        <result column="GUIDELINE_NAME" property="guidelineName" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+</mapper>

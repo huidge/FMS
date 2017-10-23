@@ -1,0 +1,719 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supportType=COURSE.SUPPORT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?supportstatus=COURSE.SUPPORT_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function (e) {
+            var formDate = viewModel.model.toJSON();
+            for (var k in formDate) {
+                viewModel.model.set(k, undefined);
+            }
+            $("#Grid").data("kendoGrid").dataSource.page(1);
+        },
+    });
+</script>
+<body>
+<div id="userWin" style="display: none;"></div>
+<div id="page-content">
+    <div class="panel">
+            <div id="query_form">
+                <form class="form-horizontal" style="margin-top: 5px;">
+                    <div class="panel-body">
+                        <div class="col-xs-12" >
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">申请编号</label>
+                                    <div class="col-xs-8">
+                                        <input id="supportNum" data-role="maskedtextbox" name="supportNum" type="text" data-bind="value:model.supportNum" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">渠道</label>
+                                    <div class="col-xs-8">
+                                    	<input id="channelName" data-role="maskedtextbox" name="channelName" type="text" data-bind="value:model.channelName" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">手机</label>
+                                    <div class="col-xs-8">
+                                    	<input id="contactPhoneComb" data-role="maskedtextbox" name="contactPhoneComb" type="text" data-bind="value:model.contactPhoneComb" style="width: 100%;" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12" >
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">开始时间</label>
+                                    <div class="col-xs-8">
+                                        <input type="date" style="width: 100%"  id="startDate" name="startDate"  
+                                           		data-bind="value:model.startDate"  data-role="datepicker" class="k-datepicker">
+                                           	<script>
+		                                     	$("#startDate").kendoDatePicker({
+		                                         	format: "yyyy-MM-dd",
+		                                     	});
+                             		 		</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">结束时间</label>
+                                    <div class="col-xs-8">
+                                        <input type="date" style="width: 100%"  id="endDate" name="endDate" 
+                                           		data-bind="value:model.endDate"  data-role="datepicker" class="k-datepicker">
+                                           	 <script>
+		                                     	$("#endDate").kendoDatePicker({
+		                                         	format: "yyyy-MM-dd",
+		                                     	});
+                             		 		</script>
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">城市</label>
+                                    <!-- <div class="col-xs-8">
+                                        <input id="province" name="province" type="text" data-bind="value:model.province" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                                    </div> -->
+                                    <div class="col-xs-4">
+                                        <input id="province" name="province" type="text" data-bind="value:model.province" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input id="city" name="city" type="text" data-bind="value:model.city" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12" >
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">申请类型</label>
+                                    <div class="col-xs-8">
+                                        <input id="supportType" name="supportType" type="text" data-bind="value:model.supportType" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">状态</label>
+                                    <div class="col-xs-8">
+                                        <input id="status" name="status" type="text" data-bind="value:model.status" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+							
+                            <div class="col-xs-4" >
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="panel-footer text-right">
+                        <span class="btn btn-primary" onclick="addLecturer()" style="float:left" type="button"><i class="fa fa-plus-square" style="margin-left:3px;"></i><@spring.message "添加讲师"/></span>
+                        <span class="btn btn-primary" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                        <span class="btn btn-default" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div style="clear:both">
+            <div id="Grid"></div>
+        </div>
+    
+    
+    <!-- <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+        <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
+        <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+    </div>
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+    
+    <div class="pull-right" id="query-form" style="padding-bottom:10px;">
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TrnSupport.supportType"/>'
+                   data-bind="value:model.supportType" class="k-textbox">
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TrnSupport.createrName"/>'
+                   data-bind="value:model.createrName" class="k-textbox">
+        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
+        <div style="clear:both"></div>
+    </div>
+    <script>kendo.bind($('#query-form'), viewModel);</script>
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div> -->
+    
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+	
+	$("#province").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.PROVICE";
+	    },
+	    change:function () {
+	        viewModel.model.set("city",null);
+	        viewModel.model.set("cityMeaning",null);
+	    }
+	}));
+	
+	$("#city").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.CITY";
+	        e.param['parentValue'] = viewModel.model.province;
+	    },
+	}));
+	
+	$("#supportType").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: supportType
+	});
+	$("#status").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: supportstatus
+	});
+	
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/trn/support/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/trn/support/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/trn/support/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "supportId",
+                fields: {
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "supportId",
+                title: '<@spring.message "TrnSupport.supportId"/>',
+                width: 120,
+                hidden:true
+            },
+            	{
+                field: "supportNum",
+                title: '申请编号',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            
+                    {
+                field: "channelName",
+                title: '渠道',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    /* 
+                    {
+                field: "createrName",
+                title: '<@spring.message "TrnSupport.createrName"/>',
+                width: 120
+            }, */
+            
+                    {
+                field: "contactPhoneComb",
+                title: '手机',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            {
+                field: "supportType",
+                title: '申请类型',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template: function(dataItem){
+                    var v = dataItem.supportType;
+                    $.each(supportType,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input name="' + options.field + '">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: supportType
+                        });
+                },
+            },
+            	{
+                field: "submitDate",
+                title: '提交时间',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "startFrom",
+                title: '开始时间',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "startTo",
+                title: '结束时间',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+            		{
+                field: "area",
+                title: '城市',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+            },
+                    {
+                field: "status",
+                title: '状态',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template: function(dataItem){
+                    var v = dataItem.status;
+                    $.each(supportstatus,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input name="' + options.field + '">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: supportstatus
+                        });
+                },
+            },
+            	{
+                title: '<@spring.message "hap.action"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.supportId) {
+                        if(dataItem.status=="APPROVAL"){
+                    	openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.supportType+'\',\''+dataItem.status+'\')">编辑</a>';
+                        }else if(dataItem.status=="PAYMENT"){
+                        openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.supportType+'\',\''+dataItem.status+'\')">编辑</a>';
+                        }else if(dataItem.status=="AMOUNT"){
+                        openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.supportType+'\',\''+dataItem.status+'\')">编辑</a>';	
+                        }else if(dataItem.status=="SUCCESS"){
+                        openDetail = '<a href="#"  onclick="supportSuccess('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.status+'\')">编辑</a>';	
+                        }else if(dataItem.status=="FAIL"){
+                        openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.supportType+'\',\''+dataItem.status+'\')">编辑</a>';	
+                        //openDetail = '<a href="#"  onclick="fileContent('+dataItem.supportId+')">编辑</a>';	
+                        }else if(dataItem.status=="CANCEL"){
+                        openDetail = '<a href="#"  onclick="openDetailWin('+dataItem.supportId+',\''+dataItem.amount+'\',\''+dataItem.supportType+'\',\''+dataItem.status+'\')">编辑</a>';	
+                        //openDetail = '<a href="#"  onclick="cancelSupport('+dataItem.supportId+',\''+dataItem.status+'\')">编辑</a>';		
+                        }
+                        return openDetail;
+                    } else {
+                        openDetail = '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                        return openDetail;
+                    }
+                }
+            }
+                    /* {
+                field: "contactEmail",
+                title: '<@spring.message "TrnSupport.contactEmail"/>',
+                width: 120
+            },
+                    {
+                field: "amount",
+                title: '<@spring.message "TrnSupport.amount"/>',
+                width: 120
+            },
+                    {
+                field: "trainContent",
+                title: '<@spring.message "TrnSupport.trainContent"/>',
+                width: 120
+            },
+                    {
+                field: "trainTeacher",
+                title: '<@spring.message "TrnSupport.trainTeacher"/>',
+                width: 120
+            },
+                    {
+                field: "trainAddress",
+                title: '<@spring.message "TrnSupport.trainAddress"/>',
+                width: 120
+            },
+                    {
+                field: "costTopic",
+                title: '<@spring.message "TrnSupport.costTopic"/>',
+                width: 120
+            },
+                    {
+                field: "costStartDate",
+                title: '<@spring.message "TrnSupport.costStartDate"/>',
+                width: 120
+            },
+                    {
+                field: "costEndDate",
+                title: '<@spring.message "TrnSupport.costEndDate"/>',
+                width: 120
+            },
+                    {
+                field: "province",
+                title: '<@spring.message "TrnSupport.province"/>',
+                width: 120
+            }, */
+                    /* {
+                field: "costCity",
+                title: '<@spring.message "TrnSupport.costCity"/>',
+                width: 120
+            },
+                    {
+                field: "costAddress",
+                title: '<@spring.message "TrnSupport.costAddress"/>',
+                width: 120
+            },
+                    {
+                field: "costTeacher",
+                title: '<@spring.message "TrnSupport.costTeacher"/>',
+                width: 120
+            },
+                    {
+                field: "costTarget",
+                title: '<@spring.message "TrnSupport.costTarget"/>',
+                width: 120
+            },
+                    {
+                field: "costContent",
+                title: '<@spring.message "TrnSupport.costContent"/>',
+                width: 120
+            },
+                    {
+                field: "guestDate",
+                title: '<@spring.message "TrnSupport.guestDate"/>',
+                width: 120
+            },
+                    {
+                field: "guestAddress",
+                title: '<@spring.message "TrnSupport.guestAddress"/>',
+                width: 120
+            },
+                    {
+                field: "guestTeacher",
+                title: '<@spring.message "TrnSupport.guestTeacher"/>',
+                width: 120
+            },
+                    {
+                field: "guestBackground",
+                title: '<@spring.message "TrnSupport.guestBackground"/>',
+                width: 120
+            },
+                    {
+                field: "programId",
+                title: '<@spring.message "TrnSupport.programId"/>',
+                width: 120
+            },
+                    {
+                field: "requestId",
+                title: '<@spring.message "TrnSupport.requestId"/>',
+                width: 120
+            }, */
+        ],
+        editable: false
+    });
+	
+
+   	//操作
+       function openDetailWin(supportId,amount,supportType,status) {
+   		var url;
+   		if(supportType=="TRAIN"){
+   			console.log("TRAIN");
+   			url = "${base.contextPath}/course/trn_support_examine_train.html?supportId="+supportId+"&amount="+amount+"&status="+status
+   		}else if(supportType=="COST"){
+   			console.log("COST");
+   			url = "${base.contextPath}/course/trn_support_examine.html?supportId="+supportId+"&amount="+amount+"&status="+status
+   		}else{
+   			url = "${base.contextPath}/course/trn_support_examine_guest.html?supportId="+supportId+"&amount="+amount+"&status="+status
+   		}
+   		$("#userWin").kendoWindow({
+   	       //actions: ["Close"],
+   	       draggable: true,
+   	       height: "100%",
+   	       width: "100%",
+   	       content: url,
+   	       iframe: true,
+   	       modal: true,
+   	       //visible: false,
+	   	   close:function(){
+	            $('#Grid').data('kendoGrid').dataSource.page(dataSource._page);
+	       },
+   	   });
+   	   var win = $("#userWin").data("kendoWindow");
+   	   win.toggleMaximization();
+   	   win.maximize();
+   	   win.center().open();
+   	}
+    
+       
+     //增加讲师
+       function addLecturer() {
+   		$("#userWin").kendoWindow({
+   	       actions: ["Close"],
+   	       draggable: true,
+   	       height: "60%",
+   	       width: "80%",
+   	       content: "${base.contextPath}/course/trn_support_add_lecturer.html",
+   	       iframe: true,
+   	       modal: true,
+   	       visible: false,
+   	   });
+   	   var win = $("#userWin").data("kendoWindow");
+   	   //win.toggleMaximization();
+   	   //win.maximize();
+   	   win.center().open();
+   	}
+     
+     //申请成功
+       function supportSuccess(supportId,amount,status) {
+   		$("#userWin").kendoWindow({
+   	       actions: ["Close"],
+   	       draggable: true,
+   	       height: "100%",
+   	       width: "100%",
+   	       content: "${base.contextPath}/course/trn_support_success.html?supportId="+supportId+"&amount="+amount+"&status="+status,
+   	       iframe: true,
+   	       modal: true,
+   	       visible: false,
+   	   });
+   	   var win = $("#userWin").data("kendoWindow");
+   	   win.toggleMaximization();
+   	   win.maximize();
+   	   win.center().open();
+   	}
+       
+     //申请失败
+   	function fileContent(supportId) {
+   		$("#userWin").kendoWindow({
+   	       actions: ["Close"],
+   	       draggable: false,
+   	       height: "40%",
+   	       width: "30%",
+   	       content: "${base.contextPath}/course/trn_support_examine_fail.html?supportId="+supportId,
+   	       iframe: true,
+   	       modal: true,
+   	       visible: false,
+   	   });
+   	   var win = $("#userWin").data("kendoWindow");
+   	   //win.toggleMaximization();
+   	   //win.maximize();
+   	   win.center().open();
+   	}
+    
+  //取消支援弹框
+    function cancelSupport(supportId,status) {
+    	var ids=[];
+    	var status;
+    	ids.push(supportId);
+    	if(status=="CANCEL"){
+    		kendo.ui.showErrorDialog({
+				message : "支援已取消"
+			});
+    	}else{
+	    	//利用对话框返回的值 （true 或者 false）
+	    	kendo.ui.showConfirmDialog({
+                 title: $l('hap.tip.info'),
+                 message: $l('你确定取消支援吗？')
+             }).done(function (event) {
+                 if (event.button == 'OK') {
+		        	$.ajax({
+	                    type: "POST",
+	                    url: "${base.contextPath}/fms/trn/support/cancelSupport",
+	                    data: {"ids":ids,"status":status},
+	                    dataType: "json",
+	                    success: function(data){
+	                   	 kendo.ui.showInfoDialog({
+	                   		 //alert:"成功",
+	                            title: $l('hap.tip.info'),
+	                            message: $l('hap.tip.success')
+	                        });
+	                   	 window.location.reload();
+	                    }
+	                });
+	        	}
+             })
+    	}
+    }
+    
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

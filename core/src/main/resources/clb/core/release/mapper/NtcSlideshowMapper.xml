@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.release.mapper.NtcSlideshowMapper">
+    <resultMap id="BaseResultMap" type="clb.core.release.dto.NtcSlideshow">
+        <result column="SLIDESHOW_ID" property="slideshowId" jdbcType="DECIMAL" />
+        <result column="SLIDESHOW_NUM" property="slideshowNum" jdbcType="VARCHAR" />
+        <result column="DATA_SOURCE" property="dataSource" jdbcType="VARCHAR" />
+        <result column="DATA_SOURCE_ID" property="dataSourceId" jdbcType="DECIMAL" />
+        <result column="DATA_SOURCE_CONTENT" property="dataSourceContent" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PC_FLAG" property="pcFlag" jdbcType="VARCHAR" />
+        <result column="WECHAT_FLAG" property="wechatFlag" jdbcType="VARCHAR" />
+        <result column="APP_FLAG" property="appFlag" jdbcType="VARCHAR" />
+        <result column="PC_FILE_ID" property="pcFileId" jdbcType="DECIMAL" />
+        <result column="WECHAT_FILE_ID" property="wechatFileId" jdbcType="DECIMAL" />
+        <result column="APP_FILE_ID" property="appFileId" jdbcType="VARCHAR" />
+		<result column="PC_FILE_SRC" property="pcFileSrc" jdbcType="VARCHAR" />
+		<result column="WECHAT_FILE_SRC" property="wechatFileSrc" jdbcType="VARCHAR" />
+		<result column="APP_FILE_SRC" property="appFileSrc" jdbcType="DECIMAL" />
+        <result column="RANK" property="rank" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="queryByCondition" parameterType="clb.core.release.dto.NtcSlideshow" resultMap="BaseResultMap">
+	SELECT
+		fns.SLIDESHOW_ID,
+		fns.SLIDESHOW_NUM,	
+		fns.DATA_SOURCE_ID,
+		fns.`STATUS`,
+		fns.PC_FLAG,
+		fns.WECHAT_FLAG,
+		fns.APP_FLAG,
+		fns.PC_FILE_ID,
+		(select sf.file_path from sys_file sf where sf.file_id = fns.PC_FILE_ID) PC_FILE_SRC,
+		fns.WECHAT_FILE_ID,
+		(select sf.file_path from sys_file sf where sf.file_id = fns.WECHAT_FILE_ID) WECHAT_FILE_SRC,
+		fns.APP_FILE_ID,
+		(select sf.file_path from sys_file sf where sf.file_id = fns.APP_FILE_ID) APP_FILE_SRC,
+		fns.RANK,
+		fns.PROGRAM_ID,
+		fns.REQUEST_ID,
+		t.DATA_SOURCE,
+		t.SOURCE_TYPE,
+		t.DATA_SOURCE_CONTENT
+	FROM
+		fms_ntc_slideshow fns,(
+			SELECT fna.ARTICLE_ID DATA_SOURCE_ID,fna.TITLE DATA_SOURCE_CONTENT,'ARTICLE' DATA_SOURCE,fna.RELEASE_POSITION SOURCE_TYPE
+		FROM fms_ntc_article fna UNION 
+		SELECT ftc.COURSE_ID DATA_SOURCE_ID,ftc.TOPIC DATA_SOURCE_CONTENT,'COURSE' DATA_SOURCE,'COURSE' SOURCE_TYPE
+		FROM fms_trn_course ftc
+		WHERE ftc.`STATUS` != "CANCELED"
+	) t
+	WHERE
+		<!-- 下架 -->
+		fns.DATA_SOURCE = t.DATA_SOURCE AND fns.DATA_SOURCE_ID = t.DATA_SOURCE_ID
+		<if test="status != null">
+			AND fns.`STATUS` = #{status}
+		</if>
+		<if test="dataSource != null">
+			AND t.DATA_SOURCE = #{dataSource}
+		</if>
+		<if test="dataSourceContent != null">
+			AND t.DATA_SOURCE_CONTENT LIKE concat('%',#{dataSourceContent},'%') 
+		</if>
+		<if test="pcFlag != null">
+			AND fns.PC_FLAG = #{pcFlag}
+		</if>
+		<if test="wechatFlag != null">
+			AND fns.WECHAT_FLAG = #{wechatFlag}
+		</if>
+		<if test="appFlag != null">
+			AND fns.APP_FLAG = #{appFlag}
+		</if>
+		<if test="slideshowId != null">
+			AND fns.SLIDESHOW_ID = #{slideshowId}
+		</if>
+		ORDER BY fns.RANK DESC ,
+		CASE fns.`STATUS` WHEN "release" THEN 1
+			WHEN "new" THEN 2
+			WHEN "soldOut" THEN 3 END ASC
+</select>	
+
+<select id="queryMaxRank" resultType="java.lang.Long">
+	SELECT  MAX(RANK) RANK from fms_ntc_slideshow
+</select>
+
+
+<select id="queryDownRank" parameterType="clb.core.release.dto.NtcSlideshow" resultMap="BaseResultMap">
+	SELECT * FROM fms_ntc_slideshow WHERE RANK &lt; #{rank} ORDER BY RANK DESC LIMIT 1
+</select>
+
+
+<select id="queryUpRank" parameterType="clb.core.release.dto.NtcSlideshow" resultMap="BaseResultMap">
+	SELECT * FROM fms_ntc_slideshow WHERE RANK &gt; #{rank} ORDER BY RANK ASC LIMIT 1
+</select>
+
+</mapper>

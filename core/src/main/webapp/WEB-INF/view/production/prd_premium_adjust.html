@@ -1,0 +1,262 @@
+<#-- 
+* description: 保费缴纳调整
+* version: 1.0 
+* author:tiansheng.ye@hand-china.com
+* --> 
+<#include "../include/header.html">
+<body>
+   <script type="text/javascript">
+	   function GetQueryString(name){
+	       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	       var r = window.location.search.substr(1).match(reg);
+	       if(r!=null)return  unescape(r[2]); return null;
+	   }
+  	   var itemId=GetQueryString("itemId");
+	   var templateList;
+	   var currencyList;
+        var viewModel = kendo.observable({
+	        model:{},
+	        templateList:templateList,
+	        currencyList:currencyList,
+	        createFunction: function(){
+	            $('#ruleGrid').data('kendoGrid').addRow();
+	        },
+	        saveFunction: function(){
+	            $('#ruleGrid').data('kendoGrid').saveChanges();
+	        },
+		    cancelFunction: function(e){
+   				 $('#ruleGrid').data('kendoGrid').cancelChanges();
+   			},
+	        queryResource: function(e) {
+	            $('#ruleGrid').data('kendoGrid').dataSource.page(1);
+	        }
+	    });
+        
+      //年期
+        $.ajax({
+            type:"GET",
+            url:"${base.contextPath}/clb/common/lov/ORD_SUBLINE?pagesize=1000",
+            contentType:"application/json",
+            data:{"itemId":itemId},
+            success: function(e) {
+            	templateList = e.rows;
+                viewModel.set("templateList", templateList);
+            }
+        });
+      //币种
+        $.ajax({
+            type:"GET",
+            url:"${base.contextPath}/clb/common/lov/PRD_CURRENCY?pagesize=1000",
+            contentType:"application/json",
+            data:{"itemId":itemId},
+            success: function(e) {
+            	currencyList = e.rows;
+                viewModel.set("currencyList", currencyList);
+            }
+        });
+   </script> 
+   
+ <div id="page-content">
+    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+        <span class="btn btn-success k-grid-save-changes"   data-bind="click:saveFunction" style="float:left;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+        <span  class="btn btn-danger k-grid-cancel-changes" onclick="deleteData();" style="float:left;;margin-right:5px;" ><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
+        <span class="btn btn-default" data-bind="click:cancelFunction" style="float:left;"><@spring.message "hap.cancel"/></span>
+    </div>
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+    <div style="clear:both">
+        <div id="ruleGrid"></div>
+    </div>
+    <div id="ruleDetail"  class="panel" style="border: 0px;padding: 0px 30px;;margin:0px"></div>
+</div>
+	<script type="text/javascript">
+		$('#query-form input').keydown(function (e) {
+		    if (e.keyCode == 13) {
+		        e.target.blur();
+		        viewModel.queryResource(e);
+		    }
+		});
+	
+         var crudServiceBaseUrl = "${base.contextPath}/production/prdPremiumAdjust",
+              dataSource = new kendo.data.DataSource({
+                  transport: {
+                     read:  {
+                        url: crudServiceBaseUrl + "/query",
+                        type : "POST",
+                        dataType: "json"
+                    },
+                    create : { 
+                        url : crudServiceBaseUrl + "/submit",
+                        contentType: "application/json",
+                        type : "POST" 
+                    },
+                    update : { 
+                        url : crudServiceBaseUrl + "/submit",
+                        contentType: "application/json",
+                        type : "POST" 
+                    },
+                    destroy : { 
+                        url : crudServiceBaseUrl + "/remove",
+                        contentType: "application/json",
+                        type : "POST" 
+                    },
+                    parameterMap: function(options, type) {
+                    	if (type !== "read" && options.models) {
+                            var datas = options.models
+                            if (type == 'create' || type == 'update') {
+                                datas = options.models.map(function (data) {
+                                	data['itemId']=itemId;
+                                    data['__status'] = (type == 'create' ? 'add' : 'update');
+                                    return data;
+                                })
+                            }
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            var map = viewModel.model.toJSON();
+                            map.page = options.page;
+                            map.pagesize = options.pageSize;
+                            for (var k in map) {
+                                if (map[k] === '' || map[k] === null || map[k] === undefined)
+                                    delete map[k]
+                            }
+                            map.itemId=itemId;
+                            return map;
+                        }  
+                    }
+                },
+                batch: true,
+                serverPaging : true,
+                pageSize: 10,
+                schema: {
+                    data:'rows',
+                    total:'total',
+                    model: {
+                        id: "adjustId",
+                        fields: {
+                        	currency: {validation: {required: true}},
+                        	sublineId: {validation: {required: true}},
+                        	insuranceCoverageStart: {type: "number",validation: {required: true},defaultValue:null},
+                        	insuranceCoverageEnd: {type: "number",validation: {required: true},defaultValue:null},
+                        	premium: {type: "number",validation: {required: true},defaultValue:null}
+                        }
+                    }
+                }
+            }); 
+       
+        var grid =$("#ruleGrid").kendoGrid({
+            dataSource: dataSource,
+            height:"100%",
+            navigatable: true,
+            resizable: true,
+            scrollable: true,
+            editable: true,
+            selectable: 'multiple, rowbox',
+            pageable: {
+                pageSizes:[5, 10, 20, 50],
+                refresh:true,
+                buttonCount:5
+            },
+            columns: [
+                {
+                	field: "sublineId",
+                	title: '年期',
+                	width: 70,
+                    headerAttributes: {
+            	        "class": "table-header-cell",
+            	        style  : "text-align: center"
+            	    },
+            	    template: function(dataItem){
+	                        var v = dataItem.sublineId||'';
+	                        $.each(templateList,function(i,n){
+	                            if((n.sublineId||'') == (v||'')){
+	                                v = n.sublineItemName;
+	                                return v;
+	                            }
+	                        })
+	                        return v;
+                    },
+                    editor: function(container, options){
+                    	$('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "sublineItemName",
+                                    dataValueField: "sublineId",
+                                    dataSource: templateList
+                                });
+                    }
+                },
+                { 
+                	field: "currency", 
+                	title: '币种', 
+                	width: 70,
+                    headerAttributes: {
+            	        "class": "table-header-cell",
+            	        style  : "text-align: center"
+            	    },
+            	    template: function(dataItem){
+                        var v = dataItem.currency||'';
+                        $.each(currencyList,function(i,n){
+                            if((n.currency||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+	                },
+	                editor: function(container, options){
+	                    $('<input name="' + options.field + '"/>')
+	                            .appendTo(container)
+	                            .kendoDropDownList({
+	                                dataTextField: "meaning",
+	                                dataValueField: "currency",
+	                                dataSource: currencyList,
+	                            });
+	                }
+                },
+                {
+                    field:"insuranceCoverageStart",
+                    title           : '保额从', 
+                    width: 70,
+                    headerAttributes: {style: "text-align:center"},
+                    attributes      : {style: "text-align:center"}
+                },
+                {
+                    field:"insuranceCoverageEnd",
+                    title           : '保额至', 
+                    width: 70,
+                    headerAttributes: {style: "text-align:center"},
+                    attributes      : {style: "text-align:center"}
+                },
+                {
+                    field:"premium",
+                    title           : '每1000元调整额', 
+                    width: 70,
+                    headerAttributes: {style: "text-align:center"},
+                    attributes      : {style: "text-align:center"}
+                }
+              ]
+        }).data("kendoGrid");
+        
+        function deleteData(){
+            var checked = grid.selectedDataItems();
+            if(grid.selectedDataItems().length){  
+                kendo.ui.showConfirmDialog({
+                    title:$l('hap.tip.info'),
+                    message: $l('hap.tip.delete_confirm')
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+                        $.each(checked,function(i,v){
+                            grid.dataSource.remove(v)
+                        })
+                        grid.dataSource.sync();
+                    }
+                }) 
+            }
+        
+        }
+        
+        Hap.autoResizeGrid("#ruleGrid"); 
+</script>
+
+</body>
+</html>

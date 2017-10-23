@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpKFMapper" >
+  <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpKF" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+    <result column="kf_account" property="kfAccount" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, open_id, kf_account, status,app_id, ENABLE_FLAG, OBJECT_VERSION_NUMBER, PROGRAM_ID,
+    REQUEST_ID, CREATION_DATE, CREATED_BY, LAST_UPDATED_BY, LAST_UPDATE_DATE, LAST_UPDATE_LOGIN, 
+    ATTRIBUTE_CATEGORY, ATTRIBUTE1, ATTRIBUTE2, ATTRIBUTE3, ATTRIBUTE4, ATTRIBUTE5, ATTRIBUTE6, 
+    ATTRIBUTE7, ATTRIBUTE8, ATTRIBUTE9, ATTRIBUTE10, ATTRIBUTE11, ATTRIBUTE12, ATTRIBUTE13, 
+    ATTRIBUTE14, ATTRIBUTE15
+  </sql>
+
+  <select id="findActiveOpenId" resultMap="BaseResultMap" >
+    SELECT <include refid="Base_Column_List" /> FROM woa_kf WHERE open_id=#{openId} and app_id=#{appId}  and status in ('active','pending')
+  </select>
+
+  <update id="active">
+    UPDATE woa_kf  SET status = 'active' WHERE open_id = #{openId} and app_id=#{appId} and kf_account=#{kf}
+  </update>
+
+  <delete id="end">
+    DELETE FROM woa_kf WHERE open_id = #{openId} and app_id=#{appId} and kf_account=#{kf}
+  </delete>
+
+  <update id="transfer">
+    UPDATE woa_kf  SET kf_account = #{tokf} WHERE open_id = #{openId} and app_id=#{appId} and kf_account=#{fromkf}
+  </update>
+
+</mapper>

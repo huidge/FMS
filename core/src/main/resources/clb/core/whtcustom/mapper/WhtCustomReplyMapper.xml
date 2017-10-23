@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtCustomReplyMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtCustomReply">
+        <result column="REPLY_ID" property="replyId" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="ORIGINAL_ID" property="originalId" jdbcType="VARCHAR" />
+        <result column="MSG_TYPE" property="msgType" jdbcType="VARCHAR" />
+        <result column="REPLY_TYPE" property="replyType" jdbcType="VARCHAR" />
+        <result column="ADD_CONTENT" property="addContent" jdbcType="VARCHAR" />
+        <result column="ADD_PICTURE_ID" property="addPictureId" jdbcType="VARCHAR" />
+        <result column="ADD_VOICE_ID" property="addVoiceId" jdbcType="VARCHAR" />
+        <result column="ADD_VIDEO_ID" property="addVideoId" jdbcType="VARCHAR" />
+        <result column="AUTO_CONTENT" property="autoContent" jdbcType="VARCHAR" />
+        <result column="AUTO_PICTURE_ID" property="autoPictureId" jdbcType="VARCHAR" />
+        <result column="AUTO_VOICE_ID" property="autoVoiceId" jdbcType="VARCHAR" />
+        <result column="AUTO_VIDEO_ID" property="autoVideoId" jdbcType="VARCHAR" />
+        <result column="WHT_ATTACH_CONTENT" property="whtAttachContent" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+	<select id="selectAllField" parameterType="clb.core.whtcustom.dto.WhtCustomReply"
+		resultMap="BaseResultMap">
+		SELECT
+		fwcr.*
+		FROM fms_wht_custom_reply fwcr
+		WHERE 1=1
+		<if test="replyId!=null and replyId!=''">
+			and fwcr.REPLY_ID =#{replyId}
+		</if>
+		
+		<if test="originalId !=null and originalId !=''">
+			and fwcr.ORIGINAL_ID =#{originalId}
+		</if>
+		
+		<if test="accountNum!=null and accountNum!=''">
+			and fwcr.ACCOUNT_NUM =#{accountNum}
+		</if>
+	</select>
+	
+	<select id="subscribeReply" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select fwcr.* from fms_wht_custom_reply fwcr where fwcr.ORIGINAL_ID=#{originalId}
+    </select>
+</mapper>

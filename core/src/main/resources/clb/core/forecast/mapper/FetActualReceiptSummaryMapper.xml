@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetActualReceiptSummaryMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetActualReceiptSummary">
+        <result column="RECEIPT_SUMMARY_ID" property="receiptSummaryId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_PERIOD" property="receiptPeriod" jdbcType="VARCHAR" />
+        <result column="RECEIVE_SUPPLIER_ID" property="receiveSupplierId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_SUPPLIER_ID" property="paymentSupplierId" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="CERTIFICATE_FILE_ID" property="certificateFileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_SUPPLIER_NAME" property="receiveSupplierName" jdbcType="VARCHAR" />
+        <result column="PATMENT_SUPPLIER_NAME" property="paymentSupplierName" jdbcType="VARCHAR" />
+    	<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+	
+	<select id="getData" parameterType="clb.core.forecast.dto.FetActualReceiptSummary" resultMap="BaseResultMap">
+		SELECT
+			ffars.*,
+			rfss.NAME RECEIVE_SUPPLIER_NAME,
+			pfss.Name PATMENT_SUPPLIER_NAME
+		FROM 
+			fms_fet_actual_receipt_summary ffars
+			LEFT JOIN fms_spe_supplier rfss on rfss.SUPPLIER_ID = ffars.RECEIVE_SUPPLIER_ID
+			LEFT JOIN fms_spe_supplier pfss on pfss.SUPPLIER_ID = ffars.PAYMENT_SUPPLIER_ID
+		<where>
+			<!-- rfss.STATUS_CODE = 'APPROVED'
+			AND pfss.STATUS_CODE = 'APPROVED' -->
+			<if test="receiptPeriod != null">
+				AND ffars.RECEIPT_PERIOD = #{receiptPeriod}
+			</if>
+			<if test="receiveSupplierId != null">
+				AND ffars.RECEIVE_SUPPLIER_ID = #{receiveSupplierId}
+			</if>
+			<if test="paymentSupplierId != null">
+				AND ffars.PAYMENT_SUPPLIER_ID = #{paymentSupplierId}
+			</if>
+			<if test="receiveSupplierName != null">
+				AND rfss.NAME like  CONCAT(CONCAT('%',#{receiveSupplierName}),'%')
+			</if>
+			<if test="paymentSupplierName != null">
+				AND pfss.NAME like  CONCAT(CONCAT('%',#{paymentSupplierName}),'%')
+			</if>
+		</where>
+		order by ffars.version desc
+	</select>
+
+</mapper>

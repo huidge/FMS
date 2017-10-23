@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/18.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdAttributeSetMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdAttributeSet">
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL" />
+        <result column="SET_NAME" property="setName" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="AllFields" type="clb.core.production.dto.PrdAttributeSet">
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL" />
+        <result column="SET_NAME" property="setName" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="LAST_UPDATED_BY_NAME" property="lastUpdatedByName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectAllFields" parameterType="clb.core.production.dto.PrdAttributeSet" resultMap="AllFields">
+        SELECT
+            pas.ATT_SET_ID,
+            pas.SET_NAME,
+            pas.STATUS_CODE,
+            pas.LAST_UPDATED_BY,
+            pas.LAST_UPDATE_DATE,
+            su.USER_NAME LAST_UPDATED_BY_NAME
+        FROM
+            fms_prd_attribute_set pas,
+            sys_user su
+        WHERE
+            pas.last_updated_by = su.USER_ID
+            <if test="attSetId != null and attSetId != ''">
+                AND pas.ATT_SET_ID = #{attSetId}
+            </if >
+            <if test="setName != null and setName != ''">
+                AND pas.SET_NAME LIKE CONCAT('%', #{setName}, '%')
+            </if >
+            <if test="statusCode != null and statusCode != ''">
+                AND pas.STATUS_CODE = #{statusCode}
+            </if >
+
+    </select>
+
+</mapper>

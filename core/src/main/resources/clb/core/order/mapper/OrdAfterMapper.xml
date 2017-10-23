@@ -1,0 +1,3059 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdAfterMapper">
+	<!-- 售后dto -->
+	<resultMap id="BaseResultMap" type="clb.core.order.dto.OrdAfter">
+		<result column="AFTER_ID" property="afterId" jdbcType="DECIMAL" />
+		<result column="AFTER_NUM" property="afterNum" jdbcType="VARCHAR" />
+		<result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+		<result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+		<result column="AFTER_TYPE" property="afterType" jdbcType="VARCHAR" />
+		<result column="AFTER_PROJECT" property="afterProject" jdbcType="VARCHAR" />
+		<result column="AFTER_STATUS" property="afterStatus" jdbcType="VARCHAR" />
+		<result column="HANDLER_USER_ID" property="handlerUserId" jdbcType="DECIMAL" />
+		<result column="HANDLER_USER_NAME" property="handlerUserName" jdbcType="DECIMAL" />
+		<result column="FLAG" property="flag" jdbcType="DECIMAL" />
+		<result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+		
+		<!-- 跟进表 -->
+		<result column="AFTER_FOLLOW_ID" property="afterFollowId" jdbcType="DECIMAL" />
+        <result column="FOLLOW_USER_ID" property="followUserId" jdbcType="DECIMAL" />
+        <result column="FOLLOW_DATE" property="followDate" jdbcType="DATE" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+         <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+         
+		<!-- 订单表 -->
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+		<result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_ID" property="companyChannelId" jdbcType="DECIMAL" />
+		<result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+		<result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+		<result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+		<result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+		<result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+		<result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+		<result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+		<result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId" jdbcType="DECIMAL" />
+		<result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId" jdbcType="DECIMAL" />
+		<result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+		<result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_CHECK_DATE" property="reserveCheckDate" jdbcType="TIMESTAMP" />
+		<result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+		<result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+		<result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+		<result column="EXPECT_COOL_DATE" property="expectCoolDate"
+			jdbcType="DATE" />
+		<result column="FIRST_PAY_DATE" property="firstPayDate"
+			jdbcType="DATE" />
+		<result column="RENEWAL_DUE_DATE" property="renewalDueDate"
+			jdbcType="DATE" />
+		<result column="RENEWAL_SUCCESS_DATE" property="renewalSuccessDate" jdbcType="DATE" />
+		<result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+		<result column="ADMINISTRATIVE_DATE" property="administrativeDate"
+			jdbcType="DATE" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="APPLICATION_STATUS" property="applicationStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_USER_ID" property="customerUserId"
+			jdbcType="DECIMAL" />
+		<result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate"
+			jdbcType="TIMESTAMP" />
+		<result column="HK_CONTACT_PERSON" property="hkContactPerson"
+			jdbcType="VARCHAR" />
+		<result column="HK_CONTACT_PHONE" property="hkContactPhone"
+			jdbcType="VARCHAR" />
+		<result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+		<result column="QUICK_CHECK_FLAG" property="quickCheckFlag"
+			jdbcType="VARCHAR" />
+		<result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag"
+			jdbcType="VARCHAR" />
+		<result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+		<result column="SIGN_ASSISTANT" property="signAssistant"
+			jdbcType="VARCHAR" />
+		<result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+		<result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+		<result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+		<result column="CONTACT_PERSON" property="contactPerson"
+			jdbcType="VARCHAR" />
+		<result column="CONTACT_PHONE" property="contactPhone"
+			jdbcType="VARCHAR" />
+		<result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+		<result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="RESERVE_COMMENT" property="reserveComment"
+			jdbcType="VARCHAR" />
+		<result column="RESERVE_USER_ID" property="reserveUserId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_SUPPLIER_ID" property="signSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+		<result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo"
+			jdbcType="VARCHAR" />
+		<result column="RECEPTION_USER_ID" property="receptionUserId"
+			jdbcType="DECIMAL" />
+		<result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+		<result column="REVIEWER1_DATE" property="reviewer1Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+		<result column="REVIEWER2_DATE" property="reviewer2Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER_COMMENT" property="reviewerComment"
+			jdbcType="VARCHAR" />
+		<result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+		<result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+		<result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+		<result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+		<result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate" jdbcType="TIMESTAMP" />
+		<result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod" jdbcType="VARCHAR" />
+		<result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod" jdbcType="VARCHAR" />
+		<result column="RENEWAL_OTHER" property="renewalOther" jdbcType="VARCHAR" />
+		<result column="ITEM" property="item" jdbcType="VARCHAR" />
+		<result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_NAME" property="companyChannelName" jdbcType="VARCHAR" />
+		<result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+		<result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+		<result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+		<result column="SIGN_SUPPLIER_NAME" property="signSupplierName" jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName" jdbcType="VARCHAR" />
+		<result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_EMPLOYEE_NAME" property="customerEmployeeName" jdbcType="VARCHAR" />
+		<result column="FILL_EMPLOYEE_NAME" property="fillEmployeeName" jdbcType="VARCHAR" />
+		<result column="SEND_EMPLOYEE_NAME" property="sendEmployeeName" jdbcType="VARCHAR" />
+		<result column="OWN_SUPPLIER_NAME" property="ownSupplierName" jdbcType="VARCHAR" />
+		<result column="MIDDLE_SUPPLIER_NAME" property="middleSupplierName" jdbcType="VARCHAR" />
+		<result column="INSURANCE_SUPPLIER_NAME" property="insuranceSupplierName" jdbcType="VARCHAR" />
+		<result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+		<result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+		<result column="DDA_SUBMIT_DATE" property="ddaSubmitDate" jdbcType="TIMESTAMP" />
+		<result column="DDA_EFFECTIVE_DATE" property="ddaEffectiveDate" jdbcType="TIMESTAMP" />
+		<result column="FEEDBACK_BALANCE" property="feedbackBalance" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_BALANCE" property="accountBalance" jdbcType="DECIMAL" />
+		<result column="BALANCE_CURRENCY" property="balanceCurrency" jdbcType="VARCHAR" />
+		<result column="BALANCE_PAYMENT_METHOD" property="balancePaymentMethod" jdbcType="VARCHAR" />
+		<result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+		 <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+		 <result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+		<result column="after_type_desc" property="afterTypeDesc" jdbcType="VARCHAR" />
+		<result column="after_project_desc" property="afterProjectDesc" jdbcType="VARCHAR" />
+		<result column="after_status_desc" property="afterStatusDesc" jdbcType="VARCHAR" />
+		
+		<result column="SAVE_STATUS" property="saveStatus" jdbcType="VARCHAR" />
+		<result column="RENEWAL_FLAG" property="renewalFlag" jdbcType="VARCHAR" />
+		<result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+		<result column="CHANNEL_PHONE_CODE" property="channelPhoneCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_PHONE" property="channelPhone" jdbcType="VARCHAR" />
+        
+        <!-- 产品公司的图片id -->
+    	<result column="COMPANY_FILEID" property="companyFileid" jdbcType="DECIMAL"/>
+	</resultMap>
+	
+	
+	<!-- 订单dto -->
+	<resultMap id="OrderResultMap" type="clb.core.order.dto.OrdOrder">
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+        <result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR" />
+        <result column="COMPANY_CHANNEL_ID" property="companyChannelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId" jdbcType="DECIMAL" />
+        <result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId" jdbcType="DECIMAL" />
+        <result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+        <result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_CHECK_DATE" property="reserveCheckDate" jdbcType="TIMESTAMP" />
+        <result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+        <result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+        <result column="EXPECT_COOL_DATE" property="expectCoolDate" jdbcType="DATE" />
+        <result column="FIRST_PAY_DATE" property="firstPayDate" jdbcType="DATE" />
+        <result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+        <result column="RENEWAL_SUCCESS_DATE" property="renewalSuccessDate" jdbcType="DATE" />
+        <result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+        <result column="ADMINISTRATIVE_DATE" property="administrativeDate" jdbcType="DATE" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus" jdbcType="VARCHAR" />
+        <result column="APPLICATION_STATUS" property="applicationStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_USER_ID" property="customerUserId" jdbcType="DECIMAL" />
+        <result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate" jdbcType="TIMESTAMP" />
+        <result column="HK_CONTACT_PERSON" property="hkContactPerson" jdbcType="VARCHAR" />
+        <result column="HK_CONTACT_PHONE" property="hkContactPhone" jdbcType="VARCHAR" />
+        <result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+        <result column="QUICK_CHECK_FLAG" property="quickCheckFlag" jdbcType="VARCHAR" />
+        <result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag" jdbcType="VARCHAR" />
+        <result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_ASSISTANT" property="signAssistant" jdbcType="VARCHAR" />
+        <result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+        <result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+        <result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+        <result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId" jdbcType="DECIMAL" />
+        <result column="RESERVE_COMMENT" property="reserveComment" jdbcType="VARCHAR" />
+        <result column="RESERVE_USER_ID" property="reserveUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_SUPPLIER_ID" property="signSupplierId" jdbcType="DECIMAL" />
+        <result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+        <result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo" jdbcType="VARCHAR" />
+        <result column="RECEPTION_USER_ID" property="receptionUserId" jdbcType="DECIMAL" />
+        <result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+        <result column="REVIEWER1_DATE" property="reviewer1Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+        <result column="REVIEWER2_DATE" property="reviewer2Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER_COMMENT" property="reviewerComment" jdbcType="VARCHAR" />
+        <result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+        <result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+        <result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+        <result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+        <result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate" jdbcType="TIMESTAMP" />
+        <result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_OTHER" property="renewalOther" jdbcType="VARCHAR" />
+         <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" /> 
+        <result column="ITEM" property="item" jdbcType="VARCHAR" />
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+        <result column="COMPANY_CHANNEL_NAME" property="companyChannelName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+        <result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+        <result column="SIGN_SUPPLIER_NAME" property="signSupplierName" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName" jdbcType="VARCHAR" />
+        <result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_EMPLOYEE_NAME" property="customerEmployeeName" jdbcType="VARCHAR" />
+        <result column="FILL_EMPLOYEE_NAME" property="fillEmployeeName" jdbcType="VARCHAR" />
+        <result column="SEND_EMPLOYEE_NAME" property="sendEmployeeName" jdbcType="VARCHAR" />
+        <result column="OWN_SUPPLIER_NAME" property="ownSupplierName" jdbcType="VARCHAR" />
+        <result column="MIDDLE_SUPPLIER_NAME" property="middleSupplierName" jdbcType="VARCHAR" />
+        <result column="INSURANCE_SUPPLIER_NAME" property="insuranceSupplierName" jdbcType="VARCHAR" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+        <result column="DDA_SUBMIT_DATE" property="ddaSubmitDate" jdbcType="TIMESTAMP" />
+        <result column="DDA_EFFECTIVE_DATE" property="ddaEffectiveDate" jdbcType="TIMESTAMP" />
+        <result column="FEEDBACK_BALANCE" property="feedbackBalance" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_BALANCE" property="accountBalance" jdbcType="DECIMAL" />
+        <result column="BALANCE_CURRENCY" property="balanceCurrency" jdbcType="VARCHAR" />
+        <result column="BALANCE_PAYMENT_METHOD" property="balancePaymentMethod" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        <result column="TR_CHANNEL_COUNT" property="trChannelCount" jdbcType="DECIMAL" />
+        <result column="TR_SUPPLIER_COUNT" property="trSupplierCount" jdbcType="DECIMAL" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+        <result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+        <result column="SOURCE" property="source" jdbcType="VARCHAR" />
+        <result column="SAVE_STATUS" property="saveStatus" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG" property="renewalFlag" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_PHONE_CODE" property="channelPhoneCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_PHONE" property="channelPhone" jdbcType="VARCHAR" />
+         <!-- 供应商表 -->
+        <result column="GRACE_PERIOD" property="gracePeriod" jdbcType="DECIMAL" />
+        <result column="ADMINISTRATIVE_PERIOD" property="administrativePeriod" jdbcType="DECIMAL" />
+    	<!-- 产品公司的图片id -->
+    	<result column="COMPANY_FILEID" property="companyFileid" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <!-- 续保dto -->
+    <resultMap id="RenewalResultMap" type="clb.core.order.dto.OrdOrderRenewal">
+        <result column="RENEWAL_ID" property="renewalId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="FLAG" property="flag" jdbcType="DECIMAL" />
+        <result column="CANCEL_RENEWAL_FLAG" property="cancelRenewalFlag" jdbcType="DECIMAL" />
+        <result column="RENEWAL_STATUS" property="renewalStatus" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        
+        <!-- 产品表  订单属性7 是不是附加险-->
+        <result column="ATTRIBUTE7" property="attribute7" jdbcType="VARCHAR" />
+        <!-- 供应商表 -->
+        <result column="GRACE_PERIOD" property="gracePeriod" jdbcType="DECIMAL" />
+        <result column="ADMINISTRATIVE_PERIOD" property="administrativePeriod" jdbcType="DECIMAL" />
+        <!-- 产品公司的图片id -->
+    	<result column="COMPANY_FILEID" property="companyFileid" jdbcType="DECIMAL"/>
+        <!-- 订单表 -->
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+		<result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_ID" property="companyChannelId" jdbcType="DECIMAL" />
+		<result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+		<result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+		<result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+		<!-- <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" /> -->
+		<result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+		<result column="YEAR_PAY_AMOUNT" property="yearPayAmount"
+			jdbcType="DECIMAL" />
+		<result column="POLICY_AMOUNT" property="policyAmount"
+			jdbcType="DECIMAL" />
+		<result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId"
+			jdbcType="DECIMAL" />
+		<result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId"
+			jdbcType="DECIMAL" />
+		<result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+		<result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate"
+			jdbcType="TIMESTAMP" />
+		<result column="RESERVE_CHECK_DATE" property="reserveCheckDate"
+			jdbcType="TIMESTAMP" />
+		<result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+		<result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+		<result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+		<result column="EXPECT_COOL_DATE" property="expectCoolDate"
+			jdbcType="DATE" />
+		<result column="FIRST_PAY_DATE" property="firstPayDate"
+			jdbcType="DATE" />
+		<result column="RENEWAL_DUE_DATE" property="renewalDueDate"
+			jdbcType="DATE" />
+		<result column="RENEWAL_SUCCESS_DATE" property="renewalSuccessDate" jdbcType="DATE" />
+		<result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+		<result column="ADMINISTRATIVE_DATE" property="administrativeDate"
+			jdbcType="DATE" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="APPLICATION_STATUS" property="applicationStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_USER_ID" property="customerUserId"
+			jdbcType="DECIMAL" />
+		<result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate"
+			jdbcType="TIMESTAMP" />
+		<result column="HK_CONTACT_PERSON" property="hkContactPerson"
+			jdbcType="VARCHAR" />
+		<result column="HK_CONTACT_PHONE" property="hkContactPhone"
+			jdbcType="VARCHAR" />
+		<result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+		<result column="QUICK_CHECK_FLAG" property="quickCheckFlag"
+			jdbcType="VARCHAR" />
+		<result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag"
+			jdbcType="VARCHAR" />
+		<result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+		<result column="SIGN_ASSISTANT" property="signAssistant"
+			jdbcType="VARCHAR" />
+		<result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+		<result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+		<result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+		<result column="CONTACT_PERSON" property="contactPerson"
+			jdbcType="VARCHAR" />
+		<result column="CONTACT_PHONE" property="contactPhone"
+			jdbcType="VARCHAR" />
+		<result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+		<result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="RESERVE_COMMENT" property="reserveComment"
+			jdbcType="VARCHAR" />
+		<result column="RESERVE_USER_ID" property="reserveUserId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_SUPPLIER_ID" property="signSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+		<result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo"
+			jdbcType="VARCHAR" />
+		<result column="RECEPTION_USER_ID" property="receptionUserId"
+			jdbcType="DECIMAL" />
+		<result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+		<result column="REVIEWER1_DATE" property="reviewer1Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+		<result column="REVIEWER2_DATE" property="reviewer2Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER_COMMENT" property="reviewerComment"
+			jdbcType="VARCHAR" />
+		<result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+		<result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+		<result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+		<result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+		<result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount"
+			jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate"
+			jdbcType="TIMESTAMP" />
+		<result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod"
+			jdbcType="VARCHAR" />
+		<result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod"
+			jdbcType="VARCHAR" />
+		<result column="RENEWAL_OTHER" property="renewalOther"
+			jdbcType="VARCHAR" />
+		<result column="ITEM" property="item" jdbcType="VARCHAR" />
+		<result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_NAME" property="companyChannelName"
+			jdbcType="VARCHAR" />
+		<result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+		<result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+		<result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+		<result column="SIGN_SUPPLIER_NAME" property="signSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_EMPLOYEE_NAME" property="customerEmployeeName"
+			jdbcType="VARCHAR" />
+		<result column="FILL_EMPLOYEE_NAME" property="fillEmployeeName" jdbcType="VARCHAR" />
+		<result column="SEND_EMPLOYEE_NAME" property="sendEmployeeName" jdbcType="VARCHAR" />
+		<result column="OWN_SUPPLIER_NAME" property="ownSupplierName" jdbcType="VARCHAR" />
+		<result column="MIDDLE_SUPPLIER_NAME" property="middleSupplierName" jdbcType="VARCHAR" />
+		<result column="INSURANCE_SUPPLIER_NAME" property="insuranceSupplierName" jdbcType="VARCHAR" />
+		<result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+		<result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+		<result column="DDA_SUBMIT_DATE" property="ddaSubmitDate" jdbcType="TIMESTAMP" />
+		<result column="DDA_EFFECTIVE_DATE" property="ddaEffectiveDate" jdbcType="TIMESTAMP" />
+		<result column="FEEDBACK_BALANCE" property="feedbackBalance" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_BALANCE" property="accountBalance" jdbcType="DECIMAL" />
+		<result column="BALANCE_CURRENCY" property="balanceCurrency" jdbcType="VARCHAR" />
+		<result column="BALANCE_PAYMENT_METHOD" property="balancePaymentMethod" jdbcType="VARCHAR" />
+		
+		<result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+		<result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+		<result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+		<result column="SAVE_STATUS" property="saveStatus" jdbcType="VARCHAR" />
+		<result column="RENEWAL_FLAG" property="renewalFlag" jdbcType="VARCHAR" />
+		<result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        
+        <result column="RENEWAL_DATE2" property="renewalDate2" jdbcType="DATE" />
+        <result column="RENEWAL_DATE3" property="renewalDate3" jdbcType="DATE" />
+        <result column="RENEWAL_DATE4" property="renewalDate4" jdbcType="DATE" />
+        <result column="RENEWAL_DATE5" property="renewalDate5" jdbcType="DATE" />
+        <result column="RENEWAL_DATE6" property="renewalDate6" jdbcType="DATE" />
+        <result column="RENEWAL_DATE7" property="renewalDate7" jdbcType="DATE" />
+        <result column="RENEWAL_DATE8" property="renewalDate8" jdbcType="DATE" />
+        <result column="RENEWAL_DATE9" property="renewalDate9" jdbcType="DATE" />
+        <result column="RENEWAL_DATE10" property="renewalDate10" jdbcType="DATE" />
+        <result column="RENEWAL_DATE11" property="renewalDate11" jdbcType="DATE" />
+        <result column="RENEWAL_DATE12" property="renewalDate12" jdbcType="DATE" />
+        <result column="RENEWAL_DATE13" property="renewalDate13" jdbcType="DATE" />
+        <result column="RENEWAL_DATE14" property="renewalDate14" jdbcType="DATE" />
+        <result column="RENEWAL_DATE15" property="renewalDate15" jdbcType="DATE" />
+        <result column="RENEWAL_DATE16" property="renewalDate16" jdbcType="DATE" />
+        <result column="RENEWAL_DATE17" property="renewalDate17" jdbcType="DATE" />
+        <result column="RENEWAL_DATE18" property="renewalDate18" jdbcType="DATE" />
+        <result column="RENEWAL_DATE19" property="renewalDate19" jdbcType="DATE" />
+        <result column="RENEWAL_DATE20" property="renewalDate20" jdbcType="DATE" />
+        <result column="RENEWAL_DATE21" property="renewalDate21" jdbcType="DATE" />
+        <result column="RENEWAL_DATE22" property="renewalDate22" jdbcType="DATE" />
+        <result column="RENEWAL_DATE23" property="renewalDate23" jdbcType="DATE" />
+        <result column="RENEWAL_DATE24" property="renewalDate24" jdbcType="DATE" />
+        <result column="RENEWAL_DATE25" property="renewalDate25" jdbcType="DATE" />
+        <result column="RENEWAL_DATE26" property="renewalDate26" jdbcType="DATE" />
+        <result column="RENEWAL_DATE27" property="renewalDate27" jdbcType="DATE" />
+        <result column="RENEWAL_DATE28" property="renewalDate28" jdbcType="DATE" />
+        <result column="RENEWAL_DATE29" property="renewalDate29" jdbcType="DATE" />
+        <result column="RENEWAL_DATE30" property="renewalDate30" jdbcType="DATE" />
+        <result column="RENEWAL_DATE31" property="renewalDate31" jdbcType="DATE" />
+        <result column="RENEWAL_DATE32" property="renewalDate32" jdbcType="DATE" />
+        <result column="RENEWAL_DATE33" property="renewalDate33" jdbcType="DATE" />
+        <result column="RENEWAL_DATE34" property="renewalDate34" jdbcType="DATE" />
+        <result column="RENEWAL_DATE35" property="renewalDate35" jdbcType="DATE" />
+        <result column="RENEWAL_DATE36" property="renewalDate36" jdbcType="DATE" />
+        <result column="RENEWAL_DATE37" property="renewalDate37" jdbcType="DATE" />
+        <result column="RENEWAL_DATE38" property="renewalDate38" jdbcType="DATE" />
+        <result column="RENEWAL_DATE39" property="renewalDate39" jdbcType="DATE" />
+        <result column="RENEWAL_DATE40" property="renewalDate40" jdbcType="DATE" />
+        <result column="RENEWAL_DATE41" property="renewalDate41" jdbcType="DATE" />
+        <result column="RENEWAL_DATE42" property="renewalDate42" jdbcType="DATE" />
+        <result column="RENEWAL_DATE43" property="renewalDate43" jdbcType="DATE" />
+        <result column="RENEWAL_DATE44" property="renewalDate44" jdbcType="DATE" />
+        <result column="RENEWAL_DATE45" property="renewalDate45" jdbcType="DATE" />
+        <result column="RENEWAL_DATE46" property="renewalDate46" jdbcType="DATE" />
+        <result column="RENEWAL_DATE47" property="renewalDate47" jdbcType="DATE" />
+        <result column="RENEWAL_DATE48" property="renewalDate48" jdbcType="DATE" />
+        <result column="RENEWAL_DATE49" property="renewalDate49" jdbcType="DATE" />
+        <result column="RENEWAL_DATE50" property="renewalDate50" jdbcType="DATE" />
+        <result column="RENEWAL_DATE51" property="renewalDate51" jdbcType="DATE" />
+        <result column="RENEWAL_DATE52" property="renewalDate52" jdbcType="DATE" />
+        <result column="RENEWAL_DATE53" property="renewalDate53" jdbcType="DATE" />
+        <result column="RENEWAL_DATE54" property="renewalDate54" jdbcType="DATE" />
+        <result column="RENEWAL_DATE55" property="renewalDate55" jdbcType="DATE" />
+        <result column="RENEWAL_DATE56" property="renewalDate56" jdbcType="DATE" />
+        <result column="RENEWAL_DATE57" property="renewalDate57" jdbcType="DATE" />
+        <result column="RENEWAL_DATE58" property="renewalDate58" jdbcType="DATE" />
+        <result column="RENEWAL_DATE59" property="renewalDate59" jdbcType="DATE" />
+        <result column="RENEWAL_DATE60" property="renewalDate60" jdbcType="DATE" />
+        <result column="RENEWAL_DATE61" property="renewalDate61" jdbcType="DATE" />
+        <result column="RENEWAL_DATE62" property="renewalDate62" jdbcType="DATE" />
+        <result column="RENEWAL_DATE63" property="renewalDate63" jdbcType="DATE" />
+        <result column="RENEWAL_DATE64" property="renewalDate64" jdbcType="DATE" />
+        <result column="RENEWAL_DATE65" property="renewalDate65" jdbcType="DATE" />
+        <result column="RENEWAL_DATE66" property="renewalDate66" jdbcType="DATE" />
+        <result column="RENEWAL_DATE67" property="renewalDate67" jdbcType="DATE" />
+        <result column="RENEWAL_DATE68" property="renewalDate68" jdbcType="DATE" />
+        <result column="RENEWAL_DATE69" property="renewalDate69" jdbcType="DATE" />
+        <result column="RENEWAL_DATE70" property="renewalDate70" jdbcType="DATE" />
+        <result column="RENEWAL_DATE71" property="renewalDate71" jdbcType="DATE" />
+        <result column="RENEWAL_DATE72" property="renewalDate72" jdbcType="DATE" />
+        <result column="RENEWAL_DATE73" property="renewalDate73" jdbcType="DATE" />
+        <result column="RENEWAL_DATE74" property="renewalDate74" jdbcType="DATE" />
+        <result column="RENEWAL_DATE75" property="renewalDate75" jdbcType="DATE" />
+        <result column="RENEWAL_DATE76" property="renewalDate76" jdbcType="DATE" />
+        <result column="RENEWAL_DATE77" property="renewalDate77" jdbcType="DATE" />
+        <result column="RENEWAL_DATE78" property="renewalDate78" jdbcType="DATE" />
+        <result column="RENEWAL_DATE79" property="renewalDate79" jdbcType="DATE" />
+        <result column="RENEWAL_DATE80" property="renewalDate80" jdbcType="DATE" />
+        <result column="RENEWAL_DATE81" property="renewalDate81" jdbcType="DATE" />
+        <result column="RENEWAL_DATE82" property="renewalDate82" jdbcType="DATE" />
+        <result column="RENEWAL_DATE83" property="renewalDate83" jdbcType="DATE" />
+        <result column="RENEWAL_DATE84" property="renewalDate84" jdbcType="DATE" />
+        <result column="RENEWAL_DATE85" property="renewalDate85" jdbcType="DATE" />
+        <result column="RENEWAL_DATE86" property="renewalDate86" jdbcType="DATE" />
+        <result column="RENEWAL_DATE87" property="renewalDate87" jdbcType="DATE" />
+        <result column="RENEWAL_DATE88" property="renewalDate88" jdbcType="DATE" />
+        <result column="RENEWAL_DATE89" property="renewalDate89" jdbcType="DATE" />
+        <result column="RENEWAL_DATE90" property="renewalDate90" jdbcType="DATE" />
+        <result column="RENEWAL_DATE91" property="renewalDate91" jdbcType="DATE" />
+        <result column="RENEWAL_DATE92" property="renewalDate92" jdbcType="DATE" />
+        <result column="RENEWAL_DATE93" property="renewalDate93" jdbcType="DATE" />
+        <result column="RENEWAL_DATE94" property="renewalDate94" jdbcType="DATE" />
+        <result column="RENEWAL_DATE95" property="renewalDate95" jdbcType="DATE" />
+        <result column="RENEWAL_DATE96" property="renewalDate96" jdbcType="DATE" />
+        <result column="RENEWAL_DATE97" property="renewalDate97" jdbcType="DATE" />
+        <result column="RENEWAL_DATE98" property="renewalDate98" jdbcType="DATE" />
+        <result column="RENEWAL_DATE99" property="renewalDate99" jdbcType="DATE" />
+        <result column="RENEWAL_DATE100" property="renewalDate100" jdbcType="DATE" />
+        <result column="CURRENCY2" property="currency2" jdbcType="VARCHAR" />
+        <result column="CURRENCY3" property="currency3" jdbcType="VARCHAR" />
+        <result column="CURRENCY4" property="currency4" jdbcType="VARCHAR" />
+        <result column="CURRENCY5" property="currency5" jdbcType="VARCHAR" />
+        <result column="CURRENCY6" property="currency6" jdbcType="VARCHAR" />
+        <result column="CURRENCY7" property="currency7" jdbcType="VARCHAR" />
+        <result column="CURRENCY8" property="currency8" jdbcType="VARCHAR" />
+        <result column="CURRENCY9" property="currency9" jdbcType="VARCHAR" />
+        <result column="CURRENCY10" property="currency10" jdbcType="VARCHAR" />
+        <result column="CURRENCY11" property="currency11" jdbcType="VARCHAR" />
+        <result column="CURRENCY12" property="currency12" jdbcType="VARCHAR" />
+        <result column="CURRENCY13" property="currency13" jdbcType="VARCHAR" />
+        <result column="CURRENCY14" property="currency14" jdbcType="VARCHAR" />
+        <result column="CURRENCY15" property="currency15" jdbcType="VARCHAR" />
+        <result column="CURRENCY16" property="currency16" jdbcType="VARCHAR" />
+        <result column="CURRENCY17" property="currency17" jdbcType="VARCHAR" />
+        <result column="CURRENCY18" property="currency18" jdbcType="VARCHAR" />
+        <result column="CURRENCY19" property="currency19" jdbcType="VARCHAR" />
+        <result column="CURRENCY20" property="currency20" jdbcType="VARCHAR" />
+        <result column="CURRENCY21" property="currency21" jdbcType="VARCHAR" />
+        <result column="CURRENCY22" property="currency22" jdbcType="VARCHAR" />
+        <result column="CURRENCY23" property="currency23" jdbcType="VARCHAR" />
+        <result column="CURRENCY24" property="currency24" jdbcType="VARCHAR" />
+        <result column="CURRENCY25" property="currency25" jdbcType="VARCHAR" />
+        <result column="CURRENCY26" property="currency26" jdbcType="VARCHAR" />
+        <result column="CURRENCY27" property="currency27" jdbcType="VARCHAR" />
+        <result column="CURRENCY28" property="currency28" jdbcType="VARCHAR" />
+        <result column="CURRENCY29" property="currency29" jdbcType="VARCHAR" />
+        <result column="CURRENCY30" property="currency30" jdbcType="VARCHAR" />
+        <result column="CURRENCY31" property="currency31" jdbcType="VARCHAR" />
+        <result column="CURRENCY32" property="currency32" jdbcType="VARCHAR" />
+        <result column="CURRENCY33" property="currency33" jdbcType="VARCHAR" />
+        <result column="CURRENCY34" property="currency34" jdbcType="VARCHAR" />
+        <result column="CURRENCY35" property="currency35" jdbcType="VARCHAR" />
+        <result column="CURRENCY36" property="currency36" jdbcType="VARCHAR" />
+        <result column="CURRENCY37" property="currency37" jdbcType="VARCHAR" />
+        <result column="CURRENCY38" property="currency38" jdbcType="VARCHAR" />
+        <result column="CURRENCY39" property="currency39" jdbcType="VARCHAR" />
+        <result column="CURRENCY40" property="currency40" jdbcType="VARCHAR" />
+        <result column="CURRENCY41" property="currency41" jdbcType="VARCHAR" />
+        <result column="CURRENCY42" property="currency42" jdbcType="VARCHAR" />
+        <result column="CURRENCY43" property="currency43" jdbcType="VARCHAR" />
+        <result column="CURRENCY44" property="currency44" jdbcType="VARCHAR" />
+        <result column="CURRENCY45" property="currency45" jdbcType="VARCHAR" />
+        <result column="CURRENCY46" property="currency46" jdbcType="VARCHAR" />
+        <result column="CURRENCY47" property="currency47" jdbcType="VARCHAR" />
+        <result column="CURRENCY48" property="currency48" jdbcType="VARCHAR" />
+        <result column="CURRENCY49" property="currency49" jdbcType="VARCHAR" />
+        <result column="CURRENCY50" property="currency50" jdbcType="VARCHAR" />
+        <result column="CURRENCY51" property="currency51" jdbcType="VARCHAR" />
+        <result column="CURRENCY52" property="currency52" jdbcType="VARCHAR" />
+        <result column="CURRENCY53" property="currency53" jdbcType="VARCHAR" />
+        <result column="CURRENCY54" property="currency54" jdbcType="VARCHAR" />
+        <result column="CURRENCY55" property="currency55" jdbcType="VARCHAR" />
+        <result column="CURRENCY56" property="currency56" jdbcType="VARCHAR" />
+        <result column="CURRENCY57" property="currency57" jdbcType="VARCHAR" />
+        <result column="CURRENCY58" property="currency58" jdbcType="VARCHAR" />
+        <result column="CURRENCY59" property="currency59" jdbcType="VARCHAR" />
+        <result column="CURRENCY60" property="currency60" jdbcType="VARCHAR" />
+        <result column="CURRENCY61" property="currency61" jdbcType="VARCHAR" />
+        <result column="CURRENCY62" property="currency62" jdbcType="VARCHAR" />
+        <result column="CURRENCY63" property="currency63" jdbcType="VARCHAR" />
+        <result column="CURRENCY64" property="currency64" jdbcType="VARCHAR" />
+        <result column="CURRENCY65" property="currency65" jdbcType="VARCHAR" />
+        <result column="CURRENCY66" property="currency66" jdbcType="VARCHAR" />
+        <result column="CURRENCY67" property="currency67" jdbcType="VARCHAR" />
+        <result column="CURRENCY68" property="currency68" jdbcType="VARCHAR" />
+        <result column="CURRENCY69" property="currency69" jdbcType="VARCHAR" />
+        <result column="CURRENCY70" property="currency70" jdbcType="VARCHAR" />
+        <result column="CURRENCY71" property="currency71" jdbcType="VARCHAR" />
+        <result column="CURRENCY72" property="currency72" jdbcType="VARCHAR" />
+        <result column="CURRENCY73" property="currency73" jdbcType="VARCHAR" />
+        <result column="CURRENCY74" property="currency74" jdbcType="VARCHAR" />
+        <result column="CURRENCY75" property="currency75" jdbcType="VARCHAR" />
+        <result column="CURRENCY76" property="currency76" jdbcType="VARCHAR" />
+        <result column="CURRENCY77" property="currency77" jdbcType="VARCHAR" />
+        <result column="CURRENCY78" property="currency78" jdbcType="VARCHAR" />
+        <result column="CURRENCY79" property="currency79" jdbcType="VARCHAR" />
+        <result column="CURRENCY80" property="currency80" jdbcType="VARCHAR" />
+        <result column="CURRENCY81" property="currency81" jdbcType="VARCHAR" />
+        <result column="CURRENCY82" property="currency82" jdbcType="VARCHAR" />
+        <result column="CURRENCY83" property="currency83" jdbcType="VARCHAR" />
+        <result column="CURRENCY84" property="currency84" jdbcType="VARCHAR" />
+        <result column="CURRENCY85" property="currency85" jdbcType="VARCHAR" />
+        <result column="CURRENCY86" property="currency86" jdbcType="VARCHAR" />
+        <result column="CURRENCY87" property="currency87" jdbcType="VARCHAR" />
+        <result column="CURRENCY88" property="currency88" jdbcType="VARCHAR" />
+        <result column="CURRENCY89" property="currency89" jdbcType="VARCHAR" />
+        <result column="CURRENCY90" property="currency90" jdbcType="VARCHAR" />
+        <result column="CURRENCY91" property="currency91" jdbcType="VARCHAR" />
+        <result column="CURRENCY92" property="currency92" jdbcType="VARCHAR" />
+        <result column="CURRENCY93" property="currency93" jdbcType="VARCHAR" />
+        <result column="CURRENCY94" property="currency94" jdbcType="VARCHAR" />
+        <result column="CURRENCY95" property="currency95" jdbcType="VARCHAR" />
+        <result column="CURRENCY96" property="currency96" jdbcType="VARCHAR" />
+        <result column="CURRENCY97" property="currency97" jdbcType="VARCHAR" />
+        <result column="CURRENCY98" property="currency98" jdbcType="VARCHAR" />
+        <result column="CURRENCY99" property="currency99" jdbcType="VARCHAR" />
+        <result column="CURRENCY100" property="currency100" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG2" property="renewalFlag2" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG3" property="renewalFlag3" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG4" property="renewalFlag4" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG5" property="renewalFlag5" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG6" property="renewalFlag6" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG7" property="renewalFlag7" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG8" property="renewalFlag8" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG9" property="renewalFlag9" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG10" property="renewalFlag10" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG11" property="renewalFlag11" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG12" property="renewalFlag12" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG13" property="renewalFlag13" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG14" property="renewalFlag14" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG15" property="renewalFlag15" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG16" property="renewalFlag16" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG17" property="renewalFlag17" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG18" property="renewalFlag18" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG19" property="renewalFlag19" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG20" property="renewalFlag20" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG21" property="renewalFlag21" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG22" property="renewalFlag22" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG23" property="renewalFlag23" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG24" property="renewalFlag24" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG25" property="renewalFlag25" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG26" property="renewalFlag26" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG27" property="renewalFlag27" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG28" property="renewalFlag28" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG29" property="renewalFlag29" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG30" property="renewalFlag30" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG31" property="renewalFlag31" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG32" property="renewalFlag32" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG33" property="renewalFlag33" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG34" property="renewalFlag34" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG35" property="renewalFlag35" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG36" property="renewalFlag36" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG37" property="renewalFlag37" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG38" property="renewalFlag38" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG39" property="renewalFlag39" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG40" property="renewalFlag40" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG41" property="renewalFlag41" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG42" property="renewalFlag42" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG43" property="renewalFlag43" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG44" property="renewalFlag44" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG45" property="renewalFlag45" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG46" property="renewalFlag46" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG47" property="renewalFlag47" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG48" property="renewalFlag48" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG49" property="renewalFlag49" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG50" property="renewalFlag50" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG51" property="renewalFlag51" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG52" property="renewalFlag52" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG53" property="renewalFlag53" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG54" property="renewalFlag54" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG55" property="renewalFlag55" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG56" property="renewalFlag56" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG57" property="renewalFlag57" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG58" property="renewalFlag58" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG59" property="renewalFlag59" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG60" property="renewalFlag60" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG61" property="renewalFlag61" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG62" property="renewalFlag62" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG63" property="renewalFlag63" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG64" property="renewalFlag64" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG65" property="renewalFlag65" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG66" property="renewalFlag66" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG67" property="renewalFlag67" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG68" property="renewalFlag68" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG69" property="renewalFlag69" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG70" property="renewalFlag70" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG71" property="renewalFlag71" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG72" property="renewalFlag72" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG73" property="renewalFlag73" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG74" property="renewalFlag74" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG75" property="renewalFlag75" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG76" property="renewalFlag76" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG77" property="renewalFlag77" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG78" property="renewalFlag78" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG79" property="renewalFlag79" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG80" property="renewalFlag80" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG81" property="renewalFlag81" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG82" property="renewalFlag82" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG83" property="renewalFlag83" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG84" property="renewalFlag84" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG85" property="renewalFlag85" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG86" property="renewalFlag86" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG87" property="renewalFlag87" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG88" property="renewalFlag88" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG89" property="renewalFlag89" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG90" property="renewalFlag90" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG91" property="renewalFlag91" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG92" property="renewalFlag92" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG93" property="renewalFlag93" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG94" property="renewalFlag94" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG95" property="renewalFlag95" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG96" property="renewalFlag96" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG97" property="renewalFlag97" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG98" property="renewalFlag98" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG99" property="renewalFlag99" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG100" property="renewalFlag100" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS2" property="renewalStatus2" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS3" property="renewalStatus3" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS4" property="renewalStatus4" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS5" property="renewalStatus5" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS6" property="renewalStatus6" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS7" property="renewalStatus7" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS8" property="renewalStatus8" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS9" property="renewalStatus9" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS10" property="renewalStatus10" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS11" property="renewalStatus11" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS12" property="renewalStatus12" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS13" property="renewalStatus13" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS14" property="renewalStatus14" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS15" property="renewalStatus15" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS16" property="renewalStatus16" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS17" property="renewalStatus17" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS18" property="renewalStatus18" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS19" property="renewalStatus19" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS20" property="renewalStatus20" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS21" property="renewalStatus21" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS22" property="renewalStatus22" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS23" property="renewalStatus23" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS24" property="renewalStatus24" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS25" property="renewalStatus25" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS26" property="renewalStatus26" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS27" property="renewalStatus27" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS28" property="renewalStatus28" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS29" property="renewalStatus29" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS30" property="renewalStatus30" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS31" property="renewalStatus31" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS32" property="renewalStatus32" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS33" property="renewalStatus33" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS34" property="renewalStatus34" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS35" property="renewalStatus35" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS36" property="renewalStatus36" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS37" property="renewalStatus37" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS38" property="renewalStatus38" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS39" property="renewalStatus39" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS40" property="renewalStatus40" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS41" property="renewalStatus41" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS42" property="renewalStatus42" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS43" property="renewalStatus43" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS44" property="renewalStatus44" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS45" property="renewalStatus45" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS46" property="renewalStatus46" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS47" property="renewalStatus47" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS48" property="renewalStatus48" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS49" property="renewalStatus49" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS50" property="renewalStatus50" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS51" property="renewalStatus51" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS52" property="renewalStatus52" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS53" property="renewalStatus53" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS54" property="renewalStatus54" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS55" property="renewalStatus55" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS56" property="renewalStatus56" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS57" property="renewalStatus57" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS58" property="renewalStatus58" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS59" property="renewalStatus59" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS60" property="renewalStatus60" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS61" property="renewalStatus61" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS62" property="renewalStatus62" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS63" property="renewalStatus63" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS64" property="renewalStatus64" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS65" property="renewalStatus65" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS66" property="renewalStatus66" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS67" property="renewalStatus67" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS68" property="renewalStatus68" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS69" property="renewalStatus69" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS70" property="renewalStatus70" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS71" property="renewalStatus71" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS72" property="renewalStatus72" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS73" property="renewalStatus73" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS74" property="renewalStatus74" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS75" property="renewalStatus75" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS76" property="renewalStatus76" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS77" property="renewalStatus77" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS78" property="renewalStatus78" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS79" property="renewalStatus79" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS80" property="renewalStatus80" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS81" property="renewalStatus81" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS82" property="renewalStatus82" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS83" property="renewalStatus83" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS84" property="renewalStatus84" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS85" property="renewalStatus85" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS86" property="renewalStatus86" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS87" property="renewalStatus87" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS88" property="renewalStatus88" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS89" property="renewalStatus89" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS90" property="renewalStatus90" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS91" property="renewalStatus91" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS92" property="renewalStatus92" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS93" property="renewalStatus93" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS94" property="renewalStatus94" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS95" property="renewalStatus95" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS96" property="renewalStatus96" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS97" property="renewalStatus97" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS98" property="renewalStatus98" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS99" property="renewalStatus99" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS100" property="renewalStatus100" jdbcType="VARCHAR" />
+        <result column="TOTAL_AMOUNT2" property="totalAmount2" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT3" property="totalAmount3" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT4" property="totalAmount4" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT5" property="totalAmount5" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT6" property="totalAmount6" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT7" property="totalAmount7" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT8" property="totalAmount8" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT9" property="totalAmount9" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT10" property="totalAmount10" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT11" property="totalAmount11" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT12" property="totalAmount12" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT13" property="totalAmount13" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT14" property="totalAmount14" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT15" property="totalAmount15" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT16" property="totalAmount16" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT17" property="totalAmount17" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT18" property="totalAmount18" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT19" property="totalAmount19" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT20" property="totalAmount20" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT21" property="totalAmount21" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT22" property="totalAmount22" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT23" property="totalAmount23" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT24" property="totalAmount24" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT25" property="totalAmount25" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT26" property="totalAmount26" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT27" property="totalAmount27" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT28" property="totalAmount28" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT29" property="totalAmount29" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT30" property="totalAmount30" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT31" property="totalAmount31" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT32" property="totalAmount32" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT33" property="totalAmount33" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT34" property="totalAmount34" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT35" property="totalAmount35" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT36" property="totalAmount36" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT37" property="totalAmount37" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT38" property="totalAmount38" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT39" property="totalAmount39" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT40" property="totalAmount40" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT41" property="totalAmount41" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT42" property="totalAmount42" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT43" property="totalAmount43" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT44" property="totalAmount44" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT45" property="totalAmount45" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT46" property="totalAmount46" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT47" property="totalAmount47" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT48" property="totalAmount48" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT49" property="totalAmount49" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT50" property="totalAmount50" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT51" property="totalAmount51" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT52" property="totalAmount52" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT53" property="totalAmount53" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT54" property="totalAmount54" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT55" property="totalAmount55" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT56" property="totalAmount56" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT57" property="totalAmount57" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT58" property="totalAmount58" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT59" property="totalAmount59" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT60" property="totalAmount60" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT61" property="totalAmount61" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT62" property="totalAmount62" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT63" property="totalAmount63" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT64" property="totalAmount64" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT65" property="totalAmount65" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT66" property="totalAmount66" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT67" property="totalAmount67" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT68" property="totalAmount68" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT69" property="totalAmount69" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT70" property="totalAmount70" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT71" property="totalAmount71" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT72" property="totalAmount72" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT73" property="totalAmount73" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT74" property="totalAmount74" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT75" property="totalAmount75" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT76" property="totalAmount76" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT77" property="totalAmount77" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT78" property="totalAmount78" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT79" property="totalAmount79" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT80" property="totalAmount80" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT81" property="totalAmount81" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT82" property="totalAmount82" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT83" property="totalAmount83" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT84" property="totalAmount84" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT85" property="totalAmount85" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT86" property="totalAmount86" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT87" property="totalAmount87" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT88" property="totalAmount88" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT89" property="totalAmount89" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT90" property="totalAmount90" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT91" property="totalAmount91" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT92" property="totalAmount92" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT93" property="totalAmount93" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT94" property="totalAmount94" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT95" property="totalAmount95" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT96" property="totalAmount96" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT97" property="totalAmount97" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT98" property="totalAmount98" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT99" property="totalAmount99" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT100" property="totalAmount100" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    
+  <resultMap id="OrdAdditionResultMap" type="clb.core.order.dto.OrdAddition">
+        <result column="ADDITION_ID" property="additionId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+		<result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="DEPEND_MAIN_FLAG" property="dependMainFlag" jdbcType="VARCHAR" />
+         <result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+        
+        <result column="ATTRIBUTE1" property="attribute1" jdbcType="VARCHAR" />
+        <result column="SOURCE" property="source" jdbcType="VARCHAR" />
+        <result column="SAVE_STATUS" property="saveStatus" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="queryOrdAfterList" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap">
+		SELECT
+		foa.AFTER_ID,
+		foa.AFTER_NUM,
+		foa.ORDER_ID,
+		foa.HANDLER_USER_ID,
+		foa.TEMPLATE_ID,
+		foa.AFTER_STATUS,
+		foa.FLAG,
+		foa.CREATION_DATE,
+		foa.LAST_UPDATE_DATE,
+		foa.ATTRIBUTE_CATEGORY,
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.ITEM_ID ITEM_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME
+		SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name
+		SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		foo.PAY_PERIODS,
+		fot.APPLY_CLASS_CODE  AFTER_PROJECT,
+		fot.APPLY_ITEM AFTER_TYPE,
+		scvb2.meaning AFTER_PROJECT_DESC,
+		scvb3.meaning AFTER_STATUS_DESC,
+		foo.CHANNEL_CONTRACT_ID,
+		fcc.PHONE_CODE CHANNEL_PHONE_CODE,
+        fcc.CONTACT_PHONE CHANNEL_PHONE
+		FROM
+		fms_ord_after AS foa
+		LEFT JOIN fms_ord_order AS foo
+		ON foa.ORDER_ID = foo.ORDER_ID
+		LEFT JOIN fms_ord_template fot
+		ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        
+		LEFT JOIN sys_code_b sc2 ON sc2.CODE = 'ORD.APPLY_CLASS'
+		LEFT JOIN sys_code_value_b scvb2 ON scvb2.code_id = sc2.code_id
+		AND scvb2.`VALUE` = fot.APPLY_CLASS_CODE
+		LEFT JOIN sys_code_b sc3 ON sc3.CODE = 'ORD.AFTER_STATUS'
+		LEFT JOIN sys_code_value_b scvb3 ON scvb3.code_id = sc3.code_id
+		AND scvb3.VALUE = foa.after_status
+		WHERE 1 = 1 
+		<if test="afterId != null"><!-- 售后id -->
+			AND foa.AFTER_ID = #{afterId , jdbcType=DECIMAL}
+		</if>
+		<if test="afterType != null"><!-- 售后类型 -->
+			AND fot.APPLY_ITEM = #{afterType}
+		</if>
+		<if test="afterProject != null"><!-- 售后项目 -->
+			AND fot.APPLY_CLASS_CODE = #{afterProject}
+		</if>
+		<if test="afterStatus != null"><!-- 售后状态 -->
+			AND foa.AFTER_STATUS = #{afterStatus}
+		</if>
+		<if test="orderId != null"><!-- 订单id -->
+			AND foo.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+		</if>
+		<if test="sublineId != null"><!-- 子产品id -->
+			AND foo.SUBLINE_ID = #{sublineId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelId != null"><!-- 渠道id -->
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName},'%')      
+		</if>
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber},'%') 
+		</if>
+
+		<if test="person != null"><!-- 投保人/受保人 -->
+			AND (actm.CHINESE_NAME LIKE concat('%',#{person},'%')
+			OR ictm.CHINESE_NAME LIKE concat('%',#{person},'%'))
+		</if>
+
+		<if test="number != null"><!-- 编号 -->
+			AND (foa.AFTER_NUM LIKE concat('%',#{number},'%')
+			OR foo.POLICY_NUMBER LIKE concat('%',#{number},'%'))
+		</if>
+		
+		<if test="startDateActive != null"><!-- 开始时间 和  售后单创建时间相比-->
+			 AND foa.CREATION_DATE &gt;=#{startDateActive,jdbcType=DATE}
+		</if>
+		
+		<if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		
+		<if test="endDateActive != null"><!-- 结束时间 -->
+			AND foa.CREATION_DATE &lt;=#{endDateActive,jdbcType=DATE}
+		</if>
+		ORDER BY foa.AFTER_ID DESC
+	</select>
+    
+	<!-- 售后列表 (个人)-->
+	<select id="queryWSOrdAfterList" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap">
+		SELECT
+		foa.AFTER_ID,
+		foa.AFTER_NUM,
+		foa.ORDER_ID,
+		foa.HANDLER_USER_ID,
+		foa.TEMPLATE_ID,
+		foa.AFTER_STATUS,
+		foa.FLAG,
+		foa.CREATION_DATE,
+		foa.LAST_UPDATE_DATE,
+		foa.ATTRIBUTE_CATEGORY,
+
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.ITEM_ID ITEM_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME
+		SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name
+		SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		foo.PAY_PERIODS,
+		fot.APPLY_CLASS_CODE  AFTER_PROJECT,
+		fot.APPLY_ITEM AFTER_TYPE,
+		scvb2.meaning AFTER_PROJECT_DESC,
+		scvb3.meaning AFTER_STATUS_DESC,
+		foo.CHANNEL_CONTRACT_ID,
+		pfss.FILE_ID COMPANY_FILEID
+		FROM
+		fms_ord_after AS foa
+		LEFT JOIN fms_ord_order AS foo
+		ON foa.ORDER_ID = foo.ORDER_ID
+		LEFT JOIN fms_ord_template fot
+		ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        
+		LEFT JOIN sys_code_b sc2 ON sc2.CODE = 'ORD.APPLY_CLASS'
+		LEFT JOIN sys_code_value_b scvb2 ON scvb2.code_id = sc2.code_id
+		AND scvb2.`VALUE` = fot.APPLY_CLASS_CODE
+		LEFT JOIN sys_code_b sc3 ON sc3.CODE = 'ORD.AFTER_STATUS'
+		LEFT JOIN sys_code_value_b scvb3 ON scvb3.code_id = sc3.code_id
+		AND scvb3.VALUE = foa.after_status
+		WHERE 1 = 1 <!-- foa.FLAG = 1 -->
+		<if test="afterId != null"><!-- 售后id -->
+			AND foa.AFTER_ID = #{afterId , jdbcType=DECIMAL}
+		</if>
+		<if test="afterType != null"><!-- 售后类型 -->
+			AND fot.APPLY_ITEM = #{afterType}
+		</if>
+		<if test="afterProject != null"><!-- 售后项目 -->
+			AND fot.APPLY_CLASS_CODE = #{afterProject}
+		</if>
+		<if test="afterStatus != null"><!-- 售后状态 -->
+			AND foa.AFTER_STATUS = #{afterStatus}
+		</if>
+		<if test="orderId != null"><!-- 订单id -->
+			AND foo.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+		</if>
+		<if test="sublineId != null"><!-- 子产品id -->
+			AND foo.SUBLINE_ID = #{sublineId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelId != null"><!-- 渠道id -->
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName},'%')      
+		</if>
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber},'%') 
+		</if>
+
+		<if test="person != null"><!-- 投保人/受保人 -->
+			AND (actm.CHINESE_NAME LIKE concat('%',#{person},'%')
+			OR ictm.CHINESE_NAME LIKE concat('%',#{person},'%'))
+		</if>
+
+		<if test="number != null"><!-- 编号 -->
+			AND (foa.AFTER_NUM LIKE concat('%',#{number},'%')
+			OR foo.POLICY_NUMBER LIKE concat('%',#{number},'%'))
+		</if>
+		
+		<if test="startDateActive != null"><!-- 开始时间 和  售后单创建时间相比-->
+			 AND foa.CREATION_DATE &gt;=#{startDateActive,jdbcType=DATE}
+		</if>
+		
+		<if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		
+		<if test="endDateActive != null"><!-- 结束时间 -->
+			AND foa.CREATION_DATE &lt;=#{endDateActive,jdbcType=DATE}
+		</if>
+		<!-- 微信 -->
+		<if test="applicantCustomerId != null"><!-- 投保人/受保人 -->
+			AND foo.APPLICANT_CUSTOMER_ID = #{applicantCustomerId}
+		</if>
+		ORDER BY CASE foa.AFTER_STATUS
+		WHEN "AUDITAGIN" THEN
+		1 ELSE 2 END,foa.AFTER_ID DESC
+	</select>
+
+
+	<select id="queryOrdAfterListTotal" parameterType="clb.core.order.dto.OrdAfter" resultType="java.lang.Long">
+		SELECT COUNT(*)
+		FROM
+			fms_ord_after  foa
+		JOIN fms_ord_order AS foo
+		ON foa.ORDER_ID = foo.ORDER_ID
+			WHERE 1 = 1
+			<if test="afterStatus != null">
+				AND foa.AFTER_STATUS = #{afterStatus}
+			</if>
+	</select>
+
+
+	<!-- 售后列表  团队 -->
+	<select id="queryWSOrdAfterTeamList" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap">
+		SELECT
+		foa.AFTER_ID,
+		foa.AFTER_NUM,
+		foa.ORDER_ID,
+		foa.TEMPLATE_ID,
+		foa.HANDLER_USER_ID,
+		foa.FLAG,
+		foa.CREATION_DATE,
+		foa.LAST_UPDATE_DATE,
+		foa.ATTRIBUTE_CATEGORY,
+		
+        foo.ORDER_NUMBER,
+        foo.POLICY_NUMBER,
+        foo.PAY_NUMBER,
+        foo.CUSTOMER_NUMBER,
+        foo.COMPANY_CHANNEL_ID,
+        foo.CHANNEL_ID,
+        foo.CONTRACT_ROLE_ID,
+        foo.PRODUCT_SUPPLIER_ID,
+        foo.ITEM_ID,
+        foo.SUBLINE_ID,
+        foo.CURRENCY,
+        foo.PAY_METHOD,
+        foo.YEAR_PAY_AMOUNT,
+        foo.POLICY_AMOUNT,
+        foo.APPLICANT_CUSTOMER_ID,
+        foo.INSURANT_CUSTOMER_ID,
+        foo.INCREASE_FLAG,
+        foo.SUBMIT_DATE,
+        foo.RESERVE_DATE,
+        foo.RESERVE_ARRIVAL_DATE,
+        foo.RESERVE_CHECK_DATE,
+        foo.SIGN_DATE,
+        foo.EFFECTIVE_DATE,
+        foo.APPROVE_DATE,
+        foo.EXPECT_COOL_DATE,
+        foo.FIRST_PAY_DATE,
+        foo.RENEWAL_DUE_DATE,
+        foo.RENEWAL_SUCCESS_DATE,
+        foo.GRACE_DATE,
+        foo.ADMINISTRATIVE_DATE,
+        foo.STATUS,
+        foo.CLUB_CONFIRM_STATUS,
+        foo.CUSTOMER_CONFIRM_STATUS,
+        foo.APPLICATION_STATUS,
+        foo.CUSTOMER_USER_ID,
+        foo.SMS_FLAG,
+        foo.CUSTOMER_OPERATE_DATE,
+        foo.HK_CONTACT_PERSON,
+        foo.HK_CONTACT_PHONE,
+        foo.RECEIPT_DATE,
+        foo.QUICK_CHECK_FLAG,
+        foo.ELE_INSURANCE_FLAG,
+        foo.FILL_USER_ID,
+        foo.SIGN_ASSISTANT,
+        foo.ARRIVAL_DATE,
+        foo.LEAVE_DATE,
+        foo.PHONE_FLAG,
+        foo.CONTACT_PERSON,
+        foo.CONTACT_PHONE,
+        foo.SIGN_ADDRESS,
+        foo.MEET_ADDRESS,
+        foo.RESERVE_SUPPLIER_ID,
+        foo.RESERVE_COMMENT,
+        foo.RESERVE_USER_ID,
+        foo.SIGN_SUPPLIER_ID,
+        foo.SIGN_PERSON,
+        foo.EXPRESS_DELIVERY_INFO,
+        foo.RECEPTION_USER_ID,
+        foo.REVIEWER1,
+        foo.REVIEWER1_DATE,
+        foo.REVIEWER2,
+        foo.REVIEWER2_DATE,
+        foo.REVIEWER_COMMENT,
+        foo.SEND_USER_ID,
+        foo.SEND_DATE,
+        foo.SEND_STATUS,
+        foo.PLAN_FILE_ID,
+        foo.REQ_FILE_ID,
+        foo.NEXT_POLICY_AMOUNT,
+        foo.NEXT_POLICY_DUE_DATE,
+        foo.FIRST_PAYMENT_METHOD,
+        foo.RENEWAL_PAYMENT_METHOD,
+        foo.RENEWAL_OTHER,
+        foo.DDA_FLAG,
+        foo.DDA_SUBMIT_DATE,
+        foo.DDA_EFFECTIVE_DATE,
+        foo.FEEDBACK_BALANCE,
+        foo.ACCOUNT_BALANCE,
+        foo.BALANCE_CURRENCY,
+        foo.BALANCE_PAYMENT_METHOD,
+        foo.PROGRAM_ID,
+        foo.REQUEST_ID,
+        CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME, CONCAT('-', fpis.SUBLINE_ITEM_NAME)))) ITEM,
+        rfcc.USER_NAME ROLE_NAME,
+        cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+        fcc.CHANNEL_NAME,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        sfss.NAME SIGN_SUPPLIER_NAME,
+        rfss.NAME RESERVE_SUPPLIER_NAME,
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+        che.name CUSTOMER_EMPLOYEE_NAME,
+        fhe.name FILL_EMPLOYEE_NAME,
+        she.name SEND_EMPLOYEE_NAME,
+        scvt.MEANING STATUS_DESC,
+        fpis.SUBLINE_ITEM_NAME,
+        fotrs.channel_count TR_CHANNEL_COUNT,
+        fotrs.supplier_count TR_SUPPLIER_COUNT,
+        foo.INTRODUCER,
+        foo.INTRODUCE_BENEFIT,
+        fotr.COMPANY_ID PARENT_CHANNEL_ID,
+        fot.APPLY_CLASS_CODE  AFTER_PROJECT,
+		fot.APPLY_ITEM AFTER_TYPE,
+		foo.CHANNEL_CONTRACT_ID
+        FROM
+        fms_ord_after AS foa
+		LEFT JOIN fms_ord_order AS foo
+		ON foa.ORDER_ID = foo.ORDER_ID
+		LEFT JOIN fms_ord_template fot
+		ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        <!-- ON fccr.ROLE_USER_ID = rfcc.USER_ID -->
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN FMS_ORD_TRADE_ROUTE_SHOW fotrs
+        ON foo.ORDER_ID = fotrs.ORDER_ID
+        JOIN fms_ord_trade_route fotr
+        ON fotr.order_id = foo.order_id AND fotr.COMPANY_TYPE = 'CHANNEL'
+        JOIN fms_ord_trade_route fotr1
+        ON fotr1.order_id = foo.order_id AND fotr1.COMPANY_TYPE = 'CHANNEL'
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = fotr1.COMPANY_ID
+        WHERE 1 = 1<!-- foa.FLAG = 1 -->
+        AND fotr.SEQ_NUM -1 = fotr1.SEQ_NUM
+        <if test="afterId != null"><!-- 售后id -->
+			AND foa.AFTER_ID = #{afterId , jdbcType=DECIMAL}
+		</if>
+
+		<if test="afterType != null"><!-- 售后类型 -->
+			AND fot.APPLY_ITEM = #{afterType}
+		</if>
+		
+		<if test="afterProject != null"><!-- 售后项目 -->
+			AND fot.APPLY_CLASS_CODE = #{afterProject}
+		</if>
+		
+		<if test="afterStatus != null"><!-- 售后状态 -->
+			AND foa.AFTER_STATUS = #{afterStatus}
+		</if>
+		<if test="orderId != null"><!-- 订单id -->
+			AND foo.ORDER_ID = #{orderId , jdbcType=DECIMAL}
+		</if>
+        <if test = "status != null"> 
+        	AND foo.STATUS = #{status , jdbcType=VARCHAR} 
+        </if>
+        
+        <if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		
+        <if test = "parentChannelId != null"> 
+        	AND fotr.COMPANY_ID = #{parentChannelId , jdbcType=DECIMAL} 
+        	</if>
+
+        <if test = "item != null">
+            AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME, CONCAT('-', fpis.SUBLINE_ITEM_NAME)))) LIKE concat('%',concat(#{item , jdbcType=VARCHAR},'%')
+        </if>
+		<if test = "parentChannelId != null"> 
+			AND fotr.COMPANY_ID = #{parentChannelId , jdbcType=DECIMAL} 
+		</if>
+		<if test="sublineId != null"><!-- 子产品id -->
+			AND foo.SUBLINE_ID = #{sublineId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelId != null"><!-- 渠道id -->
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if>
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName},'%')
+		</if>
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber},'%')
+		</if>
+
+		<if test="person != null"><!-- 投保人/受保人 -->
+			AND (actm.CHINESE_NAME LIKE concat('%',concat(#{person ,jdbcType=VARCHAR},'%'))
+			OR ictm.CHINESE_NAME LIKE concat('%',concat(#{person ,jdbcType=VARCHAR},'%')))
+		</if>
+
+		<if test="number != null"><!-- 编号 -->
+			AND (foa.AFTER_NUM LIKE concat('%',concat(#{number ,jdbcType=VARCHAR},'%'))
+			OR foo.POLICY_NUMBER LIKE concat('%',concat(#{number ,jdbcType=VARCHAR},'%')))
+		</if>
+		
+		<if test="startDateActive != null"><!-- 开始时间 和  售后单创建时间相比-->
+			 AND foa.CREATION_DATE &gt;= #{startDateActive,jdbcType=DATE}
+		</if>
+		
+		<if test="endDateActive != null"><!-- 结束时间 -->
+			AND foa.CREATION_DATE &lt;=#{endDateActive,jdbcType=DATE}
+		</if>
+		ORDER BY CASE foa.AFTER_STATUS
+		WHEN "AUDITAGIN" THEN
+		1 ELSE 2 END,foa.AFTER_ID DESC
+	</select>
+	<!-- 售后汇总跟进接口 -->
+	<select id="queryOrdAfterListFollow" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap">
+		SELECT 
+		foa.AFTER_ID,
+		foa.AFTER_NUM,
+		foa.ORDER_ID,
+		foa.FLAG,
+		foa.CREATION_DATE,
+		foa.LAST_UPDATE_DATE,
+		foa.ATTRIBUTE_CATEGORY,
+		
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.ITEM_ID ITEM_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE
+		ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME
+		SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name
+		SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		foo.PAY_PERIODS,
+		fot.APPLY_CLASS_CODE  AFTER_PROJECT,
+		fot.APPLY_ITEM AFTER_TYPE
+		FROM
+		fms_ord_after AS foa
+		LEFT JOIN fms_ord_order AS foo
+		ON foa.ORDER_ID = foo.ORDER_ID
+		LEFT JOIN fms_ord_template fot
+		ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+        LEFT JOIN sys_user rfcc
+        <!-- ON fccr.ROLE_USER_ID = rfcc.USER_ID -->
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+		WHERE foa.FLAG = 1
+			AND foa.AFTER_ID = #{afterId , jdbcType=DECIMAL}
+	</select>
+	
+	<!-- 退保产品表格 -->
+	 <select id="queryOrdAdditionByOrderId" parameterType="clb.core.order.dto.OrdAddition" resultMap="OrdAdditionResultMap" >
+      SELECT
+			t.ORDER_ID,
+			t.ITEM_ID,
+			t.`STATUS`,
+			t.SAVE_STATUS,
+			t.SURRENDER_FLAG,
+			fpi.ITEM_NAME,
+			foo.RENEWAL_DUE_DATE,
+			foo.NEXT_POLICY_AMOUNT,
+			foo.CURRENCY,
+			foo.PAY_PERIODS,
+			fpi.ATTRIBUTE1,
+			t.SOURCE
+		FROM
+			(
+				SELECT
+					ORDER_ID,
+					ITEM_ID,
+					`STATUS`,
+					SAVE_STATUS,
+					SURRENDER_FLAG,
+					ATTRIBUTE1,
+					"ADDITION" SOURCE
+				FROM
+					fms_ord_addition
+				UNION
+					SELECT
+						ORDER_ID,
+						ITEM_ID,
+						`STATUS`,
+						SAVE_STATUS,
+						SURRENDER_FLAG,
+						ATTRIBUTE1,
+						"ORDER" SOURCE
+					FROM
+						fms_ord_order
+			) t
+		LEFT JOIN fms_prd_items fpi ON t.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_ord_order foo ON t.ORDER_ID = foo.ORDER_ID
+		WHERE
+			1 = 1 
+			<if test = "orderId != null"> AND t.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+		ORDER BY
+			t.SOURCE DESC
+    </select>
+	
+	 <!-- 续保产品  表格 -->
+    <select id="queryRenewalInfoByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="RenewalResultMap">
+   	 SELECT	
+   	 		foor.RENEWAL_ID,
+			foor.ITEM_ID,
+			foor.ORDER_ID,
+			foor.TYPE,
+			foo.PAY_PERIODS,
+			fpi.ITEM_NAME,
+			${renewalStatusColumn} RENEWAL_STATUS,
+			${currencyColumn} CURRENCY,
+			${renewalDateColumn} RENEWAL_DUE_DATE
+		FROM
+			fms_ord_renewal foor
+		LEFT JOIN fms_ord_order foo ON foor.ORDER_ID = foo.ORDER_ID
+		LEFT JOIN fms_prd_items fpi ON foor.ITEM_ID = fpi.ITEM_ID
+		WHERE
+			foor.TYPE = "ITEM" AND foor.FLAG = 0 AND foor.CANCEL_RENEWAL_FLAG = 0
+		<if test = "orderId != null"> AND FOOR.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+    
+    <!-- 修改续保表中当前期数下主险和附加险的信息   修改状态  币种  续保到期日-->
+    <update id="updateRenewalInfoByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal">
+    	update fms_ord_renewal
+    	<set>
+    		<if test="renewalStatus != null and renewalStatus != ''">
+    			RENEWAL_STATUS = #{renewalStatus},
+    		</if>
+    		<if test="renewalStatusColumn != null and renewalStatusColumn != ''">
+    			${renewalStatusColumn} = #{renewalStatus},
+    		</if>
+    		<if test="currencyColumn != null and currencyColumn != ''">
+    			${currencyColumn} = #{currency},
+    		</if>
+    		<if test="renewalFlagColumn != null and renewalFlagColumn != ''">
+    			${renewalFlagColumn} = #{renewalFlag},
+    		</if>
+    		<if test="renewalDateColumn != null and renewalDateColumn != ''">
+    			${renewalDateColumn} = #{renewalDate},
+    		</if>
+    	</set>
+    	where TYPE = "ITEM" and ORDER_ID = #{orderId}
+    </update>
+    
+    <!-- 修改续保表中当前期数下主险和附加险的缴费金额-->
+    <update id="updateRenewalTotalAmountByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal">
+    	update fms_ord_renewal set ${totalAmountColumn} = #{totalAmount}
+    	where TYPE = "TOTAL" and ORDER_ID = #{orderId}
+    </update>
+    
+	<!-- 订单续保的列表 -->
+	<select id="queryOrdRenewalList" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="RenewalResultMap">
+		SELECT
+		`for`.RENEWAL_ID,
+		`for`.ORDER_ID,
+		`for`.TYPE,
+		`for`.RENEWAL_STATUS,
+		`for`.ITEM_ID,
+		`for`.FLAG,
+
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE
+		ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		fpi.ATTRIBUTE7,
+		pfss.GRACE_PERIOD,
+		pfss.ADMINISTRATIVE_PERIOD,
+		foo.PAY_PERIODS,
+		foo.CHANNEL_CONTRACT_ID
+		
+		FROM
+		fms_ord_renewal AS `for`
+		LEFT JOIN fms_ord_order AS foo
+		ON `for`.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+		WHERE 1 = 1 
+			AND foo.PAY_METHOD !='FJ' 
+			AND IFNULL(foo.RENEWAL_FLAG,"N") = "N"
+			AND foo.`STATUS` != "SURRENDERED" 
+			AND foo.`STATUS` != "EXPIRED"
+			AND `for`.FLAG = 0 
+			AND `for`.CANCEL_RENEWAL_FLAG = 0 
+			AND `for`.ITEM_ID = foo.ITEM_ID AND TIMESTAMPDIFF(DAY,foo.RENEWAL_DUE_DATE,NOW()) > -31
+		<!-- 续保状态 -->
+		<if test="renewalStatus != null">
+			 AND `for`.RENEWAL_STATUS = #{renewalStatus} 
+		</if>
+		<!-- 时间 -->
+		<if test = "dateType != null ">
+			<if test='dateType == "EFFECTIVE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.EFFECTIVE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.EFFECTIVE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+			<if test='dateType == "RENEWAL_DUE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.RENEWAL_DUE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.RENEWAL_DUE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+        </if>
+		<!-- 产品 -->
+		<if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		<!-- 投保人/受保人 -->
+		<if test = "person != null">
+              AND (actm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%'))
+              OR ictm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%')))
+        </if>
+		 
+		<!-- 渠道 -->
+		<!-- <if test="channelId != null">
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if> -->
+		
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber ,jdbcType=VARCHAR},'%') 
+		</if>
+	</select>
+	
+	<!-- 续保个人 -->
+	<select id="queryWSOrdRenewalList" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="RenewalResultMap">
+		SELECT
+		`for`.RENEWAL_ID,
+		`for`.ORDER_ID,
+		`for`.TYPE,
+		`for`.RENEWAL_STATUS,
+		`for`.ITEM_ID,
+		`for`.FLAG,
+
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE
+		ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		fpi.ATTRIBUTE7,
+		pfss.GRACE_PERIOD,
+		pfss.ADMINISTRATIVE_PERIOD,
+		foo.PAY_PERIODS,
+		foo.CHANNEL_CONTRACT_ID,
+		pfss.FILE_ID COMPANY_FILEID
+		
+		FROM
+		fms_ord_renewal AS `for`
+		LEFT JOIN fms_ord_order AS foo
+		ON `for`.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+		WHERE 1 = 1 
+			AND foo.PAY_METHOD !='FJ' 
+			AND IFNULL(foo.RENEWAL_FLAG,"N") = "N"
+			AND foo.`STATUS` != "SURRENDERED" 
+			AND foo.`STATUS` != "EXPIRED"
+			AND `for`.FLAG = 0 
+			AND `for`.CANCEL_RENEWAL_FLAG = 0 
+			AND `for`.ITEM_ID = foo.ITEM_ID AND TIMESTAMPDIFF(DAY,foo.RENEWAL_DUE_DATE,NOW()) > -31
+		<!-- 续保状态 -->
+			<if test="renewalStatus != null and renewalStatus != ''">
+				<if test="renewalStatus == 'TOFAIL'">
+					AND `for`.RENEWAL_STATUS IN ("TOFAIL","ADMIN","NACHFRIST")
+				</if>
+				<if test="renewalStatus != 'TOFAIL'">
+					AND `for`.RENEWAL_STATUS = #{renewalStatus} 
+				</if>
+			</if>
+		<!-- 时间 -->
+		<if test = "dateType != null ">
+			<if test='dateType == "EFFECTIVE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.EFFECTIVE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.EFFECTIVE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+			<if test='dateType == "RENEWAL_DUE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.RENEWAL_DUE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.RENEWAL_DUE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+        </if>
+		<!-- 产品 -->
+		<if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		<!-- 投保人/受保人 -->
+		<if test = "person != null">
+              AND (actm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%'))
+              OR ictm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%')))
+        </if>
+		 
+		<!-- 渠道 -->
+		<!-- <if test="channelId != null">
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if> -->
+		
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber ,jdbcType=VARCHAR},'%') 
+		</if>
+		<!-- 微信 -->
+		<if test="applicantCustomerId != null"><!-- 投保人/受保人 -->
+			AND foo.APPLICANT_CUSTOMER_ID = #{applicantCustomerId}
+		</if>
+	</select>
+	
+	<select id="queryRenewalTotal" parameterType="clb.core.order.dto.OrdOrderRenewal" resultType="java.lang.Long">
+		SELECT
+			COUNT(1)
+		FROM
+			fms_ord_renewal `for`,
+			fms_ord_order foo
+		WHERE
+		`for`.ORDER_ID = foo.ORDER_ID
+			AND foo.PAY_METHOD !='FJ' 
+			AND IFNULL(foo.RENEWAL_FLAG,"N") = "N"
+			AND foo.`STATUS` != "SURRENDERED" 
+			AND foo.`STATUS` != "EXPIRED"
+			AND `for`.FLAG = 0 
+			AND `for`.CANCEL_RENEWAL_FLAG = 0 
+			AND `for`.ITEM_ID = foo.ITEM_ID AND TIMESTAMPDIFF(DAY,foo.RENEWAL_DUE_DATE,NOW()) > -31
+			<if test="renewalStatus != null and renewalStatus !=''">
+				AND `for`.RENEWAL_STATUS = #{renewalStatus}
+			</if>
+	</select>
+	
+	<!-- 续保详情页面  续保表格 -->
+	<select id="queryRenewalByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="RenewalResultMap" >
+        SELECT
+            FOOR.*,
+            CASE
+          WHEN fpi.ITEM_NAME IS NULL THEN
+            '总计'
+          ELSE
+            fpi.ITEM_NAME
+          END ITEM_NAME
+        FROM
+            fms_ord_renewal FOOR
+        LEFT JOIN fms_prd_items fpi
+        ON FOOR.ITEM_ID = fpi.ITEM_ID
+        WHERE 1=1 AND FOOR.FLAG = 0 AND FOOR.CANCEL_RENEWAL_FLAG = 0
+        <if test = "orderId != null"> AND FOOR.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+   
+    <!-- lov -->
+	<select id="queryOrdOrderByOrderId" parameterType="clb.core.order.dto.OrdOrder" resultMap="OrderResultMap">
+			SELECT
+				foo.ORDER_ID,
+				foo.POLICY_NUMBER,
+				CONCAT(
+					pfss. NAME,
+					CONCAT(
+						'-',
+						CONCAT(
+							fpi.ITEM_NAME,
+							CONCAT('-', fpis.SUBLINE_ITEM_NAME)
+						)
+					)
+				) ITEM,
+				fcc.CHANNEL_NAME ,
+				actm.CHINESE_NAME APPLICANT,
+				ictm.CHINESE_NAME INSURANT,
+				foo.CURRENCY,
+				foo.POLICY_AMOUNT,
+				foo.YEAR_PAY_AMOUNT,
+				rfss.NAME RESERVE_SUPPLIER_NAME,
+				foo.ORDER_NUMBER ORDER_NUMBER
+			FROM
+				fms_ord_order foo 
+                LEFT JOIN fms_spe_supplier pfss ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+                LEFT JOIN fms_prd_items fpi ON fpi.ITEM_ID = foo.ITEM_ID
+                LEFT JOIN fms_prd_item_subline fpis ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+                LEFT JOIN fms_cnl_channel fcc ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+                LEFT JOIN fms_ctm_customer actm ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+                LEFT JOIN fms_ctm_customer ictm ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+                LEFT JOIN fms_spe_supplier sfss ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+                LEFT JOIN fms_spe_supplier rfss ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+			where 
+				1=1
+				<if test="policyNumber!= null">
+							AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber,jdbcType=VARCHAR},'%')
+				</if>
+				<if test="orderId!= null">
+							AND foo.ORDER_ID = #{orderId} 
+				</if>
+	</select>
+	
+    <!-- 保单信息 售后跟进页面-->
+     <select id="queryOrderInfoByAfterId" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap" >
+     			SELECT
+					foa.AFTER_ID,
+					foa.AFTER_NUM,
+					foa.ORDER_ID,
+					foa.TEMPLATE_ID,
+					foa.HANDLER_USER_ID,
+					fot.APPLY_CLASS_CODE  AFTER_PROJECT,
+					fot.APPLY_ITEM AFTER_TYPE,
+					foa.AFTER_STATUS,
+					foa.CREATION_DATE,
+					foo.POLICY_NUMBER,
+					CONCAT(
+						pfss. NAME,
+						CONCAT(
+							'-',
+							CONCAT(
+								fpi.ITEM_NAME,
+								CONCAT('-', fpis.SUBLINE_ITEM_NAME)
+							)
+						)
+					) ITEM,
+					fcc.CHANNEL_NAME,
+					actm.CHINESE_NAME APPLICANT,
+					ictm.CHINESE_NAME INSURANT,
+					foo.CURRENCY,
+					foo.POLICY_AMOUNT,
+					foo.YEAR_PAY_AMOUNT,
+					rfcc.USER_NAME ROLE_NAME,
+					rfss. NAME RESERVE_SUPPLIER_NAME,
+					foo.ORDER_NUMBER ORDER_NUMBER,
+					fcc.PHONE_CODE CHANNEL_PHONE_CODE,
+        			fcc.CONTACT_PHONE CHANNEL_PHONE
+				FROM
+					fms_ord_after foa
+				LEFT JOIN fms_ord_order foo ON foa.ORDER_ID = foo.ORDER_ID
+				LEFT JOIN fms_ord_template fot ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+				LEFT JOIN fms_spe_supplier pfss ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+				LEFT JOIN fms_prd_items fpi ON fpi.ITEM_ID = foo.ITEM_ID
+				LEFT JOIN fms_prd_item_subline fpis ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+				LEFT JOIN fms_cnl_channel fcc ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+				LEFT JOIN fms_cnl_contract_role fccr ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		 		LEFT JOIN sys_user rfcc ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+				LEFT JOIN fms_ctm_customer actm ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+				LEFT JOIN fms_ctm_customer ictm ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+				LEFT JOIN fms_spe_supplier sfss ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+				LEFT JOIN fms_spe_supplier rfss ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+			where 
+				1=1
+				<if test="afterId!= null">
+							AND foa.AFTER_ID = #{afterId} 
+				</if>
+    </select>
+    
+    
+    <!-- 续保信息 -->
+     <select id="queryOrderByOrdOrderId" parameterType="clb.core.order.dto.OrdOrder" resultMap="OrderResultMap" >
+        SELECT
+        foo.ORDER_ID,
+        foo.ORDER_NUMBER,
+        foo.POLICY_NUMBER,
+        foo.PAY_NUMBER,
+        foo.CUSTOMER_NUMBER,
+        foo.COMPANY_CHANNEL_ID,
+        foo.CHANNEL_ID,
+        foo.CONTRACT_ROLE_ID,
+        foo.PRODUCT_SUPPLIER_ID,
+        foo.ITEM_ID,
+        foo.SUBLINE_ID,
+        foo.PAY_PERIODS,
+        foo.CURRENCY,
+        foo.PAY_METHOD,
+        foo.YEAR_PAY_AMOUNT,
+        foo.POLICY_AMOUNT,
+        foo.APPLICANT_CUSTOMER_ID,
+        foo.INSURANT_CUSTOMER_ID,
+        foo.INCREASE_FLAG,
+        foo.SUBMIT_DATE,
+        foo.RESERVE_DATE,
+        foo.RESERVE_ARRIVAL_DATE,
+        foo.RESERVE_CHECK_DATE,
+        foo.SIGN_DATE,
+        foo.EFFECTIVE_DATE,
+        foo.APPROVE_DATE,
+        foo.EXPECT_COOL_DATE,
+        foo.FIRST_PAY_DATE,
+        foo.RENEWAL_DUE_DATE,
+        foo.RENEWAL_SUCCESS_DATE,
+        foo.GRACE_DATE,
+        foo.ADMINISTRATIVE_DATE,
+        foo.STATUS,
+        foo.CLUB_CONFIRM_STATUS,
+        foo.CUSTOMER_CONFIRM_STATUS,
+        foo.APPLICATION_STATUS,
+        foo.CUSTOMER_USER_ID,
+        foo.SMS_FLAG,
+        foo.CUSTOMER_OPERATE_DATE,
+        foo.HK_CONTACT_PERSON,
+        foo.HK_CONTACT_PHONE,
+        foo.RECEIPT_DATE,
+        foo.QUICK_CHECK_FLAG,
+        foo.ELE_INSURANCE_FLAG,
+        foo.FILL_USER_ID,
+        foo.SIGN_ASSISTANT,
+        foo.ARRIVAL_DATE,
+        foo.LEAVE_DATE,
+        foo.PHONE_FLAG,
+        foo.CONTACT_PERSON,
+        foo.CONTACT_PHONE,
+        foo.SIGN_ADDRESS,
+        foo.MEET_ADDRESS,
+        foo.RESERVE_SUPPLIER_ID,
+        foo.RESERVE_COMMENT,
+        foo.RESERVE_USER_ID,
+        foo.SIGN_SUPPLIER_ID,
+        foo.SIGN_PERSON,
+        foo.EXPRESS_DELIVERY_INFO,
+        foo.RECEPTION_USER_ID,
+        foo.REVIEWER1,
+        foo.REVIEWER1_DATE,
+        foo.REVIEWER2,
+        foo.REVIEWER2_DATE,
+        foo.REVIEWER_COMMENT,
+        foo.SEND_USER_ID,
+        foo.SEND_DATE,
+        foo.SEND_STATUS,
+        foo.PLAN_FILE_ID,
+        foo.REQ_FILE_ID,
+        foo.NEXT_POLICY_AMOUNT,
+        foo.NEXT_POLICY_DUE_DATE,
+        foo.FIRST_PAYMENT_METHOD,
+        foo.RENEWAL_PAYMENT_METHOD,
+        foo.RENEWAL_OTHER,
+        foo.DDA_FLAG,
+        foo.DDA_SUBMIT_DATE,
+        foo.DDA_EFFECTIVE_DATE,
+        foo.FEEDBACK_BALANCE,
+        foo.ACCOUNT_BALANCE,
+        foo.BALANCE_CURRENCY,
+        foo.BALANCE_PAYMENT_METHOD,
+        foo.PROGRAM_ID,
+        foo.REQUEST_ID,
+        CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME, CONCAT('-', fpis.SUBLINE_ITEM_NAME)))) ITEM,
+        rfcc.USER_NAME ROLE_NAME,
+        cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+        fcc.CHANNEL_NAME,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        sfss.NAME SIGN_SUPPLIER_NAME,
+        rfss.NAME RESERVE_SUPPLIER_NAME,
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+        che.name CUSTOMER_EMPLOYEE_NAME,
+        fhe.name FILL_EMPLOYEE_NAME,
+        she.name SEND_EMPLOYEE_NAME,
+        scvt.MEANING STATUS_DESC,
+        fpis.SUBLINE_ITEM_NAME,
+        fotrs.channel_count TR_CHANNEL_COUNT,
+        fotrs.supplier_count TR_SUPPLIER_COUNT,
+        foo.INTRODUCER,
+        foo.INTRODUCE_BENEFIT,
+        pfss.GRACE_PERIOD,
+		pfss.ADMINISTRATIVE_PERIOD,
+		fcc.PHONE_CODE CHANNEL_PHONE_CODE,
+        fcc.CONTACT_PHONE CHANNEL_PHONE
+        FROM
+        fms_ord_order AS foo
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        
+        <!-- LEFT JOIN fms_spe_supplier_user  fssu
+        ON foo.CHANNEL_ID = fssu. -->
+        
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+	    LEFT JOIN sys_user rfcc
+        <!-- ON fccr.ROLE_USER_ID = rfcc.USER_ID -->
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN FMS_ORD_TRADE_ROUTE_SHOW fotrs
+        ON foo.ORDER_ID = fotrs.ORDER_ID
+        WHERE 1=1
+        <if test = "orderId != null"> AND foo.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+
+	<select id="queryWsOrdAfter" parameterType="clb.core.order.dto.OrdAfter" resultMap="BaseResultMap">
+		SELECT
+				foa.after_id,
+				foa.after_num,
+				foa.order_id,
+				fot.APPLY_CLASS_CODE AFTER_PROJECT,
+				fot.APPLY_ITEM AFTER_TYPE,
+				foa.after_status,
+				foa.flag,
+				fot.APPLY_ITEM after_type_desc,
+				scvb2.meaning after_project_desc,
+				scvb3.meaning after_status_desc
+			FROM
+				fms_ord_after foa
+			LEFT JOIN fms_ord_template fot ON foa.TEMPLATE_ID = fot.TEMPLATE_ID
+			LEFT JOIN sys_code_b sc2 ON sc2.CODE = 'ORD.APPLY_CLASS'
+			LEFT JOIN sys_code_value_b scvb2 ON scvb2.code_id = sc2.code_id
+			AND scvb2.`VALUE` = fot.APPLY_CLASS_CODE
+			LEFT JOIN sys_code_b sc3 ON sc3.CODE = 'ORD.AFTER_STATUS'
+			LEFT JOIN sys_code_value_b scvb3 ON scvb3.code_id = sc3.code_id
+			AND scvb3.VALUE = foa.after_status
+		WHERE
+			1=1
+			<if test = "orderId != null"> AND foa.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+			<if test = "afterId != null"> AND foa.AFTER_ID = #{afterId , jdbcType=DECIMAL} </if>
+			<if test = "afterStatus != null"> AND foa.AFTER_STATUS = #{afterStatus , jdbcType=VARCHAR} </if>
+			<if test = "afterNum != null"> AND foa.AFTER_NUM = #{afterNum , jdbcType=VARCHAR} </if>
+	</select>
+	
+	<!-- 续保团队 -->
+	<select id="ClbWsOrdRenewalTeamList" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="RenewalResultMap">
+		SELECT
+		`for`.RENEWAL_ID,
+		`for`.ORDER_ID,
+		`for`.TYPE,
+		`for`.RENEWAL_STATUS,
+		`for`.ITEM_ID,
+		`for`.FLAG,
+
+		foo.ORDER_NUMBER ORDER_NUMBER,
+		foo.POLICY_NUMBER POLICY_NUMBER,
+		foo.PAY_NUMBER
+		PAY_NUMBER,
+		foo.CUSTOMER_NUMBER CUSTOMER_NUMBER,
+		foo.COMPANY_CHANNEL_ID
+		COMPANY_CHANNEL_ID,
+		foo.CHANNEL_ID CHANNEL_ID,
+		foo.CONTRACT_ROLE_ID
+		CONTRACT_ROLE_ID,
+		foo.PRODUCT_SUPPLIER_ID PRODUCT_SUPPLIER_ID,
+		foo.SUBLINE_ID SUBLINE_ID,
+		foo.CURRENCY CURRENCY,
+		foo.PAY_METHOD PAY_METHOD,
+		foo.YEAR_PAY_AMOUNT YEAR_PAY_AMOUNT,
+		foo.POLICY_AMOUNT POLICY_AMOUNT,
+		foo.APPLICANT_CUSTOMER_ID APPLICANT_CUSTOMER_ID,
+		foo.INSURANT_CUSTOMER_ID INSURANT_CUSTOMER_ID,
+		foo.INCREASE_FLAG INCREASE_FLAG,
+		foo.SUBMIT_DATE SUBMIT_DATE,
+		foo.RESERVE_DATE RESERVE_DATE,
+		foo.RESERVE_ARRIVAL_DATE RESERVE_ARRIVAL_DATE,
+		foo.RESERVE_CHECK_DATE RESERVE_CHECK_DATE,
+		foo.SIGN_DATE SIGN_DATE,
+		foo.EFFECTIVE_DATE EFFECTIVE_DATE,
+		foo.APPROVE_DATE APPROVE_DATE,
+		foo.EXPECT_COOL_DATE EXPECT_COOL_DATE,
+		foo.FIRST_PAY_DATE FIRST_PAY_DATE,
+		foo.RENEWAL_DUE_DATE RENEWAL_DUE_DATE,
+		foo.GRACE_DATE GRACE_DATE,
+		foo.ADMINISTRATIVE_DATE
+		ADMINISTRATIVE_DATE,
+		foo.`STATUS` STATUS,
+		foo.CLUB_CONFIRM_STATUS
+		CLUB_CONFIRM_STATUS,
+		foo.CUSTOMER_CONFIRM_STATUS
+		CUSTOMER_CONFIRM_STATUS,
+		foo.APPLICATION_STATUS APPLICATION_STATUS,
+		foo.CUSTOMER_USER_ID CUSTOMER_USER_ID,
+		foo.SMS_FLAG SMS_FLAG,
+		foo.CUSTOMER_OPERATE_DATE CUSTOMER_OPERATE_DATE,
+		foo.HK_CONTACT_PERSON
+		HK_CONTACT_PERSON,
+		foo.HK_CONTACT_PHONE HK_CONTACT_PHONE,
+		foo.RECEIPT_DATE RECEIPT_DATE,
+		foo.QUICK_CHECK_FLAG QUICK_CHECK_FLAG,
+		foo.ELE_INSURANCE_FLAG ELE_INSURANCE_FLAG,
+		foo.FILL_USER_ID
+		FILL_USER_ID,
+		foo.SIGN_ASSISTANT SIGN_ASSISTANT,
+		foo.ARRIVAL_DATE
+		ARRIVAL_DATE,
+		foo.LEAVE_DATE LEAVE_DATE,
+		foo.PHONE_FLAG PHONE_FLAG,
+		foo.CONTACT_PERSON CONTACT_PERSON,
+		foo.CONTACT_PHONE CONTACT_PHONE,
+		foo.SIGN_ADDRESS SIGN_ADDRESS,
+		foo.MEET_ADDRESS MEET_ADDRESS,
+		foo.RESERVE_SUPPLIER_ID RESERVE_SUPPLIER_ID,
+		foo.RESERVE_COMMENT
+		RESERVE_COMMENT,
+		foo.RESERVE_USER_ID RESERVE_USER_ID,
+		foo.SIGN_SUPPLIER_ID SIGN_SUPPLIER_ID,
+		foo.SIGN_PERSON SIGN_PERSON,
+		foo.EXPRESS_DELIVERY_INFO EXPRESS_DELIVERY_INFO,
+		foo.RECEPTION_USER_ID
+		RECEPTION_USER_ID,
+		foo.REVIEWER1 REVIEWER1,
+		foo.REVIEWER1_DATE
+		REVIEWER1_DATE,
+		foo.REVIEWER2 REVIEWER2,
+		foo.REVIEWER2_DATE
+		REVIEWER2_DATE,
+		foo.REVIEWER_COMMENT REVIEWER_COMMENT,
+		foo.SEND_USER_ID
+		SEND_USER_ID,
+		foo.SEND_DATE SEND_DATE,
+		foo.PLAN_FILE_ID PLAN_FILE_ID,
+		foo.REQ_FILE_ID REQ_FILE_ID,
+		foo.SEND_STATUS SEND_STATUS,
+		foo.NEXT_POLICY_AMOUNT NEXT_POLICY_AMOUNT,
+		foo.NEXT_POLICY_DUE_DATE
+		NEXT_POLICY_DUE_DATE,
+		foo.FIRST_PAYMENT_METHOD FIRST_PAYMENT_METHOD,
+		foo.RENEWAL_PAYMENT_METHOD RENEWAL_PAYMENT_METHOD,
+		foo.RENEWAL_OTHER
+		RENEWAL_OTHER,
+		foo.DDA_FLAG DDA_FLAG,
+		foo.DDA_SUBMIT_DATE
+		DDA_SUBMIT_DATE,
+		foo.DDA_EFFECTIVE_DATE DDA_EFFECTIVE_DATE,
+		foo.FEEDBACK_BALANCE FEEDBACK_BALANCE,
+		foo.ACCOUNT_BALANCE ACCOUNT_BALANCE,
+		foo.BALANCE_CURRENCY BALANCE_CURRENCY,
+		foo.BALANCE_PAYMENT_METHOD BALANCE_PAYMENT_METHOD,
+
+		CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,
+		CONCAT('-',
+		fpis.SUBLINE_ITEM_NAME)))) ITEM,
+		rfcc.USER_NAME ROLE_NAME,
+		cfcc.CHANNEL_NAME COMPANY_CHANNEL_NAME,
+		fcc.CHANNEL_NAME,
+		actm.CHINESE_NAME APPLICANT,
+		ictm.CHINESE_NAME INSURANT,
+		sfss.NAME SIGN_SUPPLIER_NAME,
+		rfss.NAME RESERVE_SUPPLIER_NAME,
+		CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-',
+		actm.CHINESE_NAME,'-',ictm.CHINESE_NAME) ORDER_INFO,
+		che.name
+		CUSTOMER_EMPLOYEE_NAME,
+		fhe.name FILL_EMPLOYEE_NAME,
+		she.name SEND_EMPLOYEE_NAME,
+		scvt.MEANING STATUS_DESC,
+		fpis.SUBLINE_ITEM_NAME,
+		fpi.ATTRIBUTE7,
+		pfss.GRACE_PERIOD,
+		pfss.ADMINISTRATIVE_PERIOD,
+		foo.PAY_PERIODS,
+		foo.CHANNEL_CONTRACT_ID
+		
+		FROM
+		fms_ord_renewal AS `for`
+		LEFT JOIN fms_ord_order AS foo
+		ON `for`.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_cnl_contract_role fccr
+        ON fccr.CONTRACT_ROLE_ID = foo.CONTRACT_ROLE_ID
+		LEFT JOIN sys_user rfcc
+        <!-- ON fccr.ROLE_USER_ID = rfcc.USER_ID -->
+        ON foo.CONTRACT_ROLE_ID = rfcc.USER_ID
+        LEFT JOIN fms_cnl_channel cfcc
+        ON cfcc.CHANNEL_ID = foo.COMPANY_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_spe_supplier sfss
+        ON sfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier rfss
+        ON rfss.SUPPLIER_ID = foo.RESERVE_SUPPLIER_ID
+        LEFT JOIN sys_user csu
+        ON foo.CUSTOMER_USER_ID = csu.user_id
+        LEFT JOIN hr_employee che
+        ON csu.EMPLOYEE_ID = che.EMPLOYEE_ID
+        LEFT JOIN sys_user fsu
+        ON foo.FILL_USER_ID = fsu.user_id
+        LEFT JOIN hr_employee fhe
+        ON fsu.EMPLOYEE_ID = fhe.EMPLOYEE_ID
+        LEFT JOIN sys_user ssu
+        ON foo.SEND_USER_ID = ssu.user_id
+        LEFT JOIN hr_employee she
+        ON ssu.EMPLOYEE_ID = she.EMPLOYEE_ID
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foo.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN FMS_ORD_TRADE_ROUTE_SHOW fotrs
+        ON foo.ORDER_ID = fotrs.ORDER_ID
+        JOIN fms_ord_trade_route fotr
+        ON fotr.order_id = foo.order_id AND fotr.COMPANY_TYPE = 'CHANNEL'
+        JOIN fms_ord_trade_route fotr1
+        ON fotr1.order_id = foo.order_id AND fotr1.COMPANY_TYPE = 'CHANNEL' AND fcc.CHANNEL_ID = fotr1.COMPANY_ID
+		LEFT JOIN FMS_ORD_ORDER rfoo
+        ON rfoo.order_id = foo.related_order_id
+		WHERE 
+			fotr.SEQ_NUM -1 = fotr1.SEQ_NUM 
+			AND IFNULL(foo.RENEWAL_FLAG,"N") = "N"
+			AND foo.`STATUS` != "SURRENDERED" 
+			AND foo.`STATUS` != "EXPIRED"
+			AND `for`.FLAG = 0 
+			AND `for`.CANCEL_RENEWAL_FLAG = 0 
+			AND `for`.ITEM_ID = foo.ITEM_ID AND TIMESTAMPDIFF(DAY,foo.RENEWAL_DUE_DATE,NOW()) > -31
+		<!-- 续保状态 -->
+		<if test="renewalStatus != null and renewalStatus != ''">
+				<if test="renewalStatus == 'TOFAIL'">
+					AND `for`.RENEWAL_STATUS IN ("TOFAIL","ADMIN","NACHFRIST")
+				</if>
+				<if test="renewalStatus != 'TOFAIL'">
+					AND `for`.RENEWAL_STATUS = #{renewalStatus} 
+				</if>
+		</if>
+		<!-- 产品 -->
+		<if test="item != null">
+			 AND CONCAT(pfss.NAME, CONCAT('-', CONCAT(fpi.ITEM_NAME,CONCAT('-',fpis.SUBLINE_ITEM_NAME)))) like concat('%',#{item ,jdbcType=VARCHAR},'%') 
+		</if>
+		<!-- 投保人/受保人 -->
+		<if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%'))
+              OR ictm.CHINESE_NAME LIKE concat('%',concat(#{person , jdbcType=VARCHAR},'%')))
+        </if>
+		 <if test = "dateType != null ">
+			<if test='dateType == "EFFECTIVE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.EFFECTIVE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.EFFECTIVE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+			<if test='dateType == "RENEWAL_DUE_DATE"'>
+				<if test = "startDateActive != null">
+                	AND foo.RENEWAL_DUE_DATE &gt;= #{startDateActive,jdbcType=DATE})
+	            </if>
+	            <if test = "endDateActive != null">
+	                AND foo.RENEWAL_DUE_DATE &lt;= #{endDateActive,jdbcType=DATE})
+	            </if>
+			</if>
+        </if>
+		<!-- 渠道 -->
+		<!-- <if test="channelId != null">
+			AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+		</if> -->
+		<if test="channelName != null"><!-- 渠道名称 -->
+			AND fcc.CHANNEL_NAME LIKE concat('%',#{channelName,jdbcType=VARCHAR},'%')
+		</if>
+		
+		<if test="policyNumber != null"><!-- 保单编号 -->
+			AND foo.POLICY_NUMBER LIKE concat('%',#{policyNumber ,jdbcType=VARCHAR},'%') 
+		</if>
+	</select>
+	
+	<select id="queryAfterProject" parameterType="clb.core.order.dto.OrdAfter" resultType="java.lang.String">
+		select 
+			fot.APPLY_CLASS_CODE
+		FROM
+			fms_ord_after  foa
+			LEFT JOIN fms_ord_template fot ON foa.TEMPLATE_ID = fot.TEMPLATE_ID 
+		where
+			foa.AFTER_ID = #{afterId}
+	</select>
+</mapper>

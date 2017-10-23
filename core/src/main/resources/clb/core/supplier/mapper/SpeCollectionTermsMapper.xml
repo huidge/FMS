@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeCollectionTermsMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeCollectionTerms">
+        <result column="TERM_ID" property="termId" jdbcType="DECIMAL" />
+        <result column="TERM_CODE" property="termCode" jdbcType="DECIMAL" />
+        <result column="PAYMENT_COMPANY_TYPE" property="paymentCompanyType" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_ID" property="paymentCompanyId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_DIVISION" property="productDivision" jdbcType="VARCHAR" />
+        <result column="TERM_TYPE" property="termType" jdbcType="VARCHAR" />
+         <result column="PRODUCT_COMPANY_ID" property="productCompanyId" jdbcType="DECIMAL" />
+        <result column="BASE_DATE" property="baseDate" jdbcType="VARCHAR"/>
+        <result column="SETTLE_DAYS" property="settleDays" jdbcType="DECIMAL" />
+        <result column="SETTLE_DATE1" property="settleDate1" jdbcType="VARCHAR"/>
+        <result column="SETTLE_DATE2" property="settleDate2" jdbcType="VARCHAR"/>
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR"/>
+        <result column="PAYMENT_COMPANY_NAME" property="paymentCompanyName" jdbcType="VARCHAR"/>
+        <result column="PRODUCT_COMPANY_NAME" property="productCompanyName" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="selectData" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeCollectionTerms">
+    			SELECT
+					fsct.*,
+					(CASE WHEN fss.NAME != '' THEN fss.NAME  
+              		WHEN fcc.CHANNEL_NAME != '' THEN fcc.CHANNEL_NAME
+					END)PAYMENT_COMPANY_NAME,
+					fsspc.NAME PRODUCT_COMPANY_NAME 
+				FROM
+					fms_spe_collection_terms fsct
+				LEFT JOIN fms_spe_supplier fss ON fsct.PAYMENT_COMPANY_ID = fss.SUPPLIER_ID and fsct.PAYMENT_COMPANY_TYPE='SUPPLIER'
+				LEFT JOIN fms_cnl_channel fcc ON fsct.PAYMENT_COMPANY_ID = fcc.CHANNEL_ID and fsct.PAYMENT_COMPANY_TYPE='CHANNEL'
+				LEFT JOIN fms_spe_supplier fsspc ON fsct.PRODUCT_COMPANY_ID = fsspc.SUPPLIER_ID
+				<where>
+					<if test="termCode != null">
+					AND fsct.TERM_CODE = #{termCode,jdbcType=VARCHAR}	
+					</if>
+					<if test="paymentCompanyType != null">
+					AND fsct.PAYMENT_COMPANY_TYPE = #{paymentCompanyType,jdbcType=DECIMAL}	
+					</if>
+					<if test="paymentCompanyType != null and paymentCompanyId != null">
+					AND fsct.PAYMENT_COMPANY_TYPE = #{paymentCompanyType,jdbcType=DECIMAL}	
+					AND fsct.PAYMENT_COMPANY_ID = #{paymentCompanyId,jdbcType=DECIMAL}
+					</if>
+					<if test="productDivision != null">
+					AND fsct.PRODUCT_DIVISION = #{productDivision,jdbcType=VARCHAR}	
+					</if>
+				</where>
+    </select>
+</mapper>

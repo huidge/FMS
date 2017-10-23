@@ -1,0 +1,678 @@
+<#--
+ * description: 轮播编辑页面
+ * version: 1.0
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?datasourceData=REA.SLIDESHOW_DATASOURCE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?statusData=REA.SLIDESHOW_STATUS" type="text/javascript"></script>
+<script type="text/javascript">
+	//获取"轮播管理页面"传过来的 参数
+	var slideshowId = '${RequestParameters.slideshowId!0}';
+	
+	var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+
+	viewModel.model.set("status","new");
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;">
+				<legend>
+					<div class="col-xs-8" style="text-align: left"><span class="panel-title">新建/修改轮播设置 </span></div>
+            	
+	            	<div class="col-xs-1" style="text-align: right">
+	            		<span class="btn btn-default" style="width:120px" onclick="closeWin()">
+						    <i class="fa fa-reply" style="margin-right:3px;"></i>返回上一页
+						</span>
+                        </div>
+                    </legend>
+                    <div style="width: 98%; margin-top: 5px;">
+                        <form class="form-horizontal">
+                            <div class="row" style="margin-left: 5px;">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">数据来源:</label>
+                                                <div class="col-sm-9">
+                                                    <input style="width: 240px;" id="dataSource"
+                                                           data-bind="value:model.dataSource" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">轮播内容:</label>
+                                                <div class="col-sm-9"><!-- id="dataSourceId" -->
+                                                    <input style="width: 240px;" id="dataSourceId" name="dataSourceId" required
+                                                           data-bind="value:model.dataSourceId,text:model.dataSourceContent">
+                                                    <script>
+                                                        $("#dataSourceId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "NTC_RELEASE_SLIDESHOW_DATASOURCE")}, {
+                                                            query: function (e) {
+                                                                e.param['dataSource'] = $("#dataSource").val();
+                                                            }
+                                                        }));
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">状态:</label>
+                                                <div class="col-sm-9">
+                                                    <input style="width: 240px" id="status"
+                                                           data-bind="value:model.status" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="bord-btm pad-ver text-main text-bold"></p>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">PC轮播:</label>
+                                                <div class="col-xs-9">
+                                                    <input id="pcFlag" name="pcFlag" type="checkbox" style="top:8px;"
+                                                           data-bind="value:model.pcFlag">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="col-sm-9" style="border: 1px">
+                                        <img src=""  id="img" width="150" height="150" style="text-align:center;"/>
+                                        <span class="btn btn-info" data-bind="click:queryFunction" type="submit" id="upload" onclick=upload()>
+                                            <i class="fa fa-upload"
+                                               style="margin-right:3px;"></i><@spring.message "sysfile.upload"/>Logo图片</span>
+                                        </div> -->
+
+                                        <div class="form-group">
+                                            <div class="col-sm-9" style="border: 1px;left:25%;">
+                                                <img src="" id="img1" width="760" height="200"  
+                                                     style="text-align:center;"/>尺寸要求:1920*500
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2" style="border: 1px;left:25%;">
+			                                	<span class="btn btn-info" id="upload1" onclick="upload1()">
+							                        <i class="fa fa-upload"
+                                                       style="margin-right:3px;left:25%;"></i><@spring.message "sysfile.upload"/>图片</span>
+                                            </div>
+                                        </div>
+                                        <p class="bord-btm pad-ver text-main text-bold"></p>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">微信轮播:</label>
+                                                <div class="col-xs-9">
+                                                    <input id="wechatFlag" name="wechatFlag" type="checkbox"
+                                                           style="top:8px;" data-bind="value:model.wechatFlag">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-9" style="border: 1px;left:25%;">
+                                                <img src="" id="img2"  width="345" height="180" 
+                                                     style="text-align:center;"/>尺寸要求:345*180
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2" style="border: 1px;left:25%;">
+			                                	<span class="btn btn-info" id="upload2" onclick="upload2()">
+							                        <i class="fa fa-upload"
+                                                       style="margin-right:3px;left:25%;"></i><@spring.message "sysfile.upload"/>图片</span>
+                                            </div>
+                                        </div>
+                                        <p class="bord-btm pad-ver text-main text-bold"></p>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <label class="col-sm-3 control-label">APP轮播:</label>
+                                                <div class="col-xs-9">
+                                                    <input id="appFlag" name="appFlag" type="checkbox" style="top:8px;"
+                                                           data-bind="value:model.appFlag">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-9" style="border: 1px;left:25%;">
+                                                <img src="" id="img3" width="432" height="254" 
+                                                     style="text-align:center;"/>尺寸要求:1080*635
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2" style="border: 1px;left:25%;">
+			                                	<span class="btn btn-info" id="upload3" onclick="upload3()">
+							                        <i class="fa fa-upload"
+                                                       style="margin-right:3px;left:25%;"></i><@spring.message "sysfile.upload"/>图片</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center" style="margin-top: 10px">
+							<span class="btn btn-success" onclick="saveData()" type="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span>
+
+                                <!-- <span onclick="closeWin()" class="btn btn-default"
+                                    id="btn_cancel" style="width: 80px; margin-right: 5px;">
+                                    <i class="fa fa-reply" style="margin-right: 3px;"></i><@spring.message
+                                    "hap.cancel"/>
+                                </span> -->
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div id="fileWin1" style="display: none;">
+            <form>
+                <input type="file" id="files1" name="files1"></input>
+            </form>
+        </div>
+        <div id="fileWin2" style="display: none;">
+            <form>
+                <input type="file" id="files2" name="files2"></input>
+            </form>
+        </div>
+        <div id="fileWin3" style="display: none;">
+            <form>
+                <input type="file" id="files3" name="files3"></input>
+            </form>
+        </div>
+
+        <script type="text/javascript">
+            kendo.bind($('#page-content'), viewModel);
+
+            //判断上一个页面传递过来的值
+            if (slideshowId != 0) {
+                viewModel.model.set("slideshowId", slideshowId);
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "${base.contextPath}/fms/ntc/slideshow/query?slideshowId=" + slideshowId,
+                    success: function (json) {
+                        var row = json.rows[0] || {};
+                        console.log(json);
+                        for (var k in json.rows) {
+                            //viewModel.model.set(k, row[k]);
+
+                            viewModel.model.set('dataSource', json.rows[k]['dataSource']);
+                            viewModel.model.set('dataSourceId', json.rows[k]['dataSourceId']);
+                            viewModel.model.set('dataSourceContent', json.rows[k]['dataSourceContent']);
+                            viewModel.model.set('status', json.rows[k]['status']);
+                            viewModel.model.set('pcFlag', json.rows[k]['pcFlag']);
+                            viewModel.model.set('wechatFlag', json.rows[k]['wechatFlag']);
+                            viewModel.model.set('appFlag', json.rows[k]['appFlag']);
+                            viewModel.model.set('pcFileId', json.rows[k]['pcFileId']);
+                            viewModel.model.set('wechatFileId', json.rows[k]['wechatFileId']);
+                            viewModel.model.set('appFileId', json.rows[k]['appFileId']);
+
+                            if (json.rows[k]["pcSysFile"]) {
+                                var pictureFilePath = json.rows[k]["pcSysFile"]["filePath"];
+                                if (pictureFilePath != "") {
+                                    $("#img1").show().attr('src', ossWebPath + "${base.contextPath}" + pictureFilePath);
+                                    console.log(ossWebPath + "${base.contextPath}" + pictureFilePath);
+                                    //console.log($("#img1").attr('src'));
+                                }
+                            }
+                            if (json.rows[k]["wechatSysFile"]) {
+                                var pictureFilePath = json.rows[k]["wechatSysFile"]["filePath"];
+                                if (pictureFilePath != "") {
+                                    $("#img2").attr('src', ossWebPath + "${base.contextPath}" + pictureFilePath);
+                                }
+                            }
+
+                            if (json.rows[k]["appSysFile"]) {
+                                var pictureFilePath = json.rows[k]["appSysFile"]["filePath"];
+                                if (pictureFilePath != "") {
+                                    $("#img3").attr('src', ossWebPath + "${base.contextPath}" + pictureFilePath);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            //pc图片
+           function upload1() {
+                if (viewModel.model.pcFlag == "N" || viewModel.model.pcFlag == undefined) {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: "您还没有勾选对应的轮播!"
+                    })
+                }else if(viewModel.model.pcFileId){
+                	kendo.ui.showConfirmDialog({
+                        title: $l('hap.tip.info'),
+                        message: "图片已存在,是否覆盖?"
+                    }).done(function(event){
+                   	 if (event.button == 'OK') {
+                   		window.fileWin = $("#fileWin1").kendoWindow({
+                            title: '<@spring.message "sysfile.upload"/>',
+                            width: 400,
+                            height: 250,
+                            modal: true
+                        }).data("kendoWindow");
+                        fileWin.center().open(); 
+                   	 }
+                    })
+                }else{
+                	window.fileWin = $("#fileWin1").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open(); 
+                }
+            }
+
+            $("#files1").kendoUpload({
+                async: {
+                    saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+                },
+                showFileList: false,
+                upload: onUpload1,
+                success: onSuccess1
+            });
+
+            function onUpload1(e) {
+                e.data = {
+                    modularName: 'NTC',
+                    allowType: 'jpg;png;',
+                    maxSize: 20480
+                }
+                var prevDiv = document.getElementById('img1');
+                if (e.files[0].rawFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        $('#img1').attr('src', evt.target.result);
+                    }
+                    reader.readAsDataURL(e.files[0].rawFile);
+                }
+            }
+            ;
+            function onSuccess1(e) {
+                if (e.response.success) {
+                    var filePath = e.response.file.filePath;
+                    var path = ossWebPath + filePath;
+                    fileWin.close();
+                    
+                    var fileId = e.response.file.fileId;
+                    viewModel.model.set("pcFileId", fileId);
+                    window.parent.parentFileId = fileId;
+
+                    /* //时间戳是为了浏览器缓存
+                    var img = new Image();
+                    img.src = path + "?" + Date.parse(new Date());
+                    // 加载完成执行
+                    img.onload = function () {
+                        if (img.width != 500 && img.height != 1920) {
+
+                            kendo.ui.showErrorDialog({
+                                title: '错误',
+                                message: "图片尺寸不对,请重新上传!"
+                            })
+                        } else {
+                            var fileId = e.response.file.fileId;
+                            viewModel.model.set("pcFileId", fileId);
+                            window.parent.parentFileId = fileId;
+
+                            kendo.ui.showInfoDialog({
+                                title: '成功',
+                                message: '<@spring.message "spe.pleasesavedata"/>'
+                            })
+                        }
+                    }; */
+
+                } else {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: e.response.message
+                    })
+                }
+            }
+            ;
+
+            //微信图片
+            function upload2() {
+                if (viewModel.model.wechatFlag == "N" || viewModel.model.wechatFlag == undefined) {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: "您还没有勾选对应的轮播!"
+                    })
+                }else if(viewModel.model.wechatFileId){
+                	kendo.ui.showConfirmDialog({
+                        title: $l('hap.tip.info'),
+                        message: "图片已存在,是否覆盖?"
+                    }).done(function(event){
+                   	 if (event.button == 'OK') {
+                   		window.fileWin = $("#fileWin2").kendoWindow({
+                            title: '<@spring.message "sysfile.upload"/>',
+                            width: 400,
+                            height: 250,
+                            modal: true
+                        }).data("kendoWindow");
+                        fileWin.center().open(); 
+                   	 }
+                    })
+                }else{
+                	window.fileWin = $("#fileWin2").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open(); 
+                }
+            }
+
+            $("#files2").kendoUpload({
+                async: {
+                    saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+                },
+                showFileList: false,
+                upload: onUpload2,
+                success: onSuccess2
+            });
+
+            function onUpload2(e) {
+                e.data = {
+                    modularName: 'NTC',
+                    allowType: 'jpg;png;',
+                    maxSize: 20480
+                }
+                var prevDiv = document.getElementById('img2');
+                if (e.files[0].rawFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        $('#img2').attr('src', evt.target.result);
+                    }
+                    reader.readAsDataURL(e.files[0].rawFile);
+                }
+            }
+            ;
+            function onSuccess2(e) {
+                if (e.response.success) {
+                    var filePath = e.response.file.filePath;
+                    var path = ossWebPath + filePath;
+                    fileWin.close();
+
+                    var fileId = e.response.file.fileId;
+                    viewModel.model.set("wechatFileId", fileId);
+                    window.parent.parentFileId = fileId;
+                    
+                   /*  //时间戳是为了浏览器缓存
+                    var img = new Image();
+                    img.src = path + "?" + Date.parse(new Date());
+                    // 加载完成执行
+                    img.onload = function () {
+                        if (img.width != 400 && img.height != 200) {
+
+                            kendo.ui.showErrorDialog({
+                                title: '错误',
+                                message: "图片尺寸不对,请重新上传!"
+                            })
+                        } else {
+
+                            var fileId = e.response.file.fileId;
+                            viewModel.model.set("wechatFileId", fileId);
+                            window.parent.parentFileId = fileId;
+
+                            kendo.ui.showInfoDialog({
+                                title: '成功',
+                                message: '<@spring.message "spe.pleasesavedata"/>'
+                            })
+                        }
+                    };*/
+ 
+                } else {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: e.response.message
+                    })
+                }
+            }
+            ;
+
+            //APP图片
+            function upload3() {
+                if (viewModel.model.appFlag == "N" || viewModel.model.appFlag == undefined) {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: "您还没有勾选对应的轮播!"
+                    })
+                } else if(viewModel.model.appFileId){
+                	kendo.ui.showConfirmDialog({
+                        title: $l('hap.tip.info'),
+                        message: "图片已存在,是否覆盖?"
+                    }).done(function(event){
+                   	 if (event.button == 'OK') {
+                   		window.fileWin = $("#fileWin3").kendoWindow({
+                            title: '<@spring.message "sysfile.upload"/>',
+                            width: 400,
+                            height: 250,
+                            modal: true
+                        }).data("kendoWindow");
+                        fileWin.center().open(); 
+                   	 }
+                    })
+                }else{
+                	window.fileWin = $("#fileWin3").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open(); 
+                }
+            }
+
+            $("#files3").kendoUpload({
+                async: {
+                    saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+                },
+                showFileList: false,
+                upload: onUpload3,
+                success: onSuccess3
+            });
+
+            function onUpload3(e) {
+                e.data = {
+                    modularName: 'NTC',
+                    allowType: 'jpg;png;',
+                    maxSize: 20480
+                }
+                var prevDiv = document.getElementById('img3');
+                if (e.files[0].rawFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        $('#img3').attr('src', evt.target.result);
+                    }
+                    reader.readAsDataURL(e.files[0].rawFile);
+                }
+            }
+            ;
+            function onSuccess3(e) {
+                if (e.response.success) {
+                    var filePath = e.response.file.filePath;
+                    var path = ossWebPath + filePath;
+                    fileWin.close();
+                    
+                    var fileId = e.response.file.fileId;
+                    viewModel.model.set("appFileId", fileId);
+                    window.parent.parentFileId = fileId;
+
+                    //时间戳是为了浏览器缓存
+                   /*  var img = new Image();
+                    img.src = path + "?" + Date.parse(new Date());
+                    // 加载完成执行
+                    img.onload = function () {
+                        if (img.width != 400 && img.height != 200) {
+
+                            kendo.ui.showErrorDialog({
+                                title: '错误',
+                                message: "图片尺寸不对,请重新上传!"
+                            })
+                        } else {
+
+                            var fileId = e.response.file.fileId;
+                            viewModel.model.set("appFileId", fileId);
+                            window.parent.parentFileId = fileId;
+
+                            kendo.ui.showInfoDialog({
+                                title: '成功',
+                                message: '<@spring.message "spe.pleasesavedata"/>'
+                            })
+                        }
+                    }; */
+
+                } else {
+                    kendo.ui.showErrorDialog({
+                        title: '错误',
+                        message: e.response.message
+                    })
+                }
+            };
+            
+
+            $('#dataSource').kendoDropDownList({
+                optionLabel: "-请选择-",
+                /* filter: "contains", */
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: datasourceData
+            });
+
+            $('#status').kendoDropDownList({
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: statusData
+            });
+
+            $("#pcFlag").kendoCheckbox({
+                checkedValue: 'Y',
+                uncheckedValue: 'N'
+            });
+
+            $("#wechatFlag").kendoCheckbox({
+                checkedValue: 'Y',
+                uncheckedValue: 'N'
+            });
+
+            $("#appFlag").kendoCheckbox({
+                checkedValue: 'Y',
+                uncheckedValue: 'N'
+            });
+
+            //点击取消的时候  关闭页面
+            function closeWin() {
+                parent.closeTab('SLIDESHOW_EDIT' + slideshowId);
+            };
+            
+            $(document).ready(function() {
+            	if(slideshowId != 0){
+            		$("input[name='dataSourceId']").data("kendoLov").enable(false);
+            		$("#dataSource").data("kendoDropDownList").enable(false);
+            	}
+            });
+
+            //点击保存
+            function saveData() {
+            	if(viewModel.model.dataSource == undefined || viewModel.model.dataSource == null){
+            		kendo.ui.showErrorDialog({
+                        message: "请选择数据来源!"
+                    });
+        			return;
+            	}
+            	if(viewModel.model.dataSourceId == undefined || viewModel.model.dataSourceId == null){
+            		kendo.ui.showErrorDialog({
+                        message: "请选择轮播内容!"
+                    });
+        			return;
+            	}
+            	if(viewModel.model.pcFlag == "Y"){
+            		if(viewModel.model.pcFileId == undefined || viewModel.model.pcFileId == null){
+            			kendo.ui.showErrorDialog({
+                            message: "请上传PC轮播图片!"
+                        });
+            			return;
+            		}
+            	}
+            	if(viewModel.model.wechatFlag == "Y"){
+            		if(viewModel.model.wechatFileId == undefined || viewModel.model.wechatFileId == null){
+            			kendo.ui.showErrorDialog({
+                            message: "请上传微信轮播图片!"
+                        });
+            			return;
+            		}
+            	}
+            	if(viewModel.model.appFlag == "Y"){
+            		if(viewModel.model.appFileId == undefined || viewModel.model.appFileId == null){
+            			kendo.ui.showErrorDialog({
+                            message: "请上传APP轮播图片!"
+                        });
+            			return;
+            		}
+            	}
+            	
+                //判断是新建还是修改
+                if (slideshowId != 0) {
+                    //修改
+                    Hap.submitForm({
+                        url: '${base.contextPath}/fms/ntc/slideshow/submit',
+                        formModel: viewModel.model,
+                        success: function (data) {
+                            if (data.success) {
+                                kendo.ui.showInfoDialog({
+                                    title: $l('hap.tip.info'),
+                                    message: $l('hap.tip.success')
+                                }).done(function(event){
+                                  	 if (event.button == 'OK') {
+                                    		parent.closeTab('SLIDESHOW_EDIT' + slideshowId);
+                                 	 }
+                                  });;
+                            } else {
+                                kendo.ui.showErrorDialog({
+                                    message: "失败"
+                                });
+                            }
+
+                        }
+                    })
+                } else {
+                    viewModel.model.set("articleId", null);
+                    //添加
+                    Hap.submitForm({
+                        url: '${base.contextPath}/fms/ntc/slideshow/add',
+                        formModel: viewModel.model,
+                        success: function (data) {
+                            if (data.success) {
+                                kendo.ui.showInfoDialog({
+                                    title: $l('hap.tip.info'),
+                                    message: $l('hap.tip.success')
+                                }).done(function(event){
+                               	 if (event.button == 'OK') {
+                               		parent.closeTab('SLIDESHOW_EDIT' + slideshowId);
+                            	 }
+                             });
+                                
+                            } else {
+                                kendo.ui.showErrorDialog({
+                                    message: "失败"
+                                });
+                            }
+
+                        }
+                    })
+                }
+            }
+
+        </script>
+        </body>
+        </html>

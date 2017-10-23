@@ -1,0 +1,274 @@
+<#--
+        * description: 渠道分成设置
+        * version: 1.0
+        * author: wanjun.feng@hand-china.com
+        * -->
+<#include "../include/header.html">
+<body>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        queryFunction: function (e) {
+            $('#grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function(e) {
+            var formData = viewModel.model.toJSON();
+            for ( var k in formData) {
+                viewModel.model.set(k, null);
+            }
+       },
+       importFunction: function(e) {
+    	   var url = '${base.contextPath}/fnd/import/import_upload.html?className=clb.core.commission.service.impl.CmnChannelRatioImport';
+           var importDialog = $("#importDialog").kendoWindow({
+               actions: ["Close"],
+               width: '100%',
+               height: '100%',
+               title: '<@spring.message "fms.data_import"/>',
+               content: url,
+               iframe: true,
+               visible: false,
+               modal: true,
+               close: function () {
+                   //window 关闭  刷新本页面的grid
+                   $('#grid').data('kendoGrid').dataSource.page(1);
+               }
+           }).data("kendoWindow");
+           importDialog.maximize();
+           importDialog.center().open();
+       }
+    });
+    function openChannelRatioDetailWin(ratioId) {
+   		$("#channelRatioDetailWin").kendoWindow({
+           actions: ["Close"],
+           title: "渠道分成详情",
+           draggable: true,
+           height: "90%",
+           width: "90%",
+           content: "${base.contextPath}/commission/cmn_channel_ratio_detail.html?ratioId="+ratioId,
+           iframe: true,
+           modal: true
+       });
+       var win = $("#channelRatioDetailWin").data("kendoWindow");
+       win.toggleMaximization();
+       win.maximize();
+       win.center().open();
+    }
+</script>
+
+<script type="text/javascript">
+ $(document).ready(function () {
+	kendo.bind($('#page-content'), viewModel);
+	
+    var BaseUrl = _basePath;
+	
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cmn/channel/ratio/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/cmn/channel/ratio/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/cmn/channel/ratio/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/cmn/channel/ratio/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "ratioId",
+                fields: {
+                	ratioId:{},
+					ratioName:{validation:{required:true}},
+					channelId:{validation:{required:true}},
+					channelName:{validation:{required:true}},
+					objectVersionNumber:{defaultValue:1}
+                }
+            }
+        }
+    });
+    $("#grid").kendoGrid({
+        dataSource: dataSource,
+        resizable: true,
+        editable: true,
+       // height: '100%',
+        scrollable: true,
+        navigatable: false,
+        rownumber: true,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [{
+            template: '<span class="btn btn-primary k-grid-add">'+
+      		'<i class="fa fa-plus-square"></i>'+
+      		'<@spring.message "hap.new"/></span>'
+	    },
+	    {
+	        template: '<span class="btn btn-success k-grid-save-changes">'+
+	   		'<i class="fa fa-save"></i>'+
+			'<@spring.message "hap.save"/></span>'
+	    },
+        {
+            template: '<span class="btn btn-default k-grid-cancel-changes">'+
+       		'<i class="fa fa-rotate-left"></i>'+
+    		'<@spring.message "hap.cancel"/></span>'
+        }],
+        columns: [
+			{
+                field: "channelName",
+                title: '<@spring.message "fms.cmn.channel_ratio.channel_name"/>',
+                width: 120,
+                headerAttributes: {
+                   style: "text-align:center"
+                },
+                attributes: {
+                   style: "text-align:center"
+                },
+                editor : function(container, options){
+	            	$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	            		.appendTo(container)
+	            		.kendoLov({
+                            code: "CMN_SUB_CHANNEL",
+                            contextPath: '${base.contextPath}',
+                            locale: '${base.locale}',
+                            model: options.model,
+                            query: function(e) {
+                            	e.param['userId'] = ${Session.userId};
+                          	},
+                            select: function(e) {
+                            	options.model.set("channelName",e.item.channelName);
+                            	options.model.set("channelId",e.item.channelId);
+                            },
+			                change : function(e) {
+                                if (e.sender._prev=="") {
+                                    //当lov中数据清除时，绑定的值也清空
+                                    options.model.set("channelName", '');
+                            		options.model.set("channelId", '');
+                                }
+                            }
+                        });
+	            }
+            },
+            {
+                field: "ratioName",
+                title: '<@spring.message "fms.cmn.channel_ratio.ratio_name"/>',
+                width: 120,
+                headerAttributes: {
+                    style: "text-align:center"
+                 },
+                 attributes: {
+                    style: "text-align:center"
+                 }
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                	if (dataItem.ratioId) {
+                		return '<a href="#" onclick="openChannelRatioDetailWin('+dataItem.ratioId+')"><@spring.message "fms.view_detail"/></a>';
+                	} else {
+                		return '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                	}
+                }
+            }
+        ],
+    }).data("kendoGrid");
+
+  	//自动根据当前屏幕大小调整表格
+	Hap.autoResizeGrid("#grid");
+ }); 
+</script>
+    <div class="content-container">
+		<div id="page-content">
+		    <div class="panel">
+            <form class="form-horizontal" id="myForm">
+                <div class="panel-body">
+                    <div class="row">
+	                	<div class="col-sm-6">
+	                     	<div class="form-group">
+	                                <label class="col-sm-3 control-label"><@spring.message "fms.cmn.channel_ratio.channel_name"/></label>
+	                                <div class="col-sm-9">
+	                                    <input type="text" style="width: 100%" id="channelName"
+	                                           data-bind="value:model.channelName">
+	                                </div>
+	                                <script>
+		                                $('#channelName').kendoLov({
+		                                    code: "CMN_SUB_CHANNEL",
+		                                    contextPath: '${base.contextPath}',
+		                                    locale: '${base.locale}',
+		                                    query: function(e) {
+		                                    	e.param['userId'] = ${Session.userId};
+		                                  	},
+		                                    select: function(e) {
+		                                    	viewModel.model.set("channelName",e.item.channelName);
+		                                    },
+		        			                change : function(e) {
+		                                        if (e.sender._prev=="") {
+		                                            //当lov中数据清除时，绑定的值也清空
+		                                            viewModel.model.set("channelId", '');
+		                                            viewModel.model.set("channelName", '');
+		                                        }
+		                                    }
+		                                });
+				                    </script>
+	                        </div>
+	                    </div>
+	                </div><!-- row end -->
+                </div><!-- panel-body end -->
+                <div class="panel-footer text-right">
+                  <span class="btn btn-primary" type="button" data-bind="click:importFunction">
+                      <i class="fa fa-file-excel-o" style="margin-right:3px;"></i>导入
+				  </span>
+                  <span class="btn btn-primary" data-bind="click:queryFunction" type="submit">
+                      <i class="fa fa-search"
+                         style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                  <span class="btn btn-default" type="button" data-bind="click:resetForm">
+                      <i class="fa fa-eraser"
+                         style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+              	</div>
+            </form>
+        </div>
+	    <div>
+		<div id="grid" class="table"></div>
+		</div>
+		<!-- 渠道分成设置详情窗口 -->
+    	<div id="channelRatioDetailWin"></div>
+		</div>
+		<!-- 导入 -->
+		<div id="importDialog"></div>
+	</div>
+</body>
+</html>

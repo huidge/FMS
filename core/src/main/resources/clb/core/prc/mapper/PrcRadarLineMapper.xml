@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.prc.mapper.PrcRadarLineMapper">
+	<resultMap id="BaseResultMap" type="clb.core.prc.dto.PrcRadarLine">
+		<result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+		<result column="SERIAL_NUMBER" property="serialNumber"
+			jdbcType="DECIMAL" />
+		<result column="COMP_DIM_NAME" property="compDimName" jdbcType="VARCHAR" />
+		<result column="COMMENT" property="comment" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<select id="selectByAttSetID" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		fprl.LINE_ID,
+		fprl.SERIAL_NUMBER,
+		fprl.COMP_DIM_NAME,
+		fprl.`COMMENT`,
+		fprl.`STATUS`,
+		fprl.ATT_SET_ID
+		from fms_prc_radar_line fprl
+        where fprl.ATT_SET_ID = #{attSetId}
+	</select>
+
+</mapper>

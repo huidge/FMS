@@ -1,0 +1,356 @@
+<#--
+ * description: 渠道注册汇总页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/4/18 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=CNL.CHANNEL_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?provinceData=PUB.PROVICE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?cityData=PUB.CITY" type="text/javascript"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryFunction: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function (e) {
+            var formDate = viewModel.model.toJSON();
+            for (var k in formDate) {
+                viewModel.model.set(k, undefined);
+            }
+            $("#grid").data("kendoGrid").dataSource.page(1);
+        },
+    });
+</script>
+<body>
+    <div id="page-content">
+        <div class="panel">
+            <div id="query_form">
+                <form class="form-horizontal" style="margin-top: 5px;">
+                    <div class="panel-body">
+                        <div class="col-xs-12" >
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "fms.CnlChannel.channelName"/></label>
+                                    <div class="col-xs-8">
+                                        <input id="channelName" name="channelName" type="text" data-bind="value:model.channelName" class=" k-textbox" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "fms.CnlChannel.area"/></label>
+                                    <div class="col-xs-4">
+                                        <input id="province" name="province" type="text" data-bind="value:model.province" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input id="city" name="city" type="text" data-bind="value:model.city" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "fms.CnlChannel.status"/></label>
+                                    <div class="col-xs-8">
+                                        <input id="statusCode" name="statusCode" type="text" data-bind="value:model.statusCode" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="panel-footer text-right">
+                        <span class="btn btn-primary" data-bind="click:queryFunction" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                        <span class="btn btn-default" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div style="clear:both">
+            <div id="Grid"></div>
+        </div>
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+
+    $("#province").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: provinceData,
+        //更新自己下面的子层
+        change: function(){
+            viewModel.model.set("city",null);
+            var provinceValue = viewModel.model.province;
+            var citys = [];
+            for(var i = 0; i < cityData.length; i++){
+                if(provinceValue && provinceValue == cityData[i].parentValue ){
+                    citys.push(cityData[i]);
+                }else if (!provinceValue){
+                    citys.push(cityData[i]);
+                }
+            }
+
+            $("#city").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: citys,
+            });
+        },
+    });
+
+
+    var provinceValue = viewModel.model.province;
+    var citys = [];
+    for(var k = 0; k < cityData.length; k++){
+        if(provinceValue && provinceValue == cityData[k].parentValue ){
+            citys.push(cityData[k]);
+        }else if (!provinceValue){
+            citys.push(cityData[k]);
+        }
+    }
+
+    $("#city").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: citys,
+    });
+
+    $("#statusCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: statusData
+    });
+
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cnl/channel/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/cnl/channel/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/cnl/channel/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/cnl/channel/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "channelId",
+                fields: {
+                    channelName : {editable : false},
+                    area : {editable : false},
+                    provinceMeaning : {editable : false},
+                    cityMeaning : {editable : false},
+                    contactPerson : {editable : false},
+                    contactPhone : {editable : false}
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                title: '<@spring.message "hap.action"/>',
+                attributes: {style: "text-align:center"},
+                command: [{
+                    name: "edit",
+                    isEnable: function (data) {
+                        if (data.status == "FREEZED") {
+                            return false;
+                        }
+                        return true;
+                    }
+                }],
+                width: 60,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "channelName",
+                title: '<@spring.message "fms.CnlChannel.channelName"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "area",
+                title: '<@spring.message "fms.CnlChannel.area"/>',
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                columns: [{
+                        field: "provinceMeaning",
+                        title: '<@spring.message "fms.CnlChannel.province"/>',
+                        width: 100,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align:center;vertical-align:middle;'
+                        },
+                    },
+                    {
+                        field: "cityMeaning",
+                        title: '<@spring.message "fms.CnlChannel.city"/>',
+                        width: 100,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align:center;vertical-align:middle;'
+                        },
+                    }]
+            },
+                    {
+                field: "contactPerson",
+                title: '<@spring.message "fms.CnlChannel.contactPerson"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "contactPhone",
+                title: '<@spring.message "fms.CnlChannel.contactPhone"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+            },
+                    {
+                field: "statusCode",
+                title: '<@spring.message "fms.CnlChannel.status"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.statusCode;
+                    $.each(statusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input name="' + options.field + '">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: statusData
+                        });
+                },
+            },
+                    {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.channelId) {
+                        return '<a href="#"  onclick="openDetailWin('+dataItem.channelId+',\''+dataItem.channelName+'\')"><@spring.message "fms.view_detail"/></a>';
+                    } else {
+                        return '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                    }
+                }
+            }
+        ],
+        editable: "inline"
+    });
+
+    function openDetailWin(channelId,channelName) {
+
+        if (channelId != null) {
+            parent.openTab("channelDetail" + channelId,channelName + " " + '<@spring.message "fms.cnlchannel.channel_detail"/>',"channel/channel_detail.html?channelId="+channelId)
+        }
+
+    }
+
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#Grid");
+    $("#Grid thead>tr th:first").text('<@spring.message "fms.rownumber"/>');
+
+</script>
+</body>
+</html>

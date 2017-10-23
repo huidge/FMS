@@ -1,0 +1,297 @@
+<#-- 
+ * description:预约日程详情页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supportType=COURSE.SUPPORT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?cityData=PUB.CITY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?orderStatus=ORD.ORDER_STATUS" type="text/javascript"></script>
+<script type="text/javascript">
+	var requestType = window.parent.requestType;
+    var response = window.parent.response;
+</script>
+<body>
+</script>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+	    var rownumList = $('[data-index="0"]');
+	    for (var i=0;i<rownumList.length;i++)
+	    {
+	        var rownumText = $(rownumList[i]).html();
+	        if("#"==rownumText){
+	            $(rownumList[i]).html("<@spring.message "spe.rownum"/>");
+	            $(rownumList[i]).eq(0).parent().parent().prev().children().eq(0).css("width","50px");
+	            $(rownumList[i]).eq(0).parent().parent().parent().parent().parent().next().children("table").children("colgroup").children().eq(0).css("width","50px");
+	        }
+	    }
+	});
+	
+	dataSource = new kendo.data.DataSource({
+        pageSize: 10
+    });
+
+    var BaseUrl = _basePath;
+    var grid = $("#Grid").kendoGrid({
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        rownumber: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        editable: false
+    }).data("kendoGrid");
+    
+    
+    var gridModel = generateGridModel();
+    grid.setOptions({
+        columns: gridModel.columns,
+        dataSource: gridModel.dataSource
+    });
+    
+    
+   function generateGridModel() {
+        // 动态构造 columns 
+        console.log(response);
+        var columns = dynamicColumns(requestType);
+        var dataSource = dynamicDataSource(response);
+        return  {
+            columns: columns,
+            dataSource: dataSource
+        };
+    }
+    
+    function dynamicColumns(requestType){
+    	var gridColumns = [];
+    	if(requestType == "QDB"){
+    		gridColumns = [
+    		  {
+    			field: "arrivalActualDate",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.arrivalactualdate"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "orderNumber",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.orderNumber"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "signAssistantName",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.signAssistantName"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "roleName",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.roleName"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "channelName",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.channelName"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "item",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.item"/>',
+    			width: 180,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            }
+    		 },{
+    			field: "status",
+    			title:'<@spring.message "fms.ordorder.appointment_schedule.status"/>',
+    			width: 120,
+    			attributes: {style: "text-align:center"},
+  	            headerAttributes: {
+  	                 "class": "table-header-cell",
+  	                 style: "text-align: center"
+  	            },
+   	            template: function(dataItem){
+                    var v = dataItem.status;
+                    $.each(orderStatus,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 }
+    		 }];
+    	}else if(requestType == "PXB"){
+    		gridColumns = [
+     		  {
+     			field: "runningTime",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.runningTime"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            }
+     		 },{
+     			field: "supportType",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.supportType"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            },
+   	            template: function(dataItem){
+                    var v = dataItem.supportType;
+                    $.each(supportType,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 }
+     		 },{
+     			field: "trainContent",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.trainContent"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            }
+     		 },{
+     			field: "createrName",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.createrName"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            }
+     		 },{
+     			field: "trainTeacher",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.trainTeacher"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            }
+     		 },{
+     			field: "area",
+     			title:'<@spring.message "fms.ordorder.appointment_schedule.city"/>',
+     			width: 120,
+     			attributes: {style: "text-align:center"},
+   	            headerAttributes: {
+   	                 "class": "table-header-cell",
+   	                 style: "text-align: center"
+   	            }
+     		 }];
+    	}else if(requestType == "KFB"){
+    		gridColumns = [
+      		  {
+      			field: "reserveActualDate",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.reserveActualDate"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 },{
+      			field: "valueaddType",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.valueaddType"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 },{
+      			field: "applicant",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.applicant"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 },{
+      			field: "customerPhone",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.customerPhone"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 },{
+      			field: "reserveContactPerson",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.reserveContactPerson"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 },{
+      			field: "reserveContactPhone",
+      			title:'<@spring.message "fms.ordorder.appointment_schedule.reserveContactPhone"/>',
+      			width: 120,
+      			attributes: {style: "text-align:center"},
+    	            headerAttributes: {
+    	                 "class": "table-header-cell",
+    	                 style: "text-align: center"
+    	            }
+      		 }];
+    	}
+    	return gridColumns;
+    }
+    
+    function dynamicDataSource(gridData){
+    	console.log(gridData);
+    	dataSource = new kendo.data.DataSource({
+    		 	data: gridData,
+    	        pageSize: 10
+    	    });
+        return dataSource;
+    }
+    
+    //自适应屏幕
+    Hap.autoResizeGrid("#Grid");
+    
+</script>
+</body>
+</html>

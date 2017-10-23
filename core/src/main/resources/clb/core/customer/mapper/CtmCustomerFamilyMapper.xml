@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.customer.mapper.CtmCustomerFamilyMapper">
+    <resultMap id="BaseResultMap" type="clb.core.customer.dto.CtmCustomerFamily">
+        <result column="CUSTOMER_FAMILY_ID" property="customerFamilyId" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL" />
+        <result column="MEMBER_NAME" property="memberName" jdbcType="VARCHAR" />
+        <result column="RELATIONSHIP" property="relationship" jdbcType="VARCHAR" />
+        <result column="AGE" property="age" jdbcType="DECIMAL" />
+        <result column="IDENTITY_NUMBER" property="identityNumber" jdbcType="VARCHAR" />
+        <result column="BIRTHDAY" property="birthday" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="selectByCustomerId" resultMap="BaseResultMap" parameterType="clb.core.customer.dto.CtmCustomer">
+        SELECT
+        CUSTOMER_FAMILY_ID,
+        AGE,
+        MEMBER_NAME,
+        CUSTOMER_ID,
+        RELATIONSHIP,
+        IDENTITY_NUMBER,
+        BIRTHDAY,
+        OBJECT_VERSION_NUMBER
+        FROM FMS_CTM_CUSTOMER_FAMILY
+        WHERE CUSTOMER_ID = #{customerId}
+    </select>
+
+</mapper>

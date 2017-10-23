@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtCrKeywordMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtCrKeyword">
+        <result column="KEYWORD_ID" property="keywordId" jdbcType="DECIMAL" />
+        <result column="KEYWORD_VALUE" property="keywordValue" jdbcType="VARCHAR" />
+        <result column="RULE_ID" property="ruleId" jdbcType="DECIMAL" />
+        <result column="MATCHING_FLAG" property="matchingFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.whtcustom.dto.WhtCrKeyword"
+		resultMap="BaseResultMap">
+		SELECT
+		fwck.*
+		FROM fms_wht_cr_keyword fwck
+		WHERE 1=1
+		<if test="keywordId!=null and keywordId!=''">
+			and fwck.REPLY_ID =#{keywordId}
+		</if>
+		<if test="ruleId!=null and ruleId!=''">
+			and fwck.RULE_ID =#{ruleId}
+		</if>
+	</select>
+	
+	<select id="keywordkReplyMsg" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT
+		fwck.*
+		FROM fms_wht_cr_keyword fwck
+		WHERE fwck.KEYWORD_VALUE LIKE CONCAT('%', #{keyword}, '%') 
+		OR #{keyword} LIKE CONCAT('%', fwck.KEYWORD_VALUE, '%') 
+		ORDER BY fwck.MATCHING_FLAG DESC ,fwck.RULE_ID DESC
+	</select>
+	<!-- <select id="subscribeReply" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select fwcr.* from fms_wht_custom_reply fwcr where fwcr.ORIGINAL_ID=#{originalId}
+    </select> -->
+</mapper>

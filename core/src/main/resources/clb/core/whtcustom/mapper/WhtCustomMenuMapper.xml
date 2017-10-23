@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtCustomMenuMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtCustomMenu">
+        <result column="MENU_ID" property="menuId" jdbcType="DECIMAL" />
+        <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+        <result column="MENU_TYPE" property="menuType" jdbcType="VARCHAR" />
+        <result column="PARENT_MENU_ID" property="parentMenuId" jdbcType="DECIMAL" />
+        <result column="ROW_NUMBER" property="rowNumber" jdbcType="DECIMAL" />
+        <result column="ORIGINAL_ID" property="originalId" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="MENU_CONTENT_TYPE" property="menuContentType" jdbcType="VARCHAR" />
+        <result column="MENU_CONTENT" property="menuContent" jdbcType="VARCHAR" />
+        <result column="MENU_PREVIEW_CONTENT" property="menuPreviewContent" jdbcType="VARCHAR" />
+        <result column="MENU_KEY" property="menuKey" jdbcType="VARCHAR" />
+        <result column="TEXT" property="text" jdbcType="VARCHAR" />
+        <result column="PICTURE_TEXT_ID" property="pictureTextId" jdbcType="VARCHAR" />
+        <result column="PICTURE_ID" property="pictureId" jdbcType="VARCHAR" />
+        <result column="VOICE_ID" property="voiceId" jdbcType="VARCHAR" />
+        <result column="VIDEO_ID" property="videoId" jdbcType="VARCHAR" />
+        <result column="PAGE_ADDRESS" property="pageAddress" jdbcType="VARCHAR" />
+        <result column="MENU_OPERATION" property="menuOperation" jdbcType="VARCHAR" />
+        <result column="SMALL_PRO_GRAM" property="smallProGram" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_SERVICE_FLAG" property="customerServiceFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	<select id="selectAllField" parameterType="clb.core.whtcustom.dto.WhtCustomMenu"
+		resultMap="BaseResultMap">
+		SELECT
+		fwcm.*
+		FROM fms_wht_custom_menu fwcm
+		WHERE 1=1
+		<if test="menuId!=null and menuId!=''">
+			and fwcm.MENU_ID =#{menuId}
+		</if>
+		<if test="originalId !=null and originalId !=''">
+			and fwcm.ORIGINAL_ID =#{originalId}
+		</if>
+		<if test="menuKey !=null and menuKey !=''">
+			and fwcm.MENU_KEY =#{menuKey}
+		</if>
+		<if test="accountNum!=null and accountNum!=''">
+			and fwcm.ACCOUNT_NUM =#{accountNum}
+		</if>
+	</select>
+	
+	<select id="menuClick" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select fwcm.* from fms_wht_custom_menu fwcm where fwcm.MENU_KEY=#{key}
+    </select>
+</mapper>

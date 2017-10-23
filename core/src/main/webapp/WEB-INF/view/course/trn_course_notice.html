@@ -1,0 +1,156 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?courseSupplier=COURSE.SUPPLIER_ID" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?productClass=PRD.PRODUCT_CLASS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?courseDuration=COURSE.CORUSE_DURATION" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?pubCity=PUB.CITY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?coruseStatus=CORUSE.COURSE_STATUS" type="text/javascript"></script>
+
+<script src="${base.contextPath}/clb/common/clbCode?courseType=CORUSE.COURSE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?trainingMethod=COURSE.TRAINING_METHOD" type="text/javascript"></script>
+<script src="../lib/kendoui/js/kendo.editor.js"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+        	courseId: '${RequestParameters.courseId!}',
+        },
+        
+        save: function(){
+			console.log(viewModel.model);
+			if (viewModel.model.notice) {
+				Hap.submitForm({
+					url : '${base.contextPath}/fms/trn/course/notice/add',
+					formModel : viewModel.model,
+					//asArray : false,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         }).done(function (event) {
+	                             if (event.button == 'OK') {
+	                            	 window.parent.location.reload();
+	                            }
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "失败"
+							});
+						}
+					}
+		       });
+			}else{
+				kendo.ui.showErrorDialog({
+					message : "发送内容不能为空"
+				});
+			}
+		},
+        resetForm: function (e) {
+            var formDate = viewModel.model.toJSON();
+            for (var k in formDate) {
+                viewModel.model.set(k, undefined);
+            }
+            //$("#grid").data("kendoGrid").dataSource.page(1);
+        },
+    });
+    
+    console.log(viewModel.model);
+</script>
+<body>
+<div id="dialog"></div>
+<div id="page-content">
+	<div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+    	<div id="query-form" >
+    		<form id="mainform" class="form-horizontal" ">
+                    <div class="panel-body">
+                        <div class="col-sm-12" >
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                </div>
+                                <label class="col-sm-8 control-label" style="text-align: left">编辑通知内容:</label>
+                                <div class="col-sm-2">   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" >
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-8">
+                                    <textarea id="lecturerEditor" type="text" style="width:100%;height:150px;"
+                                               data-bind="value:model.notice" ></textarea>
+                                </div>
+                                <div class="col-sm-2">   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+		     <div class="col-xs-12" style="margin-top: 20px">
+                <div class="form-group">
+                    <div class="col-xs-12" style="text-align: center;">
+    	      		<span class="btn btn-success" id="saveGrid" style="margin-right: 100px"  data-bind="click:save" type="submit">发送</span>
+    	      		<span class="btn btn-default" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" ></i><@spring.message "hap.reset"/></span>
+                    <div style="clear:both"></div>
+                    </div>
+                </div>
+            </div> 
+		    <script>kendo.bind($('#query-form'), viewModel);</script>
+		    <div style="clear:both">
+		        <div id="Grid"></div>
+		    </div>
+    	</div>
+    </div>
+</div>
+
+<div id="classSetManageWin"></div>
+<script type="text/javascript">
+	kendo.bind($('#page-content'), viewModel);
+	
+	//附件下载
+	var courseId = viewModel.model.courseId;
+	console.log(viewModel.model.courseId);
+	function addAttachment(consultId) {
+        var url = "trn_course_file.html?courseId="+courseId;
+        var dialog = $("#dialog").kendoWindow({
+            actions: ["Close"],
+            height: "50%",
+ 	        width: "80%",
+            title: '课程附件',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+        }).data("kendoWindow");
+        dialog.center().open();
+    };
+	
+	/* function addAttachment(){
+        var win = $("#attachmentWin").data("kendoWindow");
+        win.center().open();
+        Hap.autoResizeGrid("#attachGrid");
+    } */
+	
+	window.previewData = function () {
+        var url = 'trn_course_preview.html';
+        var dialog = $("#dialog").kendoWindow({
+            actions: ["Close"],
+            width: 900,
+            height: 600,
+            title: '',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+            /* close: function () {
+                //window 关闭  刷新 本页面的  grid
+                $('#dialog').data('kendoGrid').dataSource.page(1);
+            } */
+        }).data("kendoWindow");
+        dialog.center().open();
+    };
+	
+	
+	
+</script>
+</body>
+</html>

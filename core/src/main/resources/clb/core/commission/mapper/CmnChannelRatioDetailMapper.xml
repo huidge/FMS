@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/24.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnChannelRatioDetailMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnChannelRatioDetail">
+        <result column="RATIO_LINE_ID" property="ratioLineId" jdbcType="DECIMAL"/>
+        <result column="RATIO_ID" property="ratioId" jdbcType="DECIMAL"/>
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR"/>
+        <result column="BIG_CLASS_NAME" property="bigClassName" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS_NAME" property="midClassName" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS_NAME" property="minClassName" jdbcType="VARCHAR"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL"/>
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR"/>
+        <result column="SUBLINE_ITEM_ID" property="sublineItemId" jdbcType="DECIMAL"/>
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+    <select id="selectChannelRatioDetails" parameterType="clb.core.commission.dto.CmnChannelRatioDetail" resultMap="BaseResultMap">
+        SELECT 
+		  ccrd.`RATIO_LINE_ID`,
+		  ccrd.`RATIO_ID`,
+		  scvb1.`VALUE` BIG_CLASS,
+		  scvb1.`MEANING` BIG_CLASS_NAME,
+		  scvb2.`VALUE` MID_CLASS,
+		  scvb2.`MEANING` MID_CLASS_NAME,
+		  scvb3.`VALUE` MIN_CLASS,
+		  scvb3.`MEANING` MIN_CLASS_NAME,
+		  ccrd.`ITEM_ID`,
+		  fpi.`ITEM_NAME`,
+		  ccrd.`SUBLINE_ITEM_ID`,
+		  fpis.`SUBLINE_ITEM_NAME`,
+		  ccrd.`THE_FIRST_YEAR`,
+		  ccrd.`THE_SECOND_YEAR`,
+		  ccrd.`THE_THIRD_YEAR`,
+		  ccrd.`THE_FOURTH_YEAR`,
+		  ccrd.`THE_FIFTH_YEAR`,
+		  ccrd.`THE_SIXTH_YEAR`,
+		  ccrd.`THE_SEVENTH_YEAR`,
+		  ccrd.`THE_EIGHT_YEAR`,
+		  ccrd.`THE_NINTH_YEAR`,
+		  ccrd.`THE_TENTH_YEAR`,
+		  ccrd.`COMMENTS`,
+  		  ccrd.`OBJECT_VERSION_NUMBER` 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO_DETAIL ccrd 
+		  LEFT JOIN fms_prd_items fpi 
+		    ON fpi.`ITEM_ID` = ccrd.`ITEM_ID` 
+		  LEFT JOIN fms_prd_item_subline fpis 
+		    ON fpis.`ITEM_ID` = ccrd.`ITEM_ID` 
+		    AND fpis.`SUBLINE_ID` = ccrd.`SUBLINE_ITEM_ID` 
+		  LEFT JOIN sys_code_b scb1 
+		    ON scb1.CODE = 'PRD.PRODUCT_DIVISION' 
+		  LEFT JOIN sys_code_value_b scvb1 
+		    ON scb1.CODE_ID = scvb1.CODE_ID 
+		    AND scvb1.VALUE = ccrd.BIG_CLASS 
+		  LEFT JOIN sys_code_b scb2 
+		    ON scb2.CODE = 'PRD.PRODUCT_CLASS' 
+		  LEFT JOIN sys_code_value_b scvb2 
+		    ON scb2.CODE_ID = scvb2.CODE_ID 
+		    AND scvb2.VALUE = ccrd.MID_CLASS 
+		  LEFT JOIN sys_code_b scb3 
+		    ON scb3.CODE = 'PRD.PRODUCT_CATAGORY' 
+		  LEFT JOIN sys_code_value_b scvb3 
+		    ON scb3.CODE_ID = scvb3.CODE_ID 
+		    AND scvb3.VALUE = ccrd.MIN_CLASS 
+		  WHERE 1=1
+        <if test = "ratioId != null and ratioId != ''" >
+            AND ccrd.RATIO_ID = #{ratioId}
+        </if>
+        <if test = "bigClass != null and bigClass != ''" >
+            AND ccrd.BIG_CLASS = #{bigClass}
+        </if>
+        <if test = "midClass != null and midClass != ''" >
+            AND ccrd.MID_CLASS = #{midClass}
+        </if>
+        <if test = "minClass != null and minClass != ''" >
+            AND ccrd.MIN_CLASS = #{minClass}
+        </if>
+        <if test = "itemId != null and itemId != ''" >
+            AND ccrd.ITEM_ID = #{itemId}
+        </if>
+        <if test = "sublineItemId != null and sublineItemId != ''" >
+            AND ccrd.SUBLINE_ITEM_ID = #{sublineItemId}
+        </if>
+        ORDER BY ccrd.RATIO_LINE_ID DESC
+    </select>
+    <!-- 用于查询是否存在重复数据 -->
+    <select id="selectChannelRatioDetailsByNull" parameterType="clb.core.commission.dto.CmnChannelRatioDetail" resultMap="BaseResultMap">
+        SELECT 
+		  ccrd.`RATIO_LINE_ID`,
+		  ccrd.`RATIO_ID`,
+		  ccrd.`BIG_CLASS`,
+		  ccrd.`MID_CLASS`,
+		  ccrd.`MIN_CLASS`,
+		  ccrd.`ITEM_ID`,
+		  ccrd.`SUBLINE_ITEM_ID`,
+		  ccrd.`THE_FIRST_YEAR`,
+		  ccrd.`THE_SECOND_YEAR`,
+		  ccrd.`THE_THIRD_YEAR`,
+		  ccrd.`THE_FOURTH_YEAR`,
+		  ccrd.`THE_FIFTH_YEAR`,
+		  ccrd.`THE_SIXTH_YEAR`,
+		  ccrd.`THE_SEVENTH_YEAR`,
+		  ccrd.`THE_EIGHT_YEAR`,
+		  ccrd.`THE_NINTH_YEAR`,
+		  ccrd.`THE_TENTH_YEAR`,
+		  ccrd.`COMMENTS`,
+  		  ccrd.`OBJECT_VERSION_NUMBER` 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO_DETAIL ccrd
+		  WHERE ccrd.RATIO_ID = #{ratioId}
+        <if test = "bigClass != null and bigClass != ''" >
+            AND ccrd.BIG_CLASS = #{bigClass}
+        </if>
+        <if test = "bigClass == null or bigClass == ''" >
+            AND (ccrd.BIG_CLASS IS NULL OR ccrd.BIG_CLASS = '')
+        </if>
+        <if test = "midClass != null and midClass != ''" >
+            AND ccrd.MID_CLASS = #{midClass}
+        </if>
+        <if test = "midClass == null or midClass == ''" >
+            AND (ccrd.MID_CLASS IS NULL OR ccrd.MID_CLASS = '')
+        </if>
+        <if test = "minClass != null and minClass != ''" >
+            AND ccrd.MIN_CLASS = #{minClass}
+        </if>
+        <if test = "minClass == null or minClass == ''" >
+            AND (ccrd.MIN_CLASS IS NULL OR ccrd.MIN_CLASS = '')
+        </if>
+        <if test = "itemId != null and itemId != ''" >
+            AND ccrd.ITEM_ID = #{itemId}
+        </if>
+        <if test = "itemId == null or itemId == ''" >
+            AND (ccrd.ITEM_ID IS NULL OR ccrd.ITEM_ID = '')
+        </if>
+        <if test = "sublineItemId != null and sublineItemId != ''" >
+            AND ccrd.SUBLINE_ITEM_ID = #{sublineItemId}
+        </if>
+        <if test = "sublineItemId == null or sublineItemId == ''" >
+            AND (ccrd.SUBLINE_ITEM_ID IS NULL OR ccrd.SUBLINE_ITEM_ID = '')
+        </if>
+    </select>
+</mapper>

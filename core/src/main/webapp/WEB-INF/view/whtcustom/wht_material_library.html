@@ -1,0 +1,409 @@
+<#include "../include/header.html">
+<!-- 左侧 -->
+
+<!-- <style type="text/css">
+</style>
+<script type="text/javascript" src="${base.contextPath}/lib/clb/js/jquery-1.11.1.min.js"></script>
+<style type="text/css">
+.menuTree{ margin-left:-10px;}
+.menuTree div{ padding-left:30px;}
+.menuTree div ul{ overflow:hidden; display:none; height:auto;}
+.menuTree span{ display:block; height:25px; line-height:25px; padding-left:5px; margin:1px 0; cursor:pointer; border-bottom:1px solid #CCC;}
+.menuTree span:hover{ background-color:#e6e6e6; color:#cf0404;}
+.menuTree a{ color:#333; text-decoration:none;}
+.menuTree a:hover{ color:#06F;}
+.btn{ height:30px; margin-top:10px; }
+</style> -->
+
+<!-- 右侧 -->
+<style type="text/css">
+*{margin:0;padding:0;}
+img{border:0;}
+li{list-style:none;}
+a{text-decoration:none;}
+a:hover{text-decoration:underline;}
+body{background:#FFDEAD;font-size:9px;font-family:Verdana,Geneva,sans-serif;}
+.zzjs_net{position:relative;width:670px;margin:0 auto;}
+.list{width:670px;}
+.entry{float:left;width:202px;position:relative;margin:10px;_display:inline;}
+.entry a{display:block;text-decoration:none;border:1px #525252 solid;}
+.entry a:hover{border:1px #999 solid;}
+.entry .url{position:absolute;left:1px;bottom:1px;height:28px;width:200px;background:#000;text-align:center;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8;}
+.entry .url span{display:block;border:0;color:#fff;margin-top:6px;padding:2px;font-weight:bold;}
+._zzjsnet{position:absolute;right:-220px;top:0px;width:216px;padding:10px;background:#393939;border:1px #555 solid;color:#fff;}
+._zzjsnet li{margin-bottom:4px;}
+._zzjsnet li.mt10{margin-bottom:10px;}
+#url, #company , #description{color:#999;}
+._zzjsnet a{color:#999;}
+._zzjsnet a:hover{color:#fff;}
+#content h1{color:#ccc;font-size:20px;text-align:center;padding:70px 0;}
+#zzjsnet{clear:both;color:#808080;}
+#zzjsnet a{color:#808080;}
+#total{float:left;}
+#_zzjs_net{float:right;}
+.f90{color:#f90;}
+</style>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {
+        	originalId: '${RequestParameters.originalId!}',
+        },
+    });
+    function createFunction() {
+        $('#Grid').data('kendoGrid').addRow();
+    };
+    function saveFunction() {
+        $('#Grid').data('kendoGrid').saveChanges();
+    };
+    
+    var siteList = {"sites":[
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0?wx_fmt=jpeg","Name":"站长特效一号"},
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0?wx_fmt=jpeg","Name":"站长特效0号"},
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0?wx_fmt=jpeg","Name":"站长特效二号"},
+	    {"Url":"http://www.zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0?wx_fmt=jpeg","Name":"站长特效三号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效四号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效五号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效六号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效七号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效八号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效九号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十一号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十二号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十三号"},
+	    {"Url":"http://_zzjs_net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效四十六号"}
+	    ]
+   }
+    
+    var sites = [];
+    /* $.ajax({
+        type: "POST",
+        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+        data: {"originalId":viewModel.model.originalId,"type":"image"},
+        dataType: "json",
+        success: function(json){
+        	debugger;
+        	console.log(json.rows);
+        	if(json.rows.length>0){
+        		for(var i=0;i<json.rows.length;i++){
+				    var imageObject = {};
+				    imageObject.Url = json.rows[i].media_id;
+				    tempUrl = json.rows[i].url;
+				    tempArr = tempUrl.split("?");
+				    temp = tempArr[0];
+				    console.log(temp);
+				    imageObject.Pic = temp;
+				    imageObject.Name = json.rows[i].name;
+				    sites.push(imageObject);
+        		}
+        	};
+        	console.log(sites);
+        	if(sites.length>0){
+        		www_zzjs_net();
+        	}
+        }
+    }); */
+</script>
+<body >
+<div style="clear:both">
+    <div id="Grid"></div>
+</div>
+<div id="fileWin" style="display: none;">
+     <input type="file" id="files" name="files"></input>
+</div>
+<iframe id="ifile" style="display:none"></iframe>
+  <div id="fileWinCompany" style="display: none;">
+      <input type="file" id="filesCompany" name="filesCompany"></input>
+ </div>
+<iframe id="ifileCompany" style="display:none"></iframe>
+<div id="page-content">
+	<form class="form-horizontal">
+		<div class="panel" style="margin-top: 10px">
+			<div class="panel-heading" style="font-size: 15px">
+	            <span class="panel-title">图片素材</span>
+	            <div style="float:right;display: inline-block;margin: 8px;">
+	            	<span>选中的图片是：</span>
+		            <input id="pictureId" tyle="text" style="width: 350px;" readonly>
+		            <input id="mediaId" tyle="text" style="width: 50px;display: none" readonly>
+	            </div>
+	        </div>
+	        	<div class="panel-body" style="height: 480px;background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;">
+	        		<div class="col-xs-12" >
+                    	<!-- <div class="col-xs-3" id="policyInfoDiv" style="text-align: left;">
+                    		<div class="btn" >
+							<input name="" type="button" id="btn_open" value="全部展开" /> 
+							<input name="" type="button" id="btn_close" value="全部收缩" />
+							<input name="" type="button"  onclick="www_zzjs_net()" value="test"/>
+							</div>
+							<div id="menuTree" class="menuTree" style="display: inline-block;width: 300px;"></div>
+						</div> -->
+						<input onclick="www_zzjs_net()" type="button"  value="dsds"/>
+						<div class="col-xs-12" id="statusHisDiv" >
+							<div class="zzjs_net" style="border: 1px solid blue;">
+							 	<div class="list" style="border: 1px solid red;">
+							     	<div id="content"></div>
+							  		<div id="zzjsnet">
+							            <div id="total"></div>
+							            <div id="_zzjs_net"></div>
+							    	</div>
+							    </div>
+							    <div class="_zzjsnet" style="">
+							     	<ul>
+							         	<li>网址:</li>
+							         	<li id="siteurl" class="mt10"><a href="http://zzjs.net">http://www.zzjs.net</a></li>
+							            <li>mediaId:</li>
+							            <li id="sitename" class="mt10">生栋覆屋</li>
+							            <li>描述:</li>
+							            <li id="description">专注</li>
+							        </ul>
+							    </div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	/* function $(id){return document.getElementById(id);}//定义获取ID的方法 */
+	function GotoPage(num){//跳转页
+		Page = num;
+		www_zzjs_net();
+	}
+	var PageSize = 6;//每页个数
+	var Page = 1;//当前页码
+	function www_zzjs_net(){
+	var obj = eval(siteList);//获取JSON
+	var sites = obj.sites;
+	//获取分页总数
+	var Pages = Math.floor((sites.length - 1) / PageSize) + 1;
+	if(Page < 1)Page = 1;//如果当前页码小于1
+	if(Page > Pages)Page = Pages;//如果当前页码大于总数
+	var Temp = "";
+	var BeginNO = (Page - 1) * PageSize + 1;//开始编号
+	var EndNO = Page * PageSize;//结束编号
+	if(EndNO > sites.length) EndNO = sites.length;
+	if(EndNO == 0) BeginNO = 0;
+	if(!(Page <= Pages)) Page = Pages;
+	document.getElementById("total").innerHTML = "Total:<strong class='f90'>" + sites.length + "</strong>  Show:<strong class='f90'>" + BeginNO + "-" + EndNO + "</strong>";
+	//分页
+	if(Page > 1 && Page !== 1){
+		Temp ="<a href='javascript:void(0)' onclick='GotoPage(1)'><<Index</a> <a href='javascript:void(0)' onclick='GotoPage(" + (Page - 1) + ")'>Previous</a> "
+	}else{
+		Temp = "<<Index Previous "
+	};
+	//完美的翻页列表
+	var PageFrontSum = 3;//当页前显示个数
+	var PageBackSum = 3;//当页后显示个数
+	var PageFront = PageFrontSum - (Page - 1);
+	var PageBack = PageBackSum - (Pages - Page);
+	if(PageFront > 0 && PageBack < 0)PageBackSum += PageFront;//前少后多，前剩余空位给后
+	if(PageBack > 0 && PageFront < 0)PageFrontSum += PageBack;//后少前多，后剩余空位给前
+	var PageFrontBegin = Page - PageFrontSum;
+	if(PageFrontBegin < 1)PageFrontBegin = 1;
+	var PageFrontEnd = Page + PageBackSum;
+	if(PageFrontEnd > Pages)PageFrontEnd = Pages;
+	if(PageFrontBegin != 1) Temp += '<a href="javascript:void(0)" onclick="GotoPage(' + (Page - 10) + ')" title="前10页">..</a>';
+	for(var i = PageFrontBegin;i < Page;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	Temp += " <strong class='f90'>" + Page + "</strong>";
+	for(var i = Page + 1;i <= PageFrontEnd;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	if(PageFrontEnd != Pages) Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 10) + ")' title='后10页'>..</a>";
+	if(Page != Pages){Temp += "  <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 1) + ");'>Next</a> <a href='javascript:void(0)' onclick='GotoPage(" + Pages + ")'>Last>></a>"}else{Temp += "  Next Last>>"}
+	document.getElementById("_zzjs_net").innerHTML = Temp;
+	//输出数据
+	if(EndNO == 0){//如果为空
+		document.getElementById("content").innerHTML += "<h1>No Images</h1>";
+		return;
+	}
+	var html = "";
+	for(var i = BeginNO - 1;i < EndNO;i ++){
+		html += "<div class='entry'>";
+		html += "<a href='" +sites[i].Url+ "' rel='bookmark' title=" +sites[i].Name+ ">";
+		html += "<img src='" +sites[i].Pic+ "' width='200' height='170' />";
+	    html += "<p class='url'><span>" +sites[i].Name+ "</span></p></a>";
+	    html += "</div>";
+	 }
+	 document.getElementById("content").innerHTML = html;
+	 clickShow();//调用鼠标点击事件
+	 //键盘左右键翻页
+	 document.onkeydown=function(e){
+	 	var theEvent = window.event || e;
+	    var code = theEvent.keyCode || theEvent.which;
+	    if(code==37){
+	    	if(Page > 1 && Page !== 1){
+	    	GotoPage(Page - 1);
+	    }
+	 }
+	 if(code==39){
+	    if(Page != Pages){
+	    	GotoPage(Page + 1);
+	    }
+	 }
+	 }
+	 //鼠标滚轮翻页
+	 function handle(delta){
+	 	if (delta > 0){
+	    	if(Page > 1 && Page !== 1){
+	        	GotoPage(Page - 1);
+	  		}
+	 	}else{
+	  		if(Page != Pages){
+	   			GotoPage(Page + 1);
+	  		}
+	 	}
+	}
+	function wheel(event){
+		var delta = 0;
+	 	if (!event) /* For IE. */
+	  		event = window.event;
+	 	if (event.wheelDelta) { /* IE或者Opera. */
+	  		delta = event.wheelDelta / 120;
+	    /** 在Opera9中，事件处理不同于IE
+	    */
+	 	if (window.opera)
+	  		delta = -delta;
+	 	} else if (event._zzjsnet) { /** 兼容Mozilla. */
+	 	/** In Mozilla, sign of delta is different than in IE.
+	 	* Also, delta is multiple of 3.
+	 	*/
+	 		delta = -event._zzjsnet / 3;
+	 	}
+		 /** 如果 增量不等于0则触发
+		 * 主要功能为测试滚轮向上滚或者是向下
+		 */
+		if (delta)
+		handle(delta);
+	}
+		/** 初始化 */
+		if (window.addEventListener)
+		 /** Mozilla的基于DOM的滚轮事件 **/
+		 window.addEventListener("DOMMouseScroll", wheel, false);
+		 /** IE/Opera. */
+		 window.onmousewheel = document.onmousewheel = wheel;
+		}
+	//获取链接地址和网站名称
+	function showLink(source){
+		/* kendo.ui.showConfirmDialog({
+			message : "绑定改图片与"
+		}).done(function (event) {
+            if (event.button == 'OK') {
+            	
+            }
+        }); */
+	 	var siteUrl = document.getElementById("siteurl");
+		var siteName = document.getElementById("sitename");
+		var description = document.getElementById("description");
+		if(source.getAttribute("rel") == "bookmark"){
+			var url = source.getAttribute("href");
+			var title = source.getAttribute("title");
+			siteUrl.innerHTML = "<a href='" + url + "' target='_blank'>"+ url +"</a>";
+			siteName.innerHTML = title;
+			document.getElementById("pictureId").value = title;
+			document.getElementById("mediaId").value = url;
+		}
+	}
+	//鼠标点击事件
+	function clickShow(){
+		var links = document.getElementById("content").getElementsByTagName("a");
+	 	for(var i=0; i<links.length; i++){
+		  	var url = links[i].getAttribute("href");
+		  	var title = links[i].getAttribute("title");
+		  	links[i].onclick = function(){
+		    showLink(this);
+		    return false;
+	  		}
+	 	}
+	}
+   
+	/* function test(){
+		console.log($("#menuTree")[0]);
+	}
+	
+	
+	var json = [{"name":"*a","list":[
+	  				 {"name":"**a","url":"#a1"},
+	  				 {"name":"**aa","url":"#a2"},
+	  				 {"name":"**aaa","url":"#a3"},
+	  			 ]},
+	  			 {"name":"*b"},
+	  			 {"name":"*c","list":[
+	  				 {"name":"**c","url":"#c1"},
+	  				 {"name":"**cc","url":"#c2"}
+	  			 ]},
+	  			 {"name":"*d"}
+	  			]
+	//递归实现获取无级树数据并生成DOM结构
+	var str = "";
+	var forTree = function(o){
+	 for(var i=0;i<o.length;i++){
+	 var urlstr = "";
+	 try{
+	 if(typeof o[i]["url"] == "undefined"){
+	 urlstr = "<div><span>"+ o[i]["name"] +"</span><ul>";
+	 }else{
+	 urlstr = "<div><span><a href="+ o[i]["url"] +">"+ o[i]["name"] +"</a></span><ul>";
+	 }
+	 str += urlstr;
+	 if(o[i]["list"] != null){
+	 forTree(o[i]["list"]);
+	 }
+	 str += "</ul></div>";
+	 }catch(e){}
+	 }
+	 return str;
+	}
+	//添加无级树
+	document.getElementById("menuTree").innerHTML = forTree(json);
+	//树形菜单
+	var menuTree = function(){
+	 //给有子对象的元素加[+-]
+	  $("#menuTree ul").each(function(index, element) {
+	 var ulContent = $(element).html();
+	 var spanContent = $(element).siblings("span").html();
+	 if(ulContent){
+	 $(element).siblings("span").html("[+] " + spanContent)
+	 }
+	 }); 
+	 $("#menuTree").find("div span").click(function(){
+	 var ul = $(this).siblings("ul");
+	 var spanStr = $(this).html();
+	 var spanContent = spanStr.substr(3,spanStr.length);
+	 if(ul.find("div").html() != null){
+	 if(ul.css("display") == "none"){
+	 ul.show(300);
+	 $(this).html("[-] " + spanContent);
+	 }else{
+	 ul.hide(300);
+	 $(this).html("[+] " + spanContent);
+	 }
+	 }
+	 })
+	}()
+	//展开
+	$("#btn_open").click(function(){
+	 $("#menuTree ul").show(300);
+	 curzt("-");
+	})
+	//收缩
+	$("#btn_close").click(function(){
+	 $("#menuTree ul").hide(300);
+	 curzt("+");
+	})
+	function curzt(v){
+	 $("#menuTree span").each(function(index, element) {
+	 var ul = $(this).siblings("ul");
+	 var spanStr = $(this).html();
+	 var spanContent = spanStr.substr(3,spanStr.length);
+	 if(ul.find("div").html() != null){
+	 $(this).html("["+ v +"] " + spanContent);
+	 }
+	 });
+	}; */
+</script>
+</body>
+</html>

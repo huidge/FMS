@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeArchivesMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeArchives">
+        <result column="ARCHIVE_ID" property="archiveId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR"/>
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL"/>
+        <result column="UPLOAD_DATE" property="uploadDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+	<select id="getData" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeArchives">
+		select fsa.*,sf.FILE_SIZE,sf.UPLOAD_DATE,sf.FILE_PATH
+		from fms_spe_archives fsa, sys_file sf
+		where fsa.FILE_ID = sf.FILE_ID
+		and fsa.SUPPLIER_ID = #{supplierId}
+	</select>
+</mapper>

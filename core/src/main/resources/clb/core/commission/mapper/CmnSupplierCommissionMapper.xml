@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/24.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnSupplierCommissionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnSupplierCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="VARCHAR" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="COMMISSION_NUM" property="commissionNum" jdbcType="VARCHAR" />
+        <result column="PARENT_COMMISSION_NUM" property="parentCommissionNum" jdbcType="VARCHAR" />
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR"/>
+        <result column="DEAL_PATH_NAME" property="dealPathName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="AllFieldMap" type="clb.core.commission.dto.CmnSupplierCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_TYPE_NAME" property="channelTypeName" jdbcType="VARCHAR" />
+        <result column="ITEM_SUPPLIER_ID" property="itemSupplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD_NAME" property="payMethodName" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR" />
+        <result column="PRICE_TYPE_NAME" property="priceTypeName" jdbcType="VARCHAR"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="VARCHAR" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="COMMISSION_NUM" property="commissionNum" jdbcType="VARCHAR" />
+        <result column="PARENT_COMMISSION_NUM" property="parentCommissionNum" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR"/>
+        <result column="DEAL_PATH_NAME" property="dealPathName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="KeyFieldsMap" type="clb.core.commission.dto.CmnSpeCmnKeyField">
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_SUPPLIER_ID" property="superiorSupplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BasicResultMap" type="clb.core.commission.dto.CmnBasic">
+        <result column="BASIC_ID" property="basicId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PRODUCT_COMPANY" property="productCompany" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="OverrideResultMap" type="clb.core.commission.dto.CmnOverride">
+        <result column="OVERRIDE_ID" property="overrideId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE1" property="superiorOverride1" jdbcType="DECIMAL" />
+        <result column="OVERRIDE1" property="override1" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT1" property="adjustment1" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE2" property="superiorOverride2" jdbcType="DECIMAL" />
+        <result column="OVERRIDE2" property="override2" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT2" property="adjustment2" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE3" property="superiorOverride3" jdbcType="DECIMAL" />
+        <result column="OVERRIDE3" property="override3" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT3" property="adjustment3" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE4" property="superiorOverride4" jdbcType="DECIMAL" />
+        <result column="OVERRIDE4" property="override4" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT4" property="adjustment4" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE5" property="superiorOverride5" jdbcType="DECIMAL" />
+        <result column="OVERRIDE5" property="override5" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT5" property="adjustment5" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE6" property="superiorOverride6" jdbcType="DECIMAL" />
+        <result column="OVERRIDE6" property="override6" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT6" property="adjustment6" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE7" property="superiorOverride7" jdbcType="DECIMAL" />
+        <result column="OVERRIDE7" property="override7" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT7" property="adjustment7" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE8" property="superiorOverride8" jdbcType="DECIMAL" />
+        <result column="OVERRIDE8" property="override8" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT8" property="adjustment8" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE9" property="superiorOverride9" jdbcType="DECIMAL" />
+        <result column="OVERRIDE9" property="override9" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT9" property="adjustment9" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_OVERRIDE10" property="superiorOverride10" jdbcType="DECIMAL" />
+        <result column="OVERRIDE10" property="override10" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT10" property="adjustment10" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <!--<result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />-->
+        <!--<result column="PARENT_SUPPLIER_NAME" property="parentSupplierName" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />-->
+    </resultMap>
+
+    <resultMap id="ExtraResultMap" type="clb.core.commission.dto.CmnExtras">
+        <result column="EXTRA_ID" property="extraId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="EXTRA1" property="extra1" jdbcType="DECIMAL" />
+        <result column="EXTRA2" property="extra2" jdbcType="DECIMAL" />
+        <result column="EXTRA3" property="extra3" jdbcType="DECIMAL" />
+        <result column="EXTRA4" property="extra4" jdbcType="DECIMAL" />
+        <result column="EXTRA5" property="extra5" jdbcType="DECIMAL" />
+        <result column="EXTRA6" property="extra6" jdbcType="DECIMAL" />
+        <result column="EXTRA7" property="extra7" jdbcType="DECIMAL" />
+        <result column="EXTRA8" property="extra8" jdbcType="DECIMAL" />
+        <result column="EXTRA9" property="extra9" jdbcType="DECIMAL" />
+        <result column="EXTRA10" property="extra10" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <!--<result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />-->
+        <!--<result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />-->
+    </resultMap>
+
+    <!--查询界面所有字段-->
+    <select id="selectShowAllFields" parameterType="clb.core.commission.dto.CmnSupplierCommission" resultMap="AllFieldMap">
+        SELECT
+        csc.line_id,
+        csc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        csc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CNL.CHANNEL_CLASS'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        csc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PAY_METHOD'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.PRICE_TYPE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PRICE_TYPE'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.PRICE_TYPE
+        ) PRICE_TYPE_NAME,
+        csc.THE_FIRST_YEAR,
+        csc.THE_SECOND_YEAR,
+        csc.THE_THIRD_YEAR,
+        csc.THE_FOURTH_YEAR,
+        csc.THE_FIFTH_YEAR,
+        csc.THE_SIXTH_YEAR,
+        csc.THE_SEVENTH_YEAR,
+        csc.THE_EIGHT_YEAR,
+        csc.THE_NINTH_YEAR,
+        csc.THE_TENTH_YEAR,
+        csc.VERSION,
+        date_format(csc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(csc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        csc.COMMISSION_NUM,
+        csc.PARENT_COMMISSION_NUM,
+        fpi.BIG_CLASS,
+        csc.DEAL_PATH,
+        csc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_SUPPLIER_COMMISSION_SHOW csc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        csc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND csc.item_id = fpi.item_id
+        AND fpi.supplier_id = pss.supplier_id
+        <if test="lineId != null and lineId != ''">
+            AND csc.line_id = #{lineId}
+        </if >
+        <if test="supplierId != null and supplierId != ''">
+            AND csc.SUPPLIER_ID = #{supplierId}
+        </if >
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND csc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if >
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if >
+        <if test="itemId != null and itemId != ''">
+            AND csc.ITEM_ID = #{itemId}
+        </if >
+        <if test="bigClass != null and bigClass != ''">
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if >
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if >
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME = #{itemName}
+        </if >
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND csc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND csc.CURRENCY = #{currency}
+        </if >
+        <if test="payMethod != null and payMethod != ''">
+            AND csc.PAY_METHOD = #{payMethod}
+        </if >
+        <if test="version != null and version != ''">
+            AND csc.VERSION = #{version}
+        </if >
+        <if test="commissionNum != null and commissionNum != ''">
+            AND csc.COMMISSION_NUM = #{commissionNum}
+        </if >
+        <if test="effectiveDate != null">
+            AND #{effectiveDate} BETWEEN csc.EFFECTIVE_START_DATE AND csc.EFFECTIVE_END_DATE
+        </if>
+        ORDER BY csc.SUPPLIER_ID,
+        csc.CHANNEL_TYPE_CODE,
+        csc.ITEM_ID,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.EFFECTIVE_START_DATE,
+        csc.EFFECTIVE_END_DATE
+    </select>
+
+    <!--查询界面所有字段-->
+    <select id="selectAllFields" parameterType="clb.core.commission.dto.CmnSupplierCommission" resultMap="AllFieldMap">
+        SELECT
+        csc.line_id,
+        csc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        csc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CNL.CHANNEL_CLASS'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        csc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PAY_METHOD'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.PRICE_TYPE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PRICE_TYPE'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.PRICE_TYPE
+        ) PRICE_TYPE_NAME,
+        csc.THE_FIRST_YEAR,
+        csc.THE_SECOND_YEAR,
+        csc.THE_THIRD_YEAR,
+        csc.THE_FOURTH_YEAR,
+        csc.THE_FIFTH_YEAR,
+        csc.THE_SIXTH_YEAR,
+        csc.THE_SEVENTH_YEAR,
+        csc.THE_EIGHT_YEAR,
+        csc.THE_NINTH_YEAR,
+        csc.THE_TENTH_YEAR,
+        csc.VERSION,
+        date_format(csc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(csc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        csc.COMMISSION_NUM,
+        csc.PARENT_COMMISSION_NUM,
+        fpi.BIG_CLASS,
+        csc.DEAL_PATH,
+        csc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_SUPPLIER_COMMISSION csc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        csc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND csc.item_id = fpi.item_id
+        AND fpi.supplier_id = pss.supplier_id
+        <if test="lineId != null and lineId != ''">
+            AND csc.line_id = #{lineId}
+        </if >
+        <if test="supplierId != null and supplierId != ''">
+            AND csc.SUPPLIER_ID = #{supplierId}
+        </if >
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND csc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if >
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if >
+        <if test="itemId != null and itemId != ''">
+            AND csc.ITEM_ID = #{itemId}
+        </if >
+        <if test="bigClass != null and bigClass != ''">
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if >
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if >
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME = #{itemName}
+        </if >
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND csc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND csc.CURRENCY = #{currency}
+        </if >
+        <if test="payMethod != null and payMethod != ''">
+            AND csc.PAY_METHOD = #{payMethod}
+        </if >
+        <if test="version != null and version != ''">
+            AND csc.VERSION = #{version}
+        </if >
+        <if test="commissionNum != null and commissionNum != ''">
+            AND csc.COMMISSION_NUM = #{commissionNum}
+        </if >
+        <if test="basicId != null and basicId != ''">
+            AND csc.BASIC_ID = #{basicId}
+        </if >
+        <if test="effectiveDate != null">
+            AND #{effectiveDate} BETWEEN csc.EFFECTIVE_START_DATE AND csc.EFFECTIVE_END_DATE
+        </if>
+        ORDER BY csc.SUPPLIER_ID,
+        csc.CHANNEL_TYPE_CODE,
+        csc.ITEM_ID,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.EFFECTIVE_START_DATE,
+        csc.EFFECTIVE_END_DATE
+    </select>
+
+    <!--取源头佣金数据-->
+    <select id="selectYtCmnId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            MAX(yt.LINE_ID) LINE_ID
+        FROM
+            fms_cmn_supplier_commission csc,
+            fms_cmn_supplier_commission yt
+        WHERE
+            csc.LINE_ID = #{lineId}
+        AND yt.SUPPLIER_ID = csc.SUPPLIER_ID
+        AND yt.CHANNEL_TYPE_CODE = 'YT'
+        AND yt.ITEM_ID = csc.ITEM_ID
+        AND yt.CONTRIBUTION_PERIOD = csc.CONTRIBUTION_PERIOD
+        AND yt.CURRENCY = csc.CURRENCY
+        AND yt.PAY_METHOD = csc.PAY_METHOD
+        AND yt.POLICYHOLDERS_MIN_AGE = csc.POLICYHOLDERS_MIN_AGE
+        AND yt.POLICYHOLDERS_MAX_AGE = csc.POLICYHOLDERS_MAX_AGE
+        AND yt.PRICE_TYPE = csc.PRICE_TYPE
+        AND yt.EFFECTIVE_START_DATE = csc.EFFECTIVE_START_DATE
+        AND yt.EFFECTIVE_END_DATE = csc.EFFECTIVE_END_DATE
+    </select>
+
+    <!-- 根据编号查询 -->
+    <select id="selectByCommissionNum" parameterType="clb.core.commission.dto.CmnSupplierCommission" resultMap="AllFieldMap">
+        SELECT
+        csc.line_id,
+        csc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        csc.CHANNEL_TYPE_CODE,
+        csc.ITEM_ID,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.PRICE_TYPE,
+        csc.THE_FIRST_YEAR,
+        csc.THE_SECOND_YEAR,
+        csc.THE_THIRD_YEAR,
+        csc.THE_FOURTH_YEAR,
+        csc.THE_FIFTH_YEAR,
+        csc.THE_SIXTH_YEAR,
+        csc.THE_SEVENTH_YEAR,
+        csc.THE_EIGHT_YEAR,
+        csc.THE_NINTH_YEAR,
+        csc.THE_TENTH_YEAR,
+        csc.VERSION,
+        csc.EFFECTIVE_START_DATE,
+        csc.EFFECTIVE_END_DATE,
+        csc.COMMISSION_NUM,
+        csc.PARENT_COMMISSION_NUM,
+        csc.DEAL_PATH,
+        csc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_SUPPLIER_COMMISSION csc,
+        FMS_SPE_SUPPLIER fss
+        WHERE
+        csc.SUPPLIER_ID = fss.SUPPLIER_ID
+        <if test="lineId != null and lineId != ''">
+            AND csc.line_id = #{lineId}
+        </if >
+        <if test="supplierId != null and supplierId != ''">
+            AND csc.SUPPLIER_ID = #{supplierId}
+        </if >
+        <if test="commissionNum != null and commissionNum != ''">
+            AND csc.COMMISSION_NUM = #{commissionNum}
+        </if >
+    </select>
+
+    <!--清除供应商佣金表数据-->
+    <delete id="deleteCmnData" parameterType="clb.core.commission.dto.CmnSupplierCommission">
+        delete from
+          fms_cmn_supplier_commission
+        WHERE 1 = 1
+        <if test="payMethod != null and payMethod != ''">
+            AND PAY_METHOD = #{payMethod}
+        </if >
+        <if test="supplierId != null and supplierId != ''">
+            AND SUPPLIER_ID = #{supplierId}
+        </if >
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if >
+        <if test="itemId != null and itemId != ''">
+            AND ITEM_ID = #{itemId}
+        </if >
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND CURRENCY = #{currency}
+        </if >
+    </delete>
+
+    <!--更新交易路线值-->
+    <update id="updateDealPathName" parameterType="clb.core.commission.dto.CmnSupplierCommission">
+        update fms_cmn_supplier_commission
+           SET DEAL_PATH_NAME = #{dealPathName}
+         WHERE LINE_ID = #{lineId}
+    </update>
+
+    <select id="queryBasicList" parameterType="clb.core.commission.dto.CmnSpeCmnKeyField" resultMap="BasicResultMap">
+        SELECT
+        fcb.BASIC_ID,
+        fcb.SUPPLIER_ID,
+        fss.`NAME` PRODUCT_COMPANY,
+        fcb.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fcb.CONTRIBUTION_PERIOD,
+        fcb.CURRENCY,
+        fcb.PAY_METHOD,
+        fcb.POLICYHOLDERS_MIN_AGE,
+        fcb.POLICYHOLDERS_MAX_AGE,
+        fcb.PRICE_TYPE,
+        fcb.THE_FIRST_YEAR,
+        fcb.THE_SECOND_YEAR,
+        fcb.THE_THIRD_YEAR,
+        fcb.THE_FOURTH_YEAR,
+        fcb.THE_FIFTH_YEAR,
+        fcb.THE_SIXTH_YEAR,
+        fcb.THE_SEVENTH_YEAR,
+        fcb.THE_EIGHT_YEAR,
+        fcb.THE_NINTH_YEAR,
+        fcb.THE_TENTH_YEAR,
+        fcb.VERSION,
+        date_format(fcb.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(fcb.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE
+        FROM
+        fms_cmn_basic AS fcb
+        LEFT JOIN fms_spe_supplier fss
+        ON fcb.SUPPLIER_ID = fss.SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fcb.ITEM_ID = fpi.ITEM_ID
+        WHERE 1=1
+            <if test="supplierId!=null and supplierId!=''">
+                AND fcb.SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="itemId!=null and itemId!=''">
+                AND fcb.ITEM_ID = #{itemId}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND fcb.CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND fcb.CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND fcb.PAY_METHOD = #{payMethod}
+            </if>
+    </select>
+
+    <!--查询在组合下、时间范围内是否存在override记录-->
+    <select id="queryOverrideList" parameterType="clb.core.commission.dto.CmnSpeCmnKeyField" resultMap="OverrideResultMap">
+        SELECT
+        fco.override_id,
+        fco.supplier_id,
+        fco.CHANNEL_TYPE_CODE,
+        fco.CONTRIBUTION_PERIOD,
+        fco.CURRENCY,
+        fco.PAY_METHOD,
+        fco.POLICYHOLDERS_MIN_AGE,
+        fco.POLICYHOLDERS_MAX_AGE,
+        fco.SUPERIOR_OVERRIDE1,
+        fco.OVERRIDE1,
+        fco.ADJUSTMENT1,
+        fco.SUPERIOR_OVERRIDE2,
+        fco.OVERRIDE2,
+        fco.ADJUSTMENT2,
+        fco.SUPERIOR_OVERRIDE3,
+        fco.OVERRIDE3,
+        fco.ADJUSTMENT3,
+        fco.SUPERIOR_OVERRIDE4,
+        fco.OVERRIDE4,
+        fco.ADJUSTMENT4,
+        fco.SUPERIOR_OVERRIDE5,
+        fco.OVERRIDE5,
+        fco.ADJUSTMENT5,
+        fco.SUPERIOR_OVERRIDE6,
+        fco.OVERRIDE6,
+        fco.ADJUSTMENT6,
+        fco.SUPERIOR_OVERRIDE7,
+        fco.OVERRIDE7,
+        fco.ADJUSTMENT7,
+        fco.SUPERIOR_OVERRIDE8,
+        fco.OVERRIDE8,
+        fco.ADJUSTMENT8,
+        fco.SUPERIOR_OVERRIDE9,
+        fco.OVERRIDE9,
+        fco.ADJUSTMENT9,
+        fco.SUPERIOR_OVERRIDE10,
+        fco.OVERRIDE10,
+        fco.ADJUSTMENT10,
+        fco.VERSION,
+        date_format(fco.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(fco.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        fco.PARENT_OVERRIDE_ID
+        FROM
+        fms_cmn_override AS fco
+        WHERE 1=1
+            <if test="supplierId!=null and supplierId!=''">
+                AND fco.superior_supplier_id = #{supplierId}
+            </if>
+            <if test="itemId!=null and itemId!=''">
+                AND fco.item_id = #{itemId}
+            </if>
+            <if test="contributionPeriod !=null and contributionPeriod!=''">
+                AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND PAY_METHOD = #{payMethod}
+            </if>
+            <if test="channelTypeCode != null and channelTypeCode != ''">
+                AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+            </if>
+            <if test="parentOverrideId != null and parentOverrideId != ''">
+                AND PARENT_OVERRIDE_ID = #{parentOverrideId}
+            </if>
+        ORDER BY fco.EFFECTIVE_START_DATE,
+                 fco.EFFECTIVE_END_DATE
+    </select>
+
+    <!--查询在组合下、时间范围内是否存在extra记录-->
+    <select id="queryExtraList" parameterType="clb.core.commission.dto.CmnSpeCmnKeyField" resultMap="ExtraResultMap">
+           SELECT
+            fce.extra_id,
+            fce.supplier_id,
+            fce.CONTRIBUTION_PERIOD,
+            fce.CURRENCY,
+            fce.PAY_METHOD,
+            fce.POLICYHOLDERS_MIN_AGE,
+            fce.POLICYHOLDERS_MAX_AGE,
+            fce.EXTRA1,
+            fce.EXTRA2,
+            fce.EXTRA3,
+            fce.EXTRA4,
+            fce.EXTRA5,
+            fce.EXTRA6,
+            fce.EXTRA7,
+            fce.EXTRA8,
+            fce.EXTRA9,
+            fce.EXTRA10,
+            fce.VERSION,
+            date_format(fce.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+            date_format(fce.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE
+            FROM
+            fms_cmn_extras AS fce
+            WHERE 1=1
+                <!--<if test="supplierId!=null and supplierId!=''">
+                    AND fce.supplier_id = #{supplierId}
+                </if>-->
+                <if test="itemId!=null and itemId!=''">
+                    AND fce.item_id = #{itemId}
+                </if>
+                <if test="contributionPeriod !=null and contributionPeriod!=''">
+                    AND fce.CONTRIBUTION_PERIOD = #{contributionPeriod}
+                </if>
+                <if test="currency!=null and currency!=''">
+                    AND fce.CURRENCY = #{currency}
+                </if>
+                <if test="payMethod!=null and payMethod!=''">
+                    AND fce.PAY_METHOD = #{payMethod}
+                </if>
+        ORDER BY fce.EFFECTIVE_START_DATE,
+                 fce.EFFECTIVE_END_DATE
+    </select>
+
+</mapper>

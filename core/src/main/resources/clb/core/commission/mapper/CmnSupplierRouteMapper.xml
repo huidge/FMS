@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnSupplierRouteMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnSupplierRoute">
+        <result column="ROUTE_ID" property="routeId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_COMMISSION_LINE_ID" property="supplierCommissionLineId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="LEVEL_COMMISSION_LINE_ID" property="levelCommissionLineId" jdbcType="DECIMAL" />
+        <result column="PARENT_ROUTE_ID" property="parentRouteId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <!--清除数据-->
+    <delete id="deleteRouteData" parameterType="clb.core.commission.dto.CmnSupplierRoute">
+        delete from
+        fms_cmn_supplier_route
+        WHERE 1 = 1
+    </delete>
+
+    <select id="querySupplierRoute" parameterType="clb.core.commission.dto.CmnSupplierRoute" resultMap="BaseResultMap">
+       SELECT fcsr.ROUTE_ID,
+              fcsr.SUPPLIER_COMMISSION_LINE_ID,
+              fcsr.SEQ_NUM,
+              fcsr.SUPPLIER_ID,
+              fss.`NAME` SUPPLIER_NAME,
+              fcsr.LEVEL_COMMISSION_LINE_ID,
+              fcsr.PARENT_ROUTE_ID
+         FROM fms_cmn_supplier_route fcsr,
+              fms_spe_supplier fss
+        WHERE 1 = 1
+          AND fcsr.SUPPLIER_ID = fss.SUPPLIER_ID
+          AND fcsr.SUPPLIER_COMMISSION_LINE_ID = #{supplierCommissionLineId}
+        ORDER BY fcsr.SEQ_NUM
+    </select>
+
+</mapper>

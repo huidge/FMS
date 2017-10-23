@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdCashValueMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdCashValue">
+        <result column="CASH_VALUE_ID" property="cashValueId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId"/>
+        <result column="ITEM_NAME" property="itemName"/>
+        <result column="CURRENCY" property="currency"/>
+        <result column="SUBLINE_ID" property="sublineId"/>
+        <result column="INSURANCE_COVERAGE" property="insuranceCoverage"/>
+        <result column="PREMIUM" property="premium"/>
+        <result column="AGE" property="age"/>
+        <result column="INSURANCE_YEAR" property="insuranceYear"/>
+        <result column="SMOKE_FLAG" property="smokeFlag"/>
+        <result column="GENDER" property="gender"/>
+        <result column="SURRENDER_DEPOSIT" property="surrenderDeposit"/>
+        <result column="SURRENDER_NOT_BONUS" property="surrenderNotBonus"/>
+        <result column="DIE_DEPOSIT" property="dieDeposit"/>
+        <result column="DIE_EXTRA" property="dieExtra"/>
+        <result column="DIE_NOT_BONUS" property="dieNotBonus"/>
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName"/>
+    </resultMap>
+
+<select id="selectAllFields" parameterType="clb.core.production.dto.PrdCashValue" resultMap="BaseResultMap">
+        SELECT
+        pcv.*,(SELECT pi.ITEM_NAME from fms_prd_items pi where pi.ITEM_ID=pcv.ITEM_ID LIMIT 1) as ITEM_NAME,
+        (select pis.SUBLINE_ITEM_NAME from fms_prd_item_subline pis where pis.SUBLINE_ID=pcv.SUBLINE_ID  LIMIT 1) as SUBLINE_ITEM_NAME  
+        FROM
+        fms_prd_cash_value pcv
+        <where>
+        <if test="itemId != null and itemId != ''">
+            AND pcv.item_id = #{itemId}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND pcv.currency =#{currency}
+        </if >
+        <if test="sublineId != null and sublineId != ''">
+            AND pcv.subline_id =#{sublineId}
+        </if >
+        <if test="smokeFlag != null and smokeFlag != ''">
+            AND pcv.smoke_flag =#{smokeFlag}
+        </if >
+        <if test="gender != null and gender != ''">
+            AND pcv.gender = #{gender}
+        </if >
+        <if test="age != null and age != ''">
+            AND pcv.age = #{age}
+        </if >
+        <if test="ageMin != null and ageMin != ''">
+            AND pcv.age <![CDATA[>=]]>#{ageMin}
+        </if >
+        <if test="ageMax != null and ageMax != ''">
+            AND pcv.age <![CDATA[<=]]>#{ageMax}
+        </if >
+        <if test="insuranceCoverage != null">
+            AND pcv.INSURANCE_COVERAGE = #{insuranceCoverage}
+        </if >
+        </where>
+   </select>
+</mapper>

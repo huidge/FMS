@@ -1,0 +1,632 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?nationality=PUB.NATION" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currency=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?securityArea=PRD.SECURITY_AREA" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?securityLevel=PRD.SECURITY_LEVEL" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?payMethod=CMN.PAY_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?city=PUB.CITY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?province=PUB.PROVICE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?securityArea=PRD.SECURITY_AREA" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?securityLevel=PRD.SECURITY_LEVEL" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?backTrack=PLN.BACK_TRACK" type="text/javascript"></script>
+<script type="text/javascript">
+	//获取"文章列表页面"传过来的 参数
+	var planId = '${RequestParameters.planId}';
+	var flag = true;
+	var viewModel = kendo.observable({
+		model : {
+			
+		},
+	    nationality:nationality,
+	    currency:currency,
+	    securityArea:securityArea,
+	    securityLevel:securityLevel,
+	    payMethod:payMethod,
+	    city:city,
+	    province:province,
+	    backTrack:backTrack
+	});
+ 
+    console.log(planId);	 
+	viewModel.model.set("planId", planId);
+		
+	$.ajax({
+			type : "POST",
+			async : false,
+			url : "${base.contextPath}/fms/pln/plan/request/query",
+			data : {
+				planId : planId
+			},
+			success : function(json) {
+				var row = json.rows[0] || {};
+				for ( var k in row) {
+					viewModel.model.set(k, row[k]);
+					if(k == "insurantBirth" || k == "policyHolderBirth"){
+						viewModel.model.set(k, row[k].substring(0,row[k].length-8));
+					}
+				}
+				if (viewModel.model.extractMethod=="MA") {
+					flag =false;
+				}
+			}
+	});
+	
+	//取消按钮
+	function cancel(){
+		window.parent.$("#dialog").data("kendoWindow").close();
+	}
+	
+</script>
+<body>	
+<div id="content-container">
+    <div id="page-content">
+        <!-- 受保人信息 -->
+        <div class="panel" style="margin-top: 15px;">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">受保人信息</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">受保人姓名</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" readonly="readonly"
+                                           data-bind="value:model.insurantName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">国籍</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: nationality, value:model.insurantNationality" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">居住地</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: nationality, value:model.insurantResidence" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="insurantProvinceInfo" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">居住城市</label>
+                                <div class="col-sm-3">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: province, value:model.province" ></input>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: city, value:model.city" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">性别</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="M" data-bind="checked:model.insurantGender" readonly="readonly"/>男
+                                    <input type="radio" value="F" data-bind="checked:model.insurantGender" readonly="readonly"/>女
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">是否吸烟</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="Y" data-bind="checked:model.insurantSmokeFlag" readonly="readonly"/>是
+                                    <input type="radio" value="N" data-bind="checked:model.insurantSmokeFlag" readonly="readonly"/>否
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">保单回溯</label>
+                                <div class="col-sm-7">
+                                     <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: backTrack, value:model.backtrackFlag" ></input> 
+                                </div>
+                            </div>
+                        </div>
+                          <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">出生日期</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled gray
+                                           data-bind="value:model.insurantBirth" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 投保人信息 -->
+        <div class="panel" style="margin-top: 15px;" id="policy">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">投保人信息</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">投保人姓名</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled 
+                                           data-bind="value:model.policyHolderName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">国籍</label>
+                                <div class="col-sm-7">
+                                   <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: nationality, value:model.policyHolderNationality" ></input>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">居住地</label>
+                                <div class="col-sm-7">
+                                     <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: nationality, value:model.policyHolderResidence" ></input>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="policyHolderProvinceInfo" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">居住城市</label>
+                                <div class="col-sm-3">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: province, value:model.province" ></input>       
+                                </div>
+                                <div class="col-sm-4">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: city, value:model.city" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">性别</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="M" data-bind="checked:model.policyHolderGender" readonly="readonly"/>男
+                                    <input type="radio" value="F" data-bind="checked:model.policyHolderGender" readonly="readonly"/>女
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">是否吸烟</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="Y" data-bind="checked:model.policyHolderSmokeFlag" readonly="readonly"/>是
+                                    <input type="radio" value="N" data-bind="checked:model.policyHolderSmokeFlag" readonly="readonly"/>否
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">出生日期</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.policyHolderBirth" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- 产品信息 -->
+        <div class="panel" style="margin-top: 15px;">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">产品信息</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">产品公司</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.name" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">产品</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.itemName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">年期</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.sublineItemName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">缴款方式</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: payMethod, value:model.payMethod" ></input>        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="amountInfo">
+                            <div class="form-group">
+                                <div id="amountLabel"><label class="col-sm-3 control-label">保险总额</label></div>
+                                <div id="premiumLabel" style="display: none"><label class="col-sm-3 control-label">保费</label></div>
+                                <div class="col-sm-3">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.amount" class="k-textbox">
+                                </div>
+                                <div class="col-sm-4">
+                                     <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: currency, value:model.currency" ></input>              
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-sm-12" style="display: none" id="currencyInfo">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">缴费币种</label>
+                                <div class="col-sm-7">
+                                     <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: currency, value:model.currency" ></input>              
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-sm-12" id="securityLevelInfo" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">保障级别</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: securityLevel, value:model.securityLevel" ></input>        
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-sm-12" id="securityAreaInfo" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">保障地区</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: securityArea, value:model.securityArea" ></input>        
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-sm-12" id="selfpayInfo" style="display: none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">自付选项</label>
+                                <div class="col-sm-7">
+                                   <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.selfpay" class="k-textbox">        
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-sm-12" id="additionalRiskFlag">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">添加附加险</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="Y" data-bind="checked:model.additionalRiskFlag" readonly="readonly"/>是
+                                    <input type="radio" value="N" data-bind="checked:model.additionalRiskFlag" readonly="readonly"/>否
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="extractFlag">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">提取金额</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="Y" data-bind="checked:model.extractFlag" readonly="readonly"/>是
+                                    <input type="radio" value="N" data-bind="checked:model.extractFlag" readonly="readonly"/>否
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="advancedMedicalFlag">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">添加高端医疗</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="Y" data-bind="checked:model.advancedMedicalFlag" readonly="readonly"/>是
+                                    <input type="radio" value="N" data-bind="checked:model.advancedMedicalFlag" readonly="readonly"/>否
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+      <!--附加险信息  --> 
+       <div class="panel" style="margin-top: 15px;" id="addRiskPanel">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">附加险信息</strong>
+                    </div>
+                    <div class="row">
+                        <div id="queryAdtRisk"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+       <!--提取信息  --> 
+       <div class="panel" style="margin-top: 15px;" id="extractPanel">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">提取添加</strong>
+                    </div>
+                    <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">提取类型</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="CV" data-bind="checked:model.extractType" readonly="readonly"/>现金价值
+                                    <input type="radio" value="DE" data-bind="checked:model.extractType" readonly="readonly"/>红利提取
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">提取方式</label>
+                                <div class="col-sm-7" style="margin-top: 8px">
+                                    <input type="radio" value="MA" data-bind="checked:model.extractMethod" readonly="readonly"/>最高金额
+                                    <input type="radio" value="FA" data-bind="checked:model.extractMethod" readonly="readonly"/>固定金额
+                                </div>
+                            </div>
+                        </div>
+                        <div id="queryExtract"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!--高端医疗  -->
+        <div class="panel" style="margin-top: 15px;" id="advancedMedicalPanel">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">高端医疗</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">高端医疗产品名称</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.advancedMedicalItemName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">保障级别</label>
+                                <div class="col-sm-7">
+                                     <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: securityLevel, value:model.advancedMedicalSecurityLevel" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">保障地区</label>
+                                <div class="col-sm-7">
+                                    <input name="combobox" data-role="combobox" style="width: 100%;background-color:WhiteSmoke" data-value-primitive="true" 
+                                            data-text-field="meaning" data-value-field="value"  readonly="readonly" 
+                                            data-bind="source: securityArea, value:model.advancedMedicalSecurityArea" ></input>       
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">自付选项</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled
+                                           data-bind="value:model.advancedMedicalSelfpay" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>               
+                    </div>
+                </div>
+            </form>
+        </div>
+       <!--  <div class="col-sm-12">
+           <div class="form-group">
+               <label class="col-sm-3 control-label">其他备注信息</label>
+               <div class="col-sm-7">
+                   <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled 
+                          data-bind="value:model.comments" class="k-textbox">
+               </div>
+           </div>
+       </div>  --> 
+       <div class="panel" style="margin-top: 15px;display: none" id="comments">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">其他备注信息</strong>
+                    </div>
+                    <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">备注信息</label>
+                                <div class="col-sm-7" >
+                                    <input type="text" style="width: 100%;background-color:WhiteSmoke" disabled 
+                          data-bind="value:model.comments" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+       
+</div>
+</div>
+</body>
+	<script type="text/javascript">
+ 	  kendo.bind($('#page-content'), viewModel);
+ 	  
+ 		//查询附加险信息
+ 		$.ajax({
+ 			type : "POST",
+ 			async : false,
+ 			url : "${base.contextPath}/fms/pln/plan/request/queryAdtRisk",
+ 			data : {
+ 				planId : planId
+ 			},
+ 			success : function(json) {
+ 				for(var i=1; i<=json.rows.length; i++){
+ 					if(json.rows[i-1].comments == null){
+ 						$("#queryAdtRisk").append('<div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">附加险'+i+'</label><div class="col-sm-7"><input type="text" style="width: 100%;background-color:WhiteSmoke" disabled value="'+json.rows[i-1].itemName+'" class="k-textbox"></div></div></div><div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">附加险备注'+i+'</label><div class="col-sm-7"><input type="text" style="width: 100%;background-color:WhiteSmoke" disabled  class="k-textbox"></div></div></div>');
+ 					}
+ 					else{
+ 						$("#queryAdtRisk").append('<div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">附加险'+i+'</label><div class="col-sm-7"><input type="text" style="width: 100%;background-color:WhiteSmoke" disabled value="'+json.rows[i-1].itemName+'" class="k-textbox"></div></div></div><div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">附加险备注'+i+'</label><div class="col-sm-7"><input type="text" style="width: 100%;background-color:WhiteSmoke" disabled value="'+json.rows[i-1].comments+'" class="k-textbox"></div></div></div>');
+ 					}
+ 					
+ 				}
+ 			}
+ 	    });
+ 		
+
+ 		//查询提取行信息
+ 		$.ajax({
+ 			type : "POST",
+ 			async : false,
+ 			url : "${base.contextPath}/fms/pln/plan/request/queryExtract",
+ 			data : {
+ 				planId : planId
+ 			},
+ 			success : function(json) {
+ 				for(var i=1; i<=json.rows.length; i++){
+ 					if (flag) {
+ 					$("#queryExtract").append('<div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">提取年份'+i+'：第</label><div class="col-sm-1"><input type="text" style="background-color:WhiteSmoke" disabled class="k-textbox" value="'+json.rows[i-1].yearFrom+'"></div><label class="col-sm-1 control-label" style="padding-left: 20px">年-</label><div class="col-sm-1"><input type="text" style="background-color:WhiteSmoke" disabled class="k-textbox" value="'+json.rows[i-1].yearTo+'"></div><label class="col-sm-1 control-label">年</label><div class="col-sm-2"><input type="text" style="width: 100%;background-color:WhiteSmoke" disabled class="k-textbox" value="'+json.rows[i-1].amount+'"></div></div></div>');
+						
+					} else {
+						$("#queryExtract").append('<div class="col-sm-12"><div class="form-group"><label class="col-sm-3 control-label">提取年份'+i+'：第</label><div class="col-sm-1"><input type="text" style="background-color:WhiteSmoke" disabled class="k-textbox" value="'+json.rows[i-1].yearFrom+'"></div><label class="col-sm-1 control-label" style="padding-left: 20px">年-</label><div class="col-sm-1"><input type="text" style="background-color:WhiteSmoke" disabled class="k-textbox" value="'+json.rows[i-1].yearTo+'"></div><label class="col-sm-1 control-label">年</label><div class="col-sm-2"></div></div></div>');
+					}
+ 				}
+ 			}
+ 	    });
+ 		
+ 		
+ 		$(document).ready(function(){ 
+ 			var policy = document.getElementById("policy");
+ 			var addRiskPanel = document.getElementById("addRiskPanel");
+ 			var advancedMedicalPanel = document.getElementById("advancedMedicalPanel");
+ 			var extractPanel = document.getElementById("extractPanel");
+ 			var insurantProvinceInfo = document.getElementById("insurantProvinceInfo");
+ 			var policyHolderProvinceInfo = document.getElementById("policyHolderProvinceInfo");
+ 			var advancedMedicalFlag = document.getElementById("advancedMedicalFlag");
+ 			var extractFlag = document.getElementById("extractFlag");
+ 			var additionalRiskFlag = document.getElementById("additionalRiskFlag");
+ 			var selfpayInfo = document.getElementById("selfpayInfo");
+ 			var securityAreaInfo = document.getElementById("securityAreaInfo");
+ 			var securityLevelInfo = document.getElementById("securityLevelInfo");
+ 			var currencyInfo = document.getElementById("currencyInfo");
+ 			var amountInfo = document.getElementById("amountInfo");
+ 			var premiumLabel = document.getElementById("premiumLabel");
+ 			var amountLabel = document.getElementById("amountLabel");
+ 			var comments = document.getElementById("comments");
+ 			//判断金额类型
+ 			if(viewModel.model.amountType != "IC")
+ 	 	    {
+ 				amountLabel.style.display = "none";
+ 				premiumLabel.style.display = "block";
+ 	 	    }
+ 			/* //判断宏利公司
+ 			if(viewModel.model.name.indexOf("宏利")>=0)
+ 	 	    {
+ 				amountLabel.style.display = "block";
+ 				premiumLabel.style.display = "none";
+ 	 	    } */
+ 	 	    //判断投保人和受保人是否一致
+ 			if(viewModel.model.policyInsurantSameFlag == "N")
+ 	 	    {
+ 	 	    	policy.style.display = "none";
+ 	 	    }
+ 	 	    //判断是否是大额保单
+ 	 	    if(viewModel.model.midClass == "WYSX")
+ 	 	    {
+ 	 	    	insurantProvinceInfo.style.display = "block";
+ 	 	    	policyHolderProvinceInfo.style.display = "block";
+ 	 	    	advancedMedicalFlag.style.display = "none";
+ 	 	    	extractFlag.style.display = "none";
+ 	 	    	additionalRiskFlag.style.display = "none";
+ 	 	    }
+ 	 	    
+ 	 	    //判断是否是高端医疗
+ 	 	    if(viewModel.model.minClass == "GD")
+ 	 	    {
+ 	 	    	selfpayInfo.style.display = "block";
+ 	 	    	securityAreaInfo.style.display = "block";
+ 	 	    	securityLevelInfo.style.display = "block";
+ 	 	    	advancedMedicalFlag.style.display = "none";
+ 	 	    	extractFlag.style.display = "none";
+ 	 	    	additionalRiskFlag.style.display = "none";
+ 	 	    	amountInfo.style.display = "none";
+ 	 	    	currencyInfo.style.display = "block";
+ 	 	    }
+ 	 	   
+ 	 	    //判断高端医疗信息
+ 	 	    if(viewModel.model.advancedMedicalFlag == "N" || viewModel.model.advancedMedicalFlag =="")
+	 	    {
+ 	 	    	advancedMedicalPanel.style.display = "none";
+	 	    }
+ 	 	    //判断提取行信息
+ 	 	    if(viewModel.model.extractFlag == "N" || viewModel.model.advancedMedicalFlag =="")
+	 	    {
+ 	 	    	extractPanel.style.display = "none";
+	 	    }
+ 	 	    //判断附加险信息
+ 	 	    if(viewModel.model.additionalRiskFlag == "N" || viewModel.model.advancedMedicalFlag =="")
+	 	    {
+ 	 	    	addRiskPanel.style.display = "none";
+	 	    }
+ 	 	    //判断附加险信息提取行信息高端医疗信息   存在则显示其它备注信息
+ 	 	    if(viewModel.model.additionalRiskFlag == "Y" || viewModel.model.extractFlag == "Y" ||viewModel.model.advancedMedicalFlag == "Y" )
+	 	    {
+ 	 	    	comments.style.display = "block";
+	 	    }
+ 		}); 
+ 		
+ 		
+    </script>
+</html>

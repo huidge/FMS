@@ -1,0 +1,285 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?years=FET.PERIOD_YEAR" type="text/javascript"></script>
+<script type="text/javascript">
+var headId = '${RequestParameters.headId!0}';
+
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+       /*  saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        }, */
+          queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        } 
+    });
+</script>
+<body>
+
+
+<div class="pull-center" id="query-form" style="padding-bottom:8px;">
+    	<div class="panel-body" >
+             <div class="form-group">
+                 <div class="col-sm-12">
+                 	<label class="control-label">财务年度:</label>
+                     <input type="text" id="year" 
+                    		style="width:120px;" data-bind="value:model.year">
+                 </div>
+             </div>
+	        </div>
+    </div>
+    <script>kendo.bind($('#query-form'), viewModel);</script>
+
+<div id="page-content">
+    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus" style="margin-right:3px;"></i>新建记录</span>
+        <span class="btn btn-success k-grid-save-changes" onclick = "saveDatas()" style="float:left;margin-right:5px;"><i class="fa   fa-save" style="margin-right:3px;"></i>保存记录</span>
+        <span class="btn btn-danger k-grid-danger" onclick="deleteData()" style="float:left;margin-right:5px;"><i class="fa fa-trash-o" style="margin-right:3px;"></i>删除记录</span>
+        <!-- <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span> -->
+    </div>
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+   
+   
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+	var year;
+	 function saveDatas(){
+	    	year = $("#year").val().trim();
+	    	if(year == '' ||year == null){
+	    		kendo.ui.showInfoDialog({
+	                title:$l('hap.tip.info'),
+	                message:'亲!财务年度要选择!'
+	            });
+	    	}else{
+	    		if(dataSource.total() < 12){
+	    			kendo.ui.showInfoDialog({
+		                title:$l('hap.tip.info'),
+		                message:'亲!请填写至少12个月的数据!'
+		            });
+	    		}else{
+	    			$('#Grid').data('kendoGrid').saveChanges();
+	    		}   
+	    	}
+	    }
+
+   $("#year").kendoDropDownList({
+        optionLabel: "-请选择年度-",
+       /* filter: "contains",  */
+       dataTextField: "meaning",
+       dataValueField: "value",
+       valuePrimitive: true,
+       dataSource: years
+   });
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+              read: {
+                url: BaseUrl + "/fms/fet/period/queryEmpty",
+                type: "POST",
+                dataType: "json"
+            },  
+             update: {
+                url: BaseUrl + "/fms/fet/period/submit",
+                type: "POST",
+                contentType: "application/json"
+            }, 
+            destroy: {
+                url: BaseUrl + "/fms/fet/period/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/fet/period/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                	for (var i = 0; i < options.models.length; i++) {
+                		options.models[i].year = year;	
+					}
+                	options.models[0].year = year;
+                    var datas = Hap.prepareSubmitParameter(options, type);
+                    return kendo.stringify(datas);
+                }   else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }  
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "periodId",
+                fields: {
+                	headId:{defaultValue:headId},
+                	startDate:{type: "date",defaultValue:new Date()},
+                	endDate:{type: "date",defaultValue:new Date()},
+                	year:{},
+                	statusCode:{defaultValue:'FUTURE'},
+                	adjustFlag:{type: 'boolean', checkedValue: '1', uncheckedValue: '0',defaultValue:'0'},
+                	quarter:{type: 'number',defaultValue:'1'},
+                	periodName:{
+                		/* validation: {
+                			checkInputValue: function (input) {
+                                var periodName = $("input[name='periodName']").val().trim();
+								
+								var reg = /^[12]\d{3}-(01|02|03|04|05|06|07|08|09|10|11|12|13)$/;
+								if(periodName.length != 7){
+									input.attr("data-checkInputValue-msg", "长度不符合要求");
+									return false;
+								}
+								var r = periodName.match(reg);
+                                if(r == null){
+                                    input.attr("data-checkInputValue-msg", "格式不正确,格式为YYYY-MM");
+                                    return false;
+                                }
+                                 return true;
+                            }
+                        } */
+                	}
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: false,
+        columns: [
+            {
+                field: "periodId",
+                title: 'periodId',
+                width: 120,
+                hidden:true
+            },
+            {
+                field: "headId",
+                title: 'headId',
+                width: 120,
+                hidden:true
+            },
+                    {
+                field: "periodName",
+                title: '期间名称',
+                width: 100,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                }
+            },
+                    {
+                field: "quarter",
+                title: '季度',
+                width: 60,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                },
+                editor: function (container, options) {
+               	 $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoNumericTextBox({
+                            	max:4,
+                               min:1,
+                               step:1
+                            });
+                }
+            },
+                    {
+                field: "startDate",
+                title: '起始日期',
+                width: 120,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                },
+                editor: function(container, options) {
+                	//获得到期时间
+               	  	var end = options.model.endDate;
+               	  	var opts={
+                   		format:"yyyy-MM-dd"
+                    }
+               	  	if(end){
+               		  	opts.max=end;
+               	  	}
+           		  	$('<input name="' + options.field + '" required />')
+                      .appendTo(container)
+                      .kendoDatePicker(opts);
+                }
+            },
+                    {
+                field: "endDate",
+                title: '终止日期',
+                width: 120,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                },
+                editor: function(container, options) {
+                	//获得开始时间
+             	    var start = options.model.startDate;
+             	    var opts={
+                   	  	format:"yyyy-MM-dd"
+                    }
+             	    //设置min属性 限制最小的可选日期
+               	  	if(start){
+               		  	opts.min=start;
+               	  	}
+           		  	$('<input name="' + options.field + '"/>')
+                      .appendTo(container)
+                      .kendoDatePicker(opts);
+                }
+            },
+             {
+                field: "year",
+                title: '年度',
+                hidden:true
+              },
+             {
+                field: "statusCode",
+                title: '状态',
+                hidden:true
+              },
+                    {
+                field: "adjustFlag",
+                title: '调整',
+                width: 80,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                }
+                
+            },
+        ],
+        editable: true
+    });
+
+   function deleteData() {
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+    } 
+   // Hap.autoResizeGrid("#Grid");
+
+</script>
+</body>
+</html>

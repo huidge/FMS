@@ -1,0 +1,255 @@
+<#--
+ * description: 订单查看Pending
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?pendingStatusData=ORD.PENDING_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?applyClassData=ORD.APPLY_CLASS" type="text/javascript"></script>
+<script type="text/javascript">
+
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+    if(orderId !=-1) {
+        viewModel.model.set("orderId",orderId);
+    }
+
+</script>
+<body>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="penGrid"></div>
+    </div>
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}";
+    penDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/pending/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/pending/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/pending/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/pending/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    var model = viewModel.model.toJSON();
+                    var map = {};
+
+                    if(model.orderId){
+                        map.orderId = model.orderId;
+                    }
+                    return map;
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "pendingId",
+                fields: {
+                    dealEndDate : {type : "date"}
+                }
+            }
+        }
+    });
+
+    var penGrid = $("#penGrid").kendoGrid({
+        dataSource: penDataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+//        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "pendingNumber",
+                title: '<@spring.message "fms.OrdPending.pendingNumber"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "policyNumber",
+                title: '<@spring.message "fms.OrdOrder.policyNumber"/>',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "orderInfo",
+                title: '<@spring.message "fms.OrdPending.orderInfo"/>',
+                width: 150,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "channelName",
+                title: '<@spring.message "fms.OrdOrder.channelName"/>',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "template",
+                title: '<@spring.message "fms.OrdPending.template"/>',
+                width: 200,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.applyClassCode;
+                    $.each(applyClassData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v + "-" + dataItem.applyItem;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v + "-" + dataItem.applyItem;
+                },
+            },
+            {
+                field: "lud",
+                title: '<@spring.message "fms.OrdPending.lastUpdateDate"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "dealEndDate",
+                title: '<@spring.message "fms.OrdPending.dealEndDate"/>',
+                width: 80,
+                format: "{0: yyyy-MM-dd}",
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "dealPersonName",
+                title: '<@spring.message "fms.OrdPending.dealPerson"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "status",
+                title: '<@spring.message "fms.OrdOrder.status"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.status;
+                    $.each(pendingStatusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.pendingId) {
+                        return '<a href="#"  onclick="openFollowWin('+dataItem.pendingId+',\''+dataItem.pendingNumber+'\')"><@spring.message "fms.OrdPending.follow"/></a>';
+                    } else {
+                        return '<a href="#"><@spring.message "fms.OrdPending.follow"/></a>';
+                    }
+                }
+            }
+        ],
+        editable: false
+    }).data("kendoGrid");
+
+    function openFollowWin(pendingId,pendingNumber) {
+        if (pendingId != null) {
+            parent.openTab("order_pending_create" + pendingId,'<@spring.message "fms.ordpending.pending"/>' + " (" + '<@spring.message "fms.ordpending.pendingnumber"/>' + ":" + pendingNumber + ")","order/order_pending_create.html?pendingId="+pendingId)
+        }
+    }
+
+    Hap.autoResizeGrid("#penGrid");
+
+
+</script>
+</body>
+</html>

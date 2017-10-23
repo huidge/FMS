@@ -1,0 +1,1643 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?courseSupplier=COURSE.SUPPLIER_ID" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?productClass=PRD.PRODUCT_CLASS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?courseDuration=COURSE.CORUSE_DURATION" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?pubCity=PUB.CITY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?coruseStatus=CORUSE.COURSE_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?coruseBoutiqueVideo=CORUSE.BOUTIQUE_VIDEO" type="text/javascript"></script>
+
+<script src="${base.contextPath}/clb/common/clbCode?courseType=CORUSE.COURSE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?trainingMethod=COURSE.TRAINING_METHOD" type="text/javascript"></script>
+<script src="../lib/clb/js/clb.kendo.editor.js"></script>
+<script type="text/javascript">
+    var courseId = 0;
+    var courseFileIdList = [];
+    var prdDivisionData;
+    var prdClassData;
+    var viewModel = kendo.observable({
+        model: {
+        	prdDivisionData:prdDivisionData,
+        	prdClassData:prdClassData,
+        },
+        preview : function(){
+        	previewData();
+        },
+        save: function(){
+        	console.log(viewModel.model);
+	    	if(document.getElementById("appFlag").checked){
+	    		viewModel.model.appFlag = "Y" ;
+	    		if(viewModel.model.fileId == null || typeof(viewModel.model.fileId) == "undefined"){
+	    			 kendo.ui.showConfirmDialog({
+	    	                message: '请上传图片'
+	    	         });
+	    			 return;
+	    		}
+	    	}else{
+	    		viewModel.model.appFlag = "N" ; 
+	    	}
+	    	if(document.getElementById("wechatFlag").checked){
+	    		viewModel.model.wechatFlag = "Y" ;
+	    	}else{
+	    		viewModel.model.wechatFlag = "N" ;  
+	    	}
+	    	if(document.getElementById("pcFlag").checked){
+	    		viewModel.model.pcFlag = "Y" ;
+	    	}else{
+	    		viewModel.model.pcFlag = "N" ;  
+	    	}
+	    	var validator = $("#mainform").data("kendoValidator");
+			if (validator.validate()) {
+		        	if(viewModel.model.boutiqueVideo=="Y"){
+			    		if(!viewModel.model.boutiqueUrl){
+			    			kendo.ui.showConfirmDialog({
+		    	                message: '视频观看地址不能为空'
+		    	         	});
+			    			return;
+			    		}else{
+			    			boutiqueUrl = viewModel.model.boutiqueUrl;
+			    			if(boutiqueUrl.substr(0,7) == "http://" || boutiqueUrl.substr(0,8) == "https://"){
+							}else{
+								kendo.ui.showInfoDialog({
+			    	                message: '视频观看地址需以 http:// 或 https:// 开头'
+			    	         	});
+								return;
+							};
+			    		}
+		        	}
+			    	if(!viewModel.model.prdDivision){
+			    		kendo.ui.showErrorDialog({
+							message : "产品大分类不能为空"
+						});
+			    		return;
+			    	}
+					console.log(viewModel.model);
+					viewModel.model.set("status", "UNPUBLISHED");
+						 Hap.submitForm({
+							url : '${base.contextPath}/fms/trn/course/add',
+							formModel : viewModel.model,
+							asArray : false,
+							success : function(data) {
+								if (data.success) {
+									console.log(data.rows[0].courseId);
+									if(data.rows[0].courseId){
+										//debugger;
+										console.log(courseFileIdList);
+										if(courseFileIdList.length>0){
+											//courseFileId = "0";
+											courseId = data.rows[0].courseId;
+											$.ajax({
+							                    type: "POST",
+							                    url: "${base.contextPath}/fms/trn/course/file/courseSubmit",
+							                    data: {"courseId":courseId,"courseFileIdList":courseFileIdList},
+							                    dataType: "json",
+							                    success: function(json){
+							                   		console.log(json);
+							                    }
+							                })  
+										}
+								        //$('#Grid').data('kendoGrid').saveChanges();
+									};
+									kendo.ui.showInfoDialog({
+			                             title: $l('hap.tip.info'),
+			                             message: $l('保存成功')
+			                         }).done(function (event) {
+			                             if (event.button == 'OK') {
+			                            	 parent.openTab('course'+0,'<@spring.message "fms.course.list"/>' , '${base.contextPath}/course/trn_course.html?courseId='+0);
+			                            	 window.location.reload();
+			                            	//parent.openTab('QUESTION_EDIT'+0,'问题维护' , '${base.contextPath}/question/query_edit.html?questionId='+0);
+			                     			//parent.openTab('QUESTION_EDIT'+questionId,'问题维护' , '${base.contextPath}/question/query_edit.html?questionId='+questionId);
+			                            }
+			                         });
+								} else {
+									kendo.ui.showErrorDialog({
+										message : "失败"
+									});
+								}
+							}
+			       }); 
+			}
+		},
+        resetForm: function (e) {
+            var formDate = viewModel.model.toJSON();
+            for (var k in formDate) {
+                viewModel.model.set(k, undefined);
+            }
+        },
+    });
+    
+    /* var courseIdList = [];
+    $.ajax({
+        type: "POST",
+        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+        url: "${base.contextPath}/fms/trn/course/queryId",
+        //data: {},
+        success: function (json) {
+        	console.log(json);
+        	  for(var i=0;i<json.rows.length;i++){
+        		  //console.log(json.rows.length);
+        		  courseIdList.push(json.rows[i].courseId);
+			  }
+       		  var max = courseIdList[0];
+       		  for(var x=1; x<courseIdList.length; x++) {
+	       		  if(courseIdList[x] > max) {
+	       		  max = courseIdList[x];
+	       		  }
+       		  }
+       		courseId = max+1;
+       		viewModel.model.set("courseId", max+1);
+        }
+    }); */
+    
+    var newViewModel = kendo.observable({
+        model: {
+        	/* courseId: '${RequestParameters.courseId!0}',  */
+        },
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+        	console.log("文件保存");
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+    function createFunction() {
+        $('#Grid').data('kendoGrid').addRow();
+    };
+    function saveFunction() {
+        $('#Grid').data('kendoGrid').saveChanges();
+    };
+    console.log(newViewModel.model);
+    
+  	/* //产品大分类
+    $.ajax({
+    	type:"POST",
+    	url:"${base.contextPath}/clb/common/lov/PRD_DIVISION",
+    	data:{"statusCode":"Y"},
+    	success: function(e) {
+    		prdDivisionData = e.rows;
+    		viewModel.set("prdDivisionData", prdDivisionData);
+    	}
+    }); */
+    
+/*     window.onload=function(){
+    	$("#courseDate").attr("readonly","readonly");
+    }; */
+    	
+    	 
+
+</script>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+<div id="dialog"></div>
+<div id="page-content">
+	<div class="panel panel-default">
+    	<div id="query-form" >
+    		<form id="mainform" class="form-horizontal" ">
+                    <div class="panel-body">
+                        <div style="margin-top:30px;margin-bottom: 7px;display:none" id = "previewId1" >
+                            <div class="col-xs-9">
+                                <div class="col-xs-12" style="margin-top: 20px">
+	                                <div class="form-group">
+	                                    <label id = "topic2" style="text-align: left;font-size: 40px;color: #000000" ></label>
+	                                </div>
+	                            </div>
+                                <div class="col-xs-12" style="margin-top: 20px">
+	                                <div class="form-group" >
+	                                	<i class="fa fa-clock-o fa-2x"  aria-hidden="true" style="color: #FFDAB9"></i>
+	                                    <label style="text-align: left">&nbsp课程时间：</label>
+	                                    <label id = "courseDate2" style="text-align: left"></label>
+	                                </div>
+	                            </div>
+                                <div class="col-xs-12" style="margin-top: 10px">
+	                                <div class="form-group" >
+	                                	<i class="fa fa-book fa-2x"  aria-hidden="true" style="color: #FFDAB9"></i>
+	                                    <label style="text-align: left">&nbsp培训方式：</label>
+	                                    <label id = "trainingMethod2" style="text-align: left"></label>
+	                                </div>
+	                            </div>
+                                <div class="col-xs-12" style="margin-top: 10px">
+	                                <div class="form-group" >
+	                                	<i class="fa fa-user fa-2x"  aria-hidden="true" style="color: #FFDAB9"></i>&nbsp
+	                                    <label style="text-align: left">&nbsp培训地址：</label>
+	                                    <label id = "address2" style="text-align: left"></label>
+	                                </div>
+	                            </div>
+                                <div class="col-xs-12" style="margin-top: 10px">
+	                                <div class="form-group" >
+	                                	<i class="fa fa-microphone fa-2x"  aria-hidden="true" style="color: #FFDAB9"></i>&nbsp&nbsp
+	                                    <label style="text-align: left;background-color: #FFDAB9">&nbsp&nbsp&nbsp点我看视频&nbsp&nbsp&nbsp</label>
+	                                    <label style="text-align: left"> &nbsp直播密码：</label>
+	                                    <label id = "password2" style="text-align: left"></label>
+	                                </div>
+	                            </div>
+                                <div class="col-xs-12" style="margin-botton: 20px">
+	                                <div class="form-group" >
+	                                 <label style="text-align: left;color: #C0C0C0">&nbsp&nbsp&nbsp&nbsp&nbsp温馨提示：仅签约渠道可查看精品视频及下载资料</label>
+	                                </div>
+	                            </div>
+                            </div>
+                            
+                            
+                            <div class="col-sm-3"  >
+                           		<hr size=150 width="1" color="#999999">
+                               	<div class="form-group" style="text-align: center">
+                                    <label style="margin-top: 10px;font-size: 22px">￥0.00</label><br>
+                                    <label style="margin-top: 10px;width:130px;background-color: #FFDAB9">查看报名信息</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <HR id="previewId2" style="FILTER: alpha(opacity=100,finishopacity=1,style=18);margin-top: 30px;display: none" width="100%" color=#D3D3D3 SIZE=18>
+                        
+                        
+                        
+                        <div id="studentDiv1" class="col-xs-12" >
+                            <div class="col-xs-12" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 课程主题：</label>
+                                    <div class="col-xs-8" style="">
+                                    	<input id="topic" data-role="maskedtextbox" type="text" required style="width: 100%"  data-bind="value:model.topic" class="k-textbox">
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="studentDiv2" class="col-xs-12" >
+							<div class="col-xs-6" style="margin-top:3px">
+                                <div class="form-group">
+                                	<label class="col-xs-4 control-label"
+                                           style="text-align: right">  课程时间：</label>
+                                    <div class="col-xs-6">
+                             		 		<input type="text" required id = "courseDate" style="width: 100%" data-role="datetimepicker"
+			                                           data-bind="value:model.courseDate" class="k-datetimepicker" placeholder="-请选择日期-" onmousedown="return false"  style="color:gray">
+			                                <script>
+		                                     	$("#courseDate").kendoDateTimePicker({
+		                                         	format: "yyyy-MM-dd HH:mm:ss",
+		                                     	});
+		                                         	/* var datetimepicker = $("#courseDate").data("kendoDateTimePicker");
+		                                         	datetimepicker.readonly(); */
+                             		 		</script>           
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 时长：</label>
+                                    <div class="col-xs-6">
+                                    	<input required style="width:100%" name="duration" id="duration" data-bind="value:model.duration" >
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentDiv3" class="col-xs-12" >
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"> 课程类型：</label>
+                                    <div class="col-xs-6">
+                                    	<input required style="width:100%" name="type" id="type" data-bind="value:model.type" >
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+							<div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 培训方式：</label>
+                                    <div class="col-xs-6">
+                                    	<input required style="width:100%" name="trainingMethod" id="trainingMethod" data-bind="value:model.trainingMethod" >
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div id="studentDiv4" class="col-xs-12" >
+                            <div class="col-xs-6" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"> 产品大分类：</label>
+                                    <div class="col-xs-6">
+	                                    <input type="text" style="width: 100%"
+	                                           data-text-field="meaning" data-value-field="value" data-value-primitive="true"
+	                                           data-bind="source:prdDivisionData,value:model.prdDivision" id="bigClass" >
+                                    	<!-- <select data-role="combobox" id="sel" data-value-primitive="true"  onchange="A(this)"
+											data-text-field="meaning" data-value-field="value" style="width:100%;"
+											data-bind="source:prdDivisionData, value:model.prdDivision"></select>
+											<script>
+									            var sel = document.getElementById('sel');
+									            //sel.value = 2;
+									            sel.addEventListener("change", A(sel), false);
+									            var prdDivision;
+									            function A(obj)
+									            {
+									                console.log(obj.value);
+									                prdDivision = obj.value;
+									                if(prdDivision){
+									                	viewModel.model.prdDivision = prdDivision;
+									                }
+									                if(viewModel.model.prdDivision){
+											            //产品中分类
+											            $.ajax({
+											            	type:"POST",
+											            	url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+											            	data:{"statusCode":"Y","className1":prdDivision},
+											            	success: function(e) {
+											            		prdClassData = e.rows;
+											            		viewModel.set("prdClassData", prdClassData);
+											            	}
+											            }); 
+											           	console.log(viewModel);
+									                }
+									            }
+									        </script> -->
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+							<div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 产品中分类：</label>
+                                    <div class="col-xs-6">
+                                    	<!-- <select data-role="combobox" data-value-primitive="true" id="prdClassData" 
+												data-text-field="meaning" data-value-field="value" style="width:100%;"
+												data-bind="source:prdClassData, value:model.prdClass"></select> -->
+										<input type="text" style="width: 100%"
+	                                           data-text-field="meaning" data-value-field="value" data-value-primitive="true"
+	                                           data-bind="source:prdClassData,value:model.prdClass" id="midClass" >
+                                        <script type="text/javascript">
+		                                        //产品大分类
+		                                        $.ajax({
+		                                        	type:"POST",
+		                                        	url:"${base.contextPath}/clb/common/lov/PRD_DIVISION",
+		                                        	contentType:"application/json",
+		                                        	data:{"statusCode":"Y"},
+		                                        	success: function(e) {
+		                                        		prdDivisionData = e.rows;
+		                                        		viewModel.set("prdDivisionData", prdDivisionData);
+		                                        	}
+		                                        });
+		                                        $("#bigClass").kendoDropDownList({
+		                                            dataTextField: "meaning",
+		                                            dataValueField: "value",
+		                                            dataSource: prdDivisionData,
+		                                            select:function(e){
+		                                                //产品中分类
+		                                                $.ajax({
+		                                                    type:"POST",
+		                                                    async:false,
+		                                                    url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+		                                                    contentType:"application/x-www-form-urlencoded",
+		                                                    data:{"statusCode":"Y","className1":e.dataItem.value},
+		                                                    success: function(e) {
+		                                                    	prdClassData = e.rows;
+		                                                        viewModel.set("prdClassData", prdClassData);
+		                                                    }
+		                                                });
+		                                            }
+		                                        });
+		                                        //产品中分类
+		                                        $.ajax({
+		                                            type:"POST",
+		                                            url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+		                                            contentType:"application/json",
+		                                            data:{"statusCode":"Y"},
+		                                            success: function(e) {
+		                                            	prdClassData = e.rows;
+		                                                viewModel.set("prdClassData", prdClassData);
+		                                            }
+		                                        });
+		                                        $("#midClass").kendoDropDownList({
+		                                            dataTextField: "meaning",
+		                                            dataValueField: "value",
+		                                            dataSource: prdClassData,
+		                                        });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentDiv5" class="col-xs-12" >
+                            <div class="col-xs-6" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">培训讲师：</label>
+                                    <div class="col-xs-6">
+                                    	<input id="lecturer" data-role="maskedtextbox" required type="text" style="width: 100%"  data-bind="value:model.lecturer" class="k-textbox">
+                                    </div>
+                                    <label class="col-xs-2 control-label"
+                                           style="padding-left:0px;margin-left:0px;text-align: left">(必输)</label>
+                                </div>
+                            </div>
+							<div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right">价格：</label>
+                                    <div class="col-xs-6">
+                                    	<input id="price" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.price" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentDiv6" class="col-xs-12" >
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"> 城市：</label>
+                                    <!-- <div class="col-xs-6">
+                                    	 <input style="width:100%" name="city" id="city" data-bind="value:model.city" >
+                                    </div> -->
+                                   	<div class="col-xs-3">
+                                       	<input id="province" name="province" type="text" data-bind="value:model.province" style="width: 100%;">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <input id="city" name="city" type="text" data-bind="value:model.city" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 产品公司：</label>
+                                    <div class="col-xs-6">
+                                    	<!-- <input required style="width:100%" name="supplierId" id="supplierId" data-bind="value:model.supplierId" > -->
+                                    	<input type="text" style="width: 100%" name="supplierId"
+	                                           data-bind="value:model.supplierId" id="supplierId" >
+	                                    <script>
+	                                        $("#supplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_SUPPLIER_NAME")}, {
+	                                            query: function (e) {}
+	                                        }));
+	                                    </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentDiv7" class="col-xs-12" >
+                            <div class="col-xs-12" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right">具体地址：</label>
+                                    <div class="col-xs-8">
+                                    	<input id="address" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.address" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="studentDiv8" class="col-xs-12" >
+                            <div class="col-xs-6" >
+                               	<div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">直播链接：</label>
+                                    <div class="col-xs-6">
+                                    	<input id="url" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.url" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+							<div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right">链接密码：</label>
+                                    <div class="col-xs-6">
+                                    	<input id="password" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.password" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="studentDiv13" class="col-xs-12" style="margin-top: 20px">
+                        	<div class="col-xs-6" >
+                               	<div class="form-group">
+				                    <label class="col-xs-4 control-label" style="text-align: right">发布管理：</label>
+				                </div>
+                            </div>
+			            </div>
+                        <div id="studentDiv9" class="col-xs-12" >
+                        	<div class="col-xs-6" >
+                        		<div class="form-group" >
+                                    <label class="col-xs-4 control-label" style="text-align: right"> PC平台&nbsp&nbsp&nbsp</label>
+                                    <div class="col-xs-3" style="">
+                                    	<input type="checkbox" id="pcFlag" class="chkbx" style="margin-top:8px"  name="pcFlag" data-bind="checked:model.pcFlag" >
+                                    </div>
+                                    <div class="col-xs-3" style="text-align: right">
+                                    	<div class="form-group">
+					                    <label class="col-xs-8 control-label" style="margin-bottom:10px;margin-right: 6px;">微信公众号&nbsp&nbsp</label>
+				                        <input class="col-xs-3" type="checkbox" id="wechatFlag" class="chkbx" style="margin-top:8px;"  name="wechatFlag" data-bind="checked:model.wechatFlag" >
+				                        </div>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="col-xs-6" >
+                                <div class="form-group" >
+				                    <label class="col-xs-2 control-label" style="text-align: right;">APP&nbsp&nbsp&nbsp</label>
+				                    <div class="col-xs-1" style="margin-right: 0px;padding-right: 0px">
+				                        <input type="checkbox" id="appFlag" class="chkbx" style="margin-top:8px" onclick="appCheck()" name="webchatFlag" data-bind="checked:model.appFlag" >
+				                    </div>
+				                    <div class="col-xs-6" style="text-align: left;margin-left: 0px;padding-left: 0px">
+					                    <label >视频费用</label>
+					                    	<input id="appPrice" data-role="maskedtextbox" type="text" onclick="changeValue()" style="width: 80px;margin-left: 5px;margin-right: 15px"  data-bind="value:model.appPrice" class="k-textbox">
+					                    <label >课程费用</label>
+					                    	<input id="coursePrice" data-role="maskedtextbox" type="text" onclick="changeValue()" style="width: 80px;margin-left: 5px;margin-right: 5px"  data-bind="value:model.coursePrice" class="k-textbox">
+				                    </div>
+                                </div>
+                            </div>
+			            </div>
+			            
+                        <div id="studentDiv10" class="col-xs-12" style="margin-top: 15px">
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"> 精品视频：</label>
+                                    <div class="col-xs-6">
+                                    	<input style="width:100%" name="boutiqueVideo" id="boutiqueVideo" data-bind="value:model.boutiqueVideo" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-2 control-label"
+                                           style="text-align: right"> 视频观看地址：</label>
+                                    <div class="col-xs-6">
+                                    	<input style="width:100%" name="boutiqueUrl" id="boutiqueUrl" data-bind="value:model.boutiqueUrl" data-role="maskedtextbox" class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+			            <div id="studentDiv11" class="col-xs-12" style="margin-top: 10px">
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"> 封面图片：</label>
+                                    <!-- 图片预览的窗口 -->
+									<div class="col-xs-3" id="picture" onclick="updateIfShow()"><img src="" width="540" height="200" id="img" /></div>
+                                   <!--  <div class="col-xs-3" style="text-align:center;margin-bottom:10px;margin-top:20px;width:250px" >
+		                                <div id="updatePicture" style="display: none"><a style="text-decoration:underline" href="javascript:void(0)" onclick="addImageTextUpload()">添加图片</a></div>
+                                    </div>
+                                    <div  class="col-xs-3" style="text-align:center;margin-top: 5px;">
+		                                 <label id="label" ></label>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+			            <div id="studentDiv12" class="col-sm-12" style="margin-bottom:20px;margin-left:12%;width:76%">
+                            <div class="col-xs-6" >
+                                <div class="form-group" >
+                                    <!-- 图片预览的窗口 -->
+                                    <div class="form-group">
+                                		<label class="col-sm-12 control-label" style="text-align: center" >图片尺寸要求:1080*400像素</label>
+                           			 </div>
+                                    
+                                    <div class="col-sm-12" style="text-align: center" >
+		                                <div id="updatePicture" style="display:none"><a style="text-decoration:underline" href="javascript:void(0)" onclick="addImageTextUpload()">添加图片</a></div>
+                                    </div>
+                                    <div class="col-sm-12" style="text-align: center">
+		                                 <label id="label1" ></label>
+                                    </div>
+                                    <div class="col-sm-12" style="text-align: center">
+		                                 <label id="label" ></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="courseEditorDiv" class="col-sm-12" style="margin-bottom:20px;margin-left:12%;width:76%">
+                            <div class="form-group">
+                                <label class="col-sm-12 control-label" style="text-align: left">课程简介</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <textarea id="courseEditor" readonly
+                                               data-bind="value:model.courseIntroduction" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    	<HR id="previewId3" style="FILTER: alpha(opacity=100,finishopacity=1,style=18);margin-top: 30px;display: none" width="100%" color=#D3D3D3 SIZE=18>
+                        
+                        <div id="lecturerEditorDiv" class="col-sm-12" style="margin-bottom:20px;margin-left:12%;width:76%">
+                            <div class="form-group">
+                                <label class="col-sm-12 control-label" style="text-align: left">讲师简介</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <textarea id="lecturerEditor" readonly
+                                               data-bind="value:model.lecturerIntroduction" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="previewId4" class="col-sm-12" style="margin-bottom: 1px;display: none">
+                            <div class="form-group">
+                                <span>&nbsp&nbsp&nbsp</span><a style="text-decoration:underline" href="javascript:void(0)" onclick="addAttachment2()">培训资料下载</a>
+                            </div>
+                            <div class="form-group" style="text-align: right">
+                                <span class="btn btn-default" type="button" onclick="quxiaoyulan()">取消预览</span>
+                            </div>
+                        </div>
+                </form>
+                 <div id="studentDiv12" class="col-sm-12" >
+                     <div class="form-group">
+                         <div class="col-sm-4">
+                         </div>
+                         <div class="col-sm-8">   
+		                    <span style="float:right;margin-right:195px;" class="btn btn-success" onclick="updataReleaseStatus()"><i class="fa fa-bullhorn" style="margin-right:3px;"></i><@spring.message "发布"/></span>
+		    	      		<span class="btn btn-default" style="float:right;margin-right:8px;" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" ></i><@spring.message "hap.reset"/></span>
+		    	      		<span class="btn btn-success" style="float:right;margin-right:8px;" id="saveGrid"  data-bind="click:save" type="submit">保存</span>
+		                    <span class="btn btn-success" style="float:right;margin-right:8px;" id="preview"  onclick="previewData2()" type="button">预览</span>
+		                    <div class="col-xs-4">
+		                    <div style="clear:both"></div>
+		                    </div>
+                         </div>
+                     </div>
+                 </div>
+				<div id="quxiaoAttachment2" style="text-align: right;display: none">
+					<span class="btn btn-default" type="button" onclick="quxiaoAttachment2()"><i class="fa fa-reply" style="margin-right:5px;"></i>取消</span>
+				</div>
+		    <script>kendo.bind($('#query-form'), viewModel);</script>
+		    <!-- <div style="clear:both">
+		        <div id="Grid"></div>
+		    </div> -->
+    	</div>
+    </div>
+</div>
+<div id="classSetManageWin"></div>
+<div id="content-container1">
+	<div id="page-content1">
+		<div class="panel1" >
+			<form class="form-horizontal1" >
+			    <div >
+			        <div id="Grid"></div>
+			    </div>
+			    <div id="fileWin" style="display: none;">
+			         <input type="file" id="files" name="files"></input>
+			    </div>
+			    <iframe id="ifile" style="display:none"></iframe>
+				     <div id="fileWinCompany" style="display: none;">
+				         <input type="file" id="filesCompany" name="filesCompany"></input>
+				    </div>
+			    <iframe id="ifileCompany" style="display:none"></iframe>
+    		</form>
+    	</div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+	kendo.bind($('#page-content'), viewModel);
+	kendo.bind($('#page-content1'), newViewModel);
+	
+	$("#province").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.PROVICE";
+	    },
+	    change:function () {
+	        viewModel.model.set("city",null);
+	        viewModel.model.set("cityMeaning",null);
+	    }
+	}));
+	
+	$("#city").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+	    query: function(e) {
+	        e.param['codeName'] = "PUB.CITY";
+	        e.param['parentValue'] = viewModel.model.province;
+	    },
+	}));
+	
+	//取消预览
+	function quxiaoyulan(){
+		$(".form-horizontal").css("width", "100%");
+		$(".form-horizontal").css("border", "0px");
+		$(".form-horizontal").css("margin-left", "0%");
+		
+		$("#courseEditorDiv").css("margin-left", "12%");
+		$("#courseEditorDiv").css("width", "76%");
+		$("#lecturerEditorDiv").css("margin-left", "12%");
+		$("#lecturerEditorDiv").css("width", "76%");
+		$("#studentDiv1").show();
+		$("#studentDiv2").show();
+		$("#studentDiv3").show();
+		$("#studentDiv4").show();
+		$("#studentDiv5").show();
+		$("#studentDiv6").show();
+		$("#studentDiv7").show();
+		$("#studentDiv8").show();
+		$("#studentDiv9").show();
+		$("#studentDiv10").show();
+		$("#studentDiv11").show();
+		$("#studentDiv12").show();
+		$("#studentDiv13").show();
+		$("#content-container1").show();
+		$("#previewId1").hide();
+		$("#previewId2").hide();
+		$("#previewId3").hide();
+		$("#previewId4").hide();
+	};
+    
+	//取消培训资料预览
+	function quxiaoAttachment2() {
+		$(".form-horizontal").css("width", "80%");
+		$(".form-horizontal").css("border", "8px solid #DCDCDC");
+		$(".form-horizontal").css("margin-left", "10%");
+		$("#content-container1").hide();
+		$("#quxiaoAttachment2").hide();
+		$("#previewId1").show();
+		$("#previewId2").show();
+		$("#previewId3").show();
+		$("#previewId4").show();
+		$("#courseEditorDiv").show();
+		$("#lecturerEditorDiv").show();
+	}
+	//培训资料预览
+	function addAttachment2() {
+		$(".form-horizontal").css("width", "100%");
+		$(".form-horizontal").css("border", "0px");
+		$(".form-horizontal").css("margin-left", "0%");
+		$("#content-container1").show();
+		$("#quxiaoAttachment2").show();
+		$("#previewId1").hide();
+		$("#previewId2").hide();
+		$("#previewId3").hide();
+		$("#previewId4").hide();
+		$("#courseEditorDiv").hide();
+		$("#lecturerEditorDiv").hide();
+        /* var url = "trn_course_file.html?courseId="+courseId;
+        var dialog = $("#dialog").kendoWindow({
+            actions: ["Close"],
+            height: "50%",
+ 	        width: "50%",
+            title: '课程附件',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+        }).data("kendoWindow");
+        dialog.center().open(); */
+    };
+    
+    var format = function(time, format){
+	    var t = new Date(time);
+	    var tf = function(i){return (i < 10 ? '0' : '') + i};
+	    return format.replace(/yyyy|MM|dd|HH|mm|ss/g, function(a){
+	        switch(a){
+	            case 'yyyy':
+	                return tf(t.getFullYear());
+	                break;
+	            case 'MM':
+	                return tf(t.getMonth() + 1);
+	                break;
+	            case 'mm':
+	                return tf(t.getMinutes());
+	                break;
+	            case 'dd':
+	                return tf(t.getDate());
+	                break;
+	            case 'HH':
+	                return tf(t.getHours());
+	                break;
+	            case 'ss':
+	                return tf(t.getSeconds());
+	                break;
+	        }
+	    })
+	};
+	
+	//预览
+	function previewData2() {
+		$(".form-horizontal").css("width", "80%");
+		$(".form-horizontal").css("border", "8px solid #DCDCDC");
+		$(".form-horizontal").css("margin-left", "10%");
+		$("#courseEditorDiv").css("margin-left", "0%");
+		$("#courseEditorDiv").css("width", "100%");
+		$("#lecturerEditorDiv").css("margin-left", "0%");
+		$("#lecturerEditorDiv").css("width", "100%");
+		$("#studentDiv1").hide();
+		$("#studentDiv2").hide();
+		$("#studentDiv3").hide();
+		$("#studentDiv4").hide();
+		$("#studentDiv5").hide();
+		$("#studentDiv6").hide();
+		$("#studentDiv7").hide();
+		$("#studentDiv8").hide();
+		$("#studentDiv9").hide();
+		$("#studentDiv10").hide();
+		$("#studentDiv11").hide();
+		$("#studentDiv12").hide();
+		$("#studentDiv13").hide();
+		$("#content-container1").hide();
+		$("#previewId1").show();
+		$("#previewId2").show();
+		$("#previewId3").show();
+		$("#previewId4").show();
+		document.getElementById("topic2").innerText = document.getElementById("topic").value;
+		var courseDate = document.getElementById("courseDate").value;
+		var duration = document.getElementById("duration").value;
+		var courseDateNew;
+	  	if(courseDate && duration){
+	  		timeArr=courseDate.split(" ");
+	  		timeArr0=timeArr[0].split("-");
+	  		timeArr1=timeArr[1].split(":");
+	  		starttime = courseDate.replace(new RegExp("-","gm"),"/");
+	  		var starttimeHaoMiao = (new Date(starttime)).getTime();
+	  		duration = parseInt(duration)*60000;
+	  		var newTimeHaoMiao = new Date(starttimeHaoMiao+duration);
+	  		var newTime = format(newTimeHaoMiao, 'yyyy-MM-dd HH:mm:ss');
+	  		timeArrNew=newTime.split(" ");
+	  		timeArrNew1=timeArrNew[1].split(":");
+	  		courseDateNew = timeArr0[0]+"年"+timeArr0[1]+"月"+timeArr0[2]+"日"+" "+timeArr1[0]+":"+timeArr1[1]+" -"+timeArrNew1[0]+":"+timeArrNew1[1];
+	  		console.log(courseDateNew);
+	  	};
+		if(courseDateNew){
+			document.getElementById("courseDate2").innerText = courseDateNew;
+		};
+		var trainingMethod = document.getElementById("trainingMethod").value;
+	  	if(trainingMethod){
+	  		if(trainingMethod == "LINE"){
+	  			document.getElementById("trainingMethod2").innerText = "线下";
+	  		}else if(trainingMethod == "ONLINE"){
+	  			document.getElementById("trainingMethod2").innerText = "线上";
+	  		}else if(trainingMethod == "ALLLINE"){
+	  			document.getElementById("trainingMethod2").innerText = "线上及线下";
+	  		}
+	  	};
+		var address = document.getElementById("address").value;
+    	if(!address){
+    		document.getElementById("address2").innerText = "无";
+    	}else{
+    		document.getElementById("address2").innerText = address;
+    	}
+		var password = document.getElementById("password").value;
+    	if(!password){
+    		document.getElementById("password2").innerText = "无";
+    	}else{
+    		document.getElementById("password2").innerText = password;
+    	}
+		/* var courseEditor = document.getElementById("courseEditor").value;
+		document.getElementById("courseEditor2").innerText = courseEditor;
+		var lecturerEditor = document.getElementById("lecturerEditor").value;
+		document.getElementById("lecturerEditor2").innerText = "FGHFGH";
+        console.log(courseEditor);
+        console.log(lecturerEditor); */
+    };
+	
+	
+	
+	//验证
+	$("#mainform").kendoValidator({
+		messages: {
+	        required: '{0}不能为空！'
+		},
+		invalidMessageType : "tooltip"
+	});
+	
+	//上传图片
+	var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+	function addImageTextUpload(){
+		  if(viewModel.model.fileId){
+			  kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+		          title: '<@spring.message "sysfile.upload"/>',
+		          width: 400,
+		          height: 250,
+		          modal: true
+		      }).data("kendoWindow");
+		      reqWin.center().open();
+		  };
+	};
+	  
+	$("#reqFiles").kendoUpload({
+		async : {saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"},
+		showFileList : false,
+		upload : onUpload,
+		success : onSuccess
+	});
+	function onUpload(e) {
+		e.data = {
+			modularName : 'TRN',
+			allowType : 'jpg;png;jpeg',
+			maxSize : 20480
+		}
+	};
+	function onSuccess(e) {
+		if (e.response.success) {
+			viewModel.model.fileId = e.response.file.fileId;
+			tfileSize = Math.ceil((e.response.file.fileSize)/1024);
+			Path =ossWebPath + e.response.file.filePath;
+			$("#img").show().attr('src',Path);
+			//时间戳是为了浏览器缓存
+			var img = new Image(); 
+			img.src = Path+"?" +Date.parse(new Date());
+			img.onload = function(){
+				width = img.width;
+				height = img.height;
+				console.log('width1:'+img.width+',height1:'+img.height);
+				document.getElementById("label").innerHTML=img.width+"像素*"+img.height+"像素";
+			};
+			reqWin.close();
+	        kendo.ui.showInfoDialog({message  : '<@spring.message "spe.pleasesavedata"/>'})
+		} else {
+			kendo.ui.showErrorDialog({message : e.response.message})
+		} 
+	};
+	
+	
+	//修改发布的状态
+    function updataReleaseStatus(){
+    	debugger;
+    	viewModel.model.status = "NOTSTARTED";
+    	viewModel.model.ifRelease = parseInt("1");
+    	console.log(viewModel.model);
+    	
+    	if(document.getElementById("appFlag").checked){
+    		viewModel.model.appFlag = "Y" ;
+    		if(viewModel.model.fileId == null || typeof(viewModel.model.fileId) == "undefined"){
+	   			 kendo.ui.showInfoDialog({
+	   	                message: '请上传封面'
+	   	         });
+	   			 return;
+	   		}
+    	}else{
+    		viewModel.model.appFlag = "N" ; 
+    	}
+    	if(document.getElementById("wechatFlag").checked){
+    		viewModel.model.wechatFlag = "Y" ;
+    	}else{
+    		viewModel.model.wechatFlag = "N" ;  
+    	}
+    	if(document.getElementById("pcFlag").checked){
+    		viewModel.model.pcFlag = "Y" ;
+    	}else{
+    		viewModel.model.pcFlag = "N" ;  
+    	}
+    	/* if(viewModel.model.prdClass){
+    	}else{
+    		kendo.ui.showErrorDialog({
+				message : "产品中分类不能为空"
+			});
+    		return;
+    	} */
+    	//debugger;
+    	var validator = $("#mainform").data("kendoValidator");
+		if (validator.validate()) {
+			//debugger;
+		    	if(viewModel.model.boutiqueVideo=="Y"){
+		    		if(!viewModel.model.boutiqueUrl){
+		    			kendo.ui.showConfirmDialog({
+			                message: '视频观看地址不能为空'
+			         	});
+		    			return;
+		    		}else{
+		    			boutiqueUrl = viewModel.model.boutiqueUrl;
+		    			if(boutiqueUrl.substr(0,7) == "http://" || boutiqueUrl.substr(0,8) == "https://"){
+						}else{
+							kendo.ui.showInfoDialog({
+		    	                message: '视频观看地址需以 http:// 或 https:// 开头'
+		    	         	});
+							return;
+						};
+		    		}
+		    	}
+		    	if(!viewModel.model.prdDivision){
+		    		kendo.ui.showErrorDialog({
+						message : "产品大分类不能为空"
+					});
+		    		return;
+		    	}
+				console.log(viewModel.model);
+					Hap.submitForm({
+						url : '${base.contextPath}/fms/trn/course/add',
+						formModel : viewModel.model,
+						asArray : false,
+						success : function(data) {
+							if (data.success) {
+								if(data.rows[0].courseId){
+									//debugger;
+									console.log(courseFileIdList);
+									if(courseFileIdList.length>0){
+										//courseFileId = "0";
+										courseId = data.rows[0].courseId;
+										$.ajax({
+						                    type: "POST",
+						                    url: "${base.contextPath}/fms/trn/course/file/courseSubmit",
+						                    data: {"courseId":courseId,"courseFileIdList":courseFileIdList},
+						                    dataType: "json",
+						                    success: function(json){
+						                   		console.log(json);
+						                    }
+						                })  
+									}
+							        //$('#Grid').data('kendoGrid').saveChanges();
+								};
+								kendo.ui.showInfoDialog({
+		                             title: $l('hap.tip.info'),
+		                             message: $l('发布成功')
+		                         }).done(function (event) {
+		                             if (event.button == 'OK') {
+		                            	 parent.openTab('course'+0,'<@spring.message "fms.course.list"/>' , '${base.contextPath}/course/trn_course.html?status=update&courseId='+0);
+		                            	 window.location.reload();
+		                            }
+		                         });
+								
+							} else {
+								kendo.ui.showErrorDialog({
+									message : "失败"
+								});
+							}
+						}
+		       });
+		}
+    	/* //定义ids  存储多个id
+    	var ids=[];
+    	//发布
+    	if(status == "1"){
+    		 if(viewModel.model.courseId){
+        			 	ids.push(viewModel.model.courseId);
+        		 $.ajax({
+                     type: "POST",
+                     url: "${base.contextPath}/fms/trn/course/updataReleaseStatus",
+                     data: {"ids":ids,"status":"NOTSTARTED"},
+                     dataType: "json",
+                     success: function(data){
+                    	 kendo.ui.showInfoDialog({
+                    		 //alert:"成功",
+                             title: $l('hap.tip.info'),
+                             message: $l('hap.tip.success')
+                         }).done(function (event) {
+                             if (event.button == 'OK') {
+                            	 parent.openTab('course'+0,'<@spring.message "fms.course.list"/>' , '${base.contextPath}/course/trn_course.html?status=update&courseId='+0);
+                            }
+                         });
+                    	 //window.location.reload();
+                     }
+                 });
+             } else {
+                 kendo.ui.showInfoDialog({
+                     title:$l('hap.tip.info'),
+                     message:'你未选中任何要发布的项!'
+                 });
+             }
+    	} */
+    }
+	
+	window.previewData = function () {
+		var courseId = viewModel.model.courseId;
+		var topic = document.getElementById("topic").value;
+		var courseDate = document.getElementById("courseDate").value;
+		var duration = document.getElementById("duration").value;
+		var type = document.getElementById("type").value;
+		var trainingMethod = document.getElementById("trainingMethod").value;
+		var supplierId = document.getElementById("supplierId").value;
+		var prdDivision = document.getElementById("sel").value;
+		var prdClass = document.getElementById("prdClassData").value;
+		//var itemClass = document.getElementById("itemClass").value;
+		var lecturer = document.getElementById("lecturer").value;
+		var price = document.getElementById("price").value;
+		var city = document.getElementById("city").value;
+		var address = document.getElementById("address").value;
+		var url = document.getElementById("url").value;
+		var appFlag ;
+		if(document.getElementById("appFlag").checked){
+			appFlag = "Y" ;
+		}else{
+			appFlag = "N" ;
+		};
+		var wechatFlag ;
+		if(document.getElementById("wechatFlag").checked){
+			wechatFlag = "Y" ;
+		}else{
+			wechatFlag = "N" ;
+		};
+		var courseEditor = document.getElementById("courseEditor").value;
+		var lecturerEditor = document.getElementById("lecturerEditor").value;
+        var link = "trn_course_preview.html?topic="+topic+"&courseId="+courseId+"&courseDate="+courseDate+"&duration="+duration+"&type="+type+"&trainingMethod="+trainingMethod+"&supplierId="+supplierId+"&prdDivision="+prdDivision+"&prdClass="+prdClass+"&lecturer="+lecturer+"&price="+price+"&city="+city+"&address="+address+"&url="+url+"&appFlag="+appFlag+"&wechatFlag="+wechatFlag+"&courseEditor="+courseEditor+"&lecturerEditor="+lecturerEditor;
+        var dialog = $("#dialog").kendoWindow({
+            actions: ["Close"],
+            width: "100%",
+            height: "100%",
+            title: '',
+            content: link,
+            iframe: true,
+            visible: false,
+            modal: true,
+            /* close: function () {
+                //window 关闭  刷新 本页面的  grid
+                $('#dialog').data('kendoGrid').dataSource.page(1);
+            } */
+        }).data("kendoWindow");
+        dialog.center().open();
+    };
+	
+	
+	//富文本编辑器 
+	$(document).ready(function() {
+	              // create Editor from textarea HTML element with default set of tools
+	              /* $("#courseEditor").kendoEditor({
+	                  tools: [
+	                      "fontName",
+	                      "fontSize",
+	                      "formatting",
+	                      "bold",
+	                      "italic",
+	                      "underline",
+	                      "strikethrough",
+	                      "justifyLeft",
+	                      "justifyCenter",
+	                      "justifyRight",
+	                      "justifyFull",
+	                      "insertUnorderedList",
+	                      "insertOrderedList",
+	                      "indent",
+	                      "outdent",
+	                      "insertImage",
+	                      "subscript",
+	                      "superscript",
+	                      "foreColor",
+	                      "backColor",
+	                  ],
+	              });
+	              $("#lecturerEditor").kendoEditor({
+	                  tools: [
+	                      "fontName",
+	                      "fontSize",
+	                      "formatting",
+	                      "bold",
+	                      "italic",
+	                      "underline",
+	                      "strikethrough",
+	                      "justifyLeft",
+	                      "justifyCenter",
+	                      "justifyRight",
+	                      "justifyFull",
+	                      "insertUnorderedList",
+	                      "insertOrderedList",
+	                      "indent",
+	                      "outdent",
+	                      "insertImage",
+	                      "subscript",
+	                      "superscript",
+	                      "foreColor",
+	                      "backColor",
+	                  ],
+	              }); */
+	              
+	            //使用自定义文本编辑器
+				$.clbKendoEditor("courseEditor");
+				$.clbKendoEditor("lecturerEditor");
+				$.clbKendoUpload('<@spring.message "fms.pub.oss_web_path"/>','TRN',"${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}");
+	});
+
+	//下拉框
+	/* $("#supplierId").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: courseSupplier
+	});  */
+	$("#itemClass").kendoComboBox({
+	valuePrimitive: true,
+	dataTextField: "meaning",
+	dataValueField: "value",
+	dataSource: productClass
+	});
+	/* $("#city").kendoComboBox({
+	valuePrimitive: true,
+	dataTextField: "meaning",
+	dataValueField: "value",
+	dataSource: pubCity
+	}); */
+	$("#duration").kendoComboBox({
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value",
+		dataSource: courseDuration
+		});
+	$("#status").kendoComboBox({
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value",
+		dataSource: coruseStatus
+		});
+	$("#type").kendoComboBox({
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value",
+		dataSource: courseType
+		});
+	$("#boutiqueVideo").kendoComboBox({
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value",
+		dataSource: coruseBoutiqueVideo
+		});
+	$("#trainingMethod").kendoComboBox({
+		valuePrimitive: true,
+		dataTextField: "meaning",
+		dataValueField: "value",
+		dataSource: trainingMethod
+		});
+	
+	if(viewModel.model.boutiqueVideo != "Y" ){
+		$("#boutiqueUrl").attr({'readonly':'readonly'});
+		document.getElementById("boutiqueUrl").value = "";
+		$("#boutiqueUrl").attr({'placeholder':''});
+	}
+	
+	function appCheck(){
+		if(document.getElementById("appFlag").checked){
+			if(!viewModel.model.appPrice){
+				viewModel.model.appPrice = "0.00";
+			}
+			if(!viewModel.model.coursePrice){
+				viewModel.model.coursePrice = "0.00";
+			}
+			document.getElementById("appFlag").value ="";
+			$("#updatePicture").show();
+		}else{
+			$("#updatePicture").hide();
+			if(viewModel.model.fileId){
+				viewModel.model.fileId = "";
+				$("#img").hide().attr('src',"");
+				document.getElementById("label").innerText  = "";
+			}
+		}
+	}
+	
+	function changeValue(){
+		if(!document.getElementById("appFlag").checked){
+			kendo.ui.showInfoDialog({
+				message : "请勾选APP"
+			});
+		}
+	}
+	
+	$("#boutiqueVideo").blur(function(){  // 失去焦点  
+		if(viewModel.model.boutiqueVideo == "Y" ){
+			$('#boutiqueUrl').attr("readonly",false);
+			$("#boutiqueUrl").attr({'placeholder':'https://或https://不可少（必填）'});
+		}else{
+			$("#boutiqueUrl").attr({'readonly':'readonly'});
+			document.getElementById("boutiqueUrl").value = "";
+			viewModel.model.boutiqueUrl = "";
+			$("#boutiqueUrl").attr({'placeholder':''});
+		}
+	})
+	
+	function updateIfShow(){
+		if(!document.getElementById("appFlag").checked){
+			kendo.ui.showInfoDialog({
+                message: "请勾选APP"
+            });
+		}
+	}
+	
+	var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/trn/course/file/query?courseId="+courseId,
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/trn/course/file/submit?courseId="+newViewModel.model.courseId,
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/trn/course/file/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/trn/course/file/submit?courseId="+newViewModel.model.courseId,
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(newViewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: false,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "lineId",
+                fields: {}
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        //height: '80%',
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+                  {
+                      template: '<button type="button"  onclick="createFunction()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                      '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+                  },
+                  {
+                      template: '<span onclick="deleteArcData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                      '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+                  }
+              ],
+        columns: [
+                    {
+                field: "fileId",
+                title: '附件id',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor:function (container, options) {
+                    if (options.model.fileId) {
+                        $('<span>'+ options.model.fileId +'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                }
+            },
+            		{
+                field: "fileName",
+                title: '资料名称',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor:function (container, options) {
+                    if (options.model.fileName) {
+                        $('<span>'+ options.model.fileName +'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                }
+            },
+                    {
+                field: "fileSize",
+                title: '文件大小(kb)',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                
+                editor:function (container, options) {
+                    if (options.model.fileSize) {
+                        $('<span>'+ options.model.fileSize +'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                } 
+            },
+            {
+                field: "uploadDate",
+                title: '更新时间',
+                width: 150,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor:function (container, options) {
+                    if (options.model.uploadDate) {
+                        $('<span>'+ options.model.uploadDate +'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                }
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    var buttons = '';
+                    if(dataItem.fileId != '' && dataItem.fileId != undefined){
+                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    }
+                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>'; 
+
+                    return  '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+                }
+            }
+        ],
+        editable: false
+    });
+	
+  //文件上传代码
+	 var uidData;
+   var isUpload;
+   function upload(uid){
+       uidData = uid;
+       data = dataSource.getByUid(uidData);
+       if(data.fileId != "" && typeof(data.fileId) != "undefined"){
+           kendo.ui.showConfirmDialog({
+               message: '<@spring.message "fms.overwrite_file"/>'
+           }).done(function (e) {
+               if (e.button == 'OK') {
+                   isUpload = true;
+                   window.fileWin = $("#fileWin").kendoWindow({
+                       title: '<@spring.message "sysfile.upload"/>',
+                       width: 400,
+                       height: 250,
+                       modal: true
+                   }).data("kendoWindow");
+                   fileWin.center().open();
+               }else{
+                   isUpload = false;
+               }
+           });
+       }
+       else{
+           isUpload = false;
+           window.fileWin = $("#fileWin").kendoWindow({
+               title: '<@spring.message "sysfile.upload"/>',
+               width: 400,
+               height: 250,
+               modal: true
+           }).data("kendoWindow");
+           fileWin.center().open();
+       }
+   }
+   
+   $("#files").kendoUpload({
+       async        : {
+           saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+       },
+       showFileList : false,
+       upload       : onUpload1,
+       success      : onSuccess1
+   });
+
+   function onUpload1(e){
+       e.data = {
+           modularName:'TRN',
+           allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+           maxSize:20480
+       }
+   };
+   
+   var fileId;
+   var fileIds = [];
+   function onSuccess1(e){
+       if(e.response.success){
+           var grid = $("#Grid").data("kendoGrid");
+           var data = grid.dataSource.getByUid(uidData);
+           data.fileSize = Math.ceil((e.response.file.fileSize)/1024);
+           data.oldFileId = data.fileId;
+           data.fileId = e.response.file.fileId;
+           courseFileIdList.push(e.response.file.fileId);
+           console.log(courseFileIdList);
+           data.fileName = e.response.file.fileName;
+           data._token = e.response.file._token;
+           var newTime = new Date(e.response.file.uploadDate);
+           newTime = Hap.formatDateTime(newTime);
+           data.uploadDate = newTime;
+           data.dirty = true;
+           grid.refresh();
+           document.getElementById("attacheDownload"+uidData).disabled="";
+           fileWin.close();
+           kendo.ui.showInfoDialog({
+               title    : '成功',
+               message  : '上传成功!'
+           })
+       }else{
+           kendo.ui.showErrorDialog({
+               message  : e.response.message
+           })
+       }
+   }
+   
+   function downloadFile(uid)
+   {
+       data = dataSource.getByUid(uid);
+       $.ajax({
+           url : '${base.contextPath}/commons/attach/validateFile',
+           type : "POST",
+           dataType : "json",
+           data : {
+               fileId:data.fileId,
+               token:data._token
+           },
+           success : function(json) {
+               if(json.success == true){
+                   url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                   var iframe = document.getElementById("ifile");
+                   iframe.src=url;
+               }else{
+                   kendo.ui.showErrorDialog({
+                       message  : '<@spring.message "fms.file_not_exists"/>'
+                   })
+               }
+           },
+       })
+
+   };
+   
+   function deleteArcData() {
+       var grid = $("#Grid").data("kendoGrid");
+       var checked = grid.selectedDataItems();
+       if (grid.selectedDataItems().length) {
+           kendo.ui.showConfirmDialog({
+               title: $l('hap.tip.info'),
+               message: $l('hap.tip.delete_confirm')
+           }).done(function (event) {
+               if (event.button == 'OK') {
+            	   for (var i = 0; i < checked.length; i++) {
+	       			 	var delFileId = checked[i].fileId;
+	            	    for (var j =0;j<courseFileIdList.length;j++) {
+	                 	   if(courseFileIdList[j] == delFileId){
+	                 		  courseFileIdList.splice(j, 1);
+	                 		  j--;
+	                 	   };
+	                    };
+	       		   }
+            	   console.log(courseFileIdList);
+                   $.each(checked, function (i, v) {
+                       if(v.fileId != "" && v._token != "" && v.fileId != undefined && v._token != undefined) {
+                           $.ajax({       
+                               url:"${base.contextPath}/fms/trn/course/file/remove", 
+                               type : "POST",
+                               data:{
+                                   fileId:v.fileId,
+                                   token:v._token
+                               }
+                           })
+                       }
+                   })
+                   $.each(checked, function (i, v) {
+                       grid.dataSource.remove(v)
+                   })
+                   //grid.dataSource.sync();
+               }
+           })
+       }
+   }
+   
+    function deleteData() {
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+    }
+
+   // Hap.autoResizeGrid("#Grid");
+</script>
+</body>
+</html>

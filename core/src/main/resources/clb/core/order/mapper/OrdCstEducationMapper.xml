@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdCstEducationMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdCstEducation">
+        <result column="CST_EDUCATION_ID" property="cstEducationId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="EDUCATION_TIME" property="educationTime" jdbcType="DATE" />
+        <result column="SCHOOL" property="school" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE" property="certificate" jdbcType="VARCHAR" />
+        <result column="PROFESSION" property="profession" jdbcType="VARCHAR" />
+        <result column="FULL_TIME_FLAG" property="fullTimeFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+</mapper>

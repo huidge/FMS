@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpEmojiMapper">
+    <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpEmoji"
+               extends="com.hand.hap.mapper.StdMapper.STD">
+    </resultMap>
+    <select id="getAllEmoji" resultMap="BaseResultMap">
+      select name,detail,src
+      from woa_emoji
+      order by id
+    </select>
+</mapper>

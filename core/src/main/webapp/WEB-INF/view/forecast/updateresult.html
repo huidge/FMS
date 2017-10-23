@@ -1,0 +1,99 @@
+<#-- 
+ * description:通用更新信息页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../include/header.html">
+<script type="text/javascript">
+    var responseData = window.parent.response;
+</script>
+<body>
+</script>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="template">
+  	<div id="toolbar-btn" style="padding-bottom:10px;">
+         <span onclick="cancel()" class="btn btn-default" id="btn_cancel" style="width: 100px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.return"/></span>
+	</div>
+</script>
+
+<script type="text/javascript">
+
+	$(function(){
+	    var rownumList = $('[data-index="0"]');
+	    for (var i=0;i<rownumList.length;i++)
+	    {
+	        var rownumText = $(rownumList[i]).html();
+	        if("#"==rownumText){
+	            $(rownumList[i]).html("<@spring.message "spe.rownum"/>");
+	            $(rownumList[i]).eq(0).parent().parent().prev().children().eq(0).css("width","50px");
+	            $(rownumList[i]).eq(0).parent().parent().parent().parent().parent().next().children("table").children("colgroup").children().eq(0).css("width","50px");
+	        }
+	    }
+	});
+	
+	dataSource = new kendo.data.DataSource({
+        batch: true,
+        serverPaging: false,
+        pageSize: 10,
+        schema: {
+            data: responseData.rows,
+            total: responseData.total
+        }
+    });
+
+    var BaseUrl = _basePath;
+    $("#Grid").kendoGrid({
+    	dataSource: {
+            data: responseData.rows,
+            pageSize: 10
+        },
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        rownumber: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+             {
+                 field: "orderNumber",
+                 title: '订单编号',
+                 width: 100,
+                 attributes: {style: "text-align:center"},
+                 headerAttributes: {
+                     "class": "table-header-cell",
+                     style: "text-align: center"
+                 }
+             },{
+                 field: "errorMessage",
+                 title: '错误信息',
+                 width: 120,
+                 attributes: {style: "text-align:center"},
+                 headerAttributes: {
+                     "class": "table-header-cell",
+                     style: "text-align: center"
+                 }
+             },
+    	],
+        toolbar: kendo.template($("#template").html()),
+        editable: false
+    }).data("kendoGrid");
+    
+    //自适应屏幕
+    Hap.autoResizeGrid("#Grid");
+    
+  	//取消
+	function cancel(){
+		window.parent.$("#resultdialog").data('kendoWindow').close();
+	};
+</script>
+</body>
+</html>

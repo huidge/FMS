@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdPremiumMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdPremium">
+        <result column="premium_id" property="premiumId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId"/>
+        <result column="ITEM_NAME" property="itemName"/>
+        <result column="CURRENCY" property="currency"/>
+        <result column="SUBLINE_ID" property="sublineId"/>
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName"/>
+        <result column="SMOKE_FLAG" property="smokeFlag"/>
+        <result column="GENDER" property="gender"/>
+        <result column="NATIONALITY_CLASS" property="nationalityClass"/>
+        <result column="plan_id" property="planId"/>
+        <result column="selfpay_id" property="selfpayId"/>
+        <result column="SECURITY_LEVEL" property="securityLevel"/>
+        <result column="SECURITY_REGION" property="securityRegion"/>
+        <result column="selfpay" property="selfpay"/>
+        <result column="PREMIUM1" property="premium1"/>
+        <result column="PREMIUM2" property="premium2"/>
+        <result column="PREMIUM3" property="premium3"/>
+        <result column="PREMIUM4" property="premium4"/>
+        <result column="PREMIUM5" property="premium5"/>
+        <result column="PREMIUM6" property="premium6"/>
+        <result column="PREMIUM7" property="premium7"/>
+        <result column="PREMIUM8" property="premium8"/>
+        <result column="PREMIUM9" property="premium9"/>
+        <result column="PREMIUM10" property="premium10"/>
+        <result column="PREMIUM11" property="premium11"/>
+        <result column="PREMIUM12" property="premium12"/>
+        <result column="PREMIUM13" property="premium13"/>
+        <result column="PREMIUM14" property="premium14"/>
+        <result column="PREMIUM15" property="premium15"/>
+        <result column="PREMIUM16" property="premium16"/>
+        <result column="PREMIUM17" property="premium17"/>
+        <result column="PREMIUM18" property="premium18"/>
+        <result column="PREMIUM19" property="premium19"/>
+        <result column="PREMIUM20" property="premium20"/>
+        <result column="PREMIUM21" property="premium21"/>
+        <result column="PREMIUM22" property="premium22"/>
+        <result column="PREMIUM23" property="premium23"/>
+        <result column="PREMIUM24" property="premium24"/>
+        <result column="PREMIUM25" property="premium25"/>
+        <result column="PREMIUM26" property="premium26"/>
+        <result column="PREMIUM27" property="premium27"/>
+        <result column="PREMIUM28" property="premium28"/>
+        <result column="PREMIUM29" property="premium29"/>
+        <result column="PREMIUM30" property="premium30"/>
+        <result column="PREMIUM31" property="premium31"/>
+        <result column="PREMIUM32" property="premium32"/>
+        <result column="PREMIUM33" property="premium33"/>
+        <result column="PREMIUM34" property="premium34"/>
+        <result column="PREMIUM35" property="premium35"/>
+        <result column="PREMIUM36" property="premium36"/>
+        <result column="PREMIUM37" property="premium37"/>
+        <result column="PREMIUM38" property="premium38"/>
+        <result column="PREMIUM39" property="premium39"/>
+        <result column="PREMIUM40" property="premium40"/>
+        <result column="PREMIUM41" property="premium41"/>
+        <result column="PREMIUM42" property="premium42"/>
+        <result column="PREMIUM43" property="premium43"/>
+        <result column="PREMIUM44" property="premium44"/>
+        <result column="PREMIUM45" property="premium45"/>
+        <result column="PREMIUM46" property="premium46"/>
+        <result column="PREMIUM47" property="premium47"/>
+        <result column="PREMIUM48" property="premium48"/>
+        <result column="PREMIUM49" property="premium49"/>
+        <result column="PREMIUM50" property="premium50"/>
+        <result column="PREMIUM51" property="premium51"/>
+        <result column="PREMIUM52" property="premium52"/>
+        <result column="PREMIUM53" property="premium53"/>
+        <result column="PREMIUM54" property="premium54"/>
+        <result column="PREMIUM55" property="premium55"/>
+        <result column="PREMIUM56" property="premium56"/>
+        <result column="PREMIUM57" property="premium57"/>
+        <result column="PREMIUM58" property="premium58"/>
+        <result column="PREMIUM59" property="premium59"/>
+        <result column="PREMIUM60" property="premium60"/>
+        <result column="PREMIUM61" property="premium61"/>
+        <result column="PREMIUM62" property="premium62"/>
+        <result column="PREMIUM63" property="premium63"/>
+        <result column="PREMIUM64" property="premium64"/>
+        <result column="PREMIUM65" property="premium65"/>
+        <result column="PREMIUM66" property="premium66"/>
+        <result column="PREMIUM67" property="premium67"/>
+        <result column="PREMIUM68" property="premium68"/>
+        <result column="PREMIUM69" property="premium69"/>
+        <result column="PREMIUM70" property="premium70"/>
+        <result column="PREMIUM71" property="premium71"/>
+        <result column="PREMIUM72" property="premium72"/>
+        <result column="PREMIUM73" property="premium73"/>
+        <result column="PREMIUM74" property="premium74"/>
+        <result column="PREMIUM75" property="premium75"/>
+        <result column="PREMIUM76" property="premium76"/>
+        <result column="PREMIUM77" property="premium77"/>
+        <result column="PREMIUM78" property="premium78"/>
+        <result column="PREMIUM79" property="premium79"/>
+        <result column="PREMIUM80" property="premium80"/>
+        <result column="PREMIUM81" property="premium81"/>
+        <result column="PREMIUM82" property="premium82"/>
+        <result column="PREMIUM83" property="premium83"/>
+        <result column="PREMIUM84" property="premium84"/>
+        <result column="PREMIUM85" property="premium85"/>
+        <result column="PREMIUM86" property="premium86"/>
+        <result column="PREMIUM87" property="premium87"/>
+        <result column="PREMIUM88" property="premium88"/>
+        <result column="PREMIUM89" property="premium89"/>
+        <result column="PREMIUM90" property="premium90"/>
+        <result column="PREMIUM91" property="premium91"/>
+        <result column="PREMIUM92" property="premium92"/>
+        <result column="PREMIUM93" property="premium93"/>
+        <result column="PREMIUM94" property="premium94"/>
+        <result column="PREMIUM95" property="premium95"/>
+        <result column="PREMIUM96" property="premium96"/>
+        <result column="PREMIUM97" property="premium97"/>
+        <result column="PREMIUM98" property="premium98"/>
+        <result column="PREMIUM99" property="premium99"/>
+        <result column="PREMIUM100" property="premium100"/>
+        
+        <result column="PREMIUM_COLUMN" property="premiumColumn" jdbcType="VARCHAR" />
+        <result column="AGE" property="age" jdbcType="INTEGER" />
+    </resultMap>
+
+	<select id="selectAllFields" parameterType="clb.core.production.dto.PrdPremium" resultMap="BaseResultMap">
+        SELECT
+        pp.*,
+        (SELECT SECURITY_LEVEL FROM fms_prd_item_security_plan isp where isp.PLAN_ID=pp.PLAN_ID)SECURITY_LEVEL,
+        (SELECT SECURITY_REGION FROM fms_prd_item_security_plan isp where isp.PLAN_ID=pp.PLAN_ID)SECURITY_REGION,
+         (SELECT selfpay from fms_prd_item_selfpay pis where pis.SELFPAY_ID=pp.SELFPAY_ID)selfpay,
+        (SELECT pi.ITEM_NAME from fms_prd_items pi where pi.ITEM_ID=pp.ITEM_ID LIMIT 1) as ITEM_NAME,
+        (select pis.SUBLINE_ITEM_NAME from fms_prd_item_subline pis where pis.SUBLINE_ID=pp.SUBLINE_ID  LIMIT 1) as SUBLINE_ITEM_NAME  
+        FROM
+        FMS_PRD_PREMIUM pp
+        <where>
+        <if test="itemId != null and itemId != ''">
+            AND pp.item_id = #{itemId}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND pp.currency =#{currency}
+        </if >
+        <if test="sublineId != null and sublineId != ''">
+            AND pp.subline_id =#{sublineId}
+        </if >
+        <if test="smokeFlag != null and smokeFlag != ''">
+            AND pp.smoke_flag =#{smokeFlag}
+        </if >
+        <if test="gender != null and gender != ''">
+            AND pp.gender = #{gender}
+        </if >
+        </where>
+   </select>
+   
+   <!-- 电子计划书查询金额 -->
+	<select id="queryAmount" parameterType="clb.core.production.dto.PrdPremium" resultType="Double">
+        SELECT
+        <if test="premiumColumn != null and premiumColumn != ''">
+	        ${premiumColumn}
+        </if>
+        FROM
+        FMS_PRD_PREMIUM pp
+        Left JOIN fms_prd_items fpi ON fpi.ITEM_ID=pp.ITEM_ID
+        Left JOIN fms_prd_item_subline fpis ON fpis.SUBLINE_ID=pp.SUBLINE_ID
+        <where>
+        <if test="itemId != null and itemId != ''">
+            AND pp.ITEM_ID = #{itemId}
+        </if >
+        <if test="currency != null and currency != ''">
+            AND pp.CURRENCY =#{currency}
+        </if >
+        <if test="sublineId != null">
+            AND pp.SUBLINE_ID =#{sublineId}
+        </if >
+        <if test="smokeFlag != null and smokeFlag != ''">
+            AND pp.SMOKE_FLAG =#{smokeFlag}
+        </if >
+        <if test="gender != null and gender != ''">
+            AND pp.GENDER = #{gender}
+        </if >
+        <if test="nationalityClass != null and nationalityClass != ''">
+        	AND pp.NATIONALITY_CLASS =#{nationalityClass}
+        </if>
+        </where>
+   </select>
+
+</mapper>

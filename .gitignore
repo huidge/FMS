@@ -1,0 +1,28 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+**/out
+core/overlays/
+/src
+.rebel.xml.bak
+
+# Mac
+.DS_Store
+
+# Maven
+**/log/
+**/target
+**/*.log
+**/tmp
+**/.tmp
+**/bin/**
+
+core/src/main/resources/profiles/dev/config.properties
+core/src/main/resources/profiles/sit/config.properties
+core/src/main/resources/profiles/uat/config.properties

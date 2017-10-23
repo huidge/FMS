@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wzl on 2017/6/14.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpUserMapper">
+    <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpUser">
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PASSWORD_ENCRYPTED" property="passwordEncrypted" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="START_ACTIVE_DATE" property="startActiveDate" jdbcType="DATE" />
+        <result column="END_ACTIVE_DATE" property="endActiveDate" jdbcType="DATE" />
+        <result column="employee_id" property="employeeId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getUserByPhoneAndType" resultMap="BaseResultMap">
+        SELECT * FROM sys_user syu WHERE syu.phone = #{phone} AND syu.user_type = #{type}
+    </select>
+</mapper>

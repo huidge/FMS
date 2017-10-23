@@ -1,0 +1,994 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supplierType=SPE.SUPPLIER_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?supplierTypeTwo=SPE.SUPPLIER_TYPE_LEVEL_TWO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?supplierTypeThree=SPE.SUPPLIER_TYPE_LEVEL_THREE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?settlementMethod=SPE.SETTLEMENT_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?yesOrNo=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?settleType=SPE.SETTLE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyType=PUB.CURRENCY" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+<script src="${base.contextPath}/clb/common/clbCode?statusData=CNL.CHANNEL_STATUS" type="text/javascript"></script>
+<style>
+        .k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg {
+            left:105px;
+            position: absolute;
+            top: 21px
+        }
+</style>
+<script type="text/javascript">
+
+	//多语言常量
+	validateNotUnique='<@spring.message "spe.notunique"/>';
+	validateNotEmpty='<@spring.message "spe.notempty"/>';
+	validateTelError='<@spring.message "spe.telerror"/>';
+	validateDateError='<@spring.message "spe.dateerror"/>';
+	validateEmailError='<@spring.message "spe.emailerror"/>';
+	//全局变量
+	var viewModel = kendo.observable({
+        model: {
+        }
+    });
+	var pageArgs = {};
+    window.supplierId = '${RequestParameters.supplierId!0}';
+    window.oldSupplierId = supplierId;
+    window.levelData = {};
+    window.trArray = [];
+    
+    //初始化
+    if (supplierId!=0 && supplierId!=undefined) {
+	       $.ajax({
+	           url: '${base.contextPath}/supplier/main/query',
+	           type : "POST",
+	           async:false,
+	           data : {supplierId:supplierId},
+	           success: function (args) {
+	               var a0 = args.rows[0] || {};
+	               for (var k in a0) {
+	               	viewModel.model.set(k,a0[k]);
+	               }
+	               viewModel.model.set("__status","update");
+	               pageArgs = args;
+	            }
+	       });
+	   }
+	   else {
+	   	viewModel.model.set("__status","add");
+	   	viewModel.model.set("statusCode","CREATED");
+	   }
+	   viewModel.model.set("formurl",'${base.contextPath}/supplier/main/validatequery');
+  	</script>
+<body>
+<script src="${base.contextPath}/resources/js/common/validate.js" type="text/javascript"></script>
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<div id="dialog" style="display: none;"></div>
+<div id="trDialog" style="display: none;"></div>
+<div id="fileWin" style="display: none;">
+	<form>
+	<input type="file" id="files" name="files"></input>
+	</form>
+</div>
+<div id="page-content">
+	<div class="panel panel-default">
+	<form class="form-horizontal" id="mainform">
+            <div class="panel-heading">
+                <span class="panel-title"><@spring.message "spe.supplier_info.maintain"/></span>
+            </div>
+            <div class="panel-body">
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.baseinfo"/>
+            </p>
+            
+			<div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.suppliercode"/></label>
+                                <div class="col-sm-9">
+                                    <input name="supplierCode" id="supplierCode" style="width: 100%" 
+                                           data-bind="value:model.supplierCode"  class="k-textbox" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.suppliername"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  unique="true" id="name" name="name" style="width: 100%"
+                                           data-bind="value:model.name" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.shortname"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  unique="true" id="shortName" name="shortName" style="width: 100%"
+                                     data-bind="value:model.shortName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               
+               <div class="row" style="margin-bottom: 20px;">
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.contactperson"/></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%"  id="contactPerson" name="contactPerson" style="width: 100%"
+                                           data-bind="value:model.contactPerson" maxlength="10" class="k-textbox">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.contactnum"/></label>
+                                 
+                                     <div class="col-xs-4">
+                            			<input id="phoneCode" name="phoneCode" type="text" data-bind="value:model.phoneCode" style="width: 100%;">
+                        			</div>
+                        			<div class="col-xs-5">
+                            			<input id="contactNum" name="contactNum" type="text" onblur="validateTel('contactNum')" data-bind="value:model.contactNum" class=" k-textbox" style="width: 100%;height:30px"
+                            			maxlength="20" >
+                        			</div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:26%"><@spring.message "spe.email"/></label>
+                                <div class="col-sm-9" style="width:74%">
+                                    <input name="email" id="email" style="width: 100%" 
+                                       onblur="checkEmail('email')"    data-bind="value:model.email" class=" k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+               </div>
+               <div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.calendarcode"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                    <input name="calendarId" require="true"   id="calendarId" style="width: 100%" 
+                                           data-bind="value:model.calendarId">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:26%"><@spring.message "spe.vocationbill"/><font color="red">*</font></label>
+                                <div class="col-sm-9" style="width:74%">
+                                    <input name="vocationBill" require="true"   id="vocationBill" style="width: 100%" 
+                                           data-bind="value:model.vocationBill">
+                                </div>
+                            </div>
+                        </div>
+                  </div>
+                  <div class="row" style="margin-bottom: 20px;">
+                  		<div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.effectivedatefrom"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"   id="effectiveDateFrom" name="effectiveDateFrom" style="width: 100%"
+                                           data-bind="value:model.effectiveDateFrom" onblur="dateCheck('effectiveDateFrom')" class="k-datepicker">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.effectivedateto"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true" id="effectiveDateTo" name="effectiveDateTo" style="width: 100%"
+                                           data-bind="value:model.effectiveDateTo" onblur="dateCheck('effectiveDateTo')" class="k-datepicker">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                </label>
+                                 <div class="col-sm-9">
+                                     <span onclick="addSignTr()" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "spe.addsigntr"/></span>
+								 </div>
+                            </div>
+                        </div>
+                  </div>
+                  
+                  
+    		<p class="bord-btm pad-ver text-main text-bold">
+                	<@spring.message "spe.qualificationmessage"/>
+            </p>
+            
+			<div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification1"/></label>
+                                <div class="col-sm-3">
+                                	<input id="checkbox1" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification2"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox2" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification3"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox3" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification4"/></label>
+                                <div class="col-sm-3">
+                                	<input id="checkbox4" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification5"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox5" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               
+               <div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification6"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox6" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification7"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox7" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification8"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox8" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.qualification9"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox9" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="col-sm-9 control-label"><@spring.message "spe.otherqualification"/></label>
+                                <div class="col-sm-3">
+                                    <input id="checkbox10" style="margin-top:5px;"/>
+                                </div>
+                            </div>
+                        </div>
+               </div>
+    	        
+    	        
+    		<p class="bord-btm pad-ver text-main text-bold">
+                	<@spring.message "spe.qualificationtype"/>
+            </p>
+            
+            
+               	<div style="clear:both">
+        			<div id="grid"></div>
+    			</div>
+        
+		 	<p class="bord-btm pad-ver text-main text-bold">
+                	<@spring.message "spe.statusmessage"/>
+         	</p>
+			<div class="row" style="margin-bottom: 20px;">
+						<div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "user.status"/></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true" id="statusCode" name="statusCode" style="width: 100%"
+                                           data-bind="value:model.statusCode">
+                                </div>
+                            </div>
+                        </div>
+		    		   <div class="col-sm-4" style="margin-left:24%">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "fms.cnlchannel.pendingperson"/></label>
+                                <div class="col-sm-9">
+                                    <input name="pendingPerson" id="pendingPerson" style="width: 100%" 
+                                           data-bind="value:model.pendingPerson"  class="k-textbox" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               </div>
+            	<iframe id="ifile" style="display:none"></iframe>
+        </form>
+               
+                <div class="panel-footer text-right">
+                <span onclick="submit()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancel()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            	</div>
+    </div>
+    
+           <!-- toolbar -->
+	<script type="text/x-kendo-template" id="template">
+    		<div class="toolbar">						
+				<span id="gridAdd" class="btn btn-primary" style="float:left;margin-right:5px;" disabled="disabled"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+				<span id="gridEdit" class="btn btn-success" style="float:left;margin-right:5px;" disabled="disabled"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.edit"/></span>
+				<span id="gridDelete" class="btn btn-danger" style="float:left;margin-right:5px;" disabled="disabled"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
+			</div>
+    </script>
+    <script>
+    /* ----------------------------------初始化组件---------------------------------- */
+		    //单选框
+    		for(var i=1;i<=10;i++){
+		    	$("#checkbox"+i).kendoCheckbox({
+			        checkedValue: 'Y',
+			        uncheckedValue: 'N'
+			    });
+		    }
+        	kendo.bind($('#page-content'), viewModel);
+   			
+   		    //校验
+			$('#mainform :input').bind('input propertychange', function(){
+				var id = $(this)[0].id;
+				var require = document.getElementById(id).getAttribute("require");
+				if(require == 'true'){
+					validateEmpty(id);
+				}
+			});
+   		    
+			$('#mainform :input').blur(function(){
+				var id = $(this)[0].id;
+				var unique = document.getElementById(id).getAttribute("unique");
+				if(unique == 'true'){
+					uniqueValidator(id);
+				}
+				var require = document.getElementById(id).getAttribute("require");
+				if(require == 'true'){
+					validateEmpty(id);
+				}
+			})
+			
+			 $("#phoneCode").kendoComboBox({
+		        valuePrimitive: true,
+		        dataTextField: "meaning",
+		        dataValueField: "value",
+		        dataSource: phoneCodeData,
+		        change:function(){
+		        	if($("#phoneCode").data('kendoComboBox').value() == ''){
+		        		removeByValue(functionArray,"telerrorcontactNum");
+		        		removeMessage("telerrorcontactNum");
+		        		viewModel.model.set('phoneCode','');
+		        	}else{
+		        		validateTel('contactNum');
+		        	}
+	   				
+	   				viewModel.model.set('contactNum','');
+	            }
+		 	});
+			
+			//供应商日历
+			$("#calendarId")
+				.kendoDropDownList({
+					dataSource : {
+					transport: {
+	                    read: {
+	                    	type:"POST",
+	                        dataType: "json",
+	                        url: '${base.contextPath}/supplier/calendar/getAll'
+	                    }
+	                },
+	                schema: {
+	                	data:'rows'
+	                }
+					},
+	  			dataTextField: "calendarName",
+	  			dataValueField: "calendarId",
+	  			valuePrimitive: true,
+	  			optionLabel:"--请选择--",
+	  			change:function(){
+	   				validateEmpty('calendarId');
+	               }
+		 		});
+			
+			//假期是否签单
+			$("#vocationBill")
+				.kendoDropDownList({
+				dataSource : yesOrNo,
+				dataTextField: "meaning",
+				dataValueField: "value",
+				valuePrimitive: true,
+				optionLabel:"--请选择--",
+				change:function(){
+					validateEmpty('vocationBill');
+	            }
+			 	});
+	          
+	        //有效日期从
+			$("#effectiveDateFrom").kendoDatePicker({
+	           	format: "yyyy-MM-dd",
+	           	change : function(){
+	           		  dateCheck('effectiveDateFrom');
+	                  mind = $('#effectiveDateFrom').val();
+	                  $("#effectiveDateTo").data("kendoDatePicker").min(mind);
+	              }
+	
+	       	});
+	        
+	        //有效日期至
+			$("#effectiveDateTo").kendoDatePicker({
+	         	format: "yyyy-MM-dd",
+	         	change : function(){
+	         		dateCheck('effectiveDateTo');
+	                maxd = $('#effectiveDateTo').val();
+	                $("#effectiveDateFrom").data("kendoDatePicker").max(maxd);
+	            }
+	     	});
+	        
+	        //状态
+			$("#statusCode").kendoDropDownList({
+	              valuePrimitive: true,
+	              dataTextField: "meaning",
+	              dataValueField: "value",
+	              dataSource: statusData,
+	              optionLabel:"--请选择--",
+	     			change:function(){
+	      				validateEmpty('statusCode');
+	                  }
+	          });
+	       	
+			$(document).ready(function(){
+				//供应商编号设置为灰色
+				$("#supplierCode").css("background","#EFEFEF");
+				//设置值
+		    	if(pageArgs.rows != undefined){
+		    		$("#statusCode").data("kendoDropDownList").value(pageArgs.rows[0].statusCode);
+		            $("#effectiveDateTo").data("kendoDatePicker").min(viewModel.model.effectiveDateFrom);
+		            $("#effectiveDateFrom").data("kendoDatePicker").max(viewModel.model.effectiveDateTo);
+		    	}
+				//设置按钮启用
+		    	if(supplierId != 0){
+		    		$("#gridAdd").removeAttr("disabled");
+		    		$("#gridEdit").removeAttr("disabled");
+		    		$("#gridDelete").removeAttr("disabled");
+		    		
+		    		$("#gridAdd").attr("onclick","addRow()");
+		    		$("#gridEdit").attr("onclick","editFunctionResources()");
+		    		$("#gridDelete").attr("onclick","deleteData()");
+		    	}
+				//设置单选框
+		    	for(var i=1;i<=9;i++){
+		    		if(viewModel.model['qualification'+i] == 'Y'){
+		    			$("#checkbox"+i).data('kendoCheckbox').check('Y');
+		    		}
+		    	}
+		    	if(viewModel.model['otherQualification'] == 'Y'){
+	    			$("#checkbox10").data('kendoCheckbox').check('Y');
+	    		}
+			});
+   			
+			var BaseUrl = _basePath;
+		    dataSource = new kendo.data.DataSource({
+		        transport: {
+		            read: {
+		                url: BaseUrl + "/spe/contract/query",
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            parameterMap: function (options, type) {
+		            	if (type === "read") {
+		            		var param = {"supplierId":supplierId};
+		                    return Hap.prepareQueryParameter(param, options)
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: false,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "contractId",
+		                fields: {
+		                }
+		            }
+		        }
+		    });
+
+		    var grid=$("#grid").kendoGrid({
+		        dataSource: dataSource,
+		        resizable: true,
+		        scrollable: true,
+		        height: '300px',
+		        selectable:'multiple,rowbox',
+		        navigatable: false,
+		        pageable: {
+		            pageSizes: [5, 10, 20, 50],
+		            refresh: true,
+		            buttonCount: 5
+		        },
+		        columns: [
+		            {
+		                field: "levelOneType",
+		                title: '<@spring.message "spe.levelOneType"/>',
+		                width: 60,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template: function(dataItem){
+	                        var v = dataItem.levelOneType;
+	                        $.each(supplierType,function(i,n){
+	                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                                v = n.meaning;
+	                                return v;
+	                            }
+	                        })
+	                        if(v != undefined) return v;
+	                        return '';
+	                     },
+	                    editor: function(container, options){
+	                    	$('<input required validationMessage="必输" id="gridlevelOneType" name="' + options.field + '"/>')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+		                    	dataSource : supplierType,
+		        				dataTextField: "meaning",
+		        				dataValueField: "value",
+		        				valuePrimitive: true,
+		        				optionLabel:"--请选择分类--",
+		        				change:function(){
+		                        	options.model.set('levelTwoType',null);
+		                        	options.model.set('levelThreeType',null);
+		                        },
+	                        });
+	                   	}
+		            },{
+		                field: "levelTwoType",
+		                title: '<@spring.message "spe.levelTwoType"/>',
+		                width: 60,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template: function(dataItem){
+	                        var v = dataItem.levelTwoType;
+	                        $.each(supplierTypeTwo,function(i,n){
+	                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                                v = n.meaning;
+	                                return v;
+	                            }
+	                        })
+	                        if(v != undefined) return v;
+	                        return '';
+	                     },
+	                    editor: function(container, options){
+	                    	$('<input id="gridlevelTwoType" name="' + options.field + '"/>')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+	                        	autoBind:false,
+	                        	dataSource : {
+	                        		transport: {
+	                        			   read: {
+	                                       		type:"POST",
+	                                        	url: _basePath+'/spe/Common/getCodeValuesByParentId'
+	                                        },
+		                   		            parameterMap: function (data,type) {
+		                		            	if (type === "read") {
+		                		            		var param = {"code":'SPE.SUPPLIER_TYPE_LEVEL_TWO','parentValue':options.model.levelOneType};
+		                		                    return Hap.prepareQueryParameter(param, options)
+		                		                }
+		                		            }
+	                                   },
+	                                   schema: {
+	                                   	data:'rows'
+	                                   }
+	               				},
+		        				dataTextField: "meaning",
+		        				dataValueField: "value",
+		        				valuePrimitive: true,
+		        				open:function(){
+		                            var dropdownlist = $("#gridlevelTwoType").data("kendoDropDownList");
+		                            dropdownlist.dataSource.read();
+		                        },
+		        				change:function(){
+		        					options.model.set('levelThreeType',null);
+		        	            }
+	                        });
+	                   	}
+		            },{
+		                field: "levelThreeType",
+		                title: '<@spring.message "spe.levelThreeType"/>',
+		                width: 60,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template: function(dataItem){
+	                        var v = dataItem.levelThreeType;
+	                        $.each(supplierTypeThree,function(i,n){
+	                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                                v = n.meaning;
+	                                return v;
+	                            }
+	                        })
+	                        if(v != undefined) return v;
+	                        return '';
+	                     },
+	                    editor: function(container, options){
+	                    	$('<input id="gridlevelThreeType" name="' + options.field + '"/>')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+	                        	autoBind:false,
+	                        	dataSource : {
+	                        		transport: {
+	                        			   read: {
+	                                       	   type:"POST",
+	                                           url: _basePath+'/spe/Common/getCodeValuesByParentId'
+	                                       },
+		                   		            parameterMap: function (data,type) {
+		                		            	if (type === "read") {
+		                		            		var param = {"code":'SPE.SUPPLIER_TYPE_LEVEL_THREE','parentValue':options.model.levelTwoType};
+		                		                    return Hap.prepareQueryParameter(param, options)
+		                		                }
+		                		            }
+	                                   },
+	                                   schema: {
+	                                   	data:'rows'
+	                                   }
+	               				},
+		        				dataTextField: "meaning",
+		        				dataValueField: "value",
+		        				valuePrimitive: true,
+		        				open:function(){
+		                            var dropdownlist = $("#gridlevelThreeType").data("kendoDropDownList");
+		                            dropdownlist.dataSource.read();
+		                        },
+	                        });
+	                   	}
+		            },{
+		                title: "<@spring.message "hap.action"/>",
+		                width: 40,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+		                template:function(dataItem){
+		                	return '<a href="javascript:void(0)" onclick="checkDetail(\''+dataItem.uid+'\')" style="width:50px">合约详情</a>';
+						}
+		            }
+		        ],
+		        toolbar: kendo.template($("#template").html()),
+		        editable: 'inline'
+		    }).data('kendoGrid');
+		    /* ----------------------------------初始化组件---------------------------------- */
+		    
+		    
+		    
+		    
+		    /* ----------------------------------函数区---------------------------------- */
+		    
+		    function checkEmail(id){
+		    	var email = $("#"+id).val(); 
+		    	if(email == ""){
+		    		removeByValue(functionArray,"emailerror"+id);
+		    		removeMessage("emailerror"+id);
+		    		return;
+		    	}else{
+		    		emailCheck(id);
+		    	}
+		    }
+		    
+		    function validateTel(id){
+		    	var phoneCode = viewModel.model.phoneCode;
+		    	if(phoneCode == '86'){
+		    		 telCheck(id,11);
+		    	}else if(phoneCode == '00886'){
+		    		 telCheck(id,9)
+		    	}else{
+		    		 telCheck(id,8)
+		    	}
+		    }
+		    
+		    
+		    //添加行
+		    function addRow(){
+		    	var grid = $("#grid").data('kendoGrid');
+        		grid.addRow();
+		    }
+		    
+		    //合约详情
+		    function checkDetail(uid){
+		    	var data = dataSource.getByUid(uid);
+		    	var typedata = [];
+		    	if(typeof(data.levelOneType) == "undefined" || data.levelOneType == null || data.levelOneType == ''){
+			    		var levelOneList = $("#gridlevelOneType").data('kendoDropDownList');
+		    			if(typeof(levelOneList) != "undefined" && levelOneList != null || levelOneList != ''){
+		    				if(levelOneList.value() == ''){
+				    			kendo.ui.showInfoDialog({
+					            	message: '<@spring.message "spe.pleasechoosetypeone"/>'
+					            })
+					            return;
+				    		}
+				    		var levelTwoList = $("#gridlevelTwoType").data('kendoDropDownList');
+					    	var levelThreeList = $("#gridlevelThreeType").data('kendoDropDownList');
+					    	//设置分类值
+					    	typedata.push({'levelValue':levelOneList.value(),'levelText':levelOneList.text()});
+					    	typedata.push({'levelValue':levelTwoList.value(),'levelText':levelTwoList.text()});
+					    	typedata.push({'levelValue':levelThreeList.value(),'levelText':levelThreeList.text()});
+				    	}
+			    }
+		    	else{
+		    		var currentNode = getTdData(data.uid);
+		    		//设置分类值
+			    	typedata.push({'levelValue':data.levelOneType,'levelText':currentNode.childNodes[1].innerText});
+			    	typedata.push({'levelValue':data.levelTwoType,'levelText':currentNode.childNodes[2].innerText});
+			    	typedata.push({'levelValue':data.levelThreeType,'levelText':currentNode.childNodes[3].innerText});
+		    	}
+		    	var contractId = 0;
+		    	if(typeof(data.contractId) == "undefined" || data.contractId == null || data.contractId == ''){
+		    		contractId = 0;
+		    	}else{
+		    		contractId = data.contractId;
+		    	}
+		    	levelData['key'+contractId] = typedata;
+		    	
+		    	var url = 'supplier_contract_detail.html?contractId='+contractId+"&supplierId="+supplierId;
+				var dialog =  $("#dialog").kendoWindow({
+	              	actions: ["Close"],
+	                 width: 1200,
+	                 height: 500,
+	                 content: url,                  
+	                 iframe:  true,
+	                 visible: false,
+	                 modal:true,
+	                 close: function(){
+	  	                $('#grid').data('kendoGrid').dataSource.read();
+	             	 }
+	              }).data("kendoWindow");
+	    		 dialog.maximize();
+	   		  	 dialog.open();
+		    }
+		    
+		    function getTdData(uid){
+		    	var dataRows = grid.items().prevObject.prevObject[0];
+		      	var trList=dataRows.getElementsByTagName("tr");
+		      	var currentNode = "";
+		      	//获取当前节点
+		      	for(var temp=0;temp<trList.length;temp++){
+		     		if(uid == trList[temp].dataset.uid){
+		     			currentNode = trList[temp];
+		     		}
+		         }
+		      	return currentNode;
+		     }
+		    
+			//取消
+        	function cancel(){
+        		var id="infomaintain"+oldSupplierId+"view";
+        		closeTab(id);
+   			};
+    
+		    //关闭tab页
+		    function closeTab(id){
+		    	var parent = window.parent.parent.$("#mainTab");
+		    	var mainTab = parent.data("kendoTabStrip");
+		        var idx = jQuery.inArray(id,mainTab.tabids),
+		        activeIndex = mainTab.tabGroup.children('li.k-state-active').index();
+		        if(idx == -1) return;
+		        mainTab.remove(idx);
+		        if (activeIndex == idx ) {
+		            if (mainTab.tabids.length >= idx + 1) mainTab.select(idx)
+		            else if (idx - 1 >= 0) mainTab.select(idx - 1);
+		        }
+		    };
+		    
+		    //编辑数据
+		    function editFunctionResources(){
+		    	var checked = grid.selectedDataItems();
+		    	if(checked.length == 1){
+		    	    var data = grid.dataItem(grid.select());
+		    	    grid.editRow(data);
+		    	}else{
+		            kendo.ui.showInfoDialog({
+		            	message: $l('hap.tip.selectrow')
+		            })
+		    	 }
+		    };
+		    
+		    //提交
+        	function submit(){
+        		viewModel = getCheckBoxValue(viewModel);
+        		var baseIds = getFormIdsByFormId('mainform');
+        		//baseIds.push.apply(baseIds,statusIds);
+        		if(submitValidate(baseIds)){
+        			var fromDate = $("#effectiveDateFrom").val();
+                    var toDate = $("#effectiveDateTo").val();
+                    if(fromDate > toDate){
+                    	kendo.ui.showErrorDialog({
+                            title    : '错误',
+                            message  : '<@spring.message "spe.timeerror"/>'
+                        })
+                        return;
+                    }
+					var unique = zeroModal.loading(6);
+					//如果不是产品公司，设置成供应商类型
+					if(viewModel.model.type != 'PC'){
+						viewModel.model.set('type','SPE');
+					}
+					
+					Hap.submitForm({
+            			formModel:viewModel.model,
+            			url : '${base.contextPath}/supplier/main/submit',
+            			success : function(json) {
+            				zeroModal.close(unique);
+    						if(json.success == true){
+            		    		if(supplierId == 0){
+            		    			var responseData = json.rows[0];
+            		    			var id = "infomaintain"+responseData.supplierId+"view";
+            		    			var url = 'supplier/supplier_info_maintain.html?supplierId='+responseData.supplierId;
+            		   				var title = responseData.name+"维护";
+            		    			window.top.openTab(id,title,url);
+            		    			cancel();
+            		    		}
+            		    		viewModel.model.set('__status','update');
+								kendo.ui.showInfoDialog({
+                		        	title:'成功',
+                		        	message: '<@spring.message "hap.tip.success"/>'
+                		        });
+            		    	}else{
+                        		kendo.ui.showErrorDialog({
+                		        	title:'失败！',
+                		        	message: json.message
+                		        })
+                        	}
+                        },
+	                    failure : function(msg){
+	                    	zeroModal.close(unique);
+	                    	kendo.ui.showErrorDialog({
+            		        	title:'失败！',
+            		        	message: msg.message
+            		        })
+	                    }
+            		});
+        		}
+        	};
+        	
+        	//删除数据
+        	function deleteData(){
+        		var checked = grid.selectedDataItems();
+        		if(checked.length == 0){
+		            kendo.ui.showInfoDialog({
+		            	message: $l('hap.tip.selectrow')
+		            })
+		            return;
+		    	 }
+        		kendo.ui.showConfirmDialog({
+            		title:'确认框',
+                    message:'<@spring.message "hap.tip.delete_confirm"/>',
+                }).done(function (e) {
+                	if (e.button == 'OK') {
+                			$.ajax({
+                    			url:"${base.contextPath}/spe/contract/remove",
+                    			type : "POST",
+                    			contentType : "application/json",
+                    			data:JSON.stringify(checked),
+                    			success : function(res) {
+                    				if(res.success){
+                    					datas = dataSource.data();
+                    					for(var i = 0;i < datas.length; i ++){
+                    						for(var j=0;j<checked.length;j++){
+                    							if(datas[i].uid == checked[j].uid){
+                        							dataSource.remove(datas[i]);
+                        						}
+                    						}
+                    					}
+            							grid.refresh();
+                    					kendo.ui.showInfoDialog({
+                                            title    : '提示',
+                                            message  : '<@spring.message "spe.deletesuccess"/>'
+                                        })
+                    				}else{
+                    					kendo.ui.showErrorDialog({
+                                            title    : '错误',
+                                            message  : res.message
+                                        })
+                    				}
+            	                },
+                    		})
+                	}
+    	        });
+        	};
+        	
+        	//获取单选框的值
+        	function getCheckBoxValue(viewModel){
+        		for(var i=1;i<=9;i++){
+        			viewModel.model['qualification'+i] = $("#checkbox"+i).data('kendoCheckbox').value();
+        		}
+        		viewModel.model['otherQualification'] = $("#checkbox10").data('kendoCheckbox').value();
+        		return viewModel;
+        	}
+        	
+        	//添加签单TR
+        	function addSignTr(){
+        		var trData = viewModel.model.signTr;
+        		if(trData == null || trData == undefined){
+        			trData = '';
+        		}else{
+        			var dataArray = trData.split(";");
+        			trArray = [];
+        			for(var i=0;i<dataArray.length;i++){
+        				if(dataArray[i] != ''){
+        					var d = {'trName':dataArray[i]};
+            				trArray.push(d);
+        				}
+        			}
+        		}
+        		var url = 'signTr.html?supplierId='+supplierId;
+				var dialog =  $("#trDialog").kendoWindow({
+	              	actions: ["Close"],
+	                 width: 500,
+	                 height: 400,
+	                 content: url, 
+	                 resizable:false,
+	                 iframe:  true,
+	                 visible: false,
+	                 modal:true
+	            }).data("kendoWindow");
+				dialog.center().open();
+        	}
+        	
+        	/* ----------------------------------函数区---------------------------------- */
+         </script>
+        
+</div>
+
+
+
+
+
+
+</body>
+</html>

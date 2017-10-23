@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnPlanLibraryMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnPlanLibrary">
+        <result column="LIBRARY_ID" property="libraryId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="PREMIUM" property="premium" jdbcType="DECIMAL" />
+        <result column="AGE" property="age" jdbcType="DECIMAL" />
+        <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+        <result column="SMOKE_FLAG" property="smokeFlag" jdbcType="VARCHAR" />
+        <result column="NATIONALITY" property="nationality" jdbcType="VARCHAR" />
+        <result column="RESIDENCE" property="residence" jdbcType="VARCHAR" />
+        <result column="CITY" property="city" jdbcType="VARCHAR" />
+        <result column="SECURITY_LEVEL" property="securityLevel" jdbcType="VARCHAR" />
+        <result column="SECURITY_AREA" property="securityArea" jdbcType="VARCHAR" />
+        <result column="SELFPAY_ID" property="selfpayId" jdbcType="DECIMAL" />
+        <result column="SELFPAY" property="selfpay" jdbcType="VARCHAR" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+        <result column="UPLOAD_DATE" property="uploadDate"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+        <result column="MIN_CLASS" property="minClass"/>
+        <result column="MID_CLASS" property="midClass"/>
+        <result column="BIG_CLASS" property="bigClass"/>
+        <result column="value" property="value"/>
+        <result column="meaning" property="meaning"/>
+        <result column="PLAN_QUOTA" property="planQuota"/>
+        <result column="ORDER_BY2" property="orderBy2"  jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <!-- 产品库信息 -->
+    <select id="selectLibraryInfo" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+       select fppl.*,
+       fpi.ITEM_CODE,
+       fpi.ITEM_NAME,
+       fpi.MIN_CLASS,
+       fpi.MID_CLASS,
+       fpi.BIG_CLASS,
+       fpis.SUBLINE_ITEM_NAME,
+       self.SELFPAY,
+       sf.FILE_PATH,
+       sf.FILE_SIZE,
+       sf.FILE_NAME,
+       sf.FILE_TYPE,
+       sf.UPLOAD_DATE
+       from FMS_PLN_PLAN_LIBRARY fppl
+       JOIN fms_prd_item_subline fpis ON fppl.SUBLINE_ID = fpis.SUBLINE_ID
+       LEFT JOIN fms_prd_item_selfpay self on fppl.SELFPAY_ID = self.SELFPAY_ID
+       JOIN fms_prd_items fpi on fppl.ITEM_ID = fpi.ITEM_ID
+       LEFT JOIN sys_file sf on fppl.FILE_ID = sf.FILE_ID
+       where 1=1
+        <if test="itemCode != null and itemCode != ''">
+		     and fpi.ITEM_CODE like CONCAT('%', #{itemCode}, '%')
+		</if>
+		<if test="sublineItemName != null and sublineItemName != ''">
+		     and fpis.SUBLINE_ITEM_NAME = #{sublineItemName}
+		</if>
+		<if test="gender != null and gender != ''">
+		     and fppl.gender like CONCAT('%', #{gender}, '%')
+		</if>
+		<if test="age != null and age != ''">
+		     <if test="age != '0015'">
+		          and fppl.age BETWEEN CAST(left(#{age}, 2) AS SIGNED) AND CAST(right(#{age}, 2) AS SIGNED)
+		     </if>
+		     <if test="age == '15'">
+		         and fppl.age BETWEEN 0 AND 15
+		     </if>
+		</if>
+		<if test="smokeFlag != null and smokeFlag != ''">
+		     and fppl.SMOKE_FLAG like CONCAT('%', #{smokeFlag}, '%')
+		</if>
+		<if test="payMethod != null and payMethod != ''">
+		     and fppl.PAY_METHOD like CONCAT('%', #{payMethod}, '%')
+		</if>
+		<if test="securityLevel != null and securityLevel != ''">
+		     and fppl.security_level like CONCAT('%', #{securityLevel}, '%')
+		</if>
+		<if test="securityArea != null and securityArea != ''">
+		     and fppl.security_area like CONCAT('%', #{securityArea}, '%')
+		</if>
+		<if test="selfpay != null and selfpay != ''">
+		     and self.selfpay like CONCAT('%', #{selfpay}, '%')
+		</if>
+		<if test="residence != null and residence != ''">
+		     and fppl.residence like CONCAT('%', #{residence}, '%')
+		</if>
+		<if test="nationality != null and nationality != ''">
+		     and fppl.nationality like CONCAT('%', #{nationality}, '%')
+		</if>
+		<if test="city != null and city != ''">
+		     and fppl.city like CONCAT('%', #{city}, '%')
+		</if>
+		<if test="premiumStart != null and premiumStart != ''">
+		    and fppl.premium <![CDATA[>=]]> #{premiumStart}
+		</if>
+		<if test="premiumEnd != null and premiumEnd != ''">
+		    and fppl.premium <![CDATA[<=]]> #{premiumEnd}
+		</if>
+		<if test="amountStart != null and amountStart != ''">
+		    and fppl.amount <![CDATA[>=]]> #{amountStart}
+		</if>
+		<if test="amountEnd != null and amountEnd != ''">
+		    and fppl.amount <![CDATA[<=]]> #{amountEnd}
+		</if>
+        <if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+		<if test="orderBy2 != null and orderBy2 != ''">
+			order by fppl.LIBRARY_ID DESC
+		</if>        
+    </select>
+
+    <!-- 产品库计划书库查询信息 -->
+    <select id="selectLibraryInfoForPrd" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+       select fppl.*,
+       fpi.ITEM_CODE,
+       fpi.ITEM_NAME,
+       fpi.MIN_CLASS,
+       fpi.MID_CLASS,
+       fpi.BIG_CLASS,
+       fpis.SUBLINE_ITEM_NAME,
+       self.SELFPAY,
+       sf.FILE_PATH,
+       sf.FILE_SIZE,
+       sf.FILE_NAME,
+       sf.FILE_TYPE,
+       sf.UPLOAD_DATE
+       from FMS_PLN_PLAN_LIBRARY fppl
+       JOIN fms_prd_item_subline fpis ON fppl.SUBLINE_ID = fpis.SUBLINE_ID
+       LEFT JOIN fms_prd_item_selfpay self on fppl.SELFPAY_ID = self.SELFPAY_ID
+       JOIN fms_prd_items fpi on fppl.ITEM_ID = fpi.ITEM_ID
+       LEFT JOIN sys_file sf on fppl.FILE_ID = sf.FILE_ID
+       where fppl.file_id is not null
+        <if test="itemCode != null and itemCode != ''">
+		     and fpi.ITEM_CODE like CONCAT('%', #{itemCode}, '%')
+		</if>
+		<if test="sublineItemName != null and sublineItemName != ''">
+		     and fpis.SUBLINE_ITEM_NAME = #{sublineItemName}
+		</if>
+		<if test="gender != null and gender != ''">
+		     and fppl.gender like CONCAT('%', #{gender}, '%')
+		</if>
+		<if test="age != null and age != ''">
+		     <if test="age != '0015'">
+		          and fppl.age BETWEEN CAST(left(#{age}, 2) AS SIGNED) AND CAST(right(#{age}, 2) AS SIGNED)
+		     </if>
+		     <if test="age == '15'">
+		         and fppl.age BETWEEN 0 AND 15
+		     </if>
+		</if>
+		<if test="smokeFlag != null and smokeFlag != ''">
+		     and fppl.SMOKE_FLAG like CONCAT('%', #{smokeFlag}, '%')
+		</if>
+		<if test="payMethod != null and payMethod != ''">
+		     and fppl.PAY_METHOD = #{payMethod}
+		</if>
+		<if test="securityLevel != null and securityLevel != ''">
+		     and fppl.security_level like CONCAT('%', #{securityLevel}, '%')
+		</if>
+		<if test="securityArea != null and securityArea != ''">
+		     and fppl.security_area like CONCAT('%', #{securityArea}, '%')
+		</if>
+		<if test="selfpay != null and selfpay != ''">
+		     and self.selfpay like CONCAT('%', #{selfpay}, '%')
+		</if>
+		<if test="residence != null and residence != ''">
+		     and fppl.residence like CONCAT('%', #{residence}, '%')
+		</if>
+		<if test="nationality != null and nationality != ''">
+		     and fppl.nationality like CONCAT('%', #{nationality}, '%')
+		</if>
+		<if test="city != null and city != ''">
+		     and fppl.city like CONCAT('%', #{city}, '%')
+		</if>
+		<if test="premiumStart != null and premiumStart != ''">
+		    and fppl.premium <![CDATA[>=]]> #{premiumStart}
+		</if>
+		<if test="premiumEnd != null and premiumEnd != ''">
+		    and fppl.premium <![CDATA[<=]]> #{premiumEnd}
+		</if>
+		<if test="amountStart != null and amountStart != ''">
+		    and fppl.amount <![CDATA[>=]]> #{amountStart}
+		</if>
+		<if test="amountEnd != null and amountEnd != ''">
+		    and fppl.amount <![CDATA[<=]]> #{amountEnd}
+		</if>
+        <if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+    </select>
+
+    <!-- 获取我的计划书角标 -->
+    <select id="getMyPlanCount" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultType="java.lang.Integer">
+        SELECT count(*) FROM (
+        SELECT
+        fppr.CHANNEL_ID
+        FROM
+        FMS_PLN_PLAN_REQUEST fppr
+        LEFT JOIN fms_prd_items fpi ON fppr.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN fms_prd_items fpi2 ON fppr.ADVANCED_MEDICAL_ITEM_ID = fpi2.ITEM_ID
+        LEFT JOIN fms_prd_item_selfpay fpis2 ON fppr.ADVANCED_MEDICAL_SELFPAY_ID = fpis2.SELFPAY_ID
+        LEFT JOIN fms_prd_item_subline fpis ON fppr.SUBLINE_ID = fpis.SUBLINE_ID
+        LEFT JOIN sys_file sf ON fppr.file_id = sf.file_id
+        LEFT JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+        LEFT JOIN sys_user su ON fppr.created_by = su.USER_ID
+        LEFT JOIN fms_sys_function_handle_person fsfhp ON fppr.PLAN_ID = fsfhp.SOURCE_ID
+        AND fsfhp.FUNCTION_CODE = "PLAN_JOB"
+        AND fsfhp.COLUMN_CODE = "STATUS"
+        LEFT JOIN sys_user su2 ON fsfhp.USER_ID = su2.USER_ID
+        LEFT JOIN fms_prd_item_selfpay fpis3 ON fppr.SELFPAY_ID = fpis3.SELFPAY_ID
+        LEFT JOIN fms_cnl_channel fcc ON fppr.channel_id = fcc.CHANNEL_ID
+        <where>
+            (fppr.status = #{ status }
+                OR
+                fppr.status = #{ extraStatus }
+                AND fppr.download_flag = #{ downloadFlag })
+            AND EXISTS (
+                SELECT
+                1
+                FROM
+                sys_user pmsu
+                WHERE
+                (
+                pmsu.USER_TYPE = 'CHANNEL'
+                AND fppr.CHANNEL_ID = pmsu.RELATED_PARTY_ID
+                OR pmsu.USER_TYPE = 'ADMINISTRATION'
+                AND EXISTS (
+                    SELECT
+                    pmfccc.channel_id
+                    FROM
+                    fms_cnl_channel_contract pmfccc
+                    JOIN fms_cnl_contract_role pmfccr ON pmfccc.channel_contract_id = pmfccr.channel_contract_id
+                    AND pmfccr.role = 'AGENCY'
+                    WHERE
+                    pmfccr.role_user_id = pmsu.user_id
+                    AND fppr.CHANNEL_ID = pmfccc.channel_id
+                  )
+                )
+                AND pmsu.USER_ID = #{ userId }
+            )
+        </where> ) temp
+    </select>
+
+    <!-- 查看是否存在 -->
+    <select id="selectLibraryByCondition" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+       select * from
+       fms_pln_plan_library fppl
+       where fppl.ITEM_ID = #{itemId}
+         and fppl.SUBLINE_ID = #{sublineId}
+         and fppl.PAY_METHOD = #{payMethod}
+         and fppl.CURRENCY = #{currency}
+         <if test="amount != null">
+            and fppl.AMOUNT = #{amount}
+         </if>
+         <if test="premium != null">
+            and fppl.PREMIUM = #{premium}
+         </if>
+         and fppl.AGE = #{age}
+         and fppl.GENDER = #{gender}
+         and fppl.SMOKE_FLAG = #{smokeFlag}
+         and fppl.NATIONALITY = #{nationality}
+         and fppl.RESIDENCE = #{residence}
+         <if test="city == null or city == ''" >
+            and fppl.CITY = ''
+         </if>
+         <if test="city != null and city != ''">
+            and fppl.CITY = #{city}
+         </if>
+         <if test="securityArea == null or securityArea == ''" >
+            and fppl.SECURITY_AREA = ''
+         </if>
+         <if test="securityArea != null and securityArea != ''">
+            and fppl.SECURITY_AREA = #{securityArea}
+         </if>
+         <if test="securityLevel == null or securityLevel == ''" >
+            and fppl.SECURITY_LEVEL = ''
+         </if>
+         <if test="securityLevel != null and securityLevel != ''">
+             and fppl.SECURITY_LEVEL = #{securityLevel}
+         </if>
+        
+    </select>
+
+    <!-- 查询值列表的值 -->
+    <select id="selectListByCodeAndItem" resultMap="BaseResultMap">
+         select scvb.value, scvb.meaning from fms_prd_item_paymode fpip, sys_code_value_b scvb, sys_code_b scb
+         where fpip.CURRENCY_CODE = scvb.`VALUE`
+           and scvb.CODE_ID = scb.CODE_ID
+           and scb.`CODE` = #{code}
+           and fpip.ITEM_ID = #{itemId}
+    </select>
+
+    <!-- 查询产品缴费方式 -->
+    <select id="queryPaymethodByItem" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+         select scvb.MEANING,
+                scvb.`VALUE`
+         from sys_code_value_b scvb, sys_code_b scb
+         where scvb.CODE_ID = scb.CODE_ID
+           and scb.`CODE` = 'CMN.PAY_METHOD'
+           <if test="payMethodList != null">
+			and scvb.`VALUE` in
+			  <foreach item="item" index="index" collection="payMethodList" open="("
+				separator="," close=")">
+				#{item}
+			   </foreach>
+		    </if>
+    </select>
+
+    <!-- 查询安全等级 -->
+     <select id="querySecurityLevelByItem" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+         select DISTINCT fpisp.SECURITY_LEVEL value,
+                fpisp.SECURITY_LEVEL meaning
+         from fms_prd_item_security_plan fpisp
+         <where>
+             <if test="itemId != null">
+			   fpisp.ITEM_ID = #{itemId}
+		    </if>
+         </where>
+    </select>
+
+
+    <!-- 查询安全区域 -->
+     <select id="querySecurityAreaByItem" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+         select DISTINCT fpisp.SECURITY_REGION value,
+                fpisp.SECURITY_REGION meaning
+         from fms_prd_item_security_plan fpisp
+         <where>
+             <if test="itemId != null and itemId != ''">
+			   and fpisp.ITEM_ID = #{itemId}
+		    </if>
+		    <if test="securityLevel != null and securityLevel != ''">
+		       and fpisp.SECURITY_LEVEL = #{securityLevel}
+		    </if>
+         </where>
+    </select>
+
+    <!-- 查询年期信息 -->
+    <select id="querySublineItemNameByItem" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+         select DISTINCT fpis.SUBLINE_ITEM_NAME value,
+                 fpis.SUBLINE_ITEM_NAME meaning
+         from fms_prd_item_subline fpis, fms_prd_items fpi
+        where fpis.ITEM_ID = fpi.ITEM_ID
+          and fpi.BIG_CLASS = 'BX'
+       <if test="itemId != null and itemId != ''">
+	      and fpis.ITEM_ID = #{itemId}
+       </if>
+    </select>
+
+    <!-- 查询自付信息 -->
+    <select id="querySelfpayByItem" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+         select DISTINCT fpis.SELFPAY value,
+                fpis.SELFPAY meaning
+         from fms_prd_item_selfpay fpis
+         <where>
+             <if test="itemId != null and itemId != ''">
+			   fpis.ITEM_ID = #{itemId}
+		    </if>
+         </where>
+    </select>
+
+    <!-- 通过渠道id查询渠道计划书额度 -->
+    <select id="queryChannelPlanQuota" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+        select su.PLAN_QUOTA from sys_user su, fms_cnl_channel fcc 
+        where su.RELATED_PARTY_ID = fcc.CHANNEL_ID
+          and su.USER_TYPE = 'CHANNEL' 
+          and fcc.CHANNEL_ID = #{channelId}
+    </select>
+    
+    
+     <select id="selectLibraryByConditionForBack" parameterType="clb.core.pln.dto.PlnPlanLibrary" resultMap="BaseResultMap">
+       select * from
+       fms_pln_plan_library fppl
+       where fppl.ITEM_ID = #{itemId}
+         and fppl.SUBLINE_ID = #{sublineId}
+         and fppl.PAY_METHOD = #{payMethod}
+         and fppl.CURRENCY = #{currency}
+         <if test="amount != null">
+            and fppl.AMOUNT = #{amount}
+         </if>
+         <if test="amount == null">
+            and fppl.AMOUNT is null
+         </if>
+         <if test="premium != null">
+            and fppl.PREMIUM = #{premium}
+         </if>
+         <if test="premium == null">
+            and fppl.PREMIUM is null
+         </if>
+         and fppl.AGE = #{age}
+         and fppl.GENDER = #{gender}
+         and fppl.SMOKE_FLAG = #{smokeFlag}
+         and fppl.NATIONALITY = #{nationality}
+         and fppl.RESIDENCE = #{residence}
+         <if test="city == null or city == ''" >
+            and fppl.CITY = ''
+         </if>
+         <if test="city != null and city != ''">
+            and fppl.CITY = #{city}
+         </if>
+         <if test="securityArea == null or securityArea == ''" >
+            and fppl.SECURITY_AREA = ''
+         </if>
+         <if test="securityArea != null and securityArea != ''">
+            and fppl.SECURITY_AREA = #{securityArea}
+         </if>
+         <if test="securityLevel == null or securityLevel == ''" >
+            and fppl.SECURITY_LEVEL = ''
+         </if>
+         <if test="securityLevel != null and securityLevel != ''">
+             and fppl.SECURITY_LEVEL = #{securityLevel}
+         </if>
+        
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wzl on 2017/6/14.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpAccountMapper">
+    <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpAccount">
+        <result column="ACCOUNT_ID" property="accountId" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_NAME" property="accountName" jdbcType="VARCHAR" />
+        <result column="TOKEN" property="token" jdbcType="VARCHAR" />
+        <result column="APPID" property="appid" jdbcType="VARCHAR" />
+        <result column="INTERFACE_ADDR" property="InterfaceAddr" jdbcType="VARCHAR" />
+        <result column="APP_SECRET" property="appSecret" jdbcType="VARCHAR" />
+        <result column="ENCODING_AESKEY" property="encodingAeskey" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getWoaAccountByAppId" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select a.CFG_ID account_id,a.ORIGINAL_ID account_num,a.ACCOUNT_NAME,a.ACCOUNT_TYPE,a.WECHAT_TOKEN token,a.BACKGROUND_APPID appid,a.BACKGROUND_APP_SECRET app_secret,a.ENCODING_AESKEY,a.ENABLE_FLAG from fms_wht_official_account_cfg a where a.BACKGROUND_APPID=#{appid}
+    </select>
+
+    <select id="getWoaAccountByAccountNum" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select a.CFG_ID account_id,a.ORIGINAL_ID account_num,a.ACCOUNT_NAME,a.ACCOUNT_TYPE,a.WECHAT_TOKEN token,a.BACKGROUND_APPID appid,a.BACKGROUND_APP_SECRET app_secret,a.ENCODING_AESKEY,a.ENABLE_FLAG from fms_wht_official_account_cfg a where a.ORIGINAL_ID=#{accountNum}
+    </select>
+
+</mapper>

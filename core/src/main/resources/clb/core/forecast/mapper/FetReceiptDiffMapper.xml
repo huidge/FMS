@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetReceiptDiffMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetReceiptDiff">
+        <result column="RECEIPT_DIFF_ID" property="receiptDiffId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_PERIOD" property="receiptPeriod" jdbcType="VARCHAR" />
+        <result column="RECEIVE_SUPPLIER_ID" property="receiveSupplierId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_SUPPLIER_ID" property="paymentSupplierId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_SUPPLIER_NAME" property="receiveSupplierName" jdbcType="VARCHAR" />
+        <result column="PATMENT_SUPPLIER_NAME" property="paymentSupplierName" jdbcType="VARCHAR" />
+        <result column="RECEIPT_TYPE" property="receiptType" jdbcType="VARCHAR" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ORDER_CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+        <result column="RECEIVABLE_HKD" property="receivableHkd" jdbcType="DECIMAL" />
+        <result column="ACTUAL_RECEIPT_HKD" property="actualReceiptHkd" jdbcType="DECIMAL" />
+        <result column="DIFF_HKD" property="diffHkd" jdbcType="DECIMAL" />
+        <result column="DIFF_RATE" property="diffRate" jdbcType="DECIMAL" />
+        <result column="DUE_DATE" property="dueDate" jdbcType="DATE" />
+        <result column="ACTUAL_DATE" property="actualDate" jdbcType="DATE" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="APPLICANT_NAME" property="applicantName" jdbcType="VARCHAR" />
+        <result column="MERGE_SEQENCE" property="mergeSeqence" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="getData" parameterType="clb.core.forecast.dto.FetReceiptDiff" resultMap="BaseResultMap">
+     			SELECT
+					ffrd.*, 
+				  	foo.ORDER_NUMBER,
+					fpi.ITEM_NAME,
+					fcc.CHINESE_NAME APPLICANT_NAME,
+					fpis.SUBLINE_ITEM_NAME
+				FROM
+					fms_fet_receipt_diff ffrd
+					LEFT JOIN fms_ord_order foo on ffrd.ORDER_ID = foo.ORDER_ID
+					LEFT JOIN fms_prd_items fpi on ffrd.ITEM_ID = fpi.ITEM_ID
+					LEFT JOIN fms_prd_item_subline fpis on foo.SUBLINE_ID = fpis.SUBLINE_ID
+					LEFT JOIN fms_ctm_customer fcc on fcc.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+				<where>
+				<if test="receiptType != null">
+					AND ffrd.RECEIPT_TYPE = #{receiptType}
+				</if>
+				<if test="receiptPeriod != null">
+					AND ffrd.RECEIPT_PERIOD = #{receiptPeriod}
+				</if>
+				<if test="receiveSupplierId != null">
+					AND ffrd.RECEIVE_SUPPLIER_ID = #{receiveSupplierId}
+				</if>
+				<if test="paymentSupplierId != null">
+					AND ffrd.PAYMENT_SUPPLIER_ID = #{paymentSupplierId}
+				</if>
+				<if test="version != null">
+					AND ffrd.VERSION = #{version}
+				</if>
+				<if test="comments != null">
+					AND ffrd.COMMENTS like CONCAT(CONCAT('%',#{comments}),'%')
+				</if>
+				<if test="orderNumber != null">
+					AND ffrd.ORDER_ID in (
+						select foo.ORDER_ID
+						from fms_ord_order foo
+						where foo.ORDER_NUMBER like CONCAT(CONCAT('%',#{orderNumber}),'%')
+					)
+				</if>
+				</where>
+     </select>
+
+	<select id="summaryQuery"  parameterType="clb.core.forecast.dto.FetReceiptDiff" resultMap="BaseResultMap">
+		SELECT
+			ffrd.RECEIPT_PERIOD,
+			ffrd.RECEIVE_SUPPLIER_ID,
+			ffrd.PAYMENT_SUPPLIER_ID,
+			pfss. NAME PATMENT_SUPPLIER_NAME,
+			rfss. NAME RECEIVE_SUPPLIER_NAME,
+			sum(ffrd.RECEIVABLE_HKD) RECEIVABLE_HKD,
+			sum(ffrd.ACTUAL_RECEIPT_HKD) ACTUAL_RECEIPT_HKD,
+			sum(ffrd.DIFF_HKD) DIFF_HKD,
+			sum(ffrd.DIFF_HKD) / sum(ffrd.RECEIVABLE_HKD) DIFF_RATE,
+			ffrd.VERSION
+		FROM
+			fms_fet_receipt_diff ffrd
+			left join fms_spe_supplier  pfss on (pfss.SUPPLIER_ID = ffrd.PAYMENT_SUPPLIER_ID)
+			left join fms_spe_supplier  rfss on (rfss.SUPPLIER_ID = ffrd.RECEIVE_SUPPLIER_ID)
+		<where>
+		 	    ffrd.MERGE_SEQENCE='0'
+		 	    <if test="paramStatus != null">
+		 	    	AND (rfss.STATUS_CODE = #{paramStatus} AND pfss.STATUS_CODE = #{paramStatus})
+		 	    </if>
+				<if test="receiptPeriod != null">
+					AND ffrd.RECEIPT_PERIOD = #{receiptPeriod}
+				</if>
+				<if test="paymentSupplierName != null">
+					AND pfss.name like CONCAT(CONCAT('%',#{paymentSupplierName}),'%')
+				</if>
+				<if test="receiveSupplierName != null">
+					AND rfss.name like CONCAT(CONCAT('%',#{receiveSupplierName}),'%')
+				</if>
+		</where>
+		group by 
+			ffrd.RECEIPT_PERIOD,
+			ffrd.RECEIVE_SUPPLIER_ID,
+			ffrd.PAYMENT_SUPPLIER_ID,
+			PATMENT_SUPPLIER_NAME,
+			RECEIVE_SUPPLIER_NAME,
+			ffrd.VERSION
+		order by ffrd.VERSION desc
+	</select> 
+	
+	<select id="getDiffData" parameterType="clb.core.forecast.dto.FetReceiptDiff" resultMap="BaseResultMap">
+     			(
+				SELECT
+					ffr.RECEIPT_PERIOD,
+					ffr.RECEIVE_COMPANY_ID RECEIVE_SUPPLIER_ID,
+					ffr.PAYMENT_COMPANY_ID PAYMENT_SUPPLIER_ID,
+					ffr.RECEIPT_TYPE,
+					ffr.ORDER_ID,
+					ffr.ORDER_CURRENCY,
+					ffr.ITEM_ID,
+					ffr.HKD_AMOUNT RECEIVABLE_HKD,
+					ffar.HKD_AMOUNT ACTUAL_RECEIPT_HKD,
+					ffar.HKD_AMOUNT - ffr.HKD_AMOUNT DIFF_HKD,
+					(
+						ffar.HKD_AMOUNT - ffr.HKD_AMOUNT
+					) / ffr.HKD_AMOUNT DIFF_RATE,
+					ffr.DUE_DATE,
+					ffar.ACTUAL_DATE,
+					ffr.COMMENTS
+				FROM
+					fms_fet_receivable ffr
+				LEFT JOIN fms_fet_actual_receipt_summary ffarm ON ffarm.RECEIPT_PERIOD = ffr.RECEIPT_PERIOD
+				AND ffarm.RECEIVE_SUPPLIER_ID = ffr.RECEIVE_COMPANY_ID
+				AND ffarm.PAYMENT_SUPPLIER_ID = ffr.PAYMENT_COMPANY_ID
+				AND ffr.RECEIVE_COMPANY_TYPE = 'SUPPLIER'
+				AND ffr.PAYMENT_COMPANY_TYPE = 'SUPPLIER'
+				LEFT JOIN fms_fet_actual_receipt ffar ON ffar.RECEIPT_SUMMARY_ID = ffarm.RECEIPT_SUMMARY_ID
+				AND ffar.RECEIPT_TYPE = ffr.RECEIPT_TYPE
+				AND ffar.ORDER_ID = ffr.ORDER_ID
+				AND ffar.ITEM_ID = ffr.ITEM_ID
+				WHERE
+					ffr.RECEIPT_PERIOD = #{receiptPeriod}
+				AND ffr.RECEIVE_COMPANY_ID = #{receiveSupplierId}
+				AND ffr.PAYMENT_COMPANY_ID = #{paymentSupplierId}
+				AND ffr.VERSION = (
+					SELECT
+						max(VERSION)
+					FROM
+						fms_fet_receivable ffr1
+					WHERE
+						ffr1.RECEIPT_PERIOD = ffr.RECEIPT_PERIOD
+					AND ffr1.RECEIVE_COMPANY_ID = ffr.RECEIVE_COMPANY_ID
+					AND ffr1.PAYMENT_COMPANY_ID = ffr.PAYMENT_COMPANY_ID
+				)
+				AND ffarm.VERSION = (
+					SELECT
+						max(VERSION)
+					FROM
+						fms_fet_actual_receipt_summary ffarm1
+					WHERE
+						ffarm1.RECEIPT_PERIOD = ffr.RECEIPT_PERIOD
+					AND ffarm1.RECEIVE_SUPPLIER_ID = ffr.RECEIVE_COMPANY_ID
+					AND ffarm1.PAYMENT_SUPPLIER_ID = ffr.PAYMENT_COMPANY_ID
+				)
+			)
+		UNION ALL
+			(
+				SELECT
+					ffarm.RECEIPT_PERIOD,
+					ffarm.RECEIVE_SUPPLIER_ID,
+					ffarm.PAYMENT_SUPPLIER_ID,
+					ffar.RECEIPT_TYPE,
+					ffar.ORDER_ID,
+					ffar.ORDER_CURRENCY,
+					ffar.ITEM_ID,
+					ffr.HKD_AMOUNT RECEIVABLE_HKD,
+					ffar.HKD_AMOUNT ACTUAL_RECEIPT_HKD,
+					ffar.HKD_AMOUNT - ffr.HKD_AMOUNT DIFF_HKD,
+					(
+						ffar.HKD_AMOUNT - ffr.HKD_AMOUNT
+					) / ffr.HKD_AMOUNT DIFF_RATE,
+					ffr.DUE_DATE,
+					ffar.ACTUAL_DATE,
+					ffr.COMMENTS
+				FROM
+					fms_fet_actual_receipt_summary ffarm
+				JOIN fms_fet_actual_receipt ffar ON ffar.RECEIPT_SUMMARY_ID = ffarm.RECEIPT_SUMMARY_ID
+				LEFT JOIN fms_fet_receivable ffr ON ffarm.RECEIPT_PERIOD = ffr.RECEIPT_PERIOD
+				AND ffarm.RECEIVE_SUPPLIER_ID = ffr.RECEIVE_COMPANY_ID
+				AND ffarm.PAYMENT_SUPPLIER_ID = ffr.PAYMENT_COMPANY_ID
+				AND ffr.RECEIVE_COMPANY_TYPE = 'SUPPLIER'
+				AND ffr.PAYMENT_COMPANY_TYPE = 'SUPPLIER'
+				AND ffar.RECEIPT_TYPE = ffr.RECEIPT_TYPE
+				AND ffar.ORDER_ID = ffr.ORDER_ID
+				AND ffar.ITEM_ID = ffr.ITEM_ID
+				AND ffr.VERSION = (
+					SELECT
+						max(VERSION)
+					FROM
+						fms_fet_receivable ffr1
+					WHERE
+						ffr1.RECEIPT_PERIOD = ffarm.RECEIPT_PERIOD
+					AND ffr1.RECEIVE_COMPANY_ID = ffarm.RECEIVE_SUPPLIER_ID
+					AND ffr1.PAYMENT_COMPANY_ID = ffarm.PAYMENT_SUPPLIER_ID
+				)
+				WHERE
+					ffr.RECEIVABLE_ID IS NULL
+				AND ffarm.RECEIPT_PERIOD = #{receiptPeriod}
+				AND ffarm.RECEIVE_SUPPLIER_ID = #{receiveSupplierId}
+				AND ffarm.PAYMENT_SUPPLIER_ID = #{paymentSupplierId}
+				AND ffarm.VERSION = (
+					SELECT
+						max(VERSION)
+					FROM
+						fms_fet_actual_receipt_summary ffarm1
+					WHERE
+						ffarm1.RECEIPT_PERIOD = ffarm.RECEIPT_PERIOD
+					AND ffarm1.RECEIVE_SUPPLIER_ID = ffarm.RECEIVE_SUPPLIER_ID
+					AND ffarm1.PAYMENT_SUPPLIER_ID = ffarm.PAYMENT_SUPPLIER_ID
+				)
+			)
+	</select>
+
+	<select id="getMaxVerion" parameterType="clb.core.forecast.dto.FetReceiptDiff" resultType="java.lang.Long">
+					SELECT
+						max(ffrd.VERSION)
+					FROM
+						fms_fet_receipt_diff ffrd
+					where 
+						ffrd.RECEIPT_PERIOD = #{receiptPeriod}
+						AND ffrd.RECEIVE_SUPPLIER_ID = #{receiveSupplierId}
+						AND ffrd.PAYMENT_SUPPLIER_ID = #{paymentSupplierId}
+	</select>
+
+</mapper>

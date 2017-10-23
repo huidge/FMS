@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/18.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdAttributeSetLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdAttributeSetLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL"/>
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL"/>
+        <result column="ATT_GROUP" property="attGroup" jdbcType="VARCHAR"/>
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL"/>
+        <result column="ATT_ID" property="attId" jdbcType="DECIMAL"/>
+        <result column="REQUIRED_FLAG" property="requiredFlag" jdbcType="VARCHAR"/>
+        <result column="DISPLAY_FLAG" property="displayFlag" jdbcType="VARCHAR"/>
+        <result column="COMPARE_FLAG" property="compareFlag" jdbcType="VARCHAR"/>
+        <result column="COMPARE_RULE" property="compareRule" jdbcType="VARCHAR"/>
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="AllFields" type="clb.core.production.dto.PrdAttributeSetLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL"/>
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL"/>
+        <result column="ATT_GROUP" property="attGroup" jdbcType="VARCHAR"/>
+        <result column="ATT_GROUP_NAME" property="attGroupName" jdbcType="VARCHAR"/>
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL"/>
+        <result column="ATT_ID" property="attId" jdbcType="DECIMAL"/>
+        <result column="ATT_NAME" property="attName" jdbcType="VARCHAR"/>
+        <result column="REQUIRED_FLAG" property="requiredFlag" jdbcType="VARCHAR"/>
+        <result column="DISPLAY_FLAG" property="displayFlag" jdbcType="VARCHAR"/>
+        <result column="COMPARE_FLAG" property="compareFlag" jdbcType="VARCHAR"/>
+        <result column="COMPARE_RULE" property="compareRule" jdbcType="VARCHAR"/>
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR"/>
+        <result column="FIELD_CODE" property="fieldCode" jdbcType="VARCHAR"/>
+        <result column="FIELD_TYPE" property="fieldType" jdbcType="VARCHAR"/>
+        <result column="VALUE_SET_ID" property="valueSetId" jdbcType="DECIMAL"/>
+        <result column="DEFAULT_VALUE" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="FIELD_COMMENTS" property="fieldComments" jdbcType="VARCHAR"/>
+        <result column="FIELD_DISPLAY_LENGTH" property="fieldDisplayLength" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAllFields" parameterType="clb.core.production.dto.PrdAttributeSetLine" resultMap="AllFields">
+        SELECT
+            asl.LINE_ID,
+            asl.ATT_SET_ID,
+            asl.ATT_GROUP,
+            asl.SEQ_NUM,
+            asl.ATT_ID,
+            fpa.ATT_NAME,
+            asl.REQUIRED_FLAG,
+            asl.DISPLAY_flag,
+            asl.COMPARE_flag,
+            asl.COMPARE_RULE,
+            asl.STATUS_CODE,
+            fpa.FIELD_CODE,
+            FPA.FIELD_TYPE,
+            FPA.VALUE_SET_ID,
+            FPA.DEFAULT_VALUE,
+            FPA.FIELD_COMMENTS,
+            FPA.FIELD_DISPLAY_LENGTH,
+            scvb.description ATT_GROUP_NAME
+        FROM
+            fms_prd_attribute_set_line asl,
+            fms_prd_attribute fpa,
+            sys_code_b scb,
+            sys_code_value_b scvb
+        WHERE 1 = 1
+        AND asl.ATT_ID = fpa.ATT_ID
+        AND asl.ATT_SET_ID = #{attSetId}
+        AND scb.code_id = scvb.code_id
+        and scb.code = 'PRD.ATTRIBUTE_CALSS'
+        and scvb.value = asl.ATT_GROUP
+        <if test="displayFlag!=null and displayFlag!=''">
+                AND asl.DISPLAY_FLAG = #{displayFlag}
+        </if>
+        <if test="compareFlag!=null and compareFlag!=''">
+                AND asl.COMPARE_FLAG = #{compareFlag}
+        </if>
+        ORDER BY scvb.ORDER_SEQ, asl.SEQ_NUM
+    </select>
+
+</mapper>

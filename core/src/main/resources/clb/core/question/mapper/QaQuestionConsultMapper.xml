@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.question.mapper.QaQuestionConsultMapper">
+    <resultMap id="BaseResultMap" type="clb.core.question.dto.QaQuestionConsult">
+        <result column="CONSULT_ID" property="consultId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="CONTACT_PERSON_NAME" property="contactPersonName" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="CONTACT_NUMBER" property="contactNumber" jdbcType="VARCHAR" />
+        <result column="EMAIL_ADDRESS" property="emailAddress" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_RELATION" property="channelRelation" jdbcType="VARCHAR" />
+        <result column="QUESTION_DATE" property="questionDate" jdbcType="TIMESTAMP" />
+        <result column="QUESTION_TYPE" property="questionType" jdbcType="VARCHAR" />
+        <result column="QUESTION_DESCRIPTION" property="questionDescription" jdbcType="VARCHAR" />
+        <result column="ANSWER_STATUS" property="answerStatus" jdbcType="VARCHAR" />
+        <result column="SOLVE_FLAG" property="solveFlag" jdbcType="VARCHAR" />
+        <result column="ANSWER_DATE" property="answerDate" jdbcType="TIMESTAMP" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <resultMap id="AllFieldsMap" type="clb.core.question.dto.QaQuestionConsult">
+        <result column="CONSULT_ID" property="consultId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" />
+        <result column="CONTACT_PERSON_NAME" property="contactPersonName" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="CONTACT_NUMBER" property="contactNumber" jdbcType="VARCHAR" />
+        <result column="EMAIL_ADDRESS" property="emailAddress" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_RELATION" property="channelRelation" jdbcType="VARCHAR" />
+        <result column="QUESTION_DATE" property="questionDate" jdbcType="TIMESTAMP" />
+        <result column="QUESTION_TYPE" property="questionType" jdbcType="VARCHAR" />
+        <result column="QUESTION_DESCRIPTION" property="questionDescription" jdbcType="VARCHAR" />
+        <result column="ANSWER_STATUS" property="answerStatus" jdbcType="VARCHAR" />
+        <result column="SOLVE_FLAG" property="solveFlag" jdbcType="VARCHAR" />
+        <result column="ANSWER_DATE" property="answerDate" jdbcType="TIMESTAMP" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.question.dto.QaQuestionConsult"
+		resultMap="AllFieldsMap">
+		SELECT
+		fqqc.CONSULT_ID,
+		fqqc.ORDER_ID,
+		foo.ORDER_NUMBER,
+		fqqc.USER_ID,
+		su.USER_NAME,
+		c.CHANNEL_NAME,
+		fqqc.CONTACT_PERSON_NAME,
+		fqqc.PHONE_CODE,
+		fqqc.CONTACT_NUMBER,
+		fqqc.EMAIL_ADDRESS,
+		fqqc.CHANNEL_ID,
+		fqqc.CHANNEL_RELATION,
+		fqqc.QUESTION_DATE,
+		fqqc.QUESTION_TYPE,
+		fqqc.QUESTION_DESCRIPTION,
+		fqqc.ANSWER_STATUS,
+		fqqc.SOLVE_FLAG,
+		fqqc.ANSWER_DATE,
+		CONCAT(fqqc.PHONE_CODE,' ',fqqc.CONTACT_NUMBER) CONTACT_PHONE_COMB,
+		fqqc.FILE_ID
+		FROM fms_qa_question_consult fqqc
+		LEFT JOIN sys_user su
+		ON su.USER_ID = fqqc.USER_ID
+		LEFT JOIN fms_ord_order foo
+		ON foo.ORDER_ID = fqqc.ORDER_ID
+		LEFT JOIN fms_cnl_channel c
+		ON c.CHANNEL_ID = fqqc.CHANNEL_ID
+		WHERE 1=1
+		<if test="consultId!=null and consultId!=''">
+			and fqqc.CONSULT_ID =#{consultId}
+		</if>
+		
+		<!-- <if test="answerFrom!=null and answerFrom!=''">
+			AND fqqc.ANSWER_DATE >= #{answerFrom}
+		</if>
+		<if test="answerTo!=null and answerTo!=''">
+			AND fqqc.ANSWER_DATE <= #{answerTo}
+		</if> -->
+		<!-- <if test="questionDate!=null and questionDate!=''">
+			fqqc.QUESTION_DATE between '1999-09-09' and '2017-05-09'
+		</if> -->
+		
+		<if test = "contactPhoneComb != null"> AND CONCAT(fqqc.PHONE_CODE,' ',fqqc.CONTACT_NUMBER) like CONCAT('%', #{contactPhoneComb}, '%')</if>
+		
+		<if test="answerFrom!=null and answerFrom!=''">
+		<![CDATA[   and DATE_FORMAT(fqqc.ANSWER_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{answerFrom}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		<if test="answerTo!=null and answerTo!=''">
+		<![CDATA[    
+					and DATE_FORMAT(fqqc.ANSWER_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{answerTo}, '%Y-%m-%d')  ]]>
+		</if>
+		
+		<if test="questionFrom!=null and questionFrom!=''">
+		<![CDATA[   and DATE_FORMAT(fqqc.QUESTION_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{questionFrom}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		<if test="questionTo!=null and questionTo!=''">
+		<![CDATA[    
+					and DATE_FORMAT(fqqc.QUESTION_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{questionTo}, '%Y-%m-%d')  ]]>
+		</if>
+		
+		<if test="orderNumber!=null and orderNumber!=''">
+			and foo.ORDER_NUMBER like CONCAT('%', #{orderNumber}, '%')
+		</if>
+		
+		<if test="channelName!=null and channelName!=''">
+			and c.CHANNEL_NAME like CONCAT('%', #{channelName}, '%')
+		</if>
+		
+		<if test="questionDate!=null and questionDate!=''">
+			and fqqc.QUESTION_DATE like CONCAT('%', #{questionDate}, '%')
+		</if>
+		<if test="orderId!=null and orderId!=''">
+			and fqqc.ORDER_ID =#{orderId}
+		</if>
+		<if test="userId!=null and userId!=''">
+			and fqqc.USER_ID =#{userId}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and su.USER_NAME like CONCAT('%', #{userName}, '%')
+		</if>
+		<if test="contactPersonName!=null and contactPersonName!=''">
+			and fqqc.CONTACT_PERSON_NAME like CONCAT('%', #{contactPersonName}, '%')
+		</if>
+		<if test="contactNumber!=null and contactNumber!=''">
+			and fqqc.CONTACT_NUMBER like CONCAT('%', #{contactNumber}, '%')
+		</if>
+		<if test="emailAddress!=null and emailAddress!=''">
+			and fqqc.EMAIL_ADDRESS like CONCAT('%', #{emailAddress}, '%')
+		</if>
+		<if test="channelId!=null and channelId!=''">
+			and fqqc.CHANNEL_ID =#{channelId}
+		</if>
+		<if test="channelRelation!=null and channelRelation!=''">
+			and fqqc.CHANNEL_RELATION like CONCAT('%', #{channelRelation}, '%')
+		</if>
+		<if test="questionType!=null and questionType!=''">
+			and fqqc.QUESTION_TYPE =#{questionType}
+		</if>
+		<if test="questionDescription!=null and questionDescription!=''">
+			and fqqc.QUESTION_DESCRIPTION like CONCAT('%', #{questionDescription}, '%')
+		</if>
+		<if test="answerStatus!=null and answerStatus!=''">
+			and fqqc.ANSWER_STATUS =#{answerStatus}
+		</if>
+		<if test="solveFlag!=null and solveFlag!=''">
+			and fqqc.SOLVE_FLAG =#{solveFlag}
+		</if>
+		<if test="answerDate!=null and answerDate!=''">
+			and fqqc.ANSWER_DATE like CONCAT('%', #{answerDate}, '%')
+		</if>
+		<if test="fileId!=null and fileId!=''">
+			and fqqc.FILE_ID like CONCAT('%', #{fileId}, '%')
+		</if>
+		ORDER BY fqqc.QUESTION_DATE DESC
+	</select>
+	
+	
+    <select id="selectByUserId" parameterType="clb.core.question.dto.QaQuestionConsult"
+		resultMap="AllFieldsMap">
+		SELECT
+		DISTINCT(foo.order_number),foo.order_id
+		FROM fms_qa_question_consult fqqc, fms_ord_order foo
+		WHERE 
+		fqqc.order_id = foo.order_id
+		and fqqc.USER_ID = #{userId}
+	</select>
+
+	<select id="query" parameterType="clb.core.question.dto.QaQuestionConsult" resultMap="AllFieldsMap">
+	  SELECT
+	  	fqqc.CONSULT_ID,
+		fqqc.ORDER_ID,
+		fqqc.USER_ID,
+		fqqc.CONTACT_PERSON_NAME,
+		fqqc.CONTACT_NUMBER,
+		fqqc.EMAIL_ADDRESS,
+		fqqc.CHANNEL_ID,
+		fcc.CHANNEL_NAME,
+		fqqc.CHANNEL_RELATION,
+		fqqc.QUESTION_DATE,
+		fqqc.QUESTION_TYPE,
+		fqqc.QUESTION_DESCRIPTION,
+		fqqc.ANSWER_STATUS,
+		fqqc.SOLVE_FLAG,
+		fqqc.ANSWER_DATE,
+		fqqc.FILE_ID
+	  FROM fms_qa_question_consult fqqc
+	  LEFT JOIN sys_user su ON fqqc.USER_ID = su.USER_ID
+	  LEFT JOIN fms_cnl_channel fcc ON fqqc.CHANNEL_ID = fcc.CHANNEL_ID
+	  WHERE
+	  	fqqc.USER_ID = #{userId}
+	  ORDER BY fqqc.QUESTION_DATE DESC
+	</select>
+
+</mapper>

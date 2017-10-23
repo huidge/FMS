@@ -1,0 +1,764 @@
+<#--
+ * description: 债券Pending新建页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/10 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.BOND_PENDING_STATUS" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var pendingId = <#if RequestParameters.pendingId?exists> ${RequestParameters.pendingId} <#else>-1</#if>;
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    var viewModel = kendo.observable({
+        model: {
+            status : "PENDING_NEW"
+        }
+    });
+
+    var followModel = kendo.observable({
+        model: {
+            followDate : new Date()
+        }
+    });
+
+    if (pendingId !=-1) {
+        viewModel.model.set("pendingId",pendingId);
+    }
+
+    if (orderId != -1) {
+        viewModel.model.set("orderId",orderId);
+    }
+
+    if (viewModel.model.pendingId) {
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/pending/query?pendingId=" + viewModel.model.pendingId,
+            data: {pendingId: viewModel.model.pendingId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+            }
+        });
+    } else {
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/pending/query?orderId=" + viewModel.model.orderId,
+            data: {orderId: viewModel.model.orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+            }
+        });
+    }
+
+
+</script>
+<div id="fileWin" style="display: none;">
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div id="panel-pending" class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading text-right">
+                <span class="panel-title pull-left"> <@spring.message "fms.ordpending.pending"/></span>
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;margin-top:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;margin-top:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "clb.return"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdOrder.orderNumber"/></label>
+                            <div class="col-xs-9">
+                                <input id="orderId" name="orderId" type="text" required validationMessage="<@spring.message "hap.error.nullexception"/>" data-bind="value:model.orderId,text:model.orderNumber" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdPending.orderInfo"/></label>
+                            <div class="col-xs-9">
+                                <input id="orderInfo" name="orderInfo" type="text" data-bind="value:model.orderInfo" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdOrder.channelName"/></label>
+                            <div class="col-xs-9">
+                                <input id="channelName" name="channelName" type="text" data-bind="value:model.channelName" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.ordorder.reserveDate"/></label>
+                            <div class="col-xs-9">
+                                <input id="reserveDate" name="reserveDate" type="text" data-bind="value:model.reserveDate" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.ordpending.bondApplyClass"/></label>
+                            <div class="col-xs-9">
+                                <input id="applyClassCode" name="applyClassCode" type="text" required validationMessage="<@spring.message "hap.error.nullexception"/>" data-bind="value:model.applyClassCode" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.ordpending.bondApplyitem"/></label>
+                            <div class="col-xs-9">
+                                <input id="templateId" name="templateId" type="text" required validationMessage="<@spring.message "hap.error.nullexception"/>" data-bind="value:model.templateId" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdOrder.status"/></label>
+                            <div class="col-xs-9">
+                                <input id="status" name="status" type="text" data-bind="value:model.status" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdPending.dealPerson"/></label>
+                            <div class="col-xs-9">
+                                <input id="dealPersonName" name="dealPersonName" type="text" data-bind="value:model.dealPersonName" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-6" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right"><@spring.message "fms.OrdPending.dealEndDate"/></label>
+                            <div class="col-xs-9">
+                                <input id="dealEndDate" name="dealEndDate" type="text" data-bind="value:model.dealEndDate" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+        </div>
+
+        <script>kendo.bind($('#panel-pending'), viewModel);</script>
+
+        <div id="panel-follow" class="panel panel-default">
+            <form class="form-horizontal">
+                <div class="panel-heading">
+                    <span class="panel-title"> <@spring.message "fms.ordpending.followinfo"/></span>
+                </div>
+                <div class="panel-body">
+
+                    <div style="clear:both;margin-bottom:20px;">
+                        <div id="Grid"></div>
+                    </div>
+
+                    <div class="col-xs-12">
+
+                        <div class="col-xs-6" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-2 control-label"
+                                       style="text-align: right"><@spring.message "fms.ord.uploadfile"/>:</label>
+
+                                <div class="col-xs-1">
+                                    <button type="button" onclick="upload()" style="margin-top: 6px;" class="btn btn-info btn-xs" id="btn_upload" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                                </div>
+
+                                <div class="col-xs-9">
+                                    <input id="fileName" name="fileName" type="text" data-bind="value:model.fileName" class="k-textbox" style="width: 100%;">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-2 control-label"
+                                       style="text-align: right"><@spring.message "fms.ordtemplateline.templatename"/></label>
+                                <div class="col-xs-10">
+                                    <input id="templateLineId" name="templateLineId" type="text" data-bind="value:model.templateLineId" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-xs-12">
+
+                        <div class="col-xs-12" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-1 control-label"
+                                       style="text-align: right"><@spring.message "fms.ordpendingfollow.content"/></label>
+                                <div class="col-xs-11">
+                                    <textarea id="content" name="content" rows="6" type="text" data-bind="value:model.content" style="width: 100%;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-xs-12" id="dealDiv">
+
+                        <div class="col-xs-6" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-2 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdPending.dealPerson"/></label>
+                                <div class="col-xs-10">
+                                    <input id="dealPerson1" name="dealPerson1" type="text" data-bind="value:model.dealPerson" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-2 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.status"/></label>
+                                <div class="col-xs-10">
+                                    <input id="status1" name="status1" type="text" data-bind="value:model.status" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="panel-footer text-right">
+                    <span onclick="submitData()" class="btn btn-success" id="btn_submit" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.submit"/></span>
+                </div>
+                <iframe id="ifile" style="display:none"></iframe>
+            </form>
+        </div>
+
+        <script>kendo.bind($('#panel-follow'), followModel);</script>
+    </div>
+
+
+
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#dealEndDate").kendoDatePicker();
+
+    $("#applyClassCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "applyClass",
+        dataValueField: "applyClassCode",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/template/queryApplyClass?templateTypeCode=ORDER_PENDING",
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $("#templateId").kendoComboBox({
+        autoBind: false,
+        valuePrimitive: true,
+        cascadeFrom: "applyClassCode",
+        cascadeFromField: "applyClassCode",
+        filter: "contains",
+        dataTextField: "applyItem",
+        dataValueField: "templateId",
+        dataSource: {
+            serverFiltering:true,
+            transport: {
+                read: {
+                    url:"${base.contextPath}/fms/ord/template/query?templateTypeCode=ORDER_PENDING",
+                    type : "POST"
+                },
+                contentType : "application/json",
+                parameterMap: function(options, type) {
+                    if (type === "read") {
+                        var filter = options.filter.filters[0]
+                        var map = {};
+                        map[filter.field] = filter.value;
+                        return map;
+                    }
+                }
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+        dataBound:function(){
+            if(viewModel.model.pendingId){
+                this.readonly(true);
+                $("input[name='templateId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                $("input[name='templateId_input']").css("background", "#DDDDDD");
+                $("input[name='templateId_input']").next().next().unbind();
+            }
+        }
+    }) ;
+
+    $("#orderId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_POLICY_NUMBER")}, {
+        select: function(e) {
+            viewModel.model.set('orderInfo', e.item.orderInfo);
+            viewModel.model.set('channelName', e.item.channelName);
+            viewModel.model.set('reserveSupplierName', e.item.reserveSupplierName);
+        },
+        change:function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set('orderInfo','');
+                viewModel.model.set('channelName','');
+                viewModel.model.set('reserveSupplierName', '');
+            }
+        },
+        query:function (e) {
+            e.param['status'] = "UNDERWRITING";
+        }
+    }));
+
+    $("#reserveDate").kendoDatePicker();
+
+    $("#orderInfo").attr("readonly", true).css("background", "#DDDDDD");
+    $("#channelName").attr("readonly", true).css("background", "#DDDDDD");
+    $("#dealPersonName").attr("readonly", true).css("background", "#DDDDDD");
+    $("#fileName").attr("readonly", true).css("background", "#DDDDDD");
+
+
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: statusData
+    });
+
+    $("#status1").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: statusData
+    });
+
+    $("#status").data("kendoComboBox").enable(false);
+
+    $("#templateLineId").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "templateName",
+        dataValueField: "templateLineId",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/template/line/query?templateId=" + viewModel.model.templateId,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        select: function(e) {
+            if (typeof(followModel.model.content) == "undefined" || followModel.model.content == null) {
+                followModel.model.set("content",e.dataItem.templateContent);
+            } else {
+                followModel.model.set("content",followModel.model.content + e.dataItem.templateContent);
+            }
+
+        },
+
+    });
+
+    $("#dealPerson1").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "userName",
+        dataValueField: "userId",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/sys/user/query",
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+    });
+
+    if (viewModel.model.pendingId) {
+        $("#orderId").data("kendoLov").enable(false);
+        $("#applyClassCode").data("kendoComboBox").enable(false);
+        $("#templateId").data("kendoComboBox").enable(false);
+        $("#reserveDate").data("kendoDatePicker").enable(false);
+
+        $("#btn_save").hide();
+
+        if (viewModel.model.status == "PENDING_MATERIAL") {
+            $("#dealDiv").hide();
+            followModel.model.set("status","PENDING_APPROVING");
+            followModel.model.set("dealPerson",viewModel.model.cb);
+        }
+
+    } else {
+        $("#panel-follow").hide();
+    }
+
+    //附件
+    function upload(){
+        if(viewModel.model.fileId != null && typeof(viewModel.model.fileId) != "undefined"){
+            kendo.ui.showConfirmDialog({
+                message: '<@spring.message "fms.overwrite_file"/>'
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    window.fileWin = $("#fileWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open();
+                }
+            });
+        }else{
+            window.fileWin = $("#fileWin").kendoWindow({
+                title: '<@spring.message "sysfile.upload"/>',
+                width: 400,
+                height: 250,
+                modal: true
+            }).data("kendoWindow");
+            fileWin.center().open();
+        }
+    }
+
+    $("#files").kendoUpload({
+        async        : {
+            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        },
+        showFileList : false,
+        upload       : onUpload,
+        success      : onSuccess
+    });
+
+    function onUpload(e){
+
+        e.data = {
+            modularName:'ORD',
+            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+            maxSize:20480
+        }
+
+    };
+    function onSuccess(e){
+        if(e.response.success){
+            followModel.model.set("oldFileId",viewModel.model.fileId);
+            followModel.model.set("fileId",e.response.file.fileId);
+            followModel.model.set("_token",e.response.file._token);
+            followModel.model.set("fileName",e.response.file.fileName);
+            followModel.model.dirty = true;
+            fileWin.close();
+        }else{
+            kendo.ui.showErrorDialog({
+                message  : e.response.message
+            })
+        }
+    }
+
+    function downloadFile(uid)
+    {
+        data = dataSource.getByUid(uid);
+        $.ajax({
+            url : '${base.contextPath}/commons/attach/validateFile',
+            type : "POST",
+            dataType : "json",
+            data : {
+                fileId:data.fileId,
+                token:data._token
+            },
+            success : function(json) {
+                if(json.success == true){
+                    url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                    var iframe = document.getElementById("ifile");
+                    iframe.src=url;
+                }else{
+                    kendo.ui.showErrorDialog({
+                        message  : '<@spring.message "fms.file_not_exists"/>'
+                    })
+                }
+            },
+        })
+
+    };
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/pending/follow/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/pending/follow/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/pending/follow/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/pending/follow/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "pendingFollowId",
+                fields: {}
+            }
+        }
+    });
+
+    var grid = $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "userName",
+                title: '<@spring.message "fms.OrdPendingFollow.followUser"/>',
+                width: 120
+            },
+            {
+                field: "followDate",
+                title: '<@spring.message "fms.OrdPendingFollow.followDate"/>',
+                width: 120
+            },
+            {
+                field: "content",
+                title: '<@spring.message "fms.OrdPendingFollow.content"/>',
+                width: 120
+            },
+            {
+                title: '<@spring.message "fms.ord.file"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    var buttons = '';
+                    if(dataItem.fileId != '' && dataItem.fileId != undefined){
+                        buttons = '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    }
+                    return buttons;
+                }
+            }
+        ],
+        editable: false
+    }).data("kendoGrid");
+
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    function saveData () {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.cnlchannel.validate_false"/>'
+            })
+        }else {
+            if (viewModel.model.pendingId == null) {
+                viewModel.model.__status = 'add';
+            }else {
+                viewModel.model.__status = 'update';
+            }
+
+            Hap.submitForm({
+                url: '${base.contextPath}/fms/ord/pending/submit',
+                formModel: viewModel.model,
+                success: function (data) {
+                    $("#orderId").data("kendoLov").readonly(true);
+                    $("input[name='orderId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                    $("input[name='orderId_input']").css("background", "#DDDDDD");
+                    $("input[name='orderId_input']").next().next().unbind();
+
+                    $("#applyClassCode").data("kendoComboBox").readonly(true);
+                    $("input[name='applyClassCode_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                    $("input[name='applyClassCode_input']").css("background", "#DDDDDD");
+                    $("input[name='applyClassCode_input']").next().next().unbind();
+
+                    $("#templateId").data("kendoComboBox").readonly(true);
+                    $("input[name='templateId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                    $("input[name='templateId_input']").css("background", "#DDDDDD");
+                    $("input[name='templateId_input']").next().next().unbind();
+
+                    $("#btn_save").hide();
+
+                    $("#panel-follow").show();
+
+
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: $l('hap.tip.success')
+                    });
+
+                }
+            });
+        }
+    }
+
+    function submitData () {
+
+        if(followModel.model.content==''||followModel.model.content==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "fms.ordpendingfollow.content"/><@spring.message "hap.error.nullexception"/>'
+            })
+        }else {
+            var unique = zeroModal.loading(6);
+            followModel.model.__status = 'add';
+            followModel.model.set("pendingId",viewModel.model.pendingId);
+            followModel.model.set("dealEndDate",viewModel.model.dealEndDate);
+            Hap.submitForm({
+                url: '${base.contextPath}/fms/ord/pending/follow/submit',
+                formModel: followModel.model,
+                success: function (data) {
+                    zeroModal.close(unique);
+                    $('#Grid').data('kendoGrid').dataSource.page(1);
+                    var formData = followModel.model.toJSON();
+                    for (var k in formData) {
+                        followModel.model.set(k, null);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "${base.contextPath}/fms/ord/pending/query?pendingId=" + viewModel.model.pendingId,
+                        data: {pendingId: pendingId},
+                        success: function (json) {
+                            var row = json.rows[0] || {};
+                            for (var k in row) {
+                                viewModel.model.set(k, row[k]);
+                            }
+                        }
+                    });
+
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: $l('hap.tip.success')
+                    });
+
+                }
+            });
+        }
+
+    }
+
+    function cancelData() {
+        if (pendingId != -1) {
+            parent.closeTab("order_pending_create" + pendingId);
+        }else {
+            parent.closeTab("order_pending_create");
+        }
+
+    }
+
+
+</script>
+</body>
+</html>

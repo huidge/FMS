@@ -1,0 +1,4300 @@
+<#--
+ * description:产品汇总查询
+ * version: 1.0 
+ * author:rui.hua@hand-china.com
+ * -->
+<#include "../include/header.html">
+<body>
+
+<!-- 产品信息维护 -->
+<div id="tagsWin"></div>
+<script src="${base.contextPath}/clb/common/clbCode?prdItemsDetailYesNo=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?prdItemsDetailCurrency=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?prdItemsDetailSublinePrdType=PRD.SUBLINE_PRODUCT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?prdItemsDetailStatusCode=SYS.STATUS_CODE" type="text/javascript"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?genderList=HR.EMPLOYEE_GENDER"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?ageList=PUB.AGE"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?NATIONALITYCLASS=PUB.NATION"></script>
+<script src="../lib/clb/js/clb.kendo.editor.js"></script>
+<!-- 界面布局 -->
+<div id="content-container">
+    <div id="page-content">
+        <!-- 表头按钮 -->
+        <div class="text-right" style="bottom: 20px; right: 85px;background: #fff;">
+            <span class="btn btn-default " data-bind="click:closeWin" style="width:15%;margin-right:2%;">
+                <i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "clb.return"/></span>
+            <span class="btn btn-success" data-bind="click:saveFunction" style="width:15%">
+                <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+        </div>
+        <!-- 产品信息 -->
+        <div class="panel" style="margin-top: 15px;">
+            <form class="form-horizontal" id="itemInfo">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong id="itemCode" var="">产品信息</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">产品名称</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%" disabled gray
+                                           data-bind="value:model.itemName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-2"></div>
+                                <label class="col-sm-3 control-label">产品公司</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%" disabled gray
+                                           data-bind="value:model.supplierName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">产品分类</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%" disabled gray
+                                           data-bind="value:model.className" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-2"></div>
+                                <label class="col-sm-3 control-label">产品属性组</label>
+                                <div class="col-sm-7">
+                                    <input type="text" style="width: 100%" disabled gray
+                                           data-bind="value:model.attSetName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 产品标签 -->
+        <div class="panel">
+            <form class="form-horizontal" id="itemTags">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong>产品标签</strong>
+                    </div>
+
+                    <div class="text-right" >
+                        <input type="text" id="tags">
+                        <span class="btn btn-primary" style="margin-right: 15px;"  onclick="addTags()">
+                            <i class="fa fa-plus-square"
+                               style="margin-right:3px;">
+                            </i>添加标签
+                        </span>
+                    </div>
+                    <div id="addTags" style="padding-left: 70px;padding-right: 250px;" ></div>
+
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 缴费方式 -->
+        <div class="panel">
+            <form class="form-horizontal" id="payMode">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong>缴费方式</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label" style="width: 12.4%">缴费方式</label>
+
+                                <div class="col-sm-10 control-label" style="width: 87.6%">
+                                    <div class="col-sm-2" style="text-align: left; width: 17%;">
+                                        <input type="checkbox" class="col-sm-2" style="top:8px;"
+                                               data-bind="value:model.fullyear" id="fullyear">
+                                        <label class="col-sm-6">整付</label>
+                                    </div>
+                                    <div class="col-sm-2" style="text-align: left; width: 17%;">
+                                        <input type="checkbox" class="col-sm-2" style="top:8px;"
+                                               data-bind="value:model.oneyear" id="oneyear">
+                                        <label class="col-sm-6">年缴</label>
+                                    </div>
+                                    <div class="col-sm-2" style="text-align: left; width: 17%;">
+                                        <input type="checkbox" class="col-sm-2" style="top:8px;"
+                                               data-bind="value:model.halfyear" id="halfyear">
+                                        <label class="col-sm-9">半年缴</label>
+                                    </div>
+                                    <div class="col-sm-2" style="text-align: left; width: 17%;">
+                                        <input type="checkbox" class="col-sm-2" style="top:8px;"
+                                               data-bind="value:model.quarter" id="quarter">
+                                        <label class="col-sm-6">季缴</label>
+                                    </div>
+                                    <div class="col-sm-2" style="text-align: left; width: 17%;">
+                                        <input type="checkbox" class="col-sm-2" style="top:8px;"
+                                               data-bind="value:model.onemonth" id="onemonth">
+                                        <label class="col-sm-6">月缴</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">可以预缴</label>
+                                <div class="col-sm-4" style="padding-left: 30px;">
+                                    <select data-role="combobox" data-value-primitive="true"
+                                            data-text-field="meaning" data-value-field="value"
+                                            data-bind="source: prdItemsDetailYesNo,value:model.prepayFlag" style="width: 100%;" id="prepayFlag" value="N"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">可选币种</label>
+                            </div>
+                        </div>
+                    </div><!-- row end -->
+                    <div>
+                        <div id="payModeGrid" class="table" style="margin-left: 70px;width: 91%"></div>
+                    </div>
+
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 维护子产品 -->
+        <div class="panel">
+            <form class="form-horizontal" id="subItems">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong>维护子产品</strong>
+                    </div>
+
+                    <div>
+                        <div id="subItemsGrid" class="table" style="margin-left: 70px;width: 91%;"></div>
+                    </div>
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 保障计划 -->
+        <div class="panel" id="securityPlan">
+            <form class="form-horizontal" >
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong>保障计划</strong>
+                    </div>
+                    <div>
+                        <div id="securityPlanGrid" class="table" style="margin-left: 70px;width: 91%;"></div>
+                    </div>
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+        <!-- 自付选项 -->
+        <div class="panel" id="selfpay">
+            <form class="form-horizontal">
+                <div class="panel-body">
+                    <div class="breadcrumb"  style="font-size:18px;color:black">
+                        <strong>自付选项</strong>
+                    </div>
+                    <div>
+                        <div id="selfpayGrid" class="table" style="margin-left: 70px;width: 91%;"></div>
+                    </div>
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+        </div><!-- panel end -->
+
+        <!-- Tab页(产品属性,产品资料,现金价值表,保费表) -->
+        <div class="demo-section k-content">
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active breadcrumb" style="font-size:16px;color:black" id="itemAttrTab"><strong>产品属性</strong> </li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="itemDataTab"><strong>产品资料</strong></li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="cashCostTab"><strong>现金价值表</strong></li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="premiumTab"><strong>保费表</strong></li>
+                    <li class="breadcrumb" style="font-size:16px;color:black" id="imageTextTab"><strong>图文版块</strong></li>
+                </ul>
+                <div id="tabstrip-1">
+                    <form class="form-horizontal" >
+                        <div class="panel-body" id="itemAttrGroup"></div>
+                    </form>
+                </div>
+                <div id="tabstrip-2">
+                    <form class="form-horizontal" >
+                        <div class="panel-body" id="itemDataGroup">
+                            <div>
+		                       <div id="prdUploadGrid" class="table"></div>
+		                    </div>
+		                    <div>
+		                       <div id="companyUploadGrid" class="table"></div>
+		                    </div>
+		                    <div id="fileWin" style="display: none;">
+                                 <input type="file" id="files" name="files"></input>
+                            </div>
+                            <iframe id="ifile" style="display:none"></iframe>
+                             <div id="fileWinCompany" style="display: none;">
+                                 <input type="file" id="filesCompany" name="filesCompany"></input>
+                            </div>
+                            <iframe id="ifileCompany" style="display:none"></iframe>
+                        </div>
+                    </form>
+                </div>
+                <div id="tabstrip-3">
+                    <form class="form-horizontal" >
+                    	<div class="panel-body">
+                    		<!--查询面板-->
+						    <div class="panel">
+						        <div id="query-form">
+						            <div class="panel-body">
+						                <div class="row">
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="currency" class="col-sm-3 control-label"><@spring.message "CmnBasic.currency"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="cashCostCurrency" style="width:100%"
+						                                       data-bind="value:model.cashCostCurrency">
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="cashCostPeriod" class="col-sm-3 control-label"><@spring.message "prdclassset.period"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="cashCostPeriod" style="width:100%"
+						                                       data-bind="value:model.cashCostPeriod">
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="smokeFlag" class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.smokeflag"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="cashCostSmokeFlag" style="width:100%" class="k-textbox"
+						                                       data-bind="value:model.cashCostSmokeFlag">
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						
+						                <div class="row">
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="sex" class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.sex"/></label>
+						                            <div class="col-sm-9">
+						                                <input style="width:100%" id="cashCostSex"
+                                                           data-bind="source: genderList, value: model.cashCostSex" class="k-textbox">
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="age" class="col-sm-3 control-label"><@spring.message "fms.ctmcustomerfamily.age"/></label>
+						                            <div class="col-sm-9">
+						                                <input style="width:100%" id="cashCostAge"
+                                                           data-bind="source: ageList, value: model.cashCostAge" class="k-textbox">
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						
+						            </div>
+						        </div>
+						    </div>
+						    <div>
+		                       <div id="cashCostUploadGrid" class="table"></div>
+		                    </div>
+                    	</div>
+                    </form>
+                </div>
+                <div id="tabstrip-4">
+                    <form class="form-horizontal" >
+                    	<div class="panel-body">
+                    		<!--查询面板-->
+						    <div class="panel">
+						        <div id="query-form">
+						            <div class="panel-body">
+						                <div class="row">
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="premiumCurrency" class="col-sm-3 control-label"><@spring.message "CmnBasic.currency"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="premiumCurrency" style="width:100%"
+						                                       data-bind="value:model.premiumCurrency">
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="premiumPeriod" class="col-sm-3 control-label"><@spring.message "prdclassset.period"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="premiumPeriod" style="width:100%"
+						                                       data-bind="value:model.premiumPeriod">
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="premiumSmokeFlag" class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.smokeflag"/></label>
+						                            <div class="col-sm-9">
+						                                <input id="premiumSmokeFlag" style="width:100%" class="k-textbox"
+						                                       data-bind="value:model.premiumSmokeFlag">
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						
+						                <div class="row">
+						                    <div class="col-sm-4">
+						                        <div class="form-group">
+						                            <label for="premiumSex" class="col-sm-3 control-label"><@spring.message "fms.ctmcustomer.sex"/></label>
+						                            <div class="col-sm-9">
+						                                <input style="width:100%" id="premiumSex"
+                                                           data-bind="source: genderList, value: model.premiumSex" class="k-textbox">
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						
+						            </div>
+						        </div>
+						    </div>
+						    <div>
+		                       <div id="premiumUploadGrid" class="table"></div>
+		                    </div>
+                    	</div>
+                    </form>
+                </div>
+                <div id="tabstrip-5">
+                    <br class="form-horizontal" >
+                        <!-- 表头按钮 -->
+                        <div class="text-right" style="bottom: 20px; right: 85px;background: #fff;">
+                            <span class="btn btn-default" onclick="addImageText()">
+                                <i class="fa fa-plus-square" style="margin-right:3px;"></i>添加图文版块</span>
+                            <!--<span class="btn btn-success" onclick="imagePreview()">-->
+                                <!--<i class="fa fa-reply" style="margin-right:3px;"></i>预览</span>-->
+                            <span class="btn btn-success" onclick="imageSave()">
+                                <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                        </div>
+                        <div id="addImageText"></div>
+                        </br>
+                        </br>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+<div id="premiumRateWindow" style="clear: both"></div>
+<div id="premiumAdjustWindow" style="clear: both"></div>
+<div id="excelWindow" style="clear: both"></div>
+<!-- 功能函数 -->
+<script type="text/javascript">
+        var crudServiceBaseUrl = "${base.contextPath}/production/itemDetail/";
+        // 界面数据绑定
+        viewModel = kendo.observable({
+            model: {itemId: '${RequestParameters.itemId!0}',attSetId: '${RequestParameters.attSetId!0}'},
+            prdItemsDetailYesNo:prdItemsDetailYesNo,
+            saveFunction:function() {
+                //获取标签值
+                var prdItemLabelLinesList = [];
+                for(var i=0;i< $("span[name='tag']").length;i++){
+                    var prdItemLabelLines = {};
+                    prdItemLabelLines.labelName = $("span[name='tag']")[i].textContent;
+                    prdItemLabelLines.bigClass = viewModel.model.bigClass;
+                    prdItemLabelLinesList.push(prdItemLabelLines);
+                }
+                viewModel.model.set("prdItemLabelLinesList", prdItemLabelLinesList);
+                Hap.submitForm({
+                    url: '${base.contextPath}/production/items/submit',
+                    formModel: viewModel.model,
+                    success: function (json) {
+                        if (json.success) {
+                            kendo.ui.showInfoDialog({
+                                message: "成功"
+                            });
+                        } else {
+                            kendo.ui.showErrorDialog({
+                                message: "失败"
+                            });
+                        }
+                    }
+                });
+            },
+            closeWin:function(){
+                window.parent.$("#itemDetail").data("kendoWindow").close();
+            }
+        });
+
+        //公司文件上传
+         var companyUploadGrid=$("#companyUploadGrid").kendoGrid({
+	        dataSource: {
+		        transport: {
+		            read: {
+		                url: "${base.contextPath}/prd/item/file/queryCompany?itemId="+viewModel.model.itemId+"&type=COMPANY",
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            update: {
+		                url: "${base.contextPath}/prd/item/file/submitCompany?itemId="+viewModel.model.itemId+"&type=COMPANY",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            destroy: {
+		                url: "${base.contextPath}/prd/item/file/removeCompany?itemId="+viewModel.model.itemId+"&type=COMPANY",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            create: {
+		                url: "${base.contextPath}/prd/item/file/submitCompany?itemId="+viewModel.model.itemId+"&type=COMPANY",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            parameterMap: function (options, type) {
+		                if (type !== "read" && options.models) {
+		                    var datas = Hap.prepareSubmitParameter(options, type)
+		                    return kendo.stringify(datas);
+		                } else if (type === "read") {
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: true,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "fileId",
+		                fields: {
+		                }
+		            }
+		        }
+		    },
+	        height: '300px',
+	        resizable: true,
+	        scrollable: true,
+	        navigatable: false,
+	        selectable: 'multiple, rowbox',
+	        pageable:{
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+	        toolbar: [
+	            {
+	                template: '<button type="button"  onclick="newArcDataCompany()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+	                '<i class="fa fa-plus-square" style="margin-right:3px;"></i>添加公司资料</button>'
+
+	            },
+	            {
+	                template: '<span onclick="deleteArcDataCompany()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+	                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+	            },
+	            {
+	                name: "cancel",
+	                template: '<span class="btn btn-default k-grid-cancel-changes">' +
+	                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+	            },{
+	            	  template: '<button type="button"  onclick="saveDataCompany()" class="btn btn-success" style="float:left;margin-right:5px;">' +
+		                '<i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></button>'
+	            }
+	        ],
+	        columns: [
+// 	            {
+// 	                field: "fileId",
+// 	                title: '资料id',
+// 	                width: 100,
+// 	                headerAttributes: {
+// 	                    'class':'table-header-cell',
+// 	                    style:'text-align: center;vertical-align:middle;'
+// 	                },
+// 	                editor:function (container, options) {
+// 	                    if (options.model.fileId) {
+// 	                        $('<span>'+ options.model.fileId +'</span>').appendTo(container)
+// 	                    }else {
+// 	                        $('<span></span>').appendTo(container)
+// 	                    }
+// 	                }
+// 	            },
+                {
+	            	field: "fileId",
+	                title: '获取文件',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                editor: function (container, options) {
+	                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+	                            .appendTo(container)
+	                            .kendoLov($.extend(<@lov "PRD_SUPPLIER_COMMON_FILE"/>, 
+	                           {
+	                                textField: 'fileId',
+	                                model    : options.model,
+	                                select:function(e){
+					                	options.model.set('uploadDate', e.item.lastUpdateDate);
+					                	options.model.set('fileSize', e.item.fileSize);
+					                	options.model.set('fileName', e.item.fileName);
+					                	options.model.set('fileId', e.item.fileId);
+					                }
+	                            },
+	                            {
+	                            	query: function (e) {
+	                                   e.param['itemId'] = viewModel.model.itemId;
+	                                 }
+	                            }));
+	                }
+	            },   
+	            {
+	                field: "fileName",
+	                title: '资料显示名',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                }
+	            },
+	            {
+	                field: "fileSize",
+	                title: '文件大小',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.fileSize) {
+	                        $('<span>'+ options.model.fileSize +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "uploadDate",
+	                title: '更新时间',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.uploadDate) {
+	                        $('<span>'+ options.model.uploadDate +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	        ],
+	        editable: true
+	    }).data("kendoGrid");
+        //产品文件上传
+	    var prdUploadGrid=$("#prdUploadGrid").kendoGrid({
+	        dataSource: {
+		        transport: {
+		            read: {
+		                url: "${base.contextPath}/prd/item/file/query?itemId="+viewModel.model.itemId+"&type=ITEM",
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            update: {
+		                url: "${base.contextPath}/prd/item/file/submit?itemId="+viewModel.model.itemId+"&type=ITEM",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            destroy: {
+		                url: "",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            create: {
+		                url: "${base.contextPath}/prd/item/file/submit?itemId="+viewModel.model.itemId+"&type=ITEM",
+		                type: "POST",
+		                contentType: "application/json"
+		            },
+		            parameterMap: function (options, type) {
+		                if (type !== "read" && options.models) {
+		                    var datas = Hap.prepareSubmitParameter(options, type)
+		                    return kendo.stringify(datas);
+		                } else if (type === "read") {
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: true,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "fileId",
+		                fields: {
+		                }
+		            }
+		        }
+		    },
+	        height: '300px',
+	        resizable: true,
+	        scrollable: true,
+	        navigatable: false,
+	        selectable: 'multiple, rowbox',
+	        pageable:{
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+	        toolbar: [
+	            {
+	                template: '<button type="button"  onclick="newArcData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+	                '<i class="fa fa-plus-square" style="margin-right:3px;"></i>添加产品资料</button>'
+
+	            },
+	            {
+	                template: '<span onclick="deleteArcData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+	                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+	            },
+	            {
+	                name: "cancel",
+	                template: '<span class="btn btn-default k-grid-cancel-changes">' +
+	                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+	            },{
+	            	  template: '<button type="button"  onclick="saveData()" class="btn btn-success" style="float:left;margin-right:5px;">' +
+		                '<i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></button>'
+	            }
+	        ],
+	        columns: [
+	            {
+	                field: "fileId",
+	                title: '资料id',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.fileId) {
+	                        $('<span>'+ options.model.fileId +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "fileName",
+	                title: '资料显示名',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                }
+	            },
+	            {
+	                field: "fileSize",
+	                title: '文件大小',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.fileSize) {
+	                        $('<span>'+ options.model.fileSize +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "uploadDate",
+	                title: '更新时间',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.uploadDate) {
+	                        $('<span>'+ options.model.uploadDate +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                title: '<@spring.message "hap.action"/>',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                template : function (dataItem) {
+	                    var buttons = '';
+	                    if(dataItem.fileId != '' && dataItem.fileId != undefined){
+	                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+	                    }
+	                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+
+	                    return  '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+	                }
+	            }
+	        ],
+	        editable: true
+	    }).data("kendoGrid");
+        // 缴费方式
+        var payModeGrid = $("#payModeGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl+'paymodeQuery',
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    create : {
+                        url : crudServiceBaseUrl + "paymodeSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    update : {
+                        url : crudServiceBaseUrl + "paymodeSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    destroy : {
+                        url : crudServiceBaseUrl + "paymodeRemove",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read"){
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                serverSorting: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "paymodeId",
+                        fields: {
+                            itemId:{defaultValue:viewModel.model.itemId},
+                            currencyCode:{validation:{required:true}},
+                            enabledFlag:{validation:{required:true} ,defaultValue:"Y"}
+                        }
+                    }
+                }
+            },
+            navigatable: false,
+            height: '250',
+            resizable: true,
+            scrollable: true,
+            rownumber: true,
+            selectable: "multiple, rowbox",
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [
+                {
+                    template: '<div style="text-align:right;"><button type="button"  onclick="newData(this.offsetParent.id)" class="btn btn-primary">' +
+                    '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+                },
+                {
+                    template: '<button type="button"  onclick="deleteData(this.offsetParent.id)" class="btn btn-danger">' +
+                    '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></button></div>'
+                }
+            ],
+            columns: [
+                {
+                    field: "itemId",
+                    title: 'itemId',
+                    width: 50,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "currencyCode",
+                    title: '币种',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.currencyCode;
+                        $.each(prdItemsDetailCurrency,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    valuePrimitive: true,
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailCurrency
+                                });
+                    }
+                },
+                {
+                    field: "enabledFlag",
+                    title: '启用',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.enabledFlag;
+                        $.each(prdItemsDetailStatusCode,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailStatusCode
+                                });
+                    }
+                },
+                {
+                    title: "操作",
+                    width: 80,
+                    command: [
+                        {
+                            name: "edit",
+                        },
+                    ],
+                    headerAttributes: {
+                        style: "text-align:center"
+                    },
+                    attributes: {
+                        style: "text-align:center"
+                    }
+                }],
+            editable: {mode: "inline"}
+        }).data("kendoGrid");
+        // 维护子产品
+        var subItemsGrid = $("#subItemsGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl+'sublineQuery',
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    create : {
+                        url : crudServiceBaseUrl + "sublineSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    update : {
+                        url : crudServiceBaseUrl + "sublineSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    destroy : {
+                        url : crudServiceBaseUrl + "sublineRemove",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read"){
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                serverSorting: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "sublineId",
+                        fields: {
+                            itemId:{defaultValue:viewModel.model.itemId},
+                            sublineId:{editable: false},
+                            sublineItemType:{defaultValue: 'FIXED_VALUE'},
+                            enabledFlag:{validation:{required:true} ,defaultValue:"Y"},
+                            onlinePaymentFlag: {
+                                defaultValue: 'N',
+                                type: 'boolean',
+                                checkedValue: 'Y',
+                                uncheckedValue: 'N'
+                            },
+
+                        }
+                    }
+                }
+            },
+            navigatable: false,
+            height: '250',
+            resizable: true,
+            scrollable: true,
+            rownumber: true,
+            selectable: "multiple, rowbox",
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+
+            toolbar: [
+                {
+                    template: '<div style="text-align:right;"><button type="button"  onclick="newData(this.offsetParent.id)" class="btn btn-primary">' +
+                    '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+                }
+            ],
+            columns: [
+                {
+                    field: "itemId",
+                    title: 'itemId',
+                    width: 50,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "sublineId",
+                    title: '子产品id',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "sublineItemType",
+                    title: '子产品类型',
+                    width: 70,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.sublineItemType;
+                        $.each(prdItemsDetailSublinePrdType,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailSublinePrdType,
+                                    change : function(e) {
+                                        if (e.sender._prev=="") {
+                                            options.model.set('sublineItemName', '');
+                                            options.model.set('yearPeriod', '');
+                                            options.model.set('age', '');
+                                        }
+                                        if (e.sender._old=="FIXED_VALUE") {
+                                            $("input[name='yearPeriod']").removeAttr("gray","gray");
+                                            $("input[name='yearPeriod']").attr("disabled",false);
+                                            $("input[name='age']").attr("gray","gray");
+                                            $("input[name='age']").attr("disabled",true);
+                                        }else if(e.sender._old=="SPECIFY_AGE"){
+                                            $("input[name='yearPeriod']").attr("gray","gray");
+                                            $("input[name='yearPeriod']").attr("disabled",true);
+                                            $("input[name='age']").removeAttr("gray","gray");
+                                            $("input[name='age']").attr("disabled",false);
+                                        }else{
+                                            $("input[name='yearPeriod']").attr("gray","gray");
+                                            $("input[name='yearPeriod']").attr("disabled",true);
+                                            $("input[name='age']").attr("gray","gray");
+                                            $("input[name='age']").attr("disabled",true);
+                                        }
+                                    }
+                                });
+                    }
+                },
+                {
+                    field: "yearPeriod",
+                    title: '固定值',
+                    width: 70,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "age",
+                    title: '指定年龄',
+                    width: 60,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "sublineItemName",
+                    title: '子产品名',
+                    width: 70,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor: function(container, options) {
+                        $('<input class="k-input k-textbox k-valid" name="' + options.field + '"/>')
+                            .appendTo(container);
+
+                        $("input[name='sublineItemName']").focus(function () {
+
+                            if ($("input[name='sublineItemName']").val() == null || $("input[name='sublineItemName']").val() == "") {
+                                if(options.model.sublineItemType=="FULL_PAY"){
+                                    options.model.set('sublineItemName', '整付');
+                                }else if(options.model.sublineItemType=="LIFE_LONG"){
+                                    options.model.set('sublineItemName', '终身');
+                                }else if(options.model.sublineItemType=="SPECIFY_AGE"){
+                                    options.model.set('sublineItemName', '至被保人' + options.model.age + '岁');
+                                }else if(options.model.sublineItemType=="FIXED_VALUE"){
+                                    options.model.set('sublineItemName', options.model.yearPeriod);
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    field: "price",
+                    title: '单价',
+                    width: 70,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "onlinePaymentFlag",
+                    title: '是否在线支付',
+                    width: 80,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {style: "text-align:center"},
+                    template        : '<input type="checkbox" #= onlinePaymentFlag=="Y" ? \'checked="checked"\' : "N" # data-field="onlinePaymentFlag" class="chkbx" />'
+                },
+                {
+                    field: "comments",
+                    title: '备注',
+                    width: 80,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "enabledFlag",
+                    title: '启用',
+                    width: 70,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.enabledFlag;
+                        $.each(prdItemsDetailStatusCode,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailStatusCode
+                                });
+                    }
+                },
+                {
+                    title: "操作",
+                    width: 70,
+                    command: [
+                        {
+                            name: "edit",
+                        },
+                    ],
+                    headerAttributes: {
+                        style: "text-align:center"
+                    },
+                    attributes: {
+                        style: "text-align:center"
+                    }
+                }],
+            edit: function(container, options){
+                //$("input[name='sublineItemName']").attr("disabled",true);
+                //$("input[name='sublineItemName']").attr("gray","gray");
+                if (container.model.sublineItemType=="FIXED_VALUE") {
+                    $("input[name='yearPeriod']").removeAttr("gray","gray");
+                    $("input[name='yearPeriod']").attr("disabled",false);
+                    $("input[name='age']").attr("gray","gray");
+                    $("input[name='age']").attr("disabled",true);
+                }else if(container.model.sublineItemType=="SPECIFY_AGE"){
+                    $("input[name='yearPeriod']").attr("gray","gray");
+                    $("input[name='yearPeriod']").attr("disabled",true);
+                    $("input[name='age']").removeAttr("gray","gray");
+                    $("input[name='age']").attr("disabled",false);
+                }else{
+                    $("input[name='yearPeriod']").attr("gray","gray");
+                    $("input[name='yearPeriod']").attr("disabled",true);
+                    $("input[name='age']").attr("gray","gray");
+                    $("input[name='age']").attr("disabled",true);
+                };
+
+            },
+            save: function(container, options){ 
+                // 子产品名赋值
+                if ($("input[name='sublineItemName']").val() == null || $("input[name='sublineItemName']").val() == "") {
+                    if(container.model.sublineItemType=="FULL_PAY"){
+                        container.model.set('sublineItemName', '整付');
+                    }else if(container.model.sublineItemType=="LIFE_LONG"){
+                        container.model.set('sublineItemName', '终身');
+                    }else if(container.model.sublineItemType=="SPECIFY_AGE"){
+                        container.model.set('sublineItemName', '至被保人' + container.model.age + '岁');
+                    }else if(container.model.sublineItemType=="FIXED_VALUE"){
+                        container.model.set('sublineItemName', container.model.yearPeriod);
+                    }
+                }
+            },
+            editable: {mode: "inline"}
+        }).data("kendoGrid");
+        // 保障计划
+        var securityPlanGrid = $("#securityPlanGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl+'securityPlanQuery',
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    create : {
+                        url : crudServiceBaseUrl + "securityPlanSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    update : {
+                        url : crudServiceBaseUrl + "securityPlanSubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    destroy : {
+                        url : crudServiceBaseUrl + "securityPlanRemove",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read"){
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                serverSorting: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "planId",
+                        fields: {
+                            itemId:{defaultValue:viewModel.model.itemId},
+                            enabledFlag:{validation:{required:true} ,defaultValue:"Y"}
+                        }
+                    }
+                }
+            },
+            navigatable: false,
+            height: '250',
+            resizable: true,
+            scrollable: true,
+            rownumber: true,
+            selectable: "multiple, rowbox",
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [
+                {
+                    template: '<div style="text-align:right;"><button type="button"  onclick="newData(this.offsetParent.id)" class="btn btn-primary">' +
+                    '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+                },
+                {
+                    template: '<button type="button"  onclick="deleteData(this.offsetParent.id)" class="btn btn-danger">' +
+                    '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></button></div>'
+                }
+            ],
+            columns: [
+                {
+                    field: "itemId",
+                    title: 'itemId',
+                    width: 50,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "securityLevel",
+                    title: '保障级别',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "securityRegion",
+                    title: '保障地区',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "enabledFlag",
+                    title: '启用',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.enabledFlag;
+                        $.each(prdItemsDetailStatusCode,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailStatusCode
+                                });
+                    }
+                },
+                {
+                    title: "操作",
+                    width: 80,
+                    command: [
+                        {
+                            name: "edit",
+                        },
+                    ],
+                    headerAttributes: {
+                        style: "text-align:center"
+                    },
+                    attributes: {
+                        style: "text-align:center"
+                    }
+                }],
+            editable: {mode: "inline"}
+        }).data("kendoGrid");
+        // 自付选项
+        var selfpayGrid = $("#selfpayGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl+'selfpayQuery',
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    create : {
+                        url : crudServiceBaseUrl + "selfpaySubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    update : {
+                        url : crudServiceBaseUrl + "selfpaySubmit",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    destroy : {
+                        url : crudServiceBaseUrl + "selfpayRemove",
+                        contentType: "application/json",
+                        type : "POST"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read"){
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                serverSorting: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "selfpayId",
+                        fields: {
+                            itemId:{defaultValue:viewModel.model.itemId},
+                            enabledFlag:{validation:{required:true} ,defaultValue:"Y"}
+                        }
+                    }
+                }
+            },
+            navigatable: false,
+            height: '250',
+            resizable: true,
+            scrollable: true,
+            rownumber: true,
+            selectable: "multiple, rowbox",
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [
+                {
+                    template: '<div style="text-align:right;"><button type="button"  onclick="newData(this.offsetParent.id)" class="btn btn-primary">' +
+                    '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+                },
+                {
+                    template: '<button type="button"  onclick="deleteData(this.offsetParent.id)" class="btn btn-danger">' +
+                    '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></button></div>'
+                }
+            ],
+            columns: [
+                {
+                    field: "itemId",
+                    title: 'itemId',
+                    width: 50,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "selfpay",
+                    title: '自付选项',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "enabledFlag",
+                    title: '启用',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    template: function(dataItem){
+                        var v = dataItem.enabledFlag;
+                        $.each(prdItemsDetailStatusCode,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdItemsDetailStatusCode
+                                });
+                    }
+                },
+                {
+                    title: "操作",
+                    width: 80,
+                    command: [
+                        {
+                            name: "edit",
+                        },
+                    ],
+                    headerAttributes: {
+                        style: "text-align:center"
+                    },
+                    attributes: {
+                        style: "text-align:center"
+                    }
+                }],
+            editable: {mode: "inline"}
+        }).data("kendoGrid");
+        // 下拉列表
+        $("#fullyear").kendoCheckbox({
+            checkedValue: 'Y',
+            uncheckedValue: 'N',
+        });
+        $("#oneyear").kendoCheckbox({
+            checkedValue: 'Y',
+            uncheckedValue: 'N',
+        });
+        $("#halfyear").kendoCheckbox({
+            checkedValue: 'Y',
+            uncheckedValue: 'N',
+        });
+        $("#quarter").kendoCheckbox({
+            checkedValue: 'Y',
+            uncheckedValue: 'N',
+        });
+        $("#onemonth").kendoCheckbox({
+            checkedValue: 'Y',
+            uncheckedValue: 'N',
+        });
+
+        // Grid新增行
+        function newData(gridName) {
+            $('#'+gridName+'').data('kendoGrid').addRow();
+        }
+        function deleteData(gridName){
+            var grid = $('#'+gridName+'').data("kendoGrid");
+            var checked = grid.selectedDataItems();
+            if(checked.length){
+                Hap.deleteGridSelection({
+                    grid:$('#'+gridName+'')
+                });
+            } else {
+                kendo.ui.showInfoDialog({
+                    title:$l('hap.tip.info'),
+                    message:'你未选中任何要删除的项!'
+                });
+            }
+        }
+
+
+
+        //获取单行记录
+        $.ajax({
+            url:"${base.contextPath}/production/items/query?itemId=" + viewModel.model.itemId+"&attSetId="+ viewModel.model.attSetId,
+            type : "POST",
+            dataType:"json",
+            contentType:"application/json",
+            success:function (data) {
+                var basicData = data.rows[0] || {};
+
+                itemAttrList = basicData.prdAttributeSetLine || {};
+                for (var k in basicData) {
+                    viewModel.model.set(k, basicData[k]);
+                }
+                //产品信息()
+                var itemCode = '产品信息(' + viewModel.model.itemCode + ')';
+                document.getElementById("itemCode").innerHTML=itemCode;
+                //产品中类="高端医疗"动态展示
+                if(viewModel.model.minClass=="GD"){
+                    $("#securityPlan").show();
+                    $("#selfpay").show();
+                }else{
+                    $("#securityPlan").hide();
+                    $("#selfpay").hide();
+                }
+                //产品大类="保修"动态展示
+                if(viewModel.model.bigClass=="BX"){
+                    $("#cashCostTab").show();
+                    $("#premiumTab").show();
+                }else{
+                    $("#cashCostTab").hide();
+                    $("#premiumTab").hide();
+                }
+                //产品大类="投资移民/增值服务"动态展示
+                if(viewModel.model.bigClass=="DC"||viewModel.model.bigClass=="FW"){
+                    $("#imageTextTab").show();
+                    $("#imageTextTab").show();
+                }else{
+                    $("#imageTextTab").hide();
+                    $("#imageTextTab").hide();
+                }
+                //标签
+                $("#tags").kendoAutoComplete({
+                    dataTextField: "labelName",
+                    dataValueField: "labelName",
+                    valuePrimitive: true,
+                    filter: "contains",
+                    height: 150,
+                    dataSource: {
+                        transport: {
+                            read: "${base.contextPath}/production/itemDetail/choiceTags?bigClass="+viewModel.model.bigClass,
+                        },
+                        schema:{
+                            data:'rows',
+                        }
+                    }
+                });
+                //产品属性(循环渲染)
+                itemAttrAdd();
+            }
+        });
+
+        //校验,产品属性只能输入英文字母
+        function checkEnchar(obj){
+            obj.value=obj.value.replace(/[^a-zA-Z]/g,'')
+        }
+        //日期时间格式
+        function FormatDate(strTime) {
+            if (strTime) {
+                var date;
+                if (strTime.toString().indexOf("-")>=0 || strTime.toString().indexOf("/")>=0) {
+                    date = new Date(strTime.replace(/-/g,"/"));
+                } else {
+                    date = new Date(strTime);
+                }
+                return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+            } else {
+                return "";
+            }
+        }
+        //////////////////////////////////// 产品标签 ////////////////////////////////////
+        //添加标签
+        function addTagValue(tagName,type){
+            for(var i=0;i< $("span[name='tag']").length;i++){
+                if($("span[name='tag']")[i].textContent==tagName){
+                    if(type=='SELECT'){return;}else{
+                        kendo.ui.showErrorDialog({
+                            title: '错误信息',
+                            message: '标签 '+tagName+' 已存在<br/>'
+                        }).done(function (event) {
+                            $("#errorMessage").html('<h5>失败信息:</h5>' + e.response.message)
+                        });
+                        return;
+                    }
+                }
+
+            }
+            return "<span class='btn btn-default' style='margin-right: 15px;margin-bottom: 15px;' name='tag'><span class='k-icon k-i-close' onclick='deleteTag(this)'></span>"+tagName+"</span>";
+        }
+        function addTags(){
+            if($("#tags").val()!=""){
+                var but = addTagValue($("#tags").val(),'INSERT');
+                $("#addTags").append(but);
+            }
+        }
+        //删除标签
+        function deleteTag(e){
+            //获取标签值
+            kendo.ui.showConfirmDialog({
+                title:$l('hap.tip.info'),
+                message: "是否删除该标签？"
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    $.ajax({
+                        url:"${base.contextPath}/production/itemDetail/tagsRemove?itemId="+ viewModel.model.itemId +"&labelName=" + $(e.parentNode)[0].innerText,
+                        type : "POST",
+                        dataType:"json",
+                        contentType:"application/json",
+                        success:function (data) {
+                            $(e.parentNode).remove();
+                        }
+                    });
+                }
+            })
+        }
+        //标签记录
+        $.ajax({
+            url:"${base.contextPath}/production/itemDetail/tagsQuery?itemId=" + viewModel.model.itemId,
+            type : "POST",
+            dataType:"json",
+            contentType:"application/json",
+            success:function (data) {
+                for(var i in data.rows) {
+                    var but = addTagValue(data.rows[i]["labelName"],'SELECT');
+                    $("#addTags").append(but);
+                }
+            }
+        });
+
+        //切换Tab页
+        $(document).ready(function() {
+            $("#tabstrip").kendoTabStrip({
+                animation:  {
+                    open: {
+                        effects: "fadeIn"
+                    }
+                }
+            });
+        });
+        //////////////////////////////////// Tab 产品属性 ////////////////////////////////////
+        //产品属性动态展现
+        function itemAttrAdd(){
+            var i = 0;
+            var attTag = "";
+            var groupVar = "";
+            //属性标签加载
+            for(var j in itemAttrList){
+                if(itemAttrList[j].statusCode=="Y"){
+                    i = i+1;
+                    //属性组
+                    if(groupVar==""||groupVar!=itemAttrList[j].attGroupName){
+                        i = 1;
+                        if(groupVar!=""&&i%2==01){
+                            attTag = attTag + "</div>";
+                        }
+                        attTag = attTag + "<div class='breadcrumb' data-bind='value:model.prdAttributeSetLine.'"+[j]+"'.value' style='font-size:16px;color:black;margin-top:20px;'><strong>"+ itemAttrList[j].attGroupName +"</strong></div>";
+
+                    }
+                    groupVar = itemAttrList[j].attGroupName ;
+                    //属性
+                    if(i%2==1){
+                        attTag = attTag + "<div class='row'>"
+                        if(itemAttrList[j].fieldType=="VARCHAR"){
+                            attTag = attTag +"<div class='col-sm-6'><div class='form-group'><label class='col-sm-4 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-6'><input type='text' style='width:100%' class='k-textbox' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId +" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase() +"' ></div></div></div>"  ;
+                        }else if(itemAttrList[j].fieldType=="ENCHAR"){
+                            attTag = attTag +"<div class='col-sm-6'><div class='form-group'><label class='col-sm-4 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-6'><input type='text' style='width:100%' class='k-textbox' onkeyup='checkEnchar(this)' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId +" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase() +"'></div></div></div>" ;
+                        }else if(itemAttrList[j].fieldType=="BIGVARCHAR"){
+                            attTag = attTag +"<div class='col-sm-12'><div class='form-group'><label class='col-sm-2 control-label' style='left: 5px;' >"+itemAttrList[j].attName+"</label><div class='col-sm-8'><textarea rows='3' type='text' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId+" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase()  +"' style='width: 105.7%;left: 5px;' class='k-textbox'></textarea></div></div></div>" ;
+                            i = i + 1;
+                            attTag = attTag + "</div>"
+                        }else{
+                            attTag = attTag +"<div class='col-sm-6'><div class='form-group'><label class='col-sm-4 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-6'><input type='text' style='width:100%' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId +" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase() +"'></div></div></div>" ;
+                        }
+                    }else if(i%2==0){
+                        if(itemAttrList[j].fieldType=="VARCHAR"){
+                            attTag = attTag +"<div class='col-sm-5'><div class='form-group'><label class='col-sm-3 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-7'><input type='text' style='width:100%' class='k-textbox' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId+" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase()  +"'></div></div></div>"  ;
+                        }else if(itemAttrList[j].fieldType=="ENCHAR"){
+                            attTag = attTag +"<div class='col-sm-5'><div class='form-group'><label class='col-sm-3 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-7'><input type='text' style='width:100%' class='k-textbox' onkeyup='checkEnchar(this)' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId +" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase() +"'></div></div></div>" ;
+                        }else if(itemAttrList[j].fieldType=="BIGVARCHAR"){
+                            attTag = attTag + "</div>";
+                            attTag = attTag + "<div class='row'>"
+                            attTag = attTag +"<div class='col-sm-12'><div class='form-group'><label class='col-sm-2 control-label' style='left: 5px;'>"+itemAttrList[j].attName+"</label><div class='col-sm-8'><textarea rows='3' type='text' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId+" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase()  +"' style='width: 105.7%;left: 5px;' class='k-textbox'></textarea></div></div></div>" ;
+                        }else{
+                            attTag = attTag +"<div class='col-sm-5'><div class='form-group'><label class='col-sm-3 control-label'>"+itemAttrList[j].attName+"</label><div class='col-sm-7'><input type='text' style='width:100%' placeholder='"+itemAttrList[j].fieldComments+"' id="+itemAttrList[j].lineId+" data-bind='value:model."+ itemAttrList[j].fieldCode.toLowerCase()  +"'></div></div></div>"  ;
+                        }
+                        attTag = attTag + "</div>"
+                    }
+                }
+            }
+
+            $("#itemAttrGroup").append(attTag);
+            kendo.bind($('#itemAttrGroup'), viewModel);
+            //属性控件加载
+            for(var j in itemAttrList){
+                if(itemAttrList[j].fieldType=="DATETIME"){
+                    $("#"+itemAttrList[j].lineId).kendoDatePicker({
+                        animation: false
+                    });
+                    //Set默认值
+//                    if(itemAttrList[j].defaultValue && $("#"+itemAttrList[j].lineId).val()==""){
+//                        viewModel.model.set(itemAttrList[j].fieldCode.toLowerCase(),FormatDate(itemAttrList[j].defaultValue));
+//                    }
+                }else if(itemAttrList[j].fieldType=="NUMBER"){
+                    var formatLength = 0;
+                    var format = "0";
+                    var value = $("#"+itemAttrList[j].lineId).val();
+                    if(value!=null&&value!=""){
+                        var attr = value.split(".");
+                        if(attr.length>1){
+                            formatLength = attr[1].length;
+
+                            function fillZero(number, digits){
+                                number = String(number);
+                                var length = number.length;
+                                if(number.length<digits){
+                                    for(var i=0;i<digits-length;i++){
+                                        number = "0"+number;
+                                    }
+                                }
+                                return number;
+                            }
+                            format = "0."+ fillZero(0,formatLength);
+                        }
+                    } 
+                    $("#"+itemAttrList[j].lineId).kendoNumericTextBox({
+                        format: format,
+                        decimals: 99,
+                        step: 1,
+                    });
+                    //Set默认值
+//                    if(itemAttrList[j].defaultValue && $("#"+itemAttrList[j].lineId).val()==""){
+//                        viewModel.model.set(itemAttrList[j].fieldCode.toLowerCase(),itemAttrList[j].defaultValue);
+//                    }
+                }else if(itemAttrList[j].fieldType=="VALUESET"){
+                    var valueSetId = itemAttrList[j].valueSetId ;
+                    $("#"+itemAttrList[j].lineId).kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: {
+                            transport:{
+                                read: function(options){
+                                    $.ajax({
+                                        type: "GET",
+                                        url : "${base.contextPath}/sys/codevalue/query?codeId="+valueSetId,
+                                        async:true,
+                                        contentType: "application/json" ,
+                                        success : function(data){
+                                            if(data.rows != null){
+                                                options.success(data.rows);
+                                            }else{
+                                                kendo.ui.showErrorDialog({
+                                                    message: data.message
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    //Set默认值
+//                    if(itemAttrList[j].defaultValue && $("#"+itemAttrList[j].lineId).val()==""){
+//                        viewModel.model.set(itemAttrList[j].fieldCode.toLowerCase(),itemAttrList[j].defaultValue);
+//                    }
+                }else if(itemAttrList[j].fieldType=="VARCHAR") {
+                    //Set默认值
+//                    if(itemAttrList[j].defaultValue && $("#"+itemAttrList[j].lineId).val()==""){
+//                        viewModel.model.set(itemAttrList[j].fieldCode.toLowerCase(),itemAttrList[j].defaultValue);
+//                    }
+                }else if(itemAttrList[j].fieldType=="ENCHAR"){
+                    //Set默认值
+//                    if(itemAttrList[j].defaultValue && $("#"+itemAttrList[j].lineId).val()==""){
+//                        viewModel.model.set(itemAttrList[j].fieldCode.toLowerCase(),itemAttrList[j].defaultValue);
+//                    }
+                }
+            }
+        }
+
+        //////////////////////////////////// Tab 产品资料 ////////////////////////////////////
+        //产品维护文件上传代码
+        var uidData;
+        var isUpload;
+        function upload(uid){
+            uidData = uid;
+            data = $('#prdUploadGrid').data('kendoGrid').dataSource.getByUid(uidData);
+            if(data.fileId != "" && typeof(data.fileId) != "undefined"){
+                kendo.ui.showConfirmDialog({
+                    message: '<@spring.message "fms.overwrite_file"/>'
+                }).done(function (e) {
+                    if (e.button == 'OK') {
+                        isUpload = true;
+                        window.fileWin = $("#fileWin").kendoWindow({
+                            title: '<@spring.message "sysfile.upload"/>',
+                            width: 400,
+                            height: 250,
+                            modal: true
+                        }).data("kendoWindow");
+                        fileWin.center().open();
+                    }else{
+                        isUpload = false;
+                    }
+                });
+            }
+            else{
+                isUpload = false;
+                window.fileWin = $("#fileWin").kendoWindow({
+                    title: '<@spring.message "sysfile.upload"/>',
+                    width: 400,
+                    height: 250,
+                    modal: true
+                }).data("kendoWindow");
+                fileWin.center().open();
+            }
+
+        }
+        $("#files").kendoUpload({
+            async        : {
+                saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+            },
+            showFileList : false,
+            upload       : onUpload,
+            success      : onSuccess
+        });
+
+        function onUpload(e){
+
+            e.data = {
+                modularName:'PRD',
+                allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+                maxSize:20480
+            }
+
+        };
+        var fileId;
+        var fileIds = [];
+        function onSuccess(e){
+            if(e.response.success){
+                var grid = $("#prdUploadGrid").data("kendoGrid");
+                var data = grid.dataSource.getByUid(uidData);
+                data.fileSize = Math.ceil((e.response.file.fileSize)/1024);
+                data.oldFileId = data.fileId;
+                data.fileId = e.response.file.fileId;
+                data.fileName = e.response.file.fileName;
+                data._token = e.response.file._token;
+                var newTime = new Date(e.response.file.uploadDate);
+                newTime = Hap.formatDateTime(newTime);
+                data.uploadDate = newTime;
+                data.dirty = true;
+                grid.refresh();
+                document.getElementById("attacheDownload"+uidData).disabled="";
+                fileWin.close();
+                fileId = data.fileId;
+                fileIds.push(fileId);
+            }else{
+                kendo.ui.showErrorDialog({
+                    message  : e.response.message
+                })
+            }
+        }
+        //产品维护文件保存
+        function saveData () {
+            $('#prdUploadGrid').data('kendoGrid').saveChanges();
+        }
+        //产品维护文件添加行信息
+        function newArcData() {
+            var grid = $("#prdUploadGrid").data('kendoGrid').addRow();
+        }
+        //产品维护文件下载
+        function downloadFile(uid)
+        {
+            data =  $('#prdUploadGrid').data('kendoGrid').dataSource.getByUid(uid);
+            $.ajax({
+                url : '${base.contextPath}/commons/attach/validateFile',
+                type : "POST",
+                dataType : "json",
+                data : {
+                    fileId:data.fileId,
+                    token:data._token
+                },
+                success : function(json) {
+                    if(json.success == true){
+                        url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                        var iframe = document.getElementById("ifile");
+                        iframe.src=url;
+                    }else{
+                        kendo.ui.showErrorDialog({
+                            message  : '<@spring.message "fms.file_not_exists"/>'
+                        })
+                    }
+                },
+            })
+
+        };
+        //删除文件
+        function deleteArcData() {
+            var grid = $("#prdUploadGrid").data("kendoGrid");
+            var checked = grid.selectedDataItems();
+            if (grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: $l('hap.tip.delete_confirm')
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+                        $.each(checked, function (i, v) {
+                            if(v.fileId != "" && v._token != "" && v.fileId != undefined && v._token != undefined) {
+                                $.ajax({
+                                    url:"${base.contextPath}/question/guideline/file/remove",
+                                    type : "POST",
+                                    data:{
+                                        fileId:v.fileId,
+                                        token:v._token
+                                    }
+                                })
+                            }
+                        })
+
+                        $.each(checked, function (i, v) {
+                            grid.dataSource.remove(v)
+                        })
+                        grid.dataSource.sync();
+                    }
+                })
+            }
+        }
+        //公司文件上传
+        var uidDataCompany;
+        var isUploadCompany;
+        function uploadCompany(uid){
+            uidDataCompany = uid;
+            data = $('#companyUploadGrid').data('kendoGrid').dataSource.getByUid(uidDataCompany);
+            if(data.fileId != "" && typeof(data.fileId) != "undefined"){
+                kendo.ui.showConfirmDialog({
+                    message: '<@spring.message "fms.overwrite_file"/>'
+                }).done(function (e) {
+                    if (e.button == 'OK') {
+                        isUploadCompany = true;
+                        window.fileWin = $("#fileWin").kendoWindow({
+                            title: '<@spring.message "sysfile.upload"/>',
+                            width: 400,
+                            height: 250,
+                            modal: true
+                        }).data("kendoWindow");
+                        fileWin.center().open();
+                    }else{
+                        isUploadCompany = false;
+                    }
+                });
+            }
+            else{
+                isUploadCompany = false;
+                window.fileWin = $("#fileWinCompany").kendoWindow({
+                    title: '<@spring.message "sysfile.upload"/>',
+                    width: 400,
+                    height: 250,
+                    modal: true
+                }).data("kendoWindow");
+                fileWin.center().open();
+            }
+
+        }
+        $("#filesCompany").kendoUpload({
+            async        : {
+                saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+            },
+            showFileList : false,
+            upload       : onUploadCompany,
+            success      : onSuccessCompany
+        });
+        function onUploadCompany(e){
+
+            e.data = {
+                modularName:'PRD',
+                allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+                maxSize:20480
+            }
+
+        };
+        var fileId;
+        var fileIds = [];
+        function onSuccessCompany(e){
+            if(e.response.success){
+                var grid = $("#companyUploadGrid").data("kendoGrid");
+                var data = grid.dataSource.getByUid(uidDataCompany);
+                data.fileSize = Math.ceil((e.response.file.fileSize)/1024);
+                data.oldFileId = data.fileId;
+                data.fileId = e.response.file.fileId;
+                data.fileName = e.response.file.fileName;
+                data._token = e.response.file._token;
+                var newTime = new Date(e.response.file.uploadDate);
+                newTime = Hap.formatDateTime(newTime);
+                data.uploadDate = newTime;
+                data.dirty = true;
+                grid.refresh();
+                document.getElementById("attacheDownloadCompany"+uidDataCompany).disabled="";
+                fileWin.close();
+                fileId = data.fileId;
+                fileIds.push(fileId);
+            }else{
+                kendo.ui.showErrorDialog({
+                    message  : e.response.message
+                })
+            }
+        }
+        //公司维护文件下载
+        function downloadFileCompany(uid)
+        {
+            data =  $('#companyUploadGrid').data('kendoGrid').dataSource.getByUid(uid);
+            $.ajax({
+                url : '${base.contextPath}/commons/attach/validateFile',
+                type : "POST",
+                dataType : "json",
+                data : {
+                    fileId:data.fileId,
+                    token:data._token
+                },
+                success : function(json) {
+                    if(json.success == true){
+                        url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                        var iframe = document.getElementById("ifileCompany");
+                        iframe.src=url;
+                    }else{
+                        kendo.ui.showErrorDialog({
+                            message  : '<@spring.message "fms.file_not_exists"/>'
+                        })
+                    }
+                },
+            })
+
+        };
+         //删除文件
+         
+      function deleteArcDataCompany(){
+    	var grid = $("#companyUploadGrid").data("kendoGrid");
+    	var checked = grid.selectedDataItems();
+        if(grid.selectedDataItems().length){  
+            kendo.ui.showConfirmDialog({
+                title:$l('hap.tip.info'),
+                message: $l('hap.tip.delete_confirm')
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    $.each(checked,function(i,v){
+                        grid.dataSource.remove(v)
+                    })
+                    grid.dataSource.sync();
+                }
+            }) 
+        }
+    }
+//          function deleteArcDataCompany() {
+//                 var grid = $("#companyUploadGrid").data("kendoGrid");
+//                 var checked = grid.selectedDataItems();
+//                 if (grid.selectedDataItems().length) {
+//                     kendo.ui.showConfirmDialog({
+//                         title: $l('hap.tip.info'),
+//                         message: $l('hap.tip.delete_confirm')
+//                     }).done(function (event) {
+//                         if (event.button == 'OK') {
+//                             $.each(checked, function (i, v) {
+//                                 if(v.fileId != "" && v._token != "" && v.fileId != undefined && v._token != undefined) {
+//                                     $.ajax({
+//                                         url:"${base.contextPath}/question/guideline/file/remove",
+//                                         type : "POST",
+//                                         data:{
+//                                             fileId:v.fileId,
+//                                             token:v._token
+//                                         }
+//                                     })
+//                                 }
+//                             })
+
+//                             $.each(checked, function (i, v) {
+//                                 grid.dataSource.remove(v)
+//                             })
+//                             grid.dataSource.sync();
+//                         }
+//                     })
+//                 }
+//             }
+        //公司维护文件保存
+        function saveDataCompany() { 
+        	$('#companyUploadGrid').data('kendoGrid').saveChanges();
+        	$('#companyUploadGrid').data('kendoGrid').refresh();
+        	$('#companyUploadGrid').data('kendoGrid').dataSource.read();
+        }
+        //公司维护文件添加行信息 
+        function newArcDataCompany() {
+		   var grid = $("#companyUploadGrid").data('kendoGrid').addRow();
+	    }
+
+        //////////////////////////////////// Tab 现金价值表 ////////////////////////////////////
+        //现金价值表
+        $("#cashCostPeriod").kendoLov($.extend(<@lov "PRD_ITEM_PERIOD"/>, {
+            query: function (e) {
+                e.param['itemId'] = viewModel.model.itemId;
+            }
+        }));
+        $('#cashCostCurrency').kendoDropDownList({
+            optionLabel: "-请选择币种-",
+            filter: "contains",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:prdItemsDetailCurrency
+        });
+        //性别
+        $('#cashCostSex').kendoDropDownList({
+            optionLabel: "-请选择-",
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: genderList,
+        });
+        //是否吸烟
+        $('#cashCostSmokeFlag').kendoDropDownList({
+            optionLabel: "-请选择-",
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: prdItemsDetailYesNo,
+        });
+        //年龄
+        $('#cashCostAge').kendoDropDownList({
+            optionLabel: "-请选择-",
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: ageList,
+        });
+        var cashCostUploadGrid=$("#cashCostUploadGrid").kendoGrid({
+	        dataSource: {
+		        transport: {
+		            read: {
+		                url: "${base.contextPath}/production/prdCashValue/query?itemId="+viewModel.model.itemId,
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            destroy : { 
+                        url : "${base.contextPath}/production/prdCashValue/remove",
+                        contentType: "application/json",
+                        type : "POST" 
+                   },
+		            parameterMap: function (options, type) {
+		                if (type !== "read" && options.models) {
+		                    var datas = Hap.prepareSubmitParameter(options, type)
+		                    return kendo.stringify(datas);
+		                } else if (type === "read") {
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: true,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "cashValueId",
+		                fields: {
+		                }
+		            }
+		        }
+		    },
+	        height: '500px',
+	        resizable: true,
+	        scrollable: true,
+	        navigatable: false,
+	        pageable:true,
+	        toolbar: [
+	                  {
+	                      template: '<div style="text-align:right;"><button type="button"  onclick="queryCashCostFunction();" class="btn btn-primary">' +
+	                      '<i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></button>'
+	                  },
+	                  {
+	                      template: '<button type="button"  onclick="importExcelData(\'cashCost\');" class="btn btn-primary">' +
+	                      '<i class="fa fa-upload" style="margin-right:3px;"></i><@spring.message "hap.importexcel"/></button></div>'
+	                  }
+	                ],
+	        columns: [
+	            {
+	                field: "itemName",
+	                title: '产品名称',
+	                width: 150,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.itemName) {
+	                        $('<span>'+ options.model.itemName +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "currency",
+	                title: '币种',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function(dataItem){
+                        var v = dataItem.currency;
+                        $.each(prdItemsDetailCurrency,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+	                editor:function (container, options) {
+	                    if (options.model.currency) {
+	                        $('<span>'+ options.model.currency +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "insuranceCoverage",
+	                title: '保额',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.insuranceCoverage) {
+	                        $('<span>'+ options.model.insuranceCoverage +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "premium",
+	                title: '保费',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.premium) {
+	                        $('<span>'+ options.model.premium +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "sublineItemName",
+	                title: '年期',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.sublineItemName) {
+	                        $('<span>'+ options.model.sublineItemName +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "smokeFlag",
+	                title: '是否吸烟',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function (dataItem) {
+	                    var v = dataItem.smokeFlag||'';
+	                    $.each(prdItemsDetailYesNo, function (i, n) {
+	                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    return v;
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.smokeFlag) {
+	                        $('<span>'+ options.model.smokeFlag +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "gender",
+	                title: '性别',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function (dataItem) {
+	                    var v = dataItem.gender||'';
+	                    $.each(genderList, function (i, n) {
+	                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    return v;
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.gender) {
+	                        $('<span>'+ options.model.gender +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "age",
+	                title: '年龄',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.age) {
+	                        $('<span>'+ options.model.age +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	                field: "insuranceYear",
+	                title: '保单年度',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                    if (options.model.insuranceYear) {
+	                        $('<span>'+ options.model.insuranceYear +'</span>').appendTo(container)
+	                    }else {
+	                        $('<span></span>').appendTo(container)
+	                    }
+	                }
+	            },
+	            {
+	          		title:'退保现金价值',
+	          		attributes: {style: "text-align:center"},
+	          		headerAttributes: {
+	                    "class": "table-header-cell",
+	                    style: "text-align: center"
+	                },
+	                columns: [
+							{
+							    field: "surrenderDeposit",
+							    title: '保证金额',
+							    width: 110,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    editor:function (container, options) {
+							        if (options.model.surrenderDeposit) {
+							            $('<span>'+ options.model.surrenderDeposit +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							},
+							{
+							    field: "surrenderNotBonus",
+							    title: '非保证红利',
+							    width: 120,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    editor:function (container, options) {
+							        if (options.model.surrenderNotBonus) {
+							            $('<span>'+ options.model.surrenderNotBonus +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							},
+							{
+							    field: "surrenderDeposit",
+							    title: '总额',
+							    width: 100,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    template: function (dataItem) {
+							        return dataItem.surrenderDeposit+dataItem.surrenderNotBonus;
+							    },
+							    editor:function (container, options) {
+							        if (options.model.surrenderDeposit) {
+							            $('<span>'+ options.model.surrenderDeposit +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							}
+	                ]
+	          	},
+	          	{
+	          		title:'身故/重疾保障',
+	          		attributes: {style: "text-align:center"},
+	          		headerAttributes: {
+	                    "class": "table-header-cell",
+	                    style: "text-align: center"
+	                },
+	                columns: [
+							{
+							    field: "dieDeposit",
+							    title: '保证金额',
+							    width: 140,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    editor:function (container, options) {
+							        if (options.model.dieDeposit) {
+							            $('<span>'+ options.model.dieDeposit +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							},
+							{
+							    field: "dieExtra",
+							    title: '额外保证',
+							    width: 140,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    editor:function (container, options) {
+							        if (options.model.dieExtra) {
+							            $('<span>'+ options.model.dieExtra +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							},
+							{
+							    field: "dieNotBonus",
+							    title: '非保证红利',
+							    width: 150,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    editor:function (container, options) {
+							        if (options.model.dieNotBonus) {
+							            $('<span>'+ options.model.dieNotBonus +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							},
+							{
+							    field: "dieNotBonus",
+							    title: '总额',
+							    width: 120,
+							    headerAttributes: {
+							        'class':'table-header-cell',
+							        style:'text-align: center;vertical-align:middle;'
+							    },
+							    template: function (dataItem) {
+							        return dataItem.dieDeposit+dataItem.dieExtra+dataItem.dieNotBonus;
+							    },
+							    editor:function (container, options) {
+							        if (options.model.dieNotBonus) {
+							            $('<span>'+ options.model.dieNotBonus +'</span>').appendTo(container)
+							        }else {
+							            $('<span></span>').appendTo(container)
+							        }
+							    }
+							}	
+	                ]
+	          	},
+	            {
+	               title: '操作',
+	               headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	               attributes: {style: "text-align:center;padding:0px"}, 
+	                   command : [{
+	                       name:'remove',
+	                       template : '<a class="btn btn-danger k-grid-remove"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></a>',
+	                       click: function(e){
+	                    	   var th = this;
+	                           e.preventDefault();
+	                           kendo.ui.showConfirmDialog({
+	                        	   title:$l('hap.tip.info'),
+	                           	   message: $l('hap.tip.delete_confirm')
+	                           }).done(function(event){
+	                               if(event.button == 'OK'){
+	                                  var data = th.dataItem($(e.target).closest("tr"));
+	                                  th.dataSource.remove(data)
+	                                  th.dataSource.sync()
+	                               }
+	                           })                      
+	                      } 
+	                   }],
+	                   width:70
+	              }
+	        ],
+	        editable: true
+	    }).data("kendoGrid");
+        
+      	function queryCashCostFunction(){
+      		var url="${base.contextPath}/production/prdCashValue/query?itemId="+viewModel.model.itemId;
+      		if(viewModel.model.cashCostCurrency){
+      			url+="&currency="+viewModel.model.cashCostCurrency;
+      		}
+      		if(viewModel.model.cashCostPeriod){
+      			url+="&sublineId="+viewModel.model.cashCostPeriod;
+      		}
+      		if(viewModel.model.cashCostSmokeFlag){
+      			url+="&smokeFlag="+viewModel.model.cashCostSmokeFlag;
+      		}
+      		if(viewModel.model.cashCostSex){
+      			url+="&gender="+viewModel.model.cashCostSex;
+      		}
+      		if(viewModel.model.cashCostAge){
+      			url+="&ageStr="+viewModel.model.cashCostAge;
+      		}
+      		$('#cashCostUploadGrid').data('kendoGrid').dataSource.transport.options.read.url=url;
+  			$('#cashCostUploadGrid').data('kendoGrid').dataSource.read();
+        }
+
+        //////////////////////////////////// Tab 保费表 ////////////////////////////////////
+        //保费表
+        $("#premiumPeriod").kendoLov($.extend(<@lov "PRD_ITEM_PERIOD"/>, {
+            query: function (e) {
+                e.param['itemId'] = viewModel.model.itemId;
+            }
+	    }));
+
+        $('#premiumCurrency').kendoDropDownList({
+            optionLabel: "-请选择币种-",
+            filter: "contains",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:prdItemsDetailCurrency
+        });
+        //性别
+        $('#premiumSex').kendoDropDownList({
+        optionLabel: "-请选择-",
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: genderList,
+        });
+        //是否吸烟
+        $('#premiumSmokeFlag').kendoDropDownList({
+        optionLabel: "-请选择-",
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: prdItemsDetailYesNo,
+        });
+        var premiumUploadGrid=$("#premiumUploadGrid").kendoGrid({
+	        dataSource: {
+		        transport: {
+		            read: {
+		                url: "${base.contextPath}/production/prdPremium/query?itemId="+viewModel.model.itemId,
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            destroy : { 
+                        url : "${base.contextPath}/production/prdPremium/remove",
+                        contentType: "application/json",
+                        type : "POST" 
+                   },
+		            parameterMap: function (options, type) {
+		                if (type !== "read" && options.models) {
+		                    var datas = Hap.prepareSubmitParameter(options, type)
+		                    return kendo.stringify(datas);
+		                } else if (type === "read") {
+                            var model = {
+                                itemId: viewModel.model.itemId
+                            };
+                            return Hap.prepareQueryParameter(model, options);
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: true,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "premiumId",
+		                fields: {
+		                }
+		            }
+		        }
+		    },
+	        height: '500px',
+	        resizable: true,
+	        scrollable: true,
+	        navigatable: false,
+	        pageable:true,
+	        toolbar: [
+	                  {
+	                      template: '<div style="text-align:right;"><button type="button"  onclick="queryPremiumFunction();" class="btn btn-primary">' +
+	                      '<i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></button>'
+	                  }
+	                  ,
+	                  {
+	                      template: '<button type="button"  onclick="premiumAdjust();" class="btn btn-primary">' +
+	                      '<i class="fa" style="margin-right:3px;"></i>保费缴纳调整</button>'
+	                  },
+	                  {
+	                      template: '<button type="button"  onclick="premiumRate();" class="btn btn-primary">' +
+	                      '<i class="fa" style="margin-right:3px;"></i>保费系数</button>'
+	                  },
+	                  {
+	                      template: '<button type="button"  onclick="importExcelData(\'premium\');" class="btn btn-primary">' +
+	                      '<i class="fa fa-upload" style="margin-right:3px;"></i><@spring.message "hap.importexcel"/></button></div>'
+	                  }
+	                ],
+	        columns: [
+	            {
+	                field: "itemName",
+	                title: '产品名称',
+	                width: 150,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                        $('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "currency",
+	                title: '币种',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function(dataItem){
+                        var v = dataItem.currency;
+                        $.each(prdItemsDetailCurrency,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "smokeFlag",
+	                title: '是否吸烟',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function (dataItem) {
+	                    var v = dataItem.smokeFlag||'';
+	                    $.each(prdItemsDetailYesNo, function (i, n) {
+	                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    return v;
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "sublineItemName",
+	                title: '年期',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "gender",
+	                title: '性别',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function (dataItem) {
+	                    var v = dataItem.gender||'';
+	                    $.each(genderList, function (i, n) {
+	                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    return v;
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "nationalityClass",
+	                title: '国籍类别',
+	                width: 80,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function (dataItem) {
+	                    var v = dataItem.nationalityClass||'';
+	                    $.each(NATIONALITYCLASS, function (i, n) {
+	                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    return v;
+	                },
+	                editor:function (container, options) {
+	                	container.html(options.model.nationalityClass);
+	                }
+	            },
+	            {
+	                field: "securityLevel",
+	                title: '保障级别',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	                field: "securityRegion",
+	                title: '保障地区',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            
+	            {
+	                field: "selfpay",
+	                title: '自付选项',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor:function (container, options) {
+	                	$('<span></span>').appendTo(container)
+	                }
+	            },
+	            {
+	          		title:'每1000元投保额之年缴基本保费',
+	          		attributes: {style: "text-align:center"},
+	          		headerAttributes: {
+	                    "class": "table-header-cell",
+	                    style: "text-align: center"
+	                },
+	                columns: [
+						{
+						    field: "premium0",
+						    title: '0岁',
+						    width: 80,
+						    headerAttributes: {
+						        'class':'table-header-cell',
+						        style:'text-align: center;vertical-align:middle;'
+						    },
+						    editor:function (container, options) {
+						    	$('<span></span>').appendTo(container)
+						    }
+						},
+			            {
+			                field: "premium1",
+			                title: '1岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium2",
+			                title: '2岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium3",
+			                title: '3岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium4",
+			                title: '4岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium5",
+			                title: '5岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium6",
+			                title: '6岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium7",
+			                title: '7岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium8",
+			                title: '8岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium9",
+			                title: '9岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium10",
+			                title: '10岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium11",
+			                title: '11岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium12",
+			                title: '12岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium13",
+			                title: '13岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium14",
+			                title: '14岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium15",
+			                title: '15岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium16",
+			                title: '16岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium17",
+			                title: '17岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium18",
+			                title: '18岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium19",
+			                title: '19岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium20",
+			                title: '20岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium21",
+			                title: '21岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium22",
+			                title: '22岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium23",
+			                title: '23岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium24",
+			                title: '24岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium25",
+			                title: '25岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium26",
+			                title: '26岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium27",
+			                title: '27岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium28",
+			                title: '28岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium29",
+			                title: '29岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium30",
+			                title: '30岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium31",
+			                title: '31岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium32",
+			                title: '32岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium33",
+			                title: '33岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium34",
+			                title: '34岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium35",
+			                title: '35岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium36",
+			                title: '36岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium37",
+			                title: '37岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium38",
+			                title: '38岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium39",
+			                title: '39岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium40",
+			                title: '40岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium41",
+			                title: '41岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium42",
+			                title: '42岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium43",
+			                title: '43岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium44",
+			                title: '44岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium45",
+			                title: '45岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium46",
+			                title: '46岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium47",
+			                title: '47岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium48",
+			                title: '48岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium49",
+			                title: '49岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium50",
+			                title: '50岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium51",
+			                title: '51岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium52",
+			                title: '52岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium53",
+			                title: '53岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium54",
+			                title: '54岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium55",
+			                title: '55岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium56",
+			                title: '56岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium57",
+			                title: '57岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium58",
+			                title: '58岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium59",
+			                title: '59岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium60",
+			                title: '60岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium61",
+			                title: '61岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium62",
+			                title: '62岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium63",
+			                title: '63岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium64",
+			                title: '64岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium65",
+			                title: '65岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium66",
+			                title: '66岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium67",
+			                title: '67岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium68",
+			                title: '68岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium69",
+			                title: '69岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium70",
+			                title: '70岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium71",
+			                title: '71岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium72",
+			                title: '72岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium73",
+			                title: '73岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium74",
+			                title: '74岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium75",
+			                title: '75岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium76",
+			                title: '76岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium77",
+			                title: '77岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium78",
+			                title: '78岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium79",
+			                title: '79岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium80",
+			                title: '80岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium81",
+			                title: '81岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium82",
+			                title: '82岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium83",
+			                title: '83岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium84",
+			                title: '84岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium85",
+			                title: '85岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium86",
+			                title: '86岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium87",
+			                title: '87岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium88",
+			                title: '88岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium89",
+			                title: '89岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium90",
+			                title: '90岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium91",
+			                title: '91岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium92",
+			                title: '92岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium93",
+			                title: '93岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium94",
+			                title: '94岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium95",
+			                title: '95岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium96",
+			                title: '96岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium97",
+			                title: '97岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium98",
+			                title: '98岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium99",
+			                title: '99岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            },
+			            {
+			                field: "premium100",
+			                title: '100岁',
+			                width: 80,
+			                headerAttributes: {
+			                    'class':'table-header-cell',
+			                    style:'text-align: center;vertical-align:middle;'
+			                },
+			                editor:function (container, options) {
+			                	$('<span></span>').appendTo(container)
+			                }
+			            }
+			          ]
+	            },
+	            {
+	               title: '操作',
+	               headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	               attributes: {style: "text-align:center;padding:0px"}, 
+	                   command : [{
+	                       name:'remove',
+	                       template : '<a class="btn btn-danger k-grid-remove"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></a>',
+	                       click: function(e){
+	                    	   var th = this;
+	                           e.preventDefault();
+	                           kendo.ui.showConfirmDialog({
+	                        	   title:$l('hap.tip.info'),
+	                           	   message: $l('hap.tip.delete_confirm')
+	                           }).done(function(event){
+	                               if(event.button == 'OK'){
+	                                  var data = th.dataItem($(e.target).closest("tr"));
+	                                  th.dataSource.remove(data)
+	                                  th.dataSource.sync()
+	                               }
+	                           })                      
+	                      } 
+	                   }],
+	                   width:70
+	              }
+	        ],
+	        editable: true
+	    }).data("kendoGrid");
+      	function queryPremiumFunction(){
+      		var url="${base.contextPath}/production/prdPremium/query?itemId="+viewModel.model.itemId;
+      		if(viewModel.model.premiumCurrency){
+      			url+="&currency="+viewModel.model.premiumCurrency;
+      		}
+      		if(viewModel.model.premiumPeriod){
+      			url+="&sublineId="+viewModel.model.premiumPeriod;
+      		}
+      		if(viewModel.model.premiumSmokeFlag){
+      			url+="&smokeFlag="+viewModel.model.premiumSmokeFlag;
+      		}
+      		if(viewModel.model.premiumSex){
+      			url+="&gender="+viewModel.model.premiumSex;
+      		}
+      		$('#premiumUploadGrid').data('kendoGrid').dataSource.transport.options.read.url=url;
+  			$('#premiumUploadGrid').data('kendoGrid').dataSource.read();
+        }
+      	function premiumRate(){
+      		$("#premiumRateWindow").kendoWindow({
+    			actions: ["Close"],
+    			title: "保费系数维护",
+    			draggable: true,
+    			height: "300px",
+    			width: "600px",
+    			content: "${base.contextPath}/production/prd_item_rate.html?itemId="+viewModel.model.itemId+"&oneyearRate="+viewModel.model.oneyearRate+"&halfyearRate="+viewModel.model.halfyearRate+"&quarterRate="+viewModel.model.quarterRate+"&onemonthRate="+viewModel.model.onemonthRate,
+    			iframe: true,
+    			modal: true
+    		});
+    		var premiumRateWindow = $("#premiumRateWindow").data("kendoWindow");
+    		premiumRateWindow.center().open();
+      	}
+      	
+      	function premiumAdjust(){
+      		$("#premiumAdjustWindow").kendoWindow({
+    			actions: ["Close"],
+    			title: "保费缴纳调整",
+    			draggable: true,
+    			width: '80%',
+                height: '90%',
+    			content: "${base.contextPath}/production/prd_premium_adjust.html?itemId="+viewModel.model.itemId,
+    			iframe: true,
+    			modal: true
+    		});
+    		var premiumAdjustWindow = $("#premiumAdjustWindow").data("kendoWindow");
+    		premiumAdjustWindow.center().open();
+      	}
+      	
+      	//数据导入window
+        function importExcelData(type) {
+    		$("#excelWindow").kendoWindow({
+    			actions: ["Close"],
+    			title: "数据导入",
+    			draggable: true,
+    			height: "600px",
+    			width: "800px",
+    			content: "${base.contextPath}/production/prd_excel_cash_pri_upload.html?type="+type+"&itemId="+viewModel.model.itemId,
+    			iframe: true,
+    			modal: true
+    		});
+    		var excelWindow = $("#excelWindow").data("kendoWindow");
+    		excelWindow.center().open();
+        }
+        kendo.bind($('#page-content'), viewModel);
+
+        //////////////////////////////////// Tab 图文版块 ////////////////////////////////////
+        //添加图文版块
+        var but
+        var imageText = [];
+        var tmp = {}
+        //新增图文版块函数
+        function addImageTextFunc(imageId,imageTextValue){
+            but = "<div name='imageGroup' id='imageGroup"+imageId+"'><span name='imageId' style='display:none'>"+imageId+"</span></br>" +
+                  "<div class='row'><div class='col-sm-12'><div class='form-group'><div class='col-sm-3'><input type='text' style='width: 100%' name='imageTextTitle' id='imageTextTitle"+imageId+"' class='k-textbox'></div><div class='col-sm-7' align='right'><span class='k-icon k-i-close' onclick='deleteImageText("+imageId+")' style='margin-top:10px;'></span></div></div></div></div>" +
+                  "<div class='row' style='margin-top: 10px;'><div class='col-sm-12'><div class='form-group'><div class='col-sm-11'><textarea name='imageTextEditor' id='imageTextEditor"+imageId+"'>"+imageTextValue+"</textarea></div><div class='col-sm-2'><span data-for='imageText' class='.k-invalid-msg'></span></div></div></div></div>" +
+                  "</div>";
+            $("#addImageText").append(but);
+            //富文本编辑器
+             $.clbKendoEditor("imageTextEditor"+imageId);
+        }
+        $.clbKendoUpload('<@spring.message "fms.pub.oss_web_path"/>','PRD',"${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}");
+
+        //添加图文版块
+        function addImageText(){
+            imageText = [];
+            tmp.imageId = "";
+            tmp.itemId = viewModel.model.itemId;
+            imageText.push(tmp);
+
+            $.ajax({
+                url:"${base.contextPath}/production/itemDetail/imageTextSubmit",
+                type : "POST",
+                dataType:"json",
+                contentType:"application/json",
+                data: JSON.stringify(imageText),
+
+                success:function (data) {
+                    if(data.success == true){
+                        for(var i in data.rows) {
+                            addImageTextFunc(data.rows[i]["imageId"],"");
+                        }
+                    }else{
+                        kendo.ui.showErrorDialog({
+                            message  : '新增图文版块失败,请联系系统管理员'
+                        })
+                    }
+                }
+            });
+        }
+        //删除图文版块
+        function deleteImageText(id){
+            imageText = [];
+            tmp.imageId=id;
+            imageText.push(tmp);
+            //获取标签值
+            kendo.ui.showConfirmDialog({
+                title:$l('hap.tip.info'),
+                message: "是否删除该图文版块？"
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    $.ajax({
+                        url:"${base.contextPath}/production/itemDetail/imageTextRemove",
+                        type : "POST",
+                        dataType:"json",
+                        contentType:"application/json",
+                        data: JSON.stringify(imageText),
+                        success:function (data) {
+                            var node = document.getElementById("imageGroup"+id);
+                            $(node).remove();
+                        }
+                    });
+                }
+            })
+        }
+        //保存
+        function imageSave(){
+            imageText = [];
+            for(var i=0;i< $("span[name='imageId']").length;i++){
+                var id = $("span[name='imageId']")[i].textContent;
+                tmp = {};
+                tmp.imageId = id;
+                tmp.itemId = viewModel.model.itemId;
+                tmp.titleCode = $("#imageTextTitle"+id).val();
+                tmp.imageText = $("#imageTextEditor"+id).val();
+                imageText.push(tmp);
+            }
+            $.ajax({
+                url:"${base.contextPath}/production/itemDetail/imageTextSubmit",
+                type : "POST",
+                dataType:"json",
+                contentType:"application/json",
+                data: JSON.stringify(imageText),
+                success: function (json) {
+                    if (json.success) {
+                        kendo.ui.showInfoDialog({
+                            message: "成功"
+                        });
+                    } else {
+                        kendo.ui.showErrorDialog({
+                            message: "失败"
+                        });
+                    }
+                }
+            });
+        }
+        //图文版块记录
+
+        $.ajax({
+            url:"${base.contextPath}/production/itemDetail/imageTextQuery?itemId="+viewModel.model.itemId,
+            type : "POST",
+            dataType:"json",
+            contentType:"application/json",
+            data: JSON.stringify(imageText),
+            success:function (data) {
+                if (data.success) {
+                    for(var i in data.rows) {
+                        addImageTextFunc(data.rows[i]["imageId"],data.rows[i]["imageText"]);
+                        $("#imageTextTitle"+data.rows[i]["imageId"]).val(data.rows[i]["titleCode"]);
+                    }
+                } else {
+                    kendo.ui.showErrorDialog({
+                        message: "图文版块查询失败"
+                    });
+                }
+            }
+        });
+
+</script>
+
+</body>
+</html>

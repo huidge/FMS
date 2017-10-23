@@ -1,0 +1,3570 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/lib/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<link rel="shortcut icon" href="http://fontawesome.io/assets/ico/favicon.ico">
+<link rel="stylesheet" href="http://fontawesome.io/assets/css/site.css">
+<link rel="stylesheet" href="http://fontawesome.io/assets/css/pygments.css">
+<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script> 
+<script src="../lib/kendoui/js/kendo.editor.js"></script>
+
+<style type="text/css">
+li{list-style:none;}
+a{text-decoration:none;}
+a:hover{text-decoration:underline;}
+.zzjs_net{position:relative;width:820px;top:15px;margin:0 auto;}
+.list{width:820px;}
+.entry{float:left;width:252px;position:relative;margin:10px;_display:inline;}
+.entry a{display:block;text-decoration:none;border:1px #525252 solid;}
+.entry a:hover{border:1px #999 solid;}
+.entry .url{position:absolute;left:1px;bottom:1px;height:28px;width:250px;background:#000;text-align:center;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8;}
+.entry .url span{display:block;border:0;color:#fff;margin-top:6px;padding:2px;font-weight:bold;}
+._zzjsnet{position:absolute;right:-220px;top:0px;width:216px;padding:10px;background:#393939;border:1px #555 solid;color:#fff;}
+._zzjsnet li{margin-bottom:4px;}
+._zzjsnet li.mt10{margin-bottom:10px;}
+#url, #company , #description{color:#999;}
+._zzjsnet a{color:#999;}
+._zzjsnet a:hover{color:#fff;}
+#contentList h1{color:#ccc;font-size:20px;text-align:center;padding:70px 0;}
+#zzjsnet{clear:both;color:#808080;}
+#zzjsnet a{color:#808080;}
+#total{float:left;}
+#_zzjs_net{float:right;}
+.f90{color:#f90;}
+</style>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+    var menuConTentList = [];
+    var menuLength;
+    
+ 	
+</script>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input> 
+    </form>
+</div>
+<body>
+<div id ="userWin"></div>
+<div id="page-content">
+	<form class="form-horizontal">
+		<div class="panel" id="menuHideDiv1" style="margin-top: 10px;">
+            <form class="form-horizontal" id="itemTags">
+                <div class="panel-body" style="margin-left: 20px;">
+                    <div class="text-left">
+                    	<span style="padding-botton: 5px">
+                    	<i class="fa fa-th-list fa-2x"  aria-hidden="true" ></i>
+                    	</span>
+                        <span style="margin-left: 10px;"  onclick="addTags()">
+                   			<font size="4" style="margin-right: 10px"><b>公众账号切换</b></font>
+                        </span>
+                        <div style="display: inline-block;" onmouseover="onmouseoverFun()"><input type="text" id="tags" data-bind="value:model.originalId" ></div>
+                    </div>
+                </div>
+            </form>
+            <script>kendo.bind($('#itemTags'), viewModel);</script>
+        </div>
+		<script type="text/javascript">
+				function onmouseoverFun(){
+					/* if(menuConTentList.length>0 && menuLength != menuConTentList.length){
+						kendo.ui.showErrorDialog({
+		 	                title: $l('hap.tip.info'),
+		 	                message: $l('切换账号前请记得保存哦！')
+		 	            })
+					} */
+				}
+		</script>
+	
+		<div id="menuHideDiv2" ><!-- class="panel-heading"  -->
+            <span class="panel-title"> <b><@spring.message "自定义菜单"/></b></span>
+        </div>
+        <div id="menuHideDiv3" class="panel-body">
+        	<div class="col-xs-12" style="padding-top:1px;margin-bottom:1px;background-color: #F5F5F5;">
+                <div class="col-xs-1" style="text-align: center">
+                    <a style="margin-right:5px;margin-top: 1px" href="javascript:void(0)" ><i class="fa fa-info-circle fa-4x"  aria-hidden="true" ></i></a>
+                </div>
+				<div class="col-xs-10" style="">
+                    <div class="form-group" >
+                        <label style="text-align: left;margin-top: 16px"><b>菜单编辑</b></label><!-- <br> -->
+                        <!-- <p style="text-align: left">菜单未发布，请确认菜单编辑完成后点击"保存并发布"同步到手机。若停用菜单，请<a href="#">点击这里</a></p> -->
+                    </div>
+                </div>
+				<div class="col-xs-1" >
+                    <div class="form-group" >
+                    </div>
+                </div>
+        	</div>
+        	<div class="col-xs-12" >
+                    <div class="col-xs-5" id="policyInfoDiv" style="text-align: left;">
+                        <div class="box1" style="margin-top: 20px;width:380px;height:600px;margin-left: 5%;position:relative;border:1px solid #dedede;">
+							<div class="box3" style="height: 319px;">
+								<img src="${base.contextPath}/resources/images/forecast/wecha.png" width="378">
+							</div>
+						    <div class="box2" style=" width:378px; height:280px;">
+						   		<div style="width:74px;display:inline-block;height:282px;">
+						   			<ul  style="margin:0; padding:0;list-style-type: none;width:78px;">
+							   			<ul style="margin:0; padding:0;list-style-type: none;margin-bottom: 10px">
+								   			<li class="ui-state-default0" style="height: 45px;padding-top: 12px">
+								   			</li>
+								   			<li class="ui-state-default0" style="height: 45px;padding-top: 12px">
+								   			</li>
+								   			<li class="ui-state-default0" style="height: 45px;padding-top: 12px">
+								   			</li>
+								   			<li class="ui-state-default0" style="height: 45px;padding-top: 12px">
+								   			</li>
+								   			<li class="ui-state-default0" style="height: 45px;padding-top: 12px">
+								   			</li>
+							   			</ul>
+						   				<li class="ui-state-default0" style="background:#f2f6fb;text-align: center;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 45px;padding-top: 3px"">
+						   					<i  class="fa fa-keyboard-o fa-2x" style="color: #dedede;" aria-hidden="true" ></i>
+						   				</li> 
+						   			</ul>
+						   		</div
+						   		>
+						   		<div id='mymenuDivParent' style='display:inline-table;position:relative'>
+							   		<div id="mymenuDiv" class="mymenuDiv1" style="width:100px;display:table-cell;">
+							   			<script type="text/javascript">$(".mymenuDiv1").hide()</script>
+							   			<ul  style="display: inline-block;width: 100%;text-align: center;margin:0; padding:0;list-style-type: none;">
+								   			<ul id="sortable1" style="margin:0; padding:0;list-style-type: none;border: 1px solid #dedede;margin-bottom: 10px;position:absolute;bottom:44px;width:100px">
+									   			<div id ="addDiv1">
+									   			</div>
+									   			<li class="ui-state-default116" style="border-bottom:1px solid #dedede;height: 45px;padding-top: 6px">
+									   				<i id="addMenu1" onclick="addMenu(1)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+									   			</li>
+								   			</ul>
+							   				<li id="ui-state-default-Big1" class="ui-state-default-Big1" onclick="selectBigMenu(1)" style="background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 45px;padding-top: 12px"">菜单名称</li> 
+							   			</ul>
+							   		</div>
+								   	<div id="mymenuDiv" class="mymenuDiv2" style="width:100px;display:table-cell;">
+							   			<script type="text/javascript">$(".mymenuDiv2").hide()</script>	
+							   			<ul  style="display: inline-block;width: 100%;text-align: center;margin:0; padding:0;list-style-type: none;">
+								   			<ul id="sortable2" style="margin:0; padding:0;list-style-type: none;border: 1px solid #dedede;margin-bottom: 10px;position:absolute;bottom:44px;width:100px">
+									   			<div id ="addDiv2">
+									   			</div>
+									   			<li class="ui-state-default226" style="border-bottom:1px solid #dedede;height: 45px;padding-top: 6px">
+									   				<i id="addMenu2" onclick="addMenu(2)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+									   			</li>
+								   			</ul>
+							   				<li id="ui-state-default-Big2" class="ui-state-default-Big2" onclick="selectBigMenu(2)" style="background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 45px;padding-top: 12px"">菜单名称</li> 
+							   			</ul>
+							   		</div>
+								   	<div id="mymenuDiv" class="mymenuDiv3" style="width:100px;display:table-cell;">
+							   			<script type="text/javascript">$(".mymenuDiv3").hide();</script>	
+							   			<ul  style="display: inline-block;width: 100%;text-align: center;margin:0; padding:0;list-style-type: none;">
+								   			<ul id="sortable3" style="margin:0; padding:0;list-style-type: none;border: 1px solid #dedede;margin-bottom: 10px;position:absolute;bottom:44px;width:100px">
+									   			<div id ="addDiv3">
+									   			</div>
+									   			<li class="ui-state-default336" style="border-bottom:1px solid #dedede;height: 45px;padding-top: 6px">
+									   				<i id="addMenu3" onclick="addMenu(3)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+									   			</li>
+								   			</ul>
+							   				<li id="ui-state-default-Big3" class="ui-state-default-Big3" onclick="selectBigMenu(3)" style="background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 45px;padding-top: 12px"">菜单名称</li> 
+							   			</ul>
+							   		</div>
+						   		</div>
+						   		<div id ="addBigMenu1" style="width:100px;height:282px;margin:0; padding:0;display:inline-block;">
+						   			<script type="text/javascript">$("#addBigMenu1").hide()</script>	
+						   			<ul  style="margin:0; padding:0;list-style-type: none;">
+						   				<li class="ui-state-default0" style="text-align: center;background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 44px;padding-top: 1px">
+						   					<i  onclick="addBigMenu(1)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+						   				</li>
+						   			</ul>
+						   		</div
+						   		><div id ="addBigMenu2" style="width:100px;height:282px;margin:0; padding:0;display:inline-block;">
+						   			<script type="text/javascript">$("#addBigMenu2").hide();</script>	
+						   			<ul  style="margin:0; padding:0;list-style-type: none;">
+						   				<li class="ui-state-default0" style="text-align: center;background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 44px;padding-top: 1px">
+						   					<i  onclick="addBigMenu(2)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+						   				</li>
+						   			</ul>
+						   		</div
+						   		><div id ="addBigMenu3" style="width:100px;height:282px;margin:0; padding:0;display:inline-block;">
+						   			<script type="text/javascript">$("#addBigMenu3").hide();</script>	
+						   			<ul  style="margin:0; padding:0;list-style-type: none;">
+						   				<li class="ui-state-default0" style="text-align: center;background:#f2f6fb;border: 1px solid #dedede;margin:0; padding:0;list-style-type: none;height: 44px;padding-top: 1px">
+						   					<i  onclick="addBigMenu(3)" class="fa fa-plus fa-2x" style="color: #dedede" aria-hidden="true" ></i>
+						   				</li>
+						   			</ul>
+						   		</div
+						   		>
+						   		<script type="text/javascript">
+						   			//添加大菜单
+						   			function addBigMenu(e) {
+						   				//菜单头
+						   				saveMenuId = document.getElementById("saveMenuId").value;
+						   				saveBigMenuId = document.getElementById("saveBigMenuId").value;
+						   				/* menuName = document.getElementById("menuName").value;
+						   				//菜单内容
+						   				mentText = document.getElementById("mentText").value;
+						   				imageTextInput = document.getElementById("imageTextInput").value;
+						   				pictureInput = document.getElementById("pictureInput").value;
+						   				voiceInput = document.getElementById("voiceInput").value;
+						   				videoInput = document.getElementById("videoInput").value;
+						   				webpageInput = document.getElementById("webpageInput").value;
+						   				appletInput = document.getElementById("appletInput").value; */
+				   						$("#menuContentP").show();
+						   				$("#menuContentDiv").show();
+		   								document.getElementById("customerServiceFlag").checked = false;
+				   							if(saveMenuId){
+				   								for (var i =0;i<menuConTentList.length;i++) {
+				   									if(menuConTentList[i].saveMenuId == saveMenuId){
+						   								menuContentToList(i);
+						   								cancelALLContent();
+						   								addBigMenuTemp();
+						   								return;
+				   									}
+				   								}
+				   							}else if(saveBigMenuId){
+				   								for (var i =0;i<menuConTentList.length;i++) {
+				   									if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+						   								menuContentToList(i);
+						   								cancelALLContent();
+						   								addBigMenuTemp();
+						   								return;
+				   									}
+				   								}
+				   							}else{
+				   								cancelALLContent();
+				   								addBigMenuTemp();
+				   								return;
+				   							}
+					   					
+						   				function addBigMenuTemp(){
+						   					document.getElementById("menuName").value = "";
+						   					if(e==1){
+												$(".mymenuDiv1").show();
+												$(".ui-state-default116").show();
+												$("#addBigMenu1").hide();
+												$("#addBigMenu2").show();
+												var WhtCustomMenu = {};
+												WhtCustomMenu.saveBigMenuId = "ui-state-default-Big1";
+												WhtCustomMenu.menuType = "firstOrder";
+												WhtCustomMenu.menuName = "菜单名称";
+												WhtCustomMenu.parentMenuId = parseInt("1");
+												WhtCustomMenu.text = "";
+												WhtCustomMenu.pictureTextId = "";
+												WhtCustomMenu.pictureId = "";
+												WhtCustomMenu.voiceId = "";
+												WhtCustomMenu.videoId = "";
+												WhtCustomMenu.pageAddress = "";
+												WhtCustomMenu.smallProGram = "";
+												menuConTentList.push(WhtCustomMenu);
+												console.log(menuConTentList);
+											}else if(e==2){
+												debugger;
+							   					cancelMenuContent();
+												$(".mymenuDiv2").show();
+												$(".ui-state-default226").show();
+												$("#addBigMenu2").hide();
+												$("#addBigMenu3").show();
+												var WhtCustomMenu = {};
+												WhtCustomMenu.saveBigMenuId = "ui-state-default-Big2";
+												WhtCustomMenu.menuType = "firstOrder";
+												WhtCustomMenu.menuName = "菜单名称";
+												WhtCustomMenu.parentMenuId = parseInt("2");
+												WhtCustomMenu.text = "";
+												WhtCustomMenu.pictureTextId = "";
+												WhtCustomMenu.pictureId = "";
+												WhtCustomMenu.voiceId = "";
+												WhtCustomMenu.videoId = "";
+												WhtCustomMenu.pageAddress = "";
+												WhtCustomMenu.smallProGram = "";
+												menuConTentList.push(WhtCustomMenu);
+												console.log(menuConTentList);
+											}else{
+							   					cancelMenuContent();
+												$(".mymenuDiv3").show();
+												$(".ui-state-default336").show();
+												$("#addBigMenu3").hide();
+												var WhtCustomMenu = {};
+												WhtCustomMenu.saveBigMenuId = "ui-state-default-Big3";
+												WhtCustomMenu.menuType = "firstOrder";
+												WhtCustomMenu.menuName = "菜单名称";
+												WhtCustomMenu.parentMenuId = parseInt("3");
+												WhtCustomMenu.text = "";
+												WhtCustomMenu.pictureTextId = "";
+												WhtCustomMenu.pictureId = "";
+												WhtCustomMenu.voiceId = "";
+												WhtCustomMenu.videoId = "";
+												WhtCustomMenu.pageAddress = "";
+												WhtCustomMenu.smallProGram = "";
+												menuConTentList.push(WhtCustomMenu);
+												console.log(menuConTentList);
+											}
+						   				}
+									}
+						   			//大菜单切换
+						   			function selectBigMenu(e){
+						   				//菜单头
+						   				saveMenuId = document.getElementById("saveMenuId").value;
+						   				saveBigMenuId = document.getElementById("saveBigMenuId").value;
+						   				menuName = document.getElementById("menuName").value;
+						   				/* //菜单内容
+						   				mentText = document.getElementById("mentText").value;
+						   				imageTextInput = document.getElementById("imageTextInput").value;
+						   				pictureInput = document.getElementById("pictureInput").value;
+						   				voiceInput = document.getElementById("voiceInput").value;
+						   				videoInput = document.getElementById("videoInput").value;
+						   				webpageInput = document.getElementById("webpageInput").value;
+						   				appletInput = document.getElementById("appletInput").value; */
+				   						$("#menuContentP").show();
+						   				$("#menuContentDiv").show();
+			   							if(saveMenuId){
+			   								$("#"+saveMenuId).css("border-bottom", "1px solid #dedede")
+			   								for (var i =0;i<menuConTentList.length;i++) {
+			   									if(menuConTentList[i].saveMenuId == saveMenuId){
+					   								menuContentToList(i);
+					   								cancelALLContent();
+							   						selectBigMenuTemp();
+					   								return;
+			   									}
+			   								}
+			   							}else if(saveBigMenuId){
+			   								$("#"+saveBigMenuId).css("border", "1px solid #dedede");
+			   								for (var i =0;i<menuConTentList.length;i++) {
+			   									if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+					   								menuContentToList(i);
+					   								cancelALLContent();
+							   						selectBigMenuTemp();
+					   								return;
+			   									}
+			   								}
+			   							}else{
+			   								cancelALLContent();
+			   								selectBigMenuTemp();
+			   								return;
+			   							}
+						   				
+						   				function selectBigMenuTemp(){
+						   					document.getElementById("saveMenuId").value = "";
+							   				document.getElementById("addMenuId").value = "";
+							   				if(e==3){
+							   					$("#ui-state-default-Big3").css("border", "1px solid #00BFFF");
+							   					$("#sortable1").hide();
+							   					$("#sortable2").hide();
+								   				document.getElementById("saveBigMenuId").value = "ui-state-default-Big3";
+								   				document.getElementById("menuName").value = $("#ui-state-default-Big3")[0].innerText;
+								   				if($(".ui-state-default3").length>0){
+									   				$("#menuContentDiv").hide();
+								   					$("#menuContentP").hide();
+								   				}
+								   				console.log(menuConTentList);
+							   					listToBigMenuContent("ui-state-default-Big3")
+							   				}else if(e==2){
+							   					$("#ui-state-default-Big2").css("border", "1px solid #00BFFF");
+							   					$("#sortable1").hide();
+							   					$("#sortable3").hide();
+								   				document.getElementById("saveBigMenuId").value = "ui-state-default-Big2";
+								   				document.getElementById("menuName").value = $("#ui-state-default-Big2")[0].innerText;
+								   				if($(".ui-state-default2").length>0){
+							   						$("#menuContentDiv").hide();
+							   						$("#menuContentP").hide();
+								   				}
+								   				console.log(menuConTentList);
+							   					listToBigMenuContent("ui-state-default-Big2")
+							   				}else{
+								   				$("#ui-state-default-Big1").css("border", "1px solid #00BFFF");
+								   				//$("#ui-state-default-Big1").css("border", "1px solid #dedede");
+							   					$("#sortable2").hide();
+							   					$("#sortable3").hide();
+								   				document.getElementById("saveBigMenuId").value = "ui-state-default-Big1";
+								   				document.getElementById("menuName").value = $("#ui-state-default-Big1")[0].innerText;
+								   				if($(".ui-state-default1").length>0){
+							   						$("#menuContentDiv").hide();
+							   						$("#menuContentP").hide();
+								   				}
+								   				console.log(menuConTentList);
+							   					listToBigMenuContent("ui-state-default-Big1")
+							   				}
+						   				}
+						   			};
+						   			
+						   			//选择小菜单
+						   			function selectId(e) {
+						   				//debugger;
+						   				//菜单头
+						   				saveMenuId = document.getElementById("saveMenuId").value;
+						   				saveBigMenuId = document.getElementById("saveBigMenuId").value;
+						   				menuName = document.getElementById("menuName").value;
+						   				/* //菜单内容
+						   				mentText = document.getElementById("mentText").value;
+						   				imageTextInput = document.getElementById("imageTextInput").value;
+						   				pictureInput = document.getElementById("pictureInput").value;
+						   				voiceInput = document.getElementById("voiceInput").value;
+						   				videoInput = document.getElementById("videoInput").value;
+						   				webpageInput = document.getElementById("webpageInput").value;
+						   				appletInput = document.getElementById("appletInput").value; */
+				   						$("#menuContentP").show();
+						   				$("#menuContentDiv").show();
+				   							if(saveMenuId){
+				   								$("#"+saveMenuId).css("border-bottom", "1px solid #dedede")
+				   								for (var i =0;i<menuConTentList.length;i++) {
+				   									if(menuConTentList[i].saveMenuId == saveMenuId){
+						   								menuContentToList(i);
+						   								cancelALLContent();
+						   								saveMenuIdMethod();
+						   								return;
+				   									}
+				   								}
+				   							}else{
+				   								$("#"+saveBigMenuId).css("border", "1px solid #dedede")
+				   								cancelALLContent();
+				   								saveMenuIdMethod();
+				   							}
+						   				
+						   				//菜单id保存
+						   				function saveMenuIdMethod(){
+						   					$(e).css("border-bottom", "1px solid #00BFFF");
+						   					//$(e).css("border-bottom", "1px solid #dedede");
+						   					document.getElementById("saveMenuId").value = $(e)[0].id;
+						   					document.getElementById("menuName").value = $(e)[0].innerText;
+						   					if($(e)[0].className == "ui-state-default3"){
+						   						document.getElementById("addMenuId").value = "ui-state-default336";
+						   						document.getElementById("saveBigMenuId").value = "ui-state-default-Big3";
+						   					}else if($(e)[0].className == "ui-state-default2"){
+						   						document.getElementById("addMenuId").value = "ui-state-default226";
+						   						document.getElementById("saveBigMenuId").value = "ui-state-default-Big2";
+						   					}else{
+						   						document.getElementById("addMenuId").value = "ui-state-default116";
+						   						document.getElementById("saveBigMenuId").value = "ui-state-default-Big1";
+						   					}
+					   						listToMenuContent($(e)[0].id);
+					   						console.log(menuConTentList);
+						   				};
+									}
+						   			
+						   			//大菜单伸展
+							   		$("#mymenuDiv ul li").prev("ul").hide();
+							   	    $("#mymenuDiv ul li").click(function()
+							   	    {
+							   	     $(this).prev("ul").toggle();
+							   	    });
+							   	    
+							   	    //排序
+							   	    function menuSortable1(){
+							   	    	 $( "#menuSortable1" ).hide();
+							   	    	 $( "#menuSortable2" ).show();
+									   	 $( "#addDiv1" ).sortable({
+								       		});
+									   	 $( "#addDiv2" ).sortable({
+								       		});
+									   	 $( "#addDiv3" ).sortable({
+								       		});
+									   	 $("#mymenuDivParent").sortable({})
+									   	/* $('.mymenuDiv1').sortable({})
+									   	 $('.mymenuDiv2').sortable({})
+									   	 $('.m /ymenuDiv3').sortable({})*/
+							   	    };
+							   	    function menuSortable2(){
+							   	    	 $( "#menuSortable1" ).show();
+							   	    	 $( "#menuSortable2" ).hide();
+									   	 $( "#addDiv1" ).sortable('destroy'); 
+									   	 $( "#addDiv2" ).sortable('destroy');
+									   	 $( "#addDiv3" ).sortable('destroy');
+							   	    }
+								   	
+								    //添加子菜单
+								 	function addMenu(e){
+								 		//菜单头
+								 		saveMenuId = document.getElementById("saveMenuId").value;
+								 		saveBigMenuId = document.getElementById("saveBigMenuId").value;
+								 		menuName = document.getElementById("menuName").value;
+								 		//菜单内容
+								 		mentText = document.getElementById("mentText").value;
+								 		imageTextInput = document.getElementById("imageTextInput").value;
+								 		pictureInput = document.getElementById("pictureInput").value;
+								 		voiceInput = document.getElementById("voiceInput").value;
+								 		videoInput = document.getElementById("videoInput").value;
+								 		webpageInput = document.getElementById("webpageInput").value;
+								 		appletInput = document.getElementById("appletInput").value;
+								 		
+								 		if(e==3){ 
+								 			if($(".ui-state-default3").length==4){
+									 			$(".ui-state-default336").hide();
+									 		}; 
+								 			if(mentText || imageTextInput || pictureInput || voiceInput || videoInput || webpageInput || appletInput || document.getElementById("customerServiceFlag").checked){
+								 				if(!saveMenuId && saveBigMenuId =="ui-state-default-Big3"){
+									 				kendo.ui.showConfirmDialog({
+									 	                title: $l('hap.tip.info'),
+									 	                message: $l('添加子菜单后一级菜单的菜单内容即会失效，是否确认添加？')
+									 	            }).done(function (event) {
+									 	                if (event.button == 'OK') {
+									 	                	//debugger;
+									 	                	deleteBigMenuContentToList(saveBigMenuId);
+									 	                	document.getElementById("customerServiceFlag").checked = false;
+									 						$("#menuContentDiv").hide();
+								    						$("#menuContentP").hide();
+								    						addMenu3();
+									 	                }
+									 	            })
+								 				}else{
+								 					for (var i =0;i<menuConTentList.length;i++) {
+						    							if(menuConTentList[i].saveMenuId == saveMenuId){
+						    								menuContentToList(i);
+						    								document.getElementById("customerServiceFlag").checked = false;
+						 			                		addMenu3();
+						    								return;
+						    							}
+						    						}
+								 				}
+								 			}else{
+								 				document.getElementById("customerServiceFlag").checked = false;
+								 				addMenu3();
+								 			};
+								 		}else if(e==2){
+								 			if($(".ui-state-default2").length==4){
+								 				$(".ui-state-default226").hide();
+								 			}
+								 			if(mentText || imageTextInput || pictureInput || voiceInput || videoInput || webpageInput || appletInput || document.getElementById("customerServiceFlag").checked){
+								 				if(!saveMenuId && saveBigMenuId =="ui-state-default-Big2"){
+									 				kendo.ui.showConfirmDialog({
+									 	                title: $l('hap.tip.info'),
+									 	                message: $l('添加子菜单后一级菜单的菜单内容即会失效，是否确认添加？')
+									 	            }).done(function (event) {
+									 	                if (event.button == 'OK') {
+									 	                	deleteBigMenuContentToList(saveBigMenuId);
+									 						$("#menuContentDiv").hide();
+								    						$("#menuContentP").hide();
+								    						document.getElementById("customerServiceFlag").checked = false;
+								    						addMenu2();
+									 	                }
+									 	            })
+								 				}else{
+								 					for (var i =0;i<menuConTentList.length;i++) {
+						    							if(menuConTentList[i].saveMenuId == saveMenuId){
+						    								menuContentToList(i);
+						    								document.getElementById("customerServiceFlag").checked = false;
+						    								addMenu2();
+						    								return;
+						    							}
+						    						}
+								 				}
+								 			}else{
+								 				document.getElementById("customerServiceFlag").checked = false;
+								 				addMenu2();
+								 			};
+								 		}else{
+								 			if($(".ui-state-default1").length==4){
+								 				$(".ui-state-default116").hide();
+								 			}
+								 			if(mentText || imageTextInput || pictureInput || voiceInput || videoInput || webpageInput || appletInput ||  document.getElementById("customerServiceFlag").checked){
+								 				if(!saveMenuId && saveBigMenuId =="ui-state-default-Big1"){
+									 				kendo.ui.showConfirmDialog({
+									 	                title: $l('hap.tip.info'),
+									 	                message: $l('添加子菜单后一级菜单的菜单内容即会失效，是否确认添加？')
+									 	            }).done(function (event) {
+									 	                if (event.button == 'OK') {
+									 	                	deleteBigMenuContentToList(saveBigMenuId);
+									 						$("#menuContentDiv").hide();
+								    						$("#menuContentP").hide();
+								    						document.getElementById("customerServiceFlag").checked = false;
+								    						addMenu1();
+									 	                }
+									 	            })
+								 				}else{
+								 					for (var i =0;i<menuConTentList.length;i++) {
+						    							if(menuConTentList[i].saveMenuId == saveMenuId){
+						    								menuContentToList(i);
+						    								document.getElementById("customerServiceFlag").checked = false;
+						    								addMenu1();
+						    								return;
+						    							}
+						    						}
+								 				}
+								 			}else{
+								 				document.getElementById("customerServiceFlag").checked = false;
+								 				addMenu1();
+								 			};
+								 		}
+								 	};
+								 	
+								 	window.addMenu1 = function () {
+								 		showMenuNum1 = $(".ui-state-default1").length;
+							 			var menuId = 0;
+							 			var menuIdList = [];
+							 			for(var i =0;i<$(".ui-state-default1").length;i++){
+							 				menuId = $(".ui-state-default1")[i].id;
+							 				id = menuId.substr(menuId.length-1,1)
+							 				menuIdList.push(id);
+							 			};
+							 			if(menuIdList.length>1){
+							 				var max = menuIdList[0];
+							       		    for(var x=1; x<menuIdList.length; x++) {
+							 	       		    if(menuIdList[x] > max) {
+							 	       		    max = menuIdList[x];
+							 	       		    }
+							       		    };
+							       			menuId = max;
+							 			}else if(menuIdList.length==1){
+							 				menuId = menuIdList[0];
+							 			}
+							 			document.getElementById("addMenuId").value = "ui-state-default116";
+							 			if(parseInt(showMenuNum1)==4){
+							 				$(".ui-state-default116").hide();
+							 			}
+							 			var html3 ="";
+							 			html3 += "<li class='ui-state-default1' id='ui-state-default1"+(parseInt(menuId)+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+
+							 					"子菜单名称</li>";
+							 	        $("#addDiv1").append(html3);
+								         
+								        var WhtCustomMenu = {};
+								 		WhtCustomMenu.saveMenuId = "ui-state-default1"+(parseInt(menuId)+1);
+								 		WhtCustomMenu.saveBigMenuId = "ui-state-default-Big1";
+								 		WhtCustomMenu.menuType = "secondOrder";
+								 		WhtCustomMenu.menuName = "子菜单名称";
+								 		WhtCustomMenu.parentMenuId = parseInt("1");
+								 		WhtCustomMenu.text = "";
+								 		WhtCustomMenu.pictureTextId = "";
+										WhtCustomMenu.pictureId = "";
+										WhtCustomMenu.voiceId = "";
+										WhtCustomMenu.videoId = "";
+										WhtCustomMenu.pageAddress = "";
+										WhtCustomMenu.smallProGram = "";
+								 		menuConTentList.push(WhtCustomMenu);
+								 		cancelMenuContent();
+								 		console.log(menuConTentList);
+								 	};
+								 	
+								 	window.addMenu2 = function () {
+								 		showMenuNum2 = $(".ui-state-default2").length;
+							 			var menuId = 0;
+							 			var menuIdList = [];
+							 			for(var i =0;i<$(".ui-state-default2").length;i++){
+							 				menuId = $(".ui-state-default2")[i].id;
+							 				id = menuId.substr(menuId.length-1,1)
+							 				menuIdList.push(id);
+							 			};
+							 			if(menuIdList.length>1){
+							 				var max = menuIdList[0];
+							       		    for(var x=1; x<menuIdList.length; x++) {
+							 	       		    if(menuIdList[x] > max) {
+							 	       		    max = menuIdList[x];
+							 	       		    }
+							       		    };
+							       			menuId = max;
+							 			}else if(menuIdList.length==1){
+							 				menuId = menuIdList[0];
+							 			}
+							 			document.getElementById("addMenuId").value = "ui-state-default226";
+							 			
+							 			var html3 ="";
+							 			html3 += "<li class='ui-state-default2' id='ui-state-default2"+(parseInt(menuId)+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+
+							 					"子菜单名称</li>";
+							 	        $("#addDiv2").append(html3);
+								         
+								        var WhtCustomMenu = {};
+								 		WhtCustomMenu.saveMenuId = "ui-state-default2"+(parseInt(menuId)+1);
+								 		WhtCustomMenu.saveBigMenuId = "ui-state-default-Big2";
+								 		WhtCustomMenu.menuType = "secondOrder";
+								 		WhtCustomMenu.menuName = "子菜单名称";
+								 		WhtCustomMenu.parentMenuId = parseInt("2");
+								 		WhtCustomMenu.text = "";
+								 		WhtCustomMenu.pictureTextId = "";
+										WhtCustomMenu.pictureId = "";
+										WhtCustomMenu.voiceId = "";
+										WhtCustomMenu.videoId = "";
+										WhtCustomMenu.pageAddress = "";
+										WhtCustomMenu.smallProGram = "";
+								 		menuConTentList.push(WhtCustomMenu);
+								 		cancelMenuContent();
+								 		console.log(menuConTentList);
+								 	};
+								 	
+								 	window.addMenu3 = function () {
+								 		showMenuNum3 = $(".ui-state-default3").length;
+								 		var menuId = 0;
+								 		//防止因删除菜单带来的id重复
+								 		var menuIdList = [];
+								 		for(var i =0;i<$(".ui-state-default3").length;i++){
+								 			menuId = $(".ui-state-default3")[i].id;
+								 			id = menuId.substr(menuId.length-1,1)
+								 			menuIdList.push(id);
+								 		};
+								 		if(menuIdList.length>1){
+								 			var max = menuIdList[0];
+								   		    for(var x=1; x<menuIdList.length; x++) {
+								        		    if(menuIdList[x] > max) {
+								        		    max = menuIdList[x];
+								        		    }
+								   		    };
+								   			menuId = max;
+								 		}else if(menuIdList.length==1){
+								 			menuId = menuIdList[0];
+								 		}
+								 		document.getElementById("addMenuId").value = "ui-state-default336";
+								 		
+								 		var html3 ="";
+								 		html3 += "<li class='ui-state-default3' id='ui-state-default3"+(parseInt(menuId)+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+
+								 				"子菜单名称</li>";
+								        $("#addDiv3").append(html3);
+								         
+								        var WhtCustomMenu = {};
+								 		WhtCustomMenu.saveMenuId = "ui-state-default3"+(parseInt(menuId)+1);
+								 		WhtCustomMenu.saveBigMenuId = "ui-state-default-Big3";
+								 		WhtCustomMenu.menuType = "secondOrder";
+								 		WhtCustomMenu.menuName = "子菜单名称";
+								 		WhtCustomMenu.parentMenuId = parseInt("3");
+								 		WhtCustomMenu.text = "";
+								 		WhtCustomMenu.pictureTextId = "";
+										WhtCustomMenu.pictureId = "";
+										WhtCustomMenu.voiceId = "";
+										WhtCustomMenu.videoId = "";
+										WhtCustomMenu.pageAddress = "";
+										WhtCustomMenu.smallProGram = "";
+								 		menuConTentList.push(WhtCustomMenu);
+								 		cancelMenuContent();
+								 		console.log(menuConTentList);
+								 	};
+								 	
+								 	//取消菜单内容
+								 	window.cancelMenuContent = function () {
+							 			document.getElementById("menuName").value ="";
+							 			cancelALLContent();
+							 			$("#addImageTextDiv").hide();
+							 			$("#addPictureDiv").hide();
+								 	}; 
+								 	
+								   	 //删除菜单
+								   	function deleteMune() {
+								   		saveMenuId = document.getElementById("saveMenuId").value;
+								   		addMenuId = document.getElementById("addMenuId").value;
+								   		saveBigMenuId = document.getElementById("saveBigMenuId").value;
+								   		//cancelContentOther();
+								   		if(saveMenuId){
+								   			kendo.ui.showConfirmDialog({
+						                         title: $l('hap.tip.info'),
+						                         message: $l('确定要删除此菜单吗')
+						                     }).done(function (event) {
+						                         if (event.button == 'OK') {
+					                        	    for (var i =0;i<menuConTentList.length;i++) {
+					                             	   if(menuConTentList[i].saveMenuId == saveMenuId){
+					                             		  menuConTentList.splice(i, 1);
+												   		  $("#"+saveMenuId).remove();
+												   		  $("."+addMenuId).show();
+											   			  document.getElementById("customerServiceFlag").checked = false;
+												   		  cancelMenuContent();
+												   		  document.getElementById("saveMenuId").value = "";
+										   				  document.getElementById("saveBigMenuId").value = "";
+												   		  return;
+					                             	   };
+					                                };
+						                        }
+						                     });
+								   		}else if(saveBigMenuId){
+								   			if(saveBigMenuId == "ui-state-default-Big3"){
+								   				kendo.ui.showConfirmDialog({
+							                         title: $l('hap.tip.info'),
+							                         message: $l('确定要删除此菜单吗')
+							                     }).done(function (event) {
+							                         if (event.button == 'OK') {
+												   		$(".mymenuDiv3").hide();
+												   		$("#addBigMenu3").show();
+												   		$("#addBigMenu1").hide();
+											   			$("#addBigMenu2").hide();
+											   			$("#ui-state-default-Big3").css("border", "1px solid #dedede")
+											   			document.getElementById("customerServiceFlag").checked = false;
+												   		cancelMenuContent();
+												   		//删除数据
+							                        	for (var i =0;i<menuConTentList.length;i++) {
+						                             	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+						                             		  menuConTentList.splice(i, 1);
+						                             		  i--;//html删除数组元素位置少一个
+						                             	   };
+						                                };
+			                             		 		//去除li标签
+				                             		 	if($(".ui-state-default3").length>0){
+									   						for(var j =0;j<$(".ui-state-default3").length;j++){
+									   							$(".ui-state-default3")[0].remove();
+									   							j--;//html删除数组元素位置少一个
+									   						}
+										   				};
+										   				document.getElementById("saveMenuId").value = "";
+										   				document.getElementById("saveBigMenuId").value = "";
+							                        }
+							                     });
+								   			}else if(saveBigMenuId == "ui-state-default-Big2"){
+								   				kendo.ui.showConfirmDialog({
+							                         title: $l('hap.tip.info'),
+							                         message: $l('确定要删除此菜单吗')
+							                     }).done(function (event) {
+							                         if (event.button == 'OK') {
+							                        	$("#ui-state-default-Big2").css("border", "1px solid #dedede")
+				                             		 	if($(".ui-state-default2").length>0){
+				                             		 		//去除li标签
+									   						for(var j =0;j<$(".ui-state-default2").length;j++){
+									   							$(".ui-state-default2")[0].remove();
+									   							j--;//html删除数组元素位置少一个
+									   						}
+										   				};
+												   		//先删除数据
+							                        	for (var i =0;i<menuConTentList.length;i++) {
+						                             	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+						                             		  menuConTentList.splice(i, 1);
+						                             		  i--;//html删除数组元素位置少一个
+						                             	   };
+						                                };
+							                        	if($(".mymenuDiv3")[0].style.display != "none"){
+						                                	$("#ui-state-default-Big2")[0].innerText = $("#ui-state-default-Big3")[0].innerText;
+							                        		//后赋值
+						                                	for(var j =0;j<menuConTentList.length;j++){
+					                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3" && menuConTentList[j].menuType == "firstOrder"){
+					                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big2";
+					                        						menuConTentList[j].parentMenuId = parseInt("2");
+					                        						break;
+					                        					}
+					                        				};
+												   			$(".mymenuDiv3").hide();
+												   			$("#addBigMenu3").show();
+							                        	}else{
+							                        		$(".mymenuDiv2").hide();
+													   		$("#addBigMenu2").show();
+												   			$("#addBigMenu3").hide();
+							                        	}
+											   			$("#addBigMenu1").hide();
+						                                document.getElementById("customerServiceFlag").checked = false;
+												   		cancelMenuContent();
+										   				
+						                                if($(".ui-state-default3").length>0){
+						                                	for(var i =0;i<$(".ui-state-default3").length;i++){
+						                        				menuId = $(".ui-state-default3")[i].id;
+						                        				innerText = $(".ui-state-default3")[i].innerText;
+						                        				stringTemp = menuId.replace(/default3/, "default2");
+						                        				
+						                        				var html3 ="";
+													 			html3 += "<li class='ui-state-default2' id='"+stringTemp+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+innerText+"</li>";
+													 	        $("#addDiv2").append(html3);
+						                        				
+						                        				for(var j =0;j<menuConTentList.length;j++){
+						                        					if(menuConTentList[j].saveMenuId == menuId){
+						                        						menuConTentList[j].saveMenuId = stringTemp;
+						                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big2";
+						                        						menuConTentList[j].parentMenuId = parseInt("2");
+						                        						break;
+						                        					}
+						                        				};
+						                        			};
+										   				}; 
+										   				if($(".ui-state-default3").length==5){
+										   					$(".ui-state-default226").hide()
+										   				}else{
+										   					$(".ui-state-default226").show()
+										   				}
+			                             		 		//去除li标签
+										   				if($(".ui-state-default3").length>0){
+									   						for(var j =0;j<$(".ui-state-default3").length;j++){
+									   							$(".ui-state-default3")[0].remove();
+									   							j--;//html删除数组元素位置少一个
+									   						}
+										   				};
+										   				document.getElementById("saveMenuId").value = "";
+										   				document.getElementById("saveBigMenuId").value = "";
+							                         }
+							                     });
+								   			}else{
+								   				kendo.ui.showConfirmDialog({
+							                         title: $l('hap.tip.info'),
+							                         message: $l('确定要删除此菜单吗')
+							                     }).done(function (event) {
+							                         if (event.button == 'OK') {
+							                        	 $("#ui-state-default-Big1").css("border", "1px solid #dedede")
+							                        	document.getElementById("customerServiceFlag").checked = false;
+												   		cancelMenuContent();
+							                        	if($(".mymenuDiv3")[0].style.display != "none"){
+													   		
+													   		if($(".mymenuDiv2")[0].style.display != "none"){
+														   		//先删除数据
+									                        	for (var i =0;i<menuConTentList.length;i++) {
+								                             	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+								                             		  menuConTentList.splice(i, 1);
+								                             		  i--;//html删除数组元素位置少一个
+								                             	   };
+								                                };
+							                                	$("#ui-state-default-Big1")[0].innerText = $("#ui-state-default-Big2")[0].innerText;
+							                                	//后赋值
+							                                	for(var j =0;j<menuConTentList.length;j++){
+						                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2" && menuConTentList[j].menuType == "firstOrder"){
+						                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+						                        						menuConTentList[j].parentMenuId = parseInt("1");
+						                        						break;
+						                        					}
+						                        				};
+							                                	//去除li标签
+								                        		if($(".ui-state-default1").length>0){
+											   						for(var j =0;j<$(".ui-state-default1").length;j++){
+											   							$(".ui-state-default1")[0].remove();
+											   							j--;//html删除数组元素位置少一个
+											   						}
+												   				};
+														   		if($(".ui-state-default2").length>0){
+								                                	for(var i =0;i<$(".ui-state-default2").length;i++){
+								                        				menuId = $(".ui-state-default2")[i].id;
+								                        				innerText = $(".ui-state-default2")[i].innerText;
+								                        				stringTemp = menuId.replace(/default2/, "default1");
+								                        				
+								                        				var html3 ="";
+															 			html3 += "<li class='ui-state-default1' id='"+stringTemp+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+innerText+"</li>";
+															 	        $("#addDiv1").append(html3);
+								                        				
+								                        				for(var j =0;j<menuConTentList.length;j++){
+								                        					if(menuConTentList[j].saveMenuId == menuId){
+								                        						menuConTentList[j].saveMenuId = stringTemp;
+								                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+								                        						menuConTentList[j].parentMenuId = parseInt("1");
+								                        						break;
+								                        					}
+								                        				};
+								                        			};
+							                        				/* for(var j =0;j<menuConTentList.length;j++){
+							                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2"){
+							                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+							                        						menuConTentList[j].parentMenuId = parseInt("1");
+							                        					}
+							                        				}; */
+														   		}
+														   		if($(".ui-state-default2").length==5){
+												   					$(".ui-state-default116").hide()
+												   				}else{
+												   					$(".ui-state-default116").show()
+												   				}
+													   		}
+													   		if($(".mymenuDiv3")[0].style.display != "none"){
+							                                	$("#ui-state-default-Big2")[0].innerText = $("#ui-state-default-Big3")[0].innerText;
+							                                	for(var j =0;j<menuConTentList.length;j++){
+						                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3" && menuConTentList[j].menuType == "firstOrder"){
+						                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big2";
+						                        						menuConTentList[j].parentMenuId = parseInt("2");
+						                        					}
+						                        				};
+														   		if($(".ui-state-default2").length>0){
+						                             		 		//去除li标签
+											   						for(var j =0;j<$(".ui-state-default2").length;j++){
+											   							$(".ui-state-default2")[0].remove();
+											   							j--;//html删除数组元素位置少一个
+											   						}
+												   				};
+														   		//删除数据  这个没必要了
+									                        	/* for (var i =0;i<menuConTentList.length;i++) {
+								                             	   if(menuConTentList[i].saveBigMenuId == "ui-state-default-Big2"){
+								                             		  menuConTentList.splice(i, 1);
+								                             		  i--;//html删除数组元素位置少一个
+								                             	   };
+								                                }; */
+								                                if($(".ui-state-default3").length>0){
+								                                	for(var i =0;i<$(".ui-state-default3").length;i++){
+								                        				menuId = $(".ui-state-default3")[i].id;
+								                        				innerText = $(".ui-state-default3")[i].innerText;
+								                        				stringTemp = menuId.replace(/default3/, "default2");
+								                        				
+								                        				var html3 ="";
+															 			html3 += "<li class='ui-state-default2' id='"+stringTemp+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+innerText+"</li>";
+															 	        $("#addDiv2").append(html3);
+								                        				
+								                        				for(var j =0;j<menuConTentList.length;j++){
+								                        					if(menuConTentList[j].saveMenuId == menuId){
+								                        						menuConTentList[j].saveMenuId = stringTemp;
+								                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big2";
+								                        						menuConTentList[j].parentMenuId = parseInt("2");
+								                        						break;
+								                        					}
+								                        				};
+								                        			};
+							                        				/* for(var j =0;j<menuConTentList.length;j++){
+							                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3"){
+							                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big2";
+							                        						menuConTentList[j].parentMenuId = parseInt("2");
+							                        					}
+							                        				}; */
+												   				};
+												   				if($(".ui-state-default3").length==5){
+												   					$(".ui-state-default226").hide()
+												   				}else{
+												   					$(".ui-state-default226").show()
+												   				}
+													   		}
+											   				
+											   				$("#addBigMenu1").hide();
+												   			$("#addBigMenu2").hide();
+												   			$("#addBigMenu3").show();
+													   		$(".mymenuDiv3").hide();
+													   		
+													   		//必须和上面的取值分开
+											   				if($(".ui-state-default3").length>0){
+					                             		 		//去除li标签
+										   						for(var j =0;j<$(".ui-state-default3").length;j++){
+										   							$(".ui-state-default3")[0].remove();
+										   							j--;//html删除数组元素位置少一个
+										   						}
+											   				};
+											   				
+							                        	}else if($(".mymenuDiv2")[0].style.display != "none" && $(".mymenuDiv3")[0].style.display == "none"){
+						                                	$("#ui-state-default-Big1")[0].innerText = $("#ui-state-default-Big2")[0].innerText;
+													   		//先删除数据
+								                        	for (var i =0;i<menuConTentList.length;i++) {
+							                             	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+							                             		  menuConTentList.splice(i, 1);
+							                             		  i--;//html删除数组元素位置少一个
+							                             	   };
+							                                };
+							                                //后赋值
+					                        				for(var j =0;j<menuConTentList.length;j++){
+					                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2" && menuConTentList[j].menuType == "firstOrder"){
+					                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+					                        						menuConTentList[j].parentMenuId = parseInt("1");
+					                        						break;
+					                        					}
+					                        				};
+													   		$("#addBigMenu1").hide();
+												   			$("#addBigMenu2").show();
+												   			$("#addBigMenu3").hide();
+													   		$(".mymenuDiv2").hide();
+				                             		 		//去除li标签
+							                        		if($(".ui-state-default1").length>0){
+										   						for(var j =0;j<$(".ui-state-default1").length;j++){
+										   							$(".ui-state-default1")[0].remove();
+										   							j--;//html删除数组元素位置少一个
+										   						}
+											   				};
+											   				
+							                                if($(".ui-state-default2").length>0){
+							                                	for(var i =0;i<$(".ui-state-default2").length;i++){
+							                        				menuId = $(".ui-state-default2")[i].id;
+							                        				innerText = $(".ui-state-default2")[i].innerText;
+							                        				stringTemp = menuId.replace(/default2/, "default1");
+							                        				
+							                        				var html3 ="";
+														 			html3 += "<li class='ui-state-default1' id='"+stringTemp+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+innerText+"</li>";
+														 	        $("#addDiv1").append(html3);
+							                        				
+							                        				for(var j =0;j<menuConTentList.length;j++){
+							                        					if(menuConTentList[j].saveMenuId == menuId){
+							                        						menuConTentList[j].saveMenuId = stringTemp;
+							                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+							                        						menuConTentList[j].parentMenuId = parseInt("1");
+							                        						break;
+							                        					}
+							                        				};
+							                        			};
+						                        				/* for(var j =0;j<menuConTentList.length;j++){
+						                        					if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2"){
+						                        						menuConTentList[j].saveBigMenuId = "ui-state-default-Big1";
+						                        						menuConTentList[j].parentMenuId = parseInt("1");
+						                        						return;
+						                        					}
+						                        				}; */
+											   				}; 
+											   				
+				                             		 		//去除li标签
+											   				if($(".ui-state-default2").length>0){
+										   						for(var j =0;j<$(".ui-state-default2").length;j++){
+										   							$(".ui-state-default2")[0].remove();
+										   							j--;//html删除数组元素位置少一个
+										   						}
+											   				};
+							                        	}else{
+													   		$("#addBigMenu1").show();
+												   			$("#addBigMenu2").hide();
+												   			$("#addBigMenu3").hide();
+													   		$(".mymenuDiv1").hide();
+													   		//删除数据
+								                        	for (var i =0;i<menuConTentList.length;i++) {
+							                             	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+							                             		  menuConTentList.splice(i, 1);
+							                             		  i--;//html删除数组元素位置少一个
+							                             	   };
+							                                };
+					                             		 	if($(".ui-state-default1").length>0){
+					                             		 		//去除li标签
+										   						for(var j =0;j<$(".ui-state-default1").length;j++){
+										   							$(".ui-state-default1")[0].remove();
+										   							j--;//html删除数组元素位置少一个
+										   						}
+											   				};
+							                        	}
+							                        	console.log($(".ui-state-default1").length);
+							                        	console.log($(".ui-state-default2").length);
+							                        	console.log($(".ui-state-default3").length);
+							                        	console.log(menuConTentList);
+							                        	document.getElementById("saveMenuId").value = "";
+										   				document.getElementById("saveBigMenuId").value = "";
+							                        }
+							                    });
+								   			}
+								   		}else{
+								   			kendo.ui.showErrorDialog({
+												message : "请选择要删除的菜单"
+											});
+								   		}
+									}
+						   		</script>
+						    </div>
+						</div>
+                    </div>
+
+                    <div class="col-xs-7" id="statusHisDiv" >
+                        <p class="bord-btm pad-ver text-main text-bold">
+                            <@spring.message "菜单名称"/><a href="#" id="deleteMune" onclick="deleteMune()" style="float: right">删除菜单</a><input id ="saveMenuId"  style="display: none" type="text" value="" ><input id ="addMenuId" style="display: none" type="text" value="" ><input id ="saveBigMenuId"  style="display: none" type="text" value="" >
+                        </p>
+                        <div class="col-xs-12" >
+                            <div class="col-xs-12" style="margin-top: 10px">
+                                <div class="form-group" style="margin-bottom:20px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"><@spring.message "菜单名称"/></label>
+                                    <div class="col-xs-9">
+                                        <input id="menuName" style="width: 50%" name="menuName" type="text"  class=" k-textbox" style="width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12" style="margin-top: 5px">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"></label>
+                                    <div class="col-xs-9">
+                                        <p >字数不超过8个汉字或16个字母</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p id="menuContentP" style="display: none" class="bord-btm pad-ver text-main text-bold">
+							    <@spring.message "菜单内容"/>
+							</p>
+							<div id="menuContentDiv" style="display: none" class="col-sm-12" style="margin-top: 20px;">
+							<input type="checkbox" id="customerServiceFlag" class="chkbx" style="margin-top:3px;float: right"><span style="float: right;margin-right: 5px">人工客服菜单按钮</span>
+                                <script type="text/javascript">
+                                   	//人工客服
+                                    $("#customerServiceFlag").blur(function(){  // 失去焦点
+                                    	saveMenuId = document.getElementById("saveMenuId").value;
+						   				saveBigMenuId = document.getElementById("saveBigMenuId").value;
+        	                    			//debugger;
+        	                    		if(document.getElementById("customerServiceFlag").checked){
+        	                    			kendo.ui.showConfirmDialog({
+	                  						    message : "设置该菜单为客服菜单吗"
+	                  					    }).done(function (event) {
+	                  			                if (event.button == 'OK') {
+		        	                    			if(saveMenuId){
+		        	                    				var h = "";
+		        	                    				for (var h =0;h<menuConTentList.length;h++) {
+						                             	   if(menuConTentList[h].saveMenuId == saveMenuId){
+						                             		    menuConTentList[h].text ="";
+					                  							menuConTentList[h].pictureTextId ="";
+					                  							menuConTentList[h].pictureId ="";
+					                  							menuConTentList[h].voiceId ="";
+					                  							menuConTentList[h].videoId ="";
+					                  							menuConTentList[h].pageAddress ="";
+					                  							menuConTentList[h].smallProGram ="";
+					                  							menuConTentList[h].menuPreviewContent ="";
+					                  			            	menuConTentList[h].customerServiceFlag = "Y";
+					                  			            	break;
+						                             	   }
+						                                }
+		        	                    				for (var i =0;i<menuConTentList.length;i++) {
+		        	                    					//debugger;
+						                             	   if(menuConTentList[i].customerServiceFlag == "Y" && menuConTentList[i].saveMenuId != saveMenuId){
+						                             		  kendo.ui.showConfirmDialog({
+						                  						  message : "客服菜单已存在，是否要覆盖"
+						                  					  }).done(function (event) {
+						                  			              if (event.button == 'OK') {
+						                  			            	  for (var z =0;z<menuConTentList.length;z++) {
+						                  			            		if(menuConTentList[z].customerServiceFlag == "Y" && menuConTentList[z].saveMenuId != saveMenuId){
+								                  			            	menuConTentList[z].customerServiceFlag = "";
+						                  			            		}
+						                  			            	  }
+							                  					      return;
+						                  			              }else{
+						                  			            	  menuConTentList[h].customerServiceFlag = "";
+						                  			            	  document.getElementById("customerServiceFlag").checked = false;
+								                  					  return;
+						                  			              }
+						                  					  })
+						                             	   }
+						                                }
+		        	                    				//document.getElementById("customerServiceFlag").checked = false;
+			                  			                cancelALLContent();
+		        	                    			}else if(!saveMenuId && saveBigMenuId){
+		        	                    				var h = "";
+		        	                    				for (var h =0;h<menuConTentList.length;h++) {
+						                             	   if(menuConTentList[h].saveBigMenuId == saveBigMenuId && menuConTentList[h].menuType == "firstOrder"){
+						                             		    menuConTentList[h].text ="";
+					                  							menuConTentList[h].pictureTextId ="";
+					                  							menuConTentList[h].pictureId ="";
+					                  							menuConTentList[h].voiceId ="";
+					                  							menuConTentList[h].videoId ="";
+					                  							menuConTentList[h].pageAddress ="";
+					                  							menuConTentList[h].smallProGram ="";
+					                  							menuConTentList[h].menuPreviewContent ="";
+					                  			            	menuConTentList[h].customerServiceFlag = "Y";
+					                  			            	break;
+						                             	   }
+						                                }
+		        	                    				for (var i =0;i<menuConTentList.length;i++) {
+						                             	   if(menuConTentList[i].customerServiceFlag == "Y" && menuConTentList[i].saveBigMenuId != saveBigMenuId && menuConTentList[i].menuType != "firstOrder"){
+						                             		  kendo.ui.showConfirmDialog({
+						                  						  message : "客服菜单已存在，是否要覆盖"
+						                  					  }).done(function (event) {
+						                  			              if (event.button == 'OK') {
+						                  			            	  for (var z =0;z<menuConTentList.length;z++) {
+						                  			            		 if(menuConTentList[z].customerServiceFlag == "Y" && menuConTentList[z].saveBigMenuId != saveBigMenuId && menuConTentList[z].menuType != "firstOrder"){
+								                  			            	menuConTentList[z].customerServiceFlag = "";
+						                  			            		 } 
+						                  			            	  }
+							                  			              //document.getElementById("customerServiceFlag").checked = false;
+							                  					      return;
+						                  			              }else{
+						                  			            	  menuConTentList[h].customerServiceFlag = "";
+						                  			            	  document.getElementById("customerServiceFlag").checked = false;
+								                  					  return;
+						                  			              }
+						                  					  })
+						                             	   };
+						                                };
+		        	                    				//document.getElementById("customerServiceFlag").checked = false;
+			                  			                cancelALLContent();
+		        	                    			}else{
+		        	                    				kendo.ui.showInfoDialog({
+		        	                    					message : "请选择要设为客服的菜单"
+		        	                    				});
+		        	                    				document.getElementById("customerServiceFlag").checked = false;
+		        	                    			}
+	                  			                }else{
+	                  			                	document.getElementById("customerServiceFlag").checked = false;
+	                  			                }
+	                  					    })
+        	                    		}else{
+        	                    			kendo.ui.showConfirmDialog({
+	                  						    message : "确定取消该菜单的客服功能吗"
+	                  					    }).done(function (event) {
+	                  			                if (event.button == 'OK') {
+		        	                    			if(saveMenuId){
+		        	                    				for (var h =0;h<menuConTentList.length;h++) {
+						                             	   if(menuConTentList[h].saveMenuId == saveMenuId){
+					                  			            	menuConTentList[h].customerServiceFlag = "";
+					                  			            	break;
+						                             	   }
+						                                }
+		        	                    			}else if(!saveMenuId && saveBigMenuId){
+		        	                    				for (var h =0;h<menuConTentList.length;h++) {
+						                             	   if(menuConTentList[h].saveBigMenuId == saveBigMenuId && menuConTentList[h].menuType == "firstOrder"){
+					                  			            	menuConTentList[h].customerServiceFlag = "";
+					                  			            	break;
+						                             	   }
+						                                }
+		        	                    			}
+		        	                    			document.getElementById("customerServiceFlag").checked = false;
+	                  			                }else{
+	                  			                	document.getElementById("customerServiceFlag").checked = true;
+	                  			                }
+	                  					    })
+        	                    		}
+        	                    	});
+                                </script>
+								<ul class="nav nav-tabs" id="myTab">
+						            <li class="active"><a href="#information" data-toggle="tab">发送信息</a></li>
+						            <li><a href="#webpage" data-toggle="tab">跳转网页</a></li>
+						            <li><a href="#applet" data-toggle="tab">跳转小程序</a></li>
+						        </ul>
+						        <div class="tab-content">
+						          <!--1-->
+						          <div class="tab-pane active" id="information">
+						              <div class="tabbable" style="margin: 10px;">
+						                  <ul class="nav nav-tabs" id="divstyletab">
+						                      <li class="active"><a href="#text" data-toggle="tab">文字</a></li>
+						                      <li><a href="#ImageText" data-toggle="tab">图文信息</a></li>
+						                      <li><a href="#picture" data-toggle="tab">图片</a></li>
+						                      <li><a href="#voice" data-toggle="tab">语音</a></li>
+						                      <li><a href="#video" data-toggle="tab">视频</a></li>
+						                  </ul>
+						                  <div class="tab-content">
+						                      <!-- 第一个tab -->
+						                      <div class="tab-pane fade active in" style="margin-top: 30px;text-align: center" id="text">
+						                          <textarea id="mentText" style="width: 100%;height: 150px"></textarea>
+						                          <script type="text/javascript">
+						                          		$("#mentText").blur(function(){
+						                          			if(document.getElementById("mentText").value){
+						                          				saveMenuId = document.getElementById("saveMenuId").value;
+												   				saveBigMenuId = document.getElementById("saveBigMenuId").value;
+												   				if(saveMenuId){
+												   					var h = "";
+												   					//debugger;
+													   				for (var h =0;h<menuConTentList.length;h++) {
+										                             	if(menuConTentList[h].saveMenuId == saveMenuId){
+										                             		
+										                             		if(menuConTentList[h].customerServiceFlag == "Y"){
+											                             		kendo.ui.showConfirmDialog({
+										                  						    message : "该菜单为客服菜单，确定客服菜单将失效"
+										                  					    }).done(function (event) {
+										                  			                if (event.button == 'OK') {
+										                  			                	//debugger;
+										                  			                	document.getElementById("customerServiceFlag").checked = false;
+										                  			                	menuConTentList[h].customerServiceFlag = "";
+										                  			                }else{
+										                  			                	document.getElementById("mentText").value = "";
+										                  			                }
+										                  					    })
+										                             		}
+														   					break;
+										                             	}
+													   				};
+													   				mentTextTemp();
+							                          			}else if(!saveMenuId && saveBigMenuId){
+							                          				for (var h =0;h<menuConTentList.length;h++) {
+										                             	if(menuConTentList[h].saveBigMenuId == saveBigMenuId && menuConTentList[h].menuType == "firstOrder"){
+										                             		if(menuConTentList[h].customerServiceFlag == "Y"){
+											                             		kendo.ui.showConfirmDialog({
+										                  						    message : "该菜单为客服菜单，确定客服菜单将失效"
+										                  					    }).done(function (event) {
+										                  			                if (event.button == 'OK') {
+										                  			                	//debugger;
+										                  			                	document.getElementById("customerServiceFlag").checked = false;
+										                  			                	menuConTentList[h].customerServiceFlag = "";
+										                  			                }else{
+										                  			                	document.getElementById("mentText").value = "";
+										                  			                }
+										                  					    })
+										                             		}
+														   					break;
+										                             	}
+													   				};
+													   				mentTextTemp();
+							                          			}else{
+							                          				kendo.ui.showConfirmDialog({
+							                  						    message : "请选择菜单"
+							                  					    });
+							                          				document.getElementById("mentText").value = "";
+							                          			}
+						                          			}
+						                          		})
+				                          				function mentTextTemp(){
+						                          			var valueHave = false;
+						                    				if(document.getElementById("webpageInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(document.getElementById("imageTextInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(document.getElementById("pictureInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(document.getElementById("voiceInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(document.getElementById("videoInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(document.getElementById("appletInput").value){
+						                    					valueHave = true;
+						                    				}
+						                    				if(valueHave){
+						                    					kendo.ui.showConfirmDialog({
+						                    						message : "已存在其它素材，是否要覆盖"
+						                    					}).done(function (event) {
+						                    			            if (event.button == 'OK') {
+								                    					//图文
+								                    					if($("#addImageTextDiv")[0].style.display != "none"){
+								                    			    		$("#addImageTextDiv").hide();
+								                    			    		document.getElementById("imageTextInput").value = "";
+								                    			    		document.getElementById("imageTextUrl").value = "";
+								                    			    		$("#addImageTextImg").hide().attr('src',"");
+								                    					}
+								                    					//图片
+								                    					if($("#addPictureDiv")[0].style.display != "none"){
+								                    			    		document.getElementById("pictureInput").value = "";
+								                    			    		document.getElementById("pictureUrl").value = "";
+								                    			    		$("#addPictureImg").hide().attr('src',"");
+								                    			    		$("#addPictureDiv").hide();
+								                    			    	}
+								                    					//语音
+								                    					if($("#addVoiceDiv")[0].style.display != "none"){
+								                    			    		$("#addVoiceDiv").hide();
+								                    						document.getElementById("voiceInput").value  = "";
+								                    						document.getElementById("voiceUrl").value  = "";
+								                    						document.getElementById("addVoiceSpan").innerText  = "";
+								                    					}
+								                    					//视频
+								                    					if($("#addVideoDiv")[0].style.display != "none"){
+								                    						$("#addVideoDiv").hide();
+								                    						document.getElementById("videoInput").value  = "";
+								                    						document.getElementById("videoUrl").value  = "";
+								                    						document.getElementById("videoInput").innerText = "";
+								                    					}
+								                    					//网页
+								                    					document.getElementById("webpageInput").value  = "";
+								                    					//小程序
+								                    					document.getElementById("appletInput").value  = "";
+						                    			            }else{
+						                    			            	document.getElementById("mentText").value = "";
+						                    			            }
+						                    					})
+						                    				}
+				                          				}
+						                          </script>
+						                      </div>
+						                      <!-- 第二个tab -->
+						                      <div class="tab-pane fade" id="ImageText">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(4)">进入素材库</a></div></label>
+							                                            <div class="col-sm-4">
+							                                            	<input id="imageTextInput" style="display: none">
+							                                            	<input id="imageTextUrl" style="display: none">
+							                                            </div>
+							                                        </div>
+								                               		<div class="form-group" id="addImageTextDiv" style="display: none">
+									                                    <div class="col-xs-11">
+																			<img id="addImageTextImg" src="" width="100%" />
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddImageText()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddImageText() {
+												                        		$("#addImageTextDiv").hide();
+												                        		document.getElementById("imageTextInput").value = "";
+												                        		document.getElementById("imageTextUrl").value = "";
+												                        		$("#addImageTextImg").hide().attr('src',"");
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第三个tab -->
+						                      <div class="tab-pane fade" id="picture">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(1)">进入素材库</a></div></label>
+							                                            <div class="col-sm-4">
+							                                            	<input id="pictureInput" style="display: none">
+							                                            	<input id="pictureUrl" style="display: none">
+							                                            </div>
+							                                        </div>
+								                               		<div class="form-group" id="addPictureDiv" style="display: none">
+									                                    <div class="col-xs-11">
+																			<img id="addPictureImg" src="" width="100%" />
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddPicture() {
+												                        		document.getElementById("pictureInput").value = "";
+												                        		document.getElementById("pictureUrl").value = "";
+												                        		$("#addPictureDiv").hide();
+												                        		$("#addPictureImg").hide().attr('src',"");
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第四个tab -->
+						                      <div class="tab-pane fade" id="voice">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(2)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+							                                            	<input id="voiceInput" style="display: none">
+							                                            	<input id="voiceUrl" style="display: none">
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="addVoiceDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="addVoiceSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddVoice()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddVoice() {
+																				$("#addVoiceDiv").hide();
+																				document.getElementById("voiceInput").value  = "";
+																				document.getElementById("voiceUrl").value  = "";
+																				document.getElementById("addVoiceSpan").innerText  = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第五个tab -->
+						                      <div class="tab-pane fade" id="video">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" id="form-query2" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(3)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+							                                            	<input id="videoInput" style="display: none">
+							                                            	<input id="videoUrl" style="display: none">
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="addVideoDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="addVideoSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddVideo()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddVideo() {
+																				$("#addVideoDiv").hide();
+																				document.getElementById("videoInput").value  = "";
+																				document.getElementById("videoUrl").value  = "";
+																				document.getElementById("videoInput").innerText = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 中间图表结束 -->
+						                  </div>
+						              </div>
+						          </div>
+						          <!-- 2 -->
+						          <div class="tab-pane" id="webpage">
+						              <div class="tabbable" style="margin: 3px;">
+						                  <div class="col-xs-12" style="margin-top: 30px;">
+							                <div class="col-xs-2" style="text-align: right;">
+							                    <label style="margin-top: 8px"></label>
+							                </div>
+											<div class="col-xs-9" style="text-align: left;">
+							                    <div class="form-group" >
+							                        <p style="text-align: left;color: #BDB76B">订阅者点击该子菜单会跳到以下链接</p>
+							                    </div>
+							                </div>
+							        	</div>
+							        	<div class="col-xs-12" style="margin-top: 20px;">
+							                <div class="col-xs-2" style="text-align: right;">
+							                    <label style="">页面地址:</label>
+							                </div>
+											<div class="col-xs-10" style="text-align: left;">
+							                    <div class="form-group" >
+							                    	<input id ="webpageInput" style="margin-right:10px;margin-bottom: 10px;width: 500px" placeholder="网址前缀http://或者https://不可省略"><!-- <button onclick="editData()" >网页预览</button> -->
+							                        <p style="text-align: left"><a href="#">从公众号图文消息中选择</a></p>
+							                    </div>
+							                </div>
+							        	</div>
+						              </div>
+						          </div>
+						          <!-- 3 -->
+						          <div class="tab-pane" id="applet">
+						              <div class="tabbable" style="margin: 3px;">
+						                  <div style="padding:15px 15px 0">
+							                <div class="row">
+							                    <div class="col-sm-12">
+							                        <div class="panel">
+							                            <form class="form-horizontal" id="form-query2" style="width:100%">
+							                                <div class="form-group">
+							                                    <!-- <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="addAttachment()">添加附件</a></div> -->
+							                                    </label>
+							                                    <div class="col-sm-4">
+							                                    	<input id="appletInput" style="display: none">
+							                                    </div>
+							                                </div>
+							                            </form>
+							                            <script>kendo.bind($('#form-query2'), viewModel);</script>
+							                        </div>
+							                    </div>
+							                </div>
+							            </div>
+						              </div>
+						          </div>
+						          <!-- tab end -->
+						      </div>
+							</div>
+                        </div>
+                    </div>
+           </div>
+        </div>
+        <div id="menuHideDiv4" style="margin-top:50px;text-align:center;padding-bottom:10px;">
+			<div class="col-xs-12" >
+                <div class="col-xs-5" >
+                    <div class="form-group" >
+				        <span id="menuSortable1" onclick="menuSortable1()" class="btn btn-danger" style="margin-right:10px;"><@spring.message "菜单排序"/></span> 
+				        <span id="menuSortable2" onclick="menuSortable2()" class="btn btn-danger" style="margin-right:10px;display: none"><@spring.message "完成"/></span> 
+                    </div>
+                </div>
+				<div class="col-xs-4" style="text-align: left;">
+                    <div class="form-group" >
+				        <span class="btn btn-success" onclick="saveMenuFunction()" >
+				        	<i class="fa fa-plus-square" style="margin-right:5px;"></i><@spring.message "保存并发布"/>
+				        </span>
+				        <span style="display:none" onclick="saveReplay()">
+				        	<@spring.message "预览"/>
+				        </span>
+                    </div>
+                </div>
+                <div class="col-xs-3" >
+                </div>
+            </div>
+	    </div>
+        
+    </form>
+    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+</div>
+
+<!-- 素材库界面 700 -->
+<div id="libraryDiv" style="display:none;height: 0px;background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;">
+	<div style="text-align: center">
+		<div style="display:inline-block;border:1px solid #FFDAB9;background-color:#FFDAB9;width: 820px;margin-top: 25px">
+			<div style="display: inline-block;float: left;">
+				<span class="panel-title" id="libraryTitle"></span>
+				<input id="replayInputId" tyle="text" style="width: 50px;display: none" readonly>
+				<input id="replayMediaId" tyle="text" style="width: 50px;display: none" readonly>
+			</div>
+			<div style="display: inline-block;float: right;margin: 8px;">
+            	<span>选中的素材是：</span>
+	            <input id="pictureName" tyle="text" style="width: 200px;" readonly>
+	            <input id="mediaId" tyle="text" style="width: 50px;display: none" readonly>
+			</div>
+		</div>
+	</div>
+	<div>
+		<div class="zzjs_net" style="font-size:9px;font-family:Verdana,Geneva,sans-serif;height: 500px">
+		 	<div id="contentListDiv" class="list" style="border:1px solid #6495ED">
+		     	<div id="contentList"></div>
+		  		<div id="zzjsnet">
+		            <div id="total"></div>
+		            <div id="_zzjs_net"></div>
+		    	</div>
+		    </div>
+		    <div class="_zzjsnet" style="display: none">
+		     	<ul>
+		         	<li>mediaId:</li>
+		         	<li id="siteurl" class="mt10"><a href="http://zzjs.net"></a></li>
+		            <li>name:</li>
+		            <li id="sitename" class="mt10"></li>
+		            <li>src:</li>
+		            <li id="description"></li>
+		        </ul>
+		    </div>
+		</div>
+	</div>
+	<div style="text-align: center;margin-top: 0px;">
+		<div style="display:inline-block;width: 820px;text-align: right">
+			<span class="btn btn-default" onclick="libraryCancel()" style="margin-right: 10px">
+				<i class="fa fa-reply" style="margin-right:5px;"></i>取消
+			</span>
+			<span class="btn btn-success" onclick="librarySave()">
+				<i class="fa fa-plus-square" style="margin-right:5px;"></i>添加
+			</span>
+		</div>
+	</div>
+</div>
+
+<!-- 图文预览界面 -->
+<div style="display: none;padding: 10px;" id= "pictrueTextPreviewDiv"><!-- style="background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;" -->
+	<div>
+		<span class="btn btn-default" onclick="quxiaoPreview()">
+			<i class="fa fa-reply" style="margin-right:5px;"></i>返回
+		</span>
+		<span class="btn btn-success" onclick="librarySave()">
+			<i class="fa fa-plus-square" style="margin-right:5px;"></i>确认添加
+		</span>
+	</div>
+	<div style="display: inline-block;top: 10px;position: relative;border: 1px solid #7FFF00"><!-- height: 500px; -->
+		<div style="margin: 25px;margin-bottom: 0px;">
+			<img width="250px" id="previewImg" src="" />
+			<span id="previewSpan" style="position:absolute;top:170px;height:30px;width: 250px;border: red;background:#000;color:#fff;text-align: center;filter:alpha(opacity=80);-moz-opacity:0.5;opacity:0.5;">
+			</span>
+		</div>
+		<div id="previewTags"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function quxiaoPreview(){
+		if($(".previewMoveDiv")){
+			for(var j =0;j<$(".previewMoveDiv").length;j++){
+				$(".previewMoveDiv")[0].remove();
+				j--;
+			}
+		};
+		$("#libraryDiv").show();
+		$("#pictrueTextPreviewDiv").hide();
+	}
+
+	//账号
+	$("#tags").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "accountName",
+	    dataValueField: "originalId",
+	    dataSource: {
+	        transport: {
+	            read:function(options) {
+	                $.ajax({
+	                    type   : "POST",
+	                    url: "${base.contextPath}/fms/wht/official/account/cfg/selectAccountName",
+	                    data: {},
+	                    success: function(json) {
+	                        options.success(json.rows);
+	                        if(json.total>0){
+	                            var row = json.rows[0] || {};
+	                            viewModel.model.originalId = row.originalId;
+	                            blur();
+	                        } 
+	                    }
+	                });
+	            }
+	        }
+	    },
+	    dataBound: function(e){
+		   if (this.select() === -1) {
+		       this.select(0);
+		       this.trigger("change");//真实有效的获取到这个值（而非仅仅显示出来）
+		   }
+	  	}   
+	});
+		
+	$("#tags").blur(function(){  // 失去焦点  
+		console.log(viewModel.model);
+		blur();
+	}); 
+	
+	window.blur = function () {
+			if($(".ui-state-default1").length>0){
+				for(var j =0;j<$(".ui-state-default1").length;j++){
+					$(".ui-state-default1")[0].remove();
+					j--;//html删除数组元素位置少一个
+				}
+			};
+			if($(".ui-state-default2").length>0){
+				for(var j =0;j<$(".ui-state-default2").length;j++){
+					$(".ui-state-default2")[0].remove();
+					j--;//html删除数组元素位置少一个
+				}
+			};
+			if($(".ui-state-default3").length>0){
+				for(var j =0;j<$(".ui-state-default3").length;j++){
+					$(".ui-state-default3")[0].remove();
+					j--;//html删除数组元素位置少一个
+				}
+			};
+			//document.getElementById("ui-state-default-Big1").innerText = "菜单名称"
+			$(".mymenuDiv1").hide();
+			//document.getElementById("ui-state-default-Big2").innerText = "菜单名称"
+			$(".mymenuDiv2").hide();
+			//document.getElementById("ui-state-default-Big3").innerText = "菜单名称"
+			$(".mymenuDiv3").hide();
+			$("#addBigMenu1").hide();
+			$("#addBigMenu2").hide();
+			$("#addBigMenu3").hide();
+			$("#menuContentP").hide();
+			$("#menuContentDiv").hide(); 
+			if(document.getElementById("saveMenuId")){
+				//排除刚开始jquery顺序加载的异常
+				var tempMenuId = document.getElementById("saveMenuId").value;
+				if(tempMenuId){
+					$("#"+tempMenuId).css("border-bottom", "1px solid #dedede");
+					document.getElementById("saveMenuId").value="";
+				}
+			}
+			if(document.getElementById("saveBigMenuId")){
+				//排除刚开始jquery顺序加载的异常
+				var tempBigMenuId = document.getElementById("saveBigMenuId").value;
+				if(tempBigMenuId){
+					$("#"+tempBigMenuId).css("border", "1px solid #dedede")
+					document.getElementById("saveBigMenuId").value="";
+				}
+			}
+			
+			if(document.getElementById("menuContentDiv")){
+				//排除刚开始jquery顺序加载的异常
+				document.getElementById("customerServiceFlag").checked = false;
+				cancelMenuContent();
+			}
+		
+		
+		menuConTentList.splice(0,menuConTentList.length);
+		if(viewModel.model.originalId){
+			$.ajax({
+		        type: "POST",
+		        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+		        url: "${base.contextPath}/fms/wht/custom/menu/selectAll",
+		        data: {"originalId":viewModel.model.originalId},
+		        success: function (json) {
+		        	menuLength = json.total;
+		        	for(var i=0;i<json.rows.length;i++){
+		        		menuConTentList.push(json.rows[i]);
+					}
+		        	console.log(menuConTentList);
+		        	var subMenuIndexList1 = [];
+		        	var subMenuIndexList2 = [];
+		        	var subMenuIndexList3 = [];
+		        	var sortUlList = [];
+		        	if(menuConTentList.length>0){
+		        		for(var i =0;i<menuConTentList.length;i++){
+		        			if(menuConTentList[i].menuType == "firstOrder" && menuConTentList[i].parentMenuId == parseInt("1")){
+			        				menuConTentList[i].saveBigMenuId = "ui-state-default-Big1";
+			        				document.getElementById("ui-state-default-Big1").innerText = menuConTentList[i].menuName;
+			        				$(".mymenuDiv1").show();
+			        				sortUlList.push(menuConTentList[i].parentMenuId);
+		        			}else if(menuConTentList[i].menuType == "firstOrder" && menuConTentList[i].parentMenuId == parseInt("2")){
+		        				menuConTentList[i].saveBigMenuId = "ui-state-default-Big2";
+		        				document.getElementById("ui-state-default-Big2").innerText = menuConTentList[i].menuName;
+		        				$(".mymenuDiv2").show();
+		        				sortUlList.push(menuConTentList[i].parentMenuId);
+		        			}else if(menuConTentList[i].menuType == "firstOrder" && menuConTentList[i].parentMenuId == parseInt("3")){
+		        				menuConTentList[i].saveBigMenuId = "ui-state-default-Big3";
+		        				document.getElementById("ui-state-default-Big3").innerText = menuConTentList[i].menuName;
+		        				$(".mymenuDiv3").show();
+		        				sortUlList.push(menuConTentList[i].parentMenuId);
+		        			}else if(menuConTentList[i].menuType == "secondOrder" && menuConTentList[i].parentMenuId == parseInt("1")){
+		        				var subMenuIndex1 ={};
+		        				subMenuIndex1.rowNumber = menuConTentList[i].rowNumber;
+		        				subMenuIndex1.index = i;
+		        				subMenuIndexList1.push(subMenuIndex1);
+		        			}else if(menuConTentList[i].menuType == "secondOrder" && menuConTentList[i].parentMenuId == parseInt("2")){
+		        				var subMenuIndex2 ={};
+		        				subMenuIndex2.rowNumber = menuConTentList[i].rowNumber;
+		        				subMenuIndex2.index = i;
+		        				subMenuIndexList2.push(subMenuIndex2);
+		        			}else if(menuConTentList[i].menuType == "secondOrder" && menuConTentList[i].parentMenuId == parseInt("3")){
+		        				var subMenuIndex3 ={};
+		        				subMenuIndex3.rowNumber = menuConTentList[i].rowNumber;
+		        				subMenuIndex3.index = i;
+		        				subMenuIndexList3.push(subMenuIndex3);
+		        			}
+		        		}
+		        	}
+		        	
+		        	console.log(subMenuIndexList1);
+		        	console.log(subMenuIndexList2);
+		        	console.log(subMenuIndexList3);
+		        	console.log(sortUlList);
+		        	if($(".ui-state-default116")[0].style.display=="none"){
+		        		$(".ui-state-default116").show();
+		        	}
+		        	if($(".ui-state-default226")[0].style.display=="none"){
+		        		$(".ui-state-default226").show();
+		        	}
+		        	if($(".ui-state-default336")[0].style.display=="none"){
+		        		$(".ui-state-default336").show();
+		        	}
+		        	if(sortUlList.length>0){
+						for(i=0;i<sortUlList.length-1;i++){
+		        	        for(j=0;j<sortUlList.length-1-i;j++){
+		        	            if(sortUlList[j]>sortUlList[j+1]){
+		        	                var temp=sortUlList[j];
+		        	                sortUlList[j]=sortUlList[j+1];
+		        	                sortUlList[j+1]=temp;
+		        	            }
+		        	        }
+		        	    };
+		        		//for(i=0;i<sortUlList.length;i++){
+		        			//indexTemp = sortUlList[i];
+		        			//menuConTentList[indexTemp].saveBigMenuId = "ui-state-default-Big"+(i+1);
+		        			//menuConTentList[indexTemp].saveMenuId = "ui-state-default1"+(i+1);
+		        			// 	var htm0 ="";
+				 			// htm0 += "<li class='ui-state-default1' id='ui-state-default1"+(i+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+menuConTentList[indexTemp].menuName+"<>";
+				 	        // $("#addDiv1").append(html3);
+			        		// if($(".ui-state-default1").length==5){
+				 			// 	$(".ui-state-default116").hide();
+				 			// }else{
+			   				// 	$(".ui-state-default116").show()
+			   				// }
+		        		//};
+					}
+		        	if(subMenuIndexList1.length>0){
+		        		for(i=0;i<subMenuIndexList1.length-1;i++){
+		        	        for(j=0;j<subMenuIndexList1.length-1-i;j++){
+		        	            if(subMenuIndexList1[j].rowNumber>subMenuIndexList1[j+1].rowNumber){
+		        	                var temp=subMenuIndexList1[j];
+		        	                subMenuIndexList1[j]=subMenuIndexList1[j+1];
+		        	                subMenuIndexList1[j+1]=temp;
+		        	            }
+		        	        }
+		        	    };
+		        		for(i=0;i<subMenuIndexList1.length;i++){
+		        			indexTemp = subMenuIndexList1[i].index;
+		        			menuConTentList[indexTemp].saveBigMenuId = "ui-state-default-Big1";
+		        			menuConTentList[indexTemp].saveMenuId = "ui-state-default1"+(i+1);
+		        				var html3 ="";
+				 			html3 += "<li class='ui-state-default1' id='ui-state-default1"+(i+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+menuConTentList[indexTemp].menuName+"</li>";
+				 	        $("#addDiv1").append(html3);
+			        		if($(".ui-state-default1").length==5){
+				 				$(".ui-state-default116").hide();
+				 			}else{
+			   					$(".ui-state-default116").show()
+			   				}
+		        		};
+		        	};
+		        	if(subMenuIndexList2.length>0){
+		        		for(i=0;i<subMenuIndexList2.length-1;i++){
+		        	        for(j=0;j<subMenuIndexList2.length-1-i;j++){
+		        	            if(subMenuIndexList2[j].rowNumber>subMenuIndexList2[j+1].rowNumber){
+		        	                var temp=subMenuIndexList2[j];
+		        	                subMenuIndexList2[j]=subMenuIndexList2[j+1];
+		        	                subMenuIndexList2[j+1]=temp;
+		        	            }
+		        	        }
+		        	    };
+		        		for(i=0;i<subMenuIndexList2.length;i++){
+		        			indexTemp = subMenuIndexList2[i].index;
+		        			menuConTentList[indexTemp].saveBigMenuId = "ui-state-default-Big2";
+		        			menuConTentList[indexTemp].saveMenuId = "ui-state-default2"+(i+1);
+		        				var html3 ="";
+				 			html3 += "<li class='ui-state-default2' id='ui-state-default2"+(i+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+menuConTentList[indexTemp].menuName+"</li>";
+				 	        $("#addDiv2").append(html3);
+				 	        if($(".ui-state-default2").length==5){
+				 				$(".ui-state-default226").hide();
+				 			}else{
+			   					$(".ui-state-default226").show()
+			   				}
+		        		}
+		        	};
+		        	if(subMenuIndexList3.length>0){
+		        		for(i=0;i<subMenuIndexList3.length-1;i++){
+		        	        for(j=0;j<subMenuIndexList3.length-1-i;j++){
+		        	            if(subMenuIndexList3[j].rowNumber>subMenuIndexList3[j+1].rowNumber){
+		        	                var temp=subMenuIndexList3[j];
+		        	                subMenuIndexList3[j]=subMenuIndexList3[j+1];
+		        	                subMenuIndexList3[j+1]=temp;
+		        	            }
+		        	        }
+		        	    };
+		        		for(i=0;i<subMenuIndexList3.length;i++){
+		        			indexTemp = subMenuIndexList3[i].index;
+		        			menuConTentList[indexTemp].saveBigMenuId = "ui-state-default-Big3";
+		        			menuConTentList[indexTemp].saveMenuId = "ui-state-default3"+(i+1);
+		        				var html3 ="";
+				 			html3 += "<li class='ui-state-default3' id='ui-state-default3"+(i+1)+"' onclick='selectId(this)' style='border-bottom:1px solid #dedede;height: 45px;padding-top: 12px'>"+menuConTentList[indexTemp].menuName+"</li>";
+				 	        $("#addDiv3").append(html3);
+				 	        if($(".ui-state-default3").length==5){
+					 			$(".ui-state-default336").hide();
+					 		}else{
+			   					$(".ui-state-default336").show()
+			   				}
+		        		}
+		        	};
+		        	bigMenuShowIf();
+		        }
+		    });
+		}
+	}
+	
+	window.bigMenuShowIf = function () {
+			if($(".mymenuDiv1")[0].style.display == "none"){
+				$("#addBigMenu1").show();
+			}
+			if($(".mymenuDiv2")[0].style.display == "none" && $("#addBigMenu1")[0].style.display == "none"){
+				$("#addBigMenu2").show();
+			}
+			console.log($(".mymenuDiv3")[0].style.display);
+			console.log($("#addBigMenu2")[0].style.display);
+			if($(".mymenuDiv3")[0].style.display == "none" && $("#addBigMenu2")[0].style.display == "none" && $(".mymenuDiv2")[0].style.display != "none"){
+				$("#addBigMenu3").show();
+			}
+	}
+	
+	
+	//给一级菜单内容赋值
+	window.listToBigMenuContent = function (e) {
+		for (var i =0;i<menuConTentList.length;i++) {
+			if(menuConTentList[i].saveBigMenuId == e && menuConTentList[i].menuType == "firstOrder"){
+				document.getElementById("mentText").value = menuConTentList[i].text;
+				/* document.getElementById("imageTextInput").value = menuConTentList[i].pictureTextId;
+				document.getElementById("pictureInput").value = menuConTentList[i].pictureId;
+				document.getElementById("voiceInput").value = menuConTentList[i].voiceId;
+				document.getElementById("videoInput").value = menuConTentList[i].videoId;  */
+				document.getElementById("webpageInput").value = menuConTentList[i].pageAddress;
+				document.getElementById("appletInput").value = menuConTentList[i].smallProGram;
+				if(menuConTentList[i].customerServiceFlag == "Y"){
+					document.getElementById("customerServiceFlag").checked = true;
+				}else{
+					document.getElementById("customerServiceFlag").checked = false;
+				}
+				if(menuConTentList[i].menuPreviewContent){
+					var menuPreviewContentList = JSON.parse(menuConTentList[i].menuPreviewContent);
+					if(menuPreviewContentList[0].pictureTextId){
+						document.getElementById("imageTextInput").value = menuPreviewContentList[0].pictureTextId;
+						document.getElementById("imageTextUrl").value = menuPreviewContentList[0].imageTextUrl;
+						$("#addImageTextDiv").show();
+			    		$("#addImageTextImg").show().attr('src',menuPreviewContentList[0].imageTextUrl);
+					}
+					if(menuPreviewContentList[1].pictureId){
+						document.getElementById("pictureInput").value = menuPreviewContentList[1].pictureId;
+						document.getElementById("pictureUrl").value = menuPreviewContentList[1].pictureUrl;
+						$("#addPictureDiv").show();
+			    		$("#addPictureImg").show().attr('src',menuPreviewContentList[1].pictureUrl);
+					}
+					if(menuPreviewContentList[2].voiceId){
+						document.getElementById("voiceInput").value = menuPreviewContentList[2].voiceId;
+						document.getElementById("voiceUrl").value = menuPreviewContentList[2].voiceUrl;
+						$("#addVoiceDiv").show();
+						document.getElementById("addVoiceSpan").innerText  = menuPreviewContentList[2].voiceUrl;
+					}
+					if(menuPreviewContentList[3].videoId){
+						document.getElementById("videoInput").value = menuPreviewContentList[3].videoId;
+						document.getElementById("videoUrl").value = menuPreviewContentList[3].videoUrl;
+						$("#addVideoDiv").show();
+						document.getElementById("addVideoSpan").innerText = menuPreviewContentList[3].videoUrl;
+					}
+				};
+				return;
+			}
+		}
+	};
+	
+	//给二级菜单内容赋值
+	window.listToMenuContent = function (e) {
+		for (var i =0;i<menuConTentList.length;i++) {
+			if(menuConTentList[i].saveMenuId == e){
+				//debugger;
+				document.getElementById("mentText").value = menuConTentList[i].text;
+				/* document.getElementById("imageTextInput").value = menuConTentList[i].pictureTextId;
+				document.getElementById("pictureInput").value = menuConTentList[i].pictureId;
+				document.getElementById("voiceInput").value = menuConTentList[i].voiceId;
+				document.getElementById("videoInput").value = menuConTentList[i].videoId; */
+				document.getElementById("webpageInput").value = menuConTentList[i].pageAddress;
+				document.getElementById("appletInput").value = menuConTentList[i].smallProGram;
+				if(menuConTentList[i].customerServiceFlag == "Y"){
+					document.getElementById("customerServiceFlag").checked = true;
+				}else{
+					document.getElementById("customerServiceFlag").checked = false;
+				}
+				if(menuConTentList[i].menuPreviewContent){
+					var menuPreviewContentList = JSON.parse(menuConTentList[i].menuPreviewContent);
+					if(menuPreviewContentList[0].pictureTextId){
+						document.getElementById("imageTextInput").value = menuPreviewContentList[0].pictureTextId;
+						document.getElementById("imageTextUrl").value = menuPreviewContentList[0].imageTextUrl;
+						$("#addImageTextDiv").show();
+			    		$("#addImageTextImg").show().attr('src',menuPreviewContentList[0].imageTextUrl);
+					}
+					if(menuPreviewContentList[1].pictureId){
+						document.getElementById("pictureInput").value = menuPreviewContentList[1].pictureId;
+						document.getElementById("pictureUrl").value = menuPreviewContentList[1].pictureUrl;
+						$("#addPictureDiv").show();
+			    		$("#addPictureImg").show().attr('src',menuPreviewContentList[1].pictureUrl);
+					}
+					if(menuPreviewContentList[2].voiceId){
+						document.getElementById("voiceInput").value = menuPreviewContentList[2].voiceId;
+						document.getElementById("voiceUrl").value = menuPreviewContentList[2].voiceUrl;
+						$("#addVoiceDiv").show();
+						document.getElementById("addVoiceSpan").innerText  = menuPreviewContentList[2].voiceUrl;
+					}
+					if(menuPreviewContentList[3].videoId){
+						document.getElementById("videoInput").value = menuPreviewContentList[3].videoId;
+						document.getElementById("videoUrl").value = menuPreviewContentList[3].videoUrl;
+						$("#addVideoDiv").show();
+						document.getElementById("addVideoSpan").innerText = menuPreviewContentList[3].videoUrl;
+					}
+				};
+				return;
+			}
+		}
+	};
+	
+	//保存菜单内容
+	function menuContentToList(index){
+		//debugger;
+		mentText = document.getElementById("mentText").value;
+		imageTextInput = document.getElementById("imageTextInput").value;
+		pictureInput = document.getElementById("pictureInput").value;
+		voiceInput = document.getElementById("voiceInput").value;
+		videoInput = document.getElementById("videoInput").value;
+		webpageInput = document.getElementById("webpageInput").value;
+		appletInput = document.getElementById("appletInput").value;
+		//menuPreviewContentList封装选中的素材库内容，回显用
+		var menuPreviewContentList = [];
+		menuConTentList[index].text = mentText;
+		menuConTentList[index].pictureTextId = imageTextInput;
+		menuConTentList[index].pictureId = pictureInput;
+		menuConTentList[index].voiceId = voiceInput;
+		menuConTentList[index].videoId = videoInput;
+		menuConTentList[index].pageAddress = webpageInput;
+		menuConTentList[index].smallProGram = appletInput;
+		imageTextUrl = document.getElementById("imageTextUrl").value;
+		pictureUrl = document.getElementById("pictureUrl").value;
+		voiceUrl = document.getElementById("voiceUrl").value;
+		videoUrl = document.getElementById("videoUrl").value;
+		var imageText = {};
+		imageText.pictureTextId = imageTextInput;
+		imageText.imageTextUrl = imageTextUrl;
+		menuPreviewContentList.push(imageText);
+		var picture = {};
+		picture.pictureId = pictureInput;
+		picture.pictureUrl = pictureUrl;
+		menuPreviewContentList.push(picture);
+		var voice = {};
+		voice.voiceId = voiceInput;
+		voice.voiceUrl = voiceUrl;
+		menuPreviewContentList.push(voice);
+		var video = {};
+		video.videoId = videoInput;
+		video.videoUrl = videoUrl;
+		menuPreviewContentList.push(video);
+		menuConTentList[index].menuPreviewContent = JSON.stringify( menuPreviewContentList );
+	};
+	
+	//删除一级菜单内容
+	window.deleteBigMenuContentToList = function (e) {
+		for (var i =0;i<menuConTentList.length;i++) {
+			if(menuConTentList[i].saveBigMenuId == e  && menuConTentList[i].menuType == "firstOrder"){
+				menuConTentList[i].text ="";
+				menuConTentList[i].pictureTextId ="";
+				menuConTentList[i].pictureId ="";
+				menuConTentList[i].voiceId ="";
+				menuConTentList[i].videoId ="";
+				menuConTentList[i].pageAddress ="";
+				menuConTentList[i].smallProGram ="";
+				menuConTentList[i].menuPreviewContent ="";
+				menuConTentList[i].customerServiceFlag ="";
+				return;
+			}
+		}
+	};
+
+
+	//绑定素材到回复内容
+	var sites = [];
+	var morePictrueTextBigList = [];
+	function librarySave(){
+		var replayInputId = document.getElementById("replayInputId").value;
+		var libraryType = "";
+		if(replayInputId == "pictureInput"){
+			libraryType = "图片";
+		}else if(replayInputId == "voiceInput"){
+			libraryType = "语音";
+		}else if(replayInputId == "videoInput"){
+			libraryType = "视频";
+		}else if(replayInputId == "imageTextInput"){
+			libraryType = "图文";
+		}else if(replayInputId == "menuText"){
+			libraryType = "文字";
+		}else if(replayInputId == "webpageInput"){
+			libraryType = "跳转网页";
+		}else if(replayInputId == "appletInput"){
+			libraryType = "小程序";
+		}
+		var replayMediaId = document.getElementById("replayMediaId").value;
+		var pictureName = document.getElementById("pictureName").value;
+		var url = document.getElementById("description").innerText;
+		var mediaId = document.getElementById("mediaId").value;
+		if(!mediaId){
+			kendo.ui.showInfoDialog({
+				message : "请选择要添加的素材"
+			});
+			return;
+		}else{
+			if(libraryType){
+				if(replayMediaId != mediaId){
+					kendo.ui.showConfirmDialog({
+						message : "是否要覆盖已有的"+libraryType+"素材"
+					}).done(function (event) {
+			            if (event.button == 'OK') {
+			            	if(libraryType == "图片"){
+			            		cancelALLContent();
+			        		}else if(libraryType == "语音"){
+			        			cancelALLContent();
+			        		}else if(libraryType == "视频"){
+			        			cancelALLContent();
+			        		}else if(libraryType == "图文"){
+			        			cancelALLContent();
+			        		}else if(libraryType == "文字"){
+			        			cancelALLContent();
+			        		}else if(libraryType == "跳转网页"){
+			        			cancelALLContent();
+			        		}else if(libraryType == "小程序"){
+			        			cancelALLContent();
+			        		};
+			            	mediaIdTOReply();
+			            }
+					})
+				}else{
+					kendo.ui.showErrorDialog({
+						message : "该素材已存在"
+					});
+					return;
+				}
+			}else{
+				mediaIdTOReply();
+			}
+		};
+		//把选到的素材显示到reply界面
+		function mediaIdTOReply(){
+			var libraryTitle = document.getElementById("libraryTitle").innerText;
+			if(libraryTitle == "图片素材"){
+				document.getElementById("pictureInput").value = mediaId;
+				document.getElementById("pictureUrl").value = url;
+				$("#addPictureDiv").show();
+				$("#addPictureImg").show().attr('src',url);
+			}else if(libraryTitle == "语音素材"){
+				document.getElementById("voiceInput").value = mediaId;
+				document.getElementById("voiceUrl").value = pictureName;
+				$("#addVoiceDiv").show();
+				document.getElementById("addVoiceSpan").innerText = pictureName;
+			}else if(libraryTitle == "视频素材"){
+				document.getElementById("videoInput").value = mediaId;
+				document.getElementById("videoUrl").value = pictureName;
+				$("#addVideoDiv").show();
+				document.getElementById("addVideoSpan").innerText = pictureName;
+			}else if(libraryTitle == "图文素材"){
+				document.getElementById("imageTextInput").value = mediaId;
+				document.getElementById("imageTextUrl").value = url;
+				$("#addImageTextDiv").show();
+				$("#addImageTextImg").show().attr('src',url);
+			};
+			kendo.ui.showInfoDialog({
+				message : "添加素材成功，记得点保存哦"
+			}).done(function (event) {
+	            if (event.button == 'OK') {
+	            	quxiaoPreview();
+	            	libraryCancel();
+	            }
+			})
+		}
+	}
+	
+	//进入素材库
+	function joinLibrary(e){
+		saveMenuId = document.getElementById("saveMenuId").value;
+		saveBigMenuId = document.getElementById("saveBigMenuId").value;
+		if(saveMenuId){
+			var h = "";
+			for (var h =0;h<menuConTentList.length;h++) {
+               	if(menuConTentList[h].saveMenuId == saveMenuId){
+               		if(menuConTentList[h].customerServiceFlag == "Y"){
+                		kendo.ui.showConfirmDialog({
+   						    message : "该菜单为客服菜单，确定客服菜单将失效"
+   					    }).done(function (event) {
+   			                if (event.button == 'OK') {
+   			                	document.getElementById("customerServiceFlag").checked = false;
+   			                	menuConTentList[h].customerServiceFlag = "";
+   			                	joinLibraryTemp(e);
+   			                }
+   					    })
+               		}else{
+               			joinLibraryTemp(e);
+               		};
+					break;
+               	}
+			};
+		}else if(!saveMenuId && saveBigMenuId){
+			for (var h =0;h<menuConTentList.length;h++) {
+         		if(menuConTentList[h].saveBigMenuId == saveBigMenuId && menuConTentList[h].menuType == "firstOrder"){
+         			if(menuConTentList[h].customerServiceFlag == "Y"){
+		          		kendo.ui.showConfirmDialog({
+						    message : "该菜单为客服菜单，确定客服菜单将失效"
+					    }).done(function (event) {
+			                if (event.button == 'OK') {
+			                	document.getElementById("customerServiceFlag").checked = false;
+			                	menuConTentList[h].customerServiceFlag = "";
+			                	joinLibraryTemp(e);
+			                }
+					    })
+	       			}else{
+               			joinLibraryTemp(e);
+               		};
+					break;
+              	}
+			};
+		}
+	}
+	function joinLibraryTemp(e){
+		$("#menuHideDiv1").hide();
+		$("#menuHideDiv2").hide();
+		$("#menuHideDiv3").hide();
+		$("#menuHideDiv4").hide();
+		$("#libraryDiv").show();
+		var menuMediaId1 = document.getElementById("pictureInput").value;
+		var menuMediaId2 = document.getElementById("voiceInput").value;
+		var menuMediaId3 = document.getElementById("videoInput").value;
+		var menuMediaId4 = document.getElementById("imageTextInput").value;
+		var menuMediaId5 = document.getElementById("mentText").value;
+		var menuMediaId6 = document.getElementById("webpageInput").value;
+		var menuMediaId7 = document.getElementById("appletInput").value;
+		var menuMediaId ="";
+		var replayInputId ="";
+		if(menuMediaId1){
+			menuMediaId = menuMediaId1;
+			replayInputId = "pictureInput";
+		}else if(menuMediaId2){
+			menuMediaId = menuMediaId2;
+			replayInputId = "voiceInput";
+		}else if(menuMediaId3){
+			menuMediaId = menuMediaId3;
+			replayInputId = "videoInput";
+		}else if(menuMediaId4){
+			menuMediaId = menuMediaId4;
+			replayInputId = "imageTextInput";
+		}else if(menuMediaId5){
+			replayInputId = "menuText";
+		}else if(menuMediaId6){
+			replayInputId = "webpageInput";
+		}else if(menuMediaId7){
+			replayInputId = "appletInput";
+		}
+		if(e==1){//图片
+			document.getElementById("replayInputId").value = replayInputId;
+			document.getElementById("replayMediaId").value = menuMediaId;
+			pictureTemp();
+		}else if(e==2){//语音
+			document.getElementById("replayInputId").value = replayInputId;
+			document.getElementById("replayMediaId").value = menuMediaId;
+			voiceTemp();
+		}else if(e==3){//视频
+			document.getElementById("replayInputId").value = replayInputId;
+			document.getElementById("replayMediaId").value = menuMediaId;
+			videoTemp();
+		}else if(e==4){//图文
+			document.getElementById("replayInputId").value = replayInputId;
+			document.getElementById("replayMediaId").value = menuMediaId;
+			pictrueTextTemp();
+		};
+		
+		function pictureTemp(){
+			if(document.getElementById("libraryTitle").innerText != "图片素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				/* if($("#BigEntry")){
+					$("#BigEntry")[0].remove();
+				} */
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"image"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "图片素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    tempUrl = json.rows[i].url;
+								    tempArr = tempUrl.split("?");
+								    temp = tempArr[0];
+								    console.log(temp);
+								    imageObject.Pic = temp;
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function voiceTemp(){
+			if(document.getElementById("libraryTitle").innerText != "语音素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"voice"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "语音素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    imageObject.Pic = "${base.contextPath}/resources/images/forecast/语音.jpg";
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function videoTemp(){
+			if(document.getElementById("libraryTitle").innerText != "视频素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"video"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "视频素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    imageObject.Pic = "${base.contextPath}/resources/images/forecast/视频.jpg";
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function pictrueTextTemp(){
+			if(document.getElementById("libraryTitle").innerText != "图文素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"news"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "图文素材";
+				        		for(var i=0;i<json.rows.length;i++){
+				        			var arrArr = json.rows[i].content.news_item;
+				        			var morePictrueTextList =[];
+				        			for (var j = 0;j<arrArr.length;j++) {
+				        				morePictrueText = {};
+				        				morePictrueText.media_id = json.rows[i].media_id;
+				        				morePictrueText.title = arrArr[j].title;
+				        				morePictrueText.thumbUrl = arrArr[j].thumb_url;
+				        				morePictrueTextList.push(morePictrueText);
+				            		}
+				        			morePictrueTextBigList.push(morePictrueTextList);
+								    var imageObject = {};
+								    imageObject.Url = morePictrueTextList[0].media_id;
+								    tempUrl = morePictrueTextList[0].thumbUrl;
+								    tempArr = tempUrl.split("?");
+								    temp = tempArr[0];
+								    imageObject.Pic = temp;
+								    imageObject.Name = morePictrueTextList[0].title;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+	}
+	
+	
+	//素材库取消
+	function libraryCancel(){
+		$("#menuHideDiv1").show();
+		$("#menuHideDiv2").show();
+		$("#menuHideDiv3").show();
+		$("#menuHideDiv4").show();
+		$("#libraryDiv").hide();
+		document.getElementById("replayInputId").value = "";
+		document.getElementById("replayMediaId").value = "";
+		document.getElementById("pictureName").value = "";
+		document.getElementById("mediaId").value = "";
+	}
+	
+	function GotoPage(num){//跳转页
+		Page = num;
+		www_zzjs_net();
+	}
+	var PageSize = 6;//每页个数
+	var Page = 1;//当前页码
+	function www_zzjs_net(){
+	//var obj = eval(siteList);//获取JSON
+	//var sites = obj.sites;
+	//获取分页总数
+	var Pages = Math.floor((sites.length - 1) / PageSize) + 1;
+	if(Page < 1)Page = 1;//如果当前页码小于1
+	if(Page > Pages)Page = Pages;//如果当前页码大于总数
+	var Temp = "";
+	var BeginNO = (Page - 1) * PageSize + 1;//开始编号
+	var EndNO = Page * PageSize;//结束编号
+	if(EndNO > sites.length) EndNO = sites.length;
+	if(EndNO == 0) BeginNO = 0;
+	if(!(Page <= Pages)) Page = Pages;
+	document.getElementById("total").innerHTML = "Total:<strong class='f90'>" + sites.length + "</strong>  Show:<strong class='f90'>" + BeginNO + "-" + EndNO + "</strong>";
+	//分页
+	if(Page > 1 && Page !== 1){
+		Temp ="<a href='javascript:void(0)' onclick='GotoPage(1)'><<Index</a> <a href='javascript:void(0)' onclick='GotoPage(" + (Page - 1) + ")'>Previous</a> "
+	}else{
+		Temp = "<<Index Previous "
+	};
+	//完美的翻页列表
+	var PageFrontSum = 3;//当页前显示个数
+	var PageBackSum = 3;//当页后显示个数
+	var PageFront = PageFrontSum - (Page - 1);
+	var PageBack = PageBackSum - (Pages - Page);
+	if(PageFront > 0 && PageBack < 0)PageBackSum += PageFront;//前少后多，前剩余空位给后
+	if(PageBack > 0 && PageFront < 0)PageFrontSum += PageBack;//后少前多，后剩余空位给前
+	var PageFrontBegin = Page - PageFrontSum;
+	if(PageFrontBegin < 1)PageFrontBegin = 1;
+	var PageFrontEnd = Page + PageBackSum;
+	if(PageFrontEnd > Pages)PageFrontEnd = Pages;
+	if(PageFrontBegin != 1) Temp += '<a href="javascript:void(0)" onclick="GotoPage(' + (Page - 10) + ')" title="前10页">..</a>';
+	for(var i = PageFrontBegin;i < Page;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	Temp += " <strong class='f90'>" + Page + "</strong>";
+	for(var i = Page + 1;i <= PageFrontEnd;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	if(PageFrontEnd != Pages) Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 10) + ")' title='后10页'>..</a>";
+	if(Page != Pages){Temp += "  <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 1) + ");'>Next</a> <a href='javascript:void(0)' onclick='GotoPage(" + Pages + ")'>Last>></a>"}else{Temp += "  Next Last>>"}
+	document.getElementById("_zzjs_net").innerHTML = Temp;
+	//输出数据
+	if(EndNO == 0){//如果为空
+		document.getElementById("contentList").innerHTML += "<h1>No Images</h1>";
+		return;
+	}
+	var html = "";
+	console.log(html);
+	html += "<div id='BigEntry'>";
+	for(var i = BeginNO - 1;i < EndNO;i ++){
+		html += "<div class='entry'>";
+		html += "<a href='" +sites[i].Url+ "' rel='bookmark' title=" +sites[i].Name+ ">";
+		html += "<img src='" +sites[i].Pic+ "' width='250' height='200' />";
+	    html += "<p class='url'><span>" +sites[i].Name+ "</span></p></a>";
+	    html += "</div>";
+	 }
+	 html += "</div>";
+	 document.getElementById("contentList").innerHTML = html;
+	 clickShow();//调用鼠标点击事件
+	 //键盘左右键翻页
+	 document.onkeydown=function(e){
+	 	var theEvent = window.event || e;
+	    var code = theEvent.keyCode || theEvent.which;
+	    if(code==37){
+	    	if(Page > 1 && Page !== 1){
+	    	GotoPage(Page - 1);
+	    }
+	 }
+	 if(code==39){
+	    if(Page != Pages){
+	    	GotoPage(Page + 1);
+	    }
+	 }
+	 }
+	 //鼠标滚轮翻页
+	 function handle(delta){
+	 	if (delta > 0){
+	    	if(Page > 1 && Page !== 1){
+	        	GotoPage(Page - 1);
+	  		}
+	 	}else{
+	  		if(Page != Pages){
+	   			GotoPage(Page + 1);
+	  		}
+	 	}
+	}
+	function wheel(event){
+		var delta = 0;
+	 	if (!event) /* For IE. */
+	  		event = window.event;
+	 	if (event.wheelDelta) { /* IE或者Opera. */
+	  		delta = event.wheelDelta / 120;
+	    /** 在Opera9中，事件处理不同于IE
+	    */
+	 	if (window.opera)
+	  		delta = -delta;
+	 	} else if (event._zzjsnet) { /** 兼容Mozilla. */
+	 	/** In Mozilla, sign of delta is different than in IE.
+	 	* Also, delta is multiple of 3.
+	 	*/
+	 		delta = -event._zzjsnet / 3;
+	 	}
+		 /** 如果 增量不等于0则触发
+		 * 主要功能为测试滚轮向上滚或者是向下
+		 */
+		if (delta)
+		handle(delta);
+	}
+		/** 初始化 */
+		if (window.addEventListener)
+		 /** Mozilla的基于DOM的滚轮事件 **/
+		 window.addEventListener("DOMMouseScroll", wheel, false);
+		 /** IE/Opera. */
+		 window.onmousewheel = document.onmousewheel = wheel;
+		}
+	//获取链接地址和网站名称
+	function showLink(source){
+	 	var siteUrl = document.getElementById("siteurl");
+		var siteName = document.getElementById("sitename");
+		var description = document.getElementById("description");
+		if(source.getAttribute("rel") == "bookmark"){
+			var url = source.getAttribute("href");
+			var title = source.getAttribute("title");
+			var src = source.getElementsByTagName("img")[0].getAttribute("src");
+			siteUrl.innerHTML = "<a href='" + url + "' target='_blank'>"+ url +"</a>";
+			siteName.innerHTML = title;
+			description.innerHTML = src;
+			document.getElementById("pictureName").value = title;
+			document.getElementById("mediaId").value = url;
+			if(document.getElementById("libraryTitle").innerText == "图文素材"){
+				for (var i = 0; i<morePictrueTextBigList.length;i++) {
+					for (var j = 0;j<morePictrueTextBigList[i].length;j++) {
+						if(url == morePictrueTextBigList[i][j].media_id){
+			    			if(morePictrueTextBigList[i].length>1){
+			    				var morePictrueTextTemp = morePictrueTextBigList[i];
+			    				/* var json = JSON.stringify( morePictrueTextTemp )
+			    				console.log(morePictrueTextTemp);
+			    				console.log(json);
+			    				console.log("${base.contextPath}/whtcustom/wht_more_picture_text_show.html?json="+json);
+			    				$("#userWin").kendoWindow({
+			    		    	    actions: ["Close"],
+			    		    	    draggable: false,
+			    		    	    dataType:"json",
+		    		    	        //title:"we", 
+		    		    	        width: "100%",
+		    		    	        height: "100%",
+		    		    	        content: "${base.contextPath}/whtcustom/wht_more_picture_text_show.html?json="+json,
+		    		    	        iframe: true,
+		    		    	        modal: true,
+		    		    	        visible: false,
+		    		    	        Resizable:false,
+			    		    	});
+		    		    	   	var win = $("#userWin").data("kendoWindow");
+		    		    	    win.center().open(); */
+		    		    	    
+		    		    	    if(morePictrueTextTemp){
+		    		    	    	$("#libraryDiv").hide();
+		    		    	    	$("#pictrueTextPreviewDiv").show();
+		    						for(var j =0;j<morePictrueTextTemp.length;j++){
+		    							var title = morePictrueTextTemp[j].title;
+		    							var thumbUrl = morePictrueTextTemp[j].thumbUrl;
+		    							tempArr = thumbUrl.split("?");
+		    						    var tempUrl = tempArr[0];
+		    							if(title.length>6){
+		    								var temp = title.substring(0,6);
+		    								temp += "...";
+		    								title = temp;
+		    							}
+		    							if(j==0){
+		    								$("#previewImg").show().attr('src',tempUrl);
+		    								document.getElementById("previewSpan").innerText = title;
+		    							}else{
+		    								var html ='';
+		    								html += '<div class="previewMoveDiv"><HR style="FILTER: alpha(opacity=100,finishopacity=0,style=2);border:1px solid #7FFF00" width="83%" color=#7FFF00 SIZE=2>'+
+		    										'<div style="position:relative;margin: 25px;margin-top: 0px;height:93px;margin-bottom: 0px;border: 1px solid #FF00FF;">'+
+		    											'<span style="position:absolute;top:25px;width: 135px;height: 20px;padding-bottom: 50px;margin: 5px;">'+title+'</span>'+
+		    											'<div style="position:absolute;top:0px;left:155px;display: inline-block;width: 80px;height: 80px;margin: 5px;">'+
+		    												'<img width="80px" height="80px" src="'+tempUrl+'"/>'+
+		    											'</div>'+
+		    										'</div></div>';
+		    								$("#previewTags").append(html);
+		    							}
+		    						}
+		    					}
+		    		    	    
+			    			};
+	    		    	    break;
+						}
+					}
+		    	}
+			}
+		}
+	}
+	//鼠标点击事件
+	function clickShow(){
+		var links = document.getElementById("contentList").getElementsByTagName("a");
+	 	for(var i=0; i<links.length; i++){
+		  	var url = links[i].getAttribute("href");
+		  	var title = links[i].getAttribute("title");
+		  	var src = links[i].getElementsByTagName("img")[0].getAttribute("src");
+		  	links[i].onclick = function(){
+		    showLink(this);
+		    return false;
+	  		}
+	 	}
+	}
+	
+	//清空文字、图片、图文、语音、视频
+	function cancelALLContent(){
+		//debugger;
+		//文字
+		document.getElementById("mentText").value = "";
+		//图文
+		if($("#addImageTextDiv")[0].style.display != "none"){
+    		$("#addImageTextDiv").hide();
+    		document.getElementById("imageTextInput").value = "";
+    		document.getElementById("imageTextUrl").value = "";
+    		$("#addImageTextImg").hide().attr('src',"");
+		}
+		//图片
+		if($("#addPictureDiv")[0].style.display != "none"){
+    		document.getElementById("pictureInput").value = "";
+    		document.getElementById("pictureUrl").value = "";
+    		$("#addPictureImg").hide().attr('src',"");
+    		$("#addPictureDiv").hide();
+    	}
+		//语音
+		if($("#addVoiceDiv")[0].style.display != "none"){
+    		$("#addVoiceDiv").hide();
+			document.getElementById("voiceInput").value  = "";
+			document.getElementById("voiceUrl").value  = "";
+			document.getElementById("addVoiceSpan").innerText  = "";
+		}
+		//视频
+		if($("#addVideoDiv")[0].style.display != "none"){
+			$("#addVideoDiv").hide();
+			document.getElementById("videoInput").value  = "";
+			document.getElementById("videoUrl").value  = "";
+			document.getElementById("videoInput").innerText = "";
+		}
+		//网页
+		document.getElementById("webpageInput").value  = "";
+		//小程序
+		document.getElementById("appletInput").value  = "";
+	}
+	
+	//清空文字、图片、图文、语音、视频的样式
+	function cancelContentOther(){
+		//图文
+		if($("#addImageTextDiv")[0].style.display != "none"){
+    		$("#addImageTextDiv").hide();
+    		$("#addImageTextImg").hide().attr('src',"");
+		}
+		//图片
+		if($("#addPictureDiv")[0].style.display != "none"){
+    		$("#addPictureImg").hide().attr('src',"");
+    		$("#addPictureDiv").hide();
+    	}
+		//语音
+		if($("#addVoiceDiv")[0].style.display != "none"){
+    		$("#addVoiceDiv").hide();
+			document.getElementById("addVoiceSpan").innerText  = "";
+		}
+		//视频
+		if($("#addVideoDiv")[0].style.display != "none"){
+			$("#addVideoDiv").hide();
+			document.getElementById("videoInput").innerText = "";
+		}
+		//小程序
+	}
+	
+	
+	
+	
+	
+	//保存数据
+	function saveMenuFunction() {
+		if(!viewModel.model.originalId){
+			kendo.ui.showErrorDialog({
+				message : "请选择账户"
+			});
+			return;
+		};
+		
+		//菜单头
+		saveMenuId = document.getElementById("saveMenuId").value;
+		saveBigMenuId = document.getElementById("saveBigMenuId").value;
+		if(saveMenuId || saveBigMenuId){
+			if(saveMenuId){
+				for (var i =0;i<menuConTentList.length;i++) {
+					if(menuConTentList[i].saveMenuId == saveMenuId){
+						menuContentToList(i);
+						break;
+					}
+				}
+			}else if(saveBigMenuId){
+				for (var i =0;i<menuConTentList.length;i++) {
+					if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+						menuContentToList(i);
+						break;
+					}
+				}
+			}
+		}
+		
+		if($(".ui-state-default1").length>0){
+			for(var i =0;i<$(".ui-state-default1").length;i++){
+				menuId = $(".ui-state-default1")[i].id;
+				for(var j =0;j<menuConTentList.length;j++){
+					if(menuConTentList[j].saveMenuId == menuId){
+						setWhtMenuTyle(j);
+						menuConTentList[j].rowNumber = i+1;
+						break;
+					}
+				}
+			};
+			/* for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big1" && menuConTentList[j].menuType == "firstOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				}
+			} */
+/* 			for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big1" && menuConTentList[j].menuType == "firstOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				}
+			} */
+		}else{
+			for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big1" && menuConTentList[j].menuType == "firstOrder"){
+					setWhtMenuTyle(j);
+					break;
+				}
+			}
+		}	
+		if($(".ui-state-default2").length>0){
+			for(var i =0;i<$(".ui-state-default2").length;i++){
+				menuId = $(".ui-state-default2")[i].id;
+				for(var j =0;j<menuConTentList.length;j++){
+					if(menuConTentList[j].saveMenuId == menuId){
+						setWhtMenuTyle(j);
+						menuConTentList[j].rowNumber = i+1;
+						break;
+					}
+				}
+			};
+			/*for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2" && menuConTentList[j].menuType == "secondOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				}
+				 if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2" && menuConTentList[j].menuType == "firstOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				} 
+			}*/
+		}else{
+			for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big2" && menuConTentList[j].menuType == "firstOrder"){
+					setWhtMenuTyle(j);
+					break;
+				}
+			}
+		}	
+		if($(".ui-state-default3").length>0){
+			for(var i =0;i<$(".ui-state-default3").length;i++){
+				menuId = $(".ui-state-default3")[i].id;
+				for(var j =0;j<menuConTentList.length;j++){
+					if(menuConTentList[j].saveMenuId == menuId){
+						setWhtMenuTyle(j);
+						menuConTentList[j].rowNumber = i+1;
+						break;
+					}
+				}
+			};
+			/*for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3" && menuConTentList[j].menuType == "secondOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				}
+ 				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3" && menuConTentList[j].menuType == "firstOrder"){
+					menuConTentList[j].whtType = "click";
+					break;
+				} 
+			}*/
+		}else{
+			for(var j =0;j<menuConTentList.length;j++){
+				if(menuConTentList[j].saveBigMenuId == "ui-state-default-Big3" && menuConTentList[j].menuType == "firstOrder"){
+					setWhtMenuTyle(j);
+					break;
+				}
+			}
+		}	
+		viewModel.model.menuConTentList = menuConTentList;
+	    console.log(viewModel.model);
+	    if(menuConTentList.length>0){
+	    	//拼接menuJSON
+	    	var WhtCustomMenuList1 = [];
+	    	var WhtCustomBigMenuList1 = [];
+	    	var WhtCustomMenuList2 = [];
+	    	var WhtCustomBigMenuList2 = [];
+	    	var WhtCustomMenuList3 = [];
+	    	var WhtCustomBigMenuList3 = [];
+	    	//菜单类型分组
+	    	for(var j =0;j<menuConTentList.length;j++){
+	    		if(menuConTentList[j].parentMenuId == "1"){
+					if("firstOrder" == menuConTentList[j].menuType){
+						WhtCustomBigMenuList1.push(menuConTentList[j]);
+					}else{
+						WhtCustomMenuList1.push(menuConTentList[j]);
+					}
+				}else if(menuConTentList[j].parentMenuId == 2){
+					if("firstOrder" == menuConTentList[j].menuType){
+						WhtCustomBigMenuList2.push(menuConTentList[j]);
+					}else{
+						WhtCustomMenuList2.push(menuConTentList[j]);
+					}
+				}else{
+					if("firstOrder" == menuConTentList[j].menuType){
+						WhtCustomBigMenuList3.push(menuConTentList[j]);
+					}else{
+						WhtCustomMenuList3.push(menuConTentList[j]);
+					}
+				}
+			}
+	    	var menuJSON = '';
+	    	menuJSON += '{"button":[';
+	    	//一级
+	    	if(WhtCustomMenuList1.length>0){
+	    		menuJSON += '{"name":"'+WhtCustomBigMenuList1[0].menuName+'","sub_button":[';
+	    		var k = 0;
+	    		for(var j =0;j<WhtCustomMenuList1.length;j++){
+	    			if(k<j){menuJSON += ',';}
+	    			var jsonMenuId = WhtCustomMenuList1[j].saveMenuId;
+	    			menuJSON += jsonMenuType(jsonMenuId);
+	    		}
+	    		menuJSON += ']}';
+	    	}else if(WhtCustomBigMenuList1.length>0 && WhtCustomMenuList1.length==0){
+	    		var jsonBigMenuId = WhtCustomBigMenuList1[0].saveBigMenuId;
+	    		menuJSON += jsonBigMenuType(jsonBigMenuId);
+	    	}
+	    	//二级
+	    	if(WhtCustomMenuList2.length>0){
+	    		menuJSON += ',{"name":"'+WhtCustomBigMenuList2[0].menuName+'","sub_button":[';
+	    		var k = 0;
+	    		for(var j =0;j<WhtCustomMenuList2.length;j++){
+	    			if(k<j){menuJSON += ',';}
+	    			var jsonMenuId = WhtCustomMenuList2[j].saveMenuId;
+	    			menuJSON += jsonMenuType(jsonMenuId);
+	    		}
+	    		menuJSON += ']}';
+	    	}else if(WhtCustomBigMenuList2.length>0 && WhtCustomMenuList2.length==0){
+	    		menuJSON += ',';
+	    		var jsonBigMenuId = WhtCustomBigMenuList2[0].saveBigMenuId;
+	    		menuJSON += jsonBigMenuType(jsonBigMenuId);
+	    	}
+	    	//三级
+	    	if(WhtCustomMenuList3.length>0){
+	    		menuJSON += ',{"name":"'+WhtCustomBigMenuList3[0].menuName+'","sub_button":[';
+	    		var k = 0;
+	    		for(var j =0;j<WhtCustomMenuList3.length;j++){
+	    			if(k<j){menuJSON += ',';}
+	    			var jsonMenuId = WhtCustomMenuList3[j].saveMenuId;
+	    			menuJSON += jsonMenuType(jsonMenuId);
+	    		}
+	    		menuJSON += ']}';
+	    	}else if(WhtCustomBigMenuList3.length>0 && WhtCustomMenuList3.length==0){
+	    		menuJSON += ',';
+	    		var jsonBigMenuId = WhtCustomBigMenuList3[0].saveBigMenuId;
+	    		menuJSON += jsonBigMenuType(jsonBigMenuId);
+	    	}
+	    	
+	    	menuJSON += ']}';
+	    	console.log(menuJSON);
+	    	viewModel.model.menuContent = menuJSON;
+	    	console.log(viewModel.model);
+		    Hap.submitForm({
+				url : '${base.contextPath}/fms/wht/custom/menu/addMenu',
+				formModel : viewModel.model,
+				//asArray : false,
+				success : function(data) {
+					if (data.success) {
+						kendo.ui.showInfoDialog({
+		                     title: $l('hap.tip.info'),
+		                     message: $l('保存成功')
+		                 }).done(function (event) {
+		                     if (event.button == 'OK') {
+		                     }
+		                 });
+	                  	 menuLength = menuConTentList.length;
+					} else {
+						kendo.ui.showErrorDialog({
+							message : "失败"
+						});
+					}
+				}
+			});    
+	    }else{
+	    	kendo.ui.showErrorDialog({
+				message : "请创建菜单"
+			});
+	    }
+	}
+	
+	function jsonBigMenuType (jsonBigMenuId){
+		menuJSONTemp = '';
+		for(var i =0;i<menuConTentList.length;i++){
+			if(menuConTentList[i].saveBigMenuId == jsonBigMenuId && menuConTentList[i].menuType == "firstOrder"){
+				if(menuConTentList[i].whtType=="text"){
+					menuJSONTemp += '{"type": "click",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				var key = guid();
+    				menuJSONTemp += '"key": "'+key+'"}';
+					menuConTentList[i].menuKey = key;
+					break;
+				}else if(menuConTentList[i].whtType=="view"){
+					menuJSONTemp += '{"type": "view",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"url": "'+menuConTentList[i].pageAddress+'"}';
+					break;
+				}else if(menuConTentList[i].whtType=="image"){
+					menuJSONTemp += '{"type": "media_id",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"media_id": "'+menuConTentList[i].pictureId+'"}';
+					break;
+				}else if(menuConTentList[i].whtType=="news"){
+					menuJSONTemp += '{"type": "view_limited",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"media_id": "'+menuConTentList[i].pictureTextId+'"}';
+					break;
+				}else if(menuConTentList[i].whtType=="click"){
+					menuJSONTemp += '{"type": "click",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+					if(menuConTentList[i].customerServiceFlag == "Y"){
+						var key = "ManualCustomerService";
+	    				menuJSONTemp += '"key": "'+key+'"}';
+					}else{
+	    				var key = guid();
+	    				menuJSONTemp += '"key": "'+key+'"}';
+					}
+					menuConTentList[i].menuKey = key;
+					break;
+				}
+			}
+		}
+		return menuJSONTemp;
+	}
+	
+	function jsonMenuType (jsonMenuId){
+		menuJSONTemp = '';
+		for(var i =0;i<menuConTentList.length;i++){
+			if(menuConTentList[i].saveMenuId == jsonMenuId){
+				if(menuConTentList[i].whtType=="click"){
+					menuJSONTemp += '{"type": "click",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+					if(menuConTentList[i].customerServiceFlag == "Y"){
+						var key = "ManualCustomerService";
+	    				menuJSONTemp += '"key": "'+key+'"}';
+					}else{
+	    				var key = guid();
+	    				menuJSONTemp += '"key": "'+key+'"}';
+					}
+					menuConTentList[i].menuKey = key;
+					break;
+				}else if(menuConTentList[i].whtType=="view"){
+					menuJSONTemp += '{"type": "view",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"url": "'+menuConTentList[i].pageAddress+'"}';
+					break;
+				}else if(menuConTentList[i].whtType=="picture"){
+					menuJSONTemp += '{"type": "media_id",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"media_id": "'+menuConTentList[i].pictureId+'"}';
+					break;
+				}else if(menuConTentList[i].whtType=="news"){
+					menuJSONTemp += '{"type": "view_limited",';   
+					menuJSONTemp += '"name": "'+menuConTentList[i].menuName+'",';
+    				menuJSONTemp += '"media_id": "'+menuConTentList[i].pictureTextId+'"}';
+					break;
+				}
+			}
+		}
+		return menuJSONTemp;
+	}
+	
+	//UUID
+	function guid() {
+	    function S4() {
+	       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+	    }
+	    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+	}
+		
+	//判断菜单类型
+	window.setWhtMenuTyle = function (j) {
+		//debugger;
+		 if(menuConTentList[j].pictureTextId){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "news";
+		}else if(menuConTentList[j].pictureId){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "image";
+		}else if(menuConTentList[j].voiceId){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "voice";
+		}else if(menuConTentList[j].videoId){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "video";
+		}else if(menuConTentList[j].pageAddress){
+			menuConTentList[j].whtType = "view";
+			menuConTentList[j].menuContentType = "view";
+		}else if(menuConTentList[j].smallProGram){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "smallProGram";
+		}else if(menuConTentList[j].text){
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "text";
+		}else {
+			menuConTentList[j].whtType = "click";
+			menuConTentList[j].menuContentType = "";
+			menuConTentList[j].menuOperation = "";
+		}; 
+	};
+	
+	//修改菜单名称
+   	$("#menuName").blur(function(){
+   		menuName = document.getElementById("menuName").value
+   		saveMenuId = document.getElementById("saveMenuId").value
+   		saveBigMenuId = document.getElementById("saveBigMenuId").value
+   		//判断菜单字数
+			var byteLen=0;
+		    var len=menuName.length;
+   		if(menuName){
+	   		 for(var i=0; i<len; i++)
+	         {
+	             if(menuName.charCodeAt(i)>255){
+	                 byteLen += 2;
+	             }else{
+	                 byteLen++;
+	             }
+	         }
+   		}
+   		if(0<parseInt(byteLen) && parseInt(byteLen)<17){
+    		if(menuName && saveMenuId){
+    			document.getElementById(saveMenuId).innerText = menuName;
+    			for (var i =0;i<menuConTentList.length;i++) {
+             	   if(menuConTentList[i].saveMenuId == saveMenuId){
+             		  menuConTentList[i].menuName = menuName;
+                 	  return;
+             	   };
+                };
+    		}else{
+    			if(saveBigMenuId){
+	    			document.getElementById(saveBigMenuId).innerText = menuName;
+	    			for (var i =0;i<menuConTentList.length;i++) {
+                 	   if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+                 		  menuConTentList[i].menuName = menuName;
+                 		  return;
+                 	   };
+                    };
+    			}
+    		}
+   		}else if(0 == parseInt(byteLen)){
+   			kendo.ui.showErrorDialog({
+				message : "菜单不能为空"
+			});
+   			if(saveMenuId){
+   				document.getElementById("menuName").value = document.getElementById(saveMenuId).innerText
+   			}else if(!saveMenuId && saveBigMenuId){
+   				document.getElementById("menuName").value = document.getElementById(saveBigMenuId).innerText
+   			}
+   		}else{
+   			kendo.ui.showErrorDialog({
+				message : "菜单字数不超过8个汉字或16个字母"
+			});
+   			if(saveMenuId){
+   				document.getElementById("menuName").value = document.getElementById(saveMenuId).innerText
+   			}else if(!saveMenuId && saveBigMenuId){
+   				document.getElementById("menuName").value = document.getElementById(saveBigMenuId).innerText
+   			}else{	
+   				document.getElementById("menuName").value = "";
+   			}
+   		}
+   	}) 
+	
+   	$("#webpageInput").blur(function(){
+		//debugger;
+		var webpageInputTemp = document.getElementById("webpageInput").value;
+		if(webpageInputTemp){
+			saveMenuId = document.getElementById("saveMenuId").value;
+			saveBigMenuId = document.getElementById("saveBigMenuId").value;
+			if(saveMenuId){
+				var h = "";
+				for (var h =0;h<menuConTentList.length;h++) {
+	               	if(menuConTentList[h].saveMenuId == saveMenuId){
+	               		if(menuConTentList[h].customerServiceFlag == "Y"){
+	                		kendo.ui.showConfirmDialog({
+	   						    message : "该菜单为客服菜单，确定客服菜单将失效"
+	   					    }).done(function (event) {
+	   			                if (event.button == 'OK') {
+	   			                	document.getElementById("customerServiceFlag").checked = false;
+	   			                	menuConTentList[h].customerServiceFlag = "";
+	   			                }else{
+	   			                	document.getElementById("webpageInput").value = "";
+	   			                }
+	   					    })
+	               		}
+					break;
+	               	}
+				};
+			webpageTemp(webpageInputTemp);
+   			}else if(!saveMenuId && saveBigMenuId){
+   				for (var h =0;h<menuConTentList.length;h++) {
+		         	if(menuConTentList[h].saveBigMenuId == saveBigMenuId && menuConTentList[h].menuType == "firstOrder"){
+		         		if(menuConTentList[h].customerServiceFlag == "Y"){
+			          		kendo.ui.showConfirmDialog({
+							    message : "该菜单为客服菜单，确定客服菜单将失效"
+						    }).done(function (event) {
+				                if (event.button == 'OK') {
+				                	document.getElementById("customerServiceFlag").checked = false;
+				                	menuConTentList[h].customerServiceFlag = "";
+				                }else{
+				                	document.getElementById("webpageInput").value = "";
+				                }
+						    })
+			       		}
+					break;
+	               	}
+				};
+			webpageTemp(webpageInputTemp);
+			}
+		}
+	});
+	
+		function webpageTemp(webpageInputTemp){
+			if(webpageInputTemp.substr(0,7)=="http://" || webpageInputTemp.substr(0,8)=="https://"){
+				var valueHave = false;
+				if(document.getElementById("mentText").value){
+					valueHave = true;
+				}
+				if(document.getElementById("imageTextInput").value){
+					valueHave = true;
+				}
+				if(document.getElementById("pictureInput").value){
+					valueHave = true;
+				}
+				if(document.getElementById("voiceInput").value){
+					valueHave = true;
+				}
+				if(document.getElementById("videoInput").value){
+					valueHave = true;
+				}
+				if(document.getElementById("appletInput").value){
+					valueHave = true;
+				}
+				if(valueHave){
+					kendo.ui.showConfirmDialog({
+						message : "已存在其它素材，是否要覆盖"
+					}).done(function (event) {
+			            if (event.button == 'OK') {
+	 					//文字
+	 					document.getElementById("mentText").value = "";
+	 					//图文
+	 					if($("#addImageTextDiv")[0].style.display != "none"){
+	 			    		$("#addImageTextDiv").hide();
+	 			    		document.getElementById("imageTextInput").value = "";
+	 			    		document.getElementById("imageTextUrl").value = "";
+	 			    		$("#addImageTextImg").hide().attr('src',"");
+	 					}
+	 					//图片
+	 					if($("#addPictureDiv")[0].style.display != "none"){
+	 			    		document.getElementById("pictureInput").value = "";
+	 			    		document.getElementById("pictureUrl").value = "";
+	 			    		$("#addPictureImg").hide().attr('src',"");
+	 			    		$("#addPictureDiv").hide();
+	 			    	}
+	 					//语音
+	 					if($("#addVoiceDiv")[0].style.display != "none"){
+	 			    		$("#addVoiceDiv").hide();
+	 						document.getElementById("voiceInput").value  = "";
+	 						document.getElementById("voiceUrl").value  = "";
+	 						document.getElementById("addVoiceSpan").innerText  = "";
+	 					}
+	 					//视频
+	 					if($("#addVideoDiv")[0].style.display != "none"){
+	 						$("#addVideoDiv").hide();
+	 						document.getElementById("videoInput").value  = "";
+	 						document.getElementById("videoUrl").value  = "";
+	 						document.getElementById("videoInput").innerText = "";
+	 					}
+	 					//小程序
+	 					document.getElementById("appletInput").value  = "";
+			            }else{
+			            	document.getElementById("webpageInput").value = "";
+			            }
+					})
+				}
+			}else{
+				kendo.ui.showInfoDialog({
+					message : "请输入正确的网址"
+				});
+				document.getElementById("webpageInput").value = "";
+				return;
+			}
+		}
+          		
+  		function editData(){
+  			var webpageUrl = document.getElementById("webpageInput").value;
+  			if(webpageUrl){
+   			if(webpageUrl.substr(0,7)=="http://" || webpageUrl.substr(0,8)=="https://"){
+   				$("#userWin").kendoWindow({
+			  	    actions: ["Close"],
+			  	    draggable: false,
+		 	        //title:"we", 
+		 	        width: "100%",
+		 	        height: "100%",
+		 	        content: "${base.contextPath}/whtcustom/wht_custom_webpage_preview.html?webpageUrl="+webpageUrl,
+		 	        iframe: true,
+		 	        modal: true,
+		 	        visible: false,
+		 	        Resizable:false,
+	  			});
+	    	   	var win = $("#userWin").data("kendoWindow");
+	    	    win.center().open();
+   			}else{
+   				kendo.ui.showInfoDialog({
+  						message : "请输入正确的网址"
+  					})
+   			}
+  			}else{
+  				kendo.ui.showInfoDialog({
+ 						message : "请输入正确的网址"
+ 					})
+  			}
+  		}
+   	
+   	
+	/* var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+	//添加上传图文
+	function addImageTextUpload(){
+		  if(document.getElementById("imageTextInput").value){
+			  kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+		          title: '<@spring.message "sysfile.upload"/>',
+		          width: 400,
+		          height: 250,
+		          modal: true
+		      }).data("kendoWindow");
+		      reqWin.center().open();
+		  };
+	  
+		$("#reqFiles").kendoUpload({
+			async : {saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+	};	
+		function onUpload(e) {
+			e.data = {
+				modularName : 'WHT',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		function onSuccess(e) {
+			if (e.response.success) {
+				$("#addImageTextDiv").show();
+				document.getElementById("imageTextInput").value = e.response.file.fileId;
+				Path =ossWebPath + e.response.file.filePath;
+				$("#addImageTextImg").show().attr('src',Path);
+				reqWin.close();
+		        kendo.ui.showInfoDialog({message  : '<@spring.message "spe.pleasesavedata"/>'})
+		        
+		        if(saveMenuId){
+	   				for (var i =0;i<menuConTentList.length;i++) {
+						if(menuConTentList[i].saveMenuId == saveMenuId){
+							menuContentToList[i].pictureTextId = e.response.file.fileId;
+							return;
+						}
+					}
+	   			}else if(!saveMenuId && saveBigMenuId){
+	   				for (var i =0;i<menuConTentList.length;i++) {
+						if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+							menuContentToList[i].pictureTextId = e.response.file.fileId;
+							return;
+						}
+					}
+	   			}
+			} else {
+				kendo.ui.showErrorDialog({message : e.response.message})
+			} 
+		};
+	
+	//添加上传图片
+	function addPictureUpload(){
+		if(document.getElementById("pictureInput").value){
+			kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		}else{
+			window.reqWin = $("#reqWin").kendoWindow({
+		         title: '<@spring.message "sysfile.upload"/>',
+		         width: 400,
+		         height: 250,
+		         modal: true
+		    }).data("kendoWindow");
+		    reqWin.center().open();
+		};
+	  
+		$("#reqFiles").kendoUpload({
+			async : {saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"},
+			showFileList : false,
+			upload : onUploadPicture,
+			success : onSuccessPicture
+		});
+	};	
+		function onUploadPicture(e) {
+			e.data = {
+				modularName : 'WHT',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		function onSuccessPicture(e) {
+			if (e.response.success) {
+				$("#addPictureDiv").show();
+				document.getElementById("pictureInput").value = e.response.file.fileId;
+				Path =ossWebPath + e.response.file.filePath;
+				$("#addPictureImg").show().attr('src',Path);
+				reqWin.close();
+		        kendo.ui.showInfoDialog({message  : '<@spring.message "spe.pleasesavedata"/>'})
+		        
+		        if(saveMenuId){
+	   				for (var i =0;i<menuConTentList.length;i++) {
+						if(menuConTentList[i].saveMenuId == saveMenuId){
+							menuContentToList[i].pictureId = e.response.file.fileId;
+							return;
+						}
+					}
+	   			}else if(!saveMenuId && saveBigMenuId){
+	   				for (var i =0;i<menuConTentList.length;i++) {
+						if(menuConTentList[i].saveBigMenuId == saveBigMenuId){
+							menuContentToList[i].pictureId = e.response.file.fileId;
+							return;
+						}
+					}
+	   			}
+			} else {
+				kendo.ui.showErrorDialog({message : e.response.message})
+			} 
+		}; */
+	
+	
+  //富文本编辑器 
+	$(document).ready(function() {
+       // create Editor from textarea HTML element with default set of tools
+      /*  $("#mentText").kendoEditor({
+            tools: [
+                "fontName",
+                "fontSize",
+                "formatting",
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "justifyLeft",
+                "justifyCenter",
+                "justifyRight",
+                "justifyFull",
+                "insertUnorderedList",
+                "insertOrderedList",
+                "indent",
+                "outdent",
+                "insertImage",
+                "subscript",
+                "superscript",
+                "foreColor",
+                "backColor",
+            ],
+        }); */
+	});
+</script>
+</body>
+</html>

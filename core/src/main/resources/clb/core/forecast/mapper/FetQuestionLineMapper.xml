@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetQuestionLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetQuestionLine">
+        <result column="QUESTION_LINE_ID" property="questionLineId" jdbcType="DECIMAL" />
+        <result column="QUESTION_ID" property="questionId" jdbcType="DECIMAL" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+        <result column="USER_NAME" property="userName" jdbcType="DATE" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="DATE" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+
+	<select id="selectData" parameterType="clb.core.forecast.dto.FetQuestionLine" resultMap="BaseResultMap">
+		SELECT 
+		ffql.*,
+		su.USER_NAME
+		FROM
+		fms_fet_question_line ffql,
+		sys_user su
+		where ffql.CREATED_BY = su.USER_ID
+		<if test="questionLineId != null">
+			AND ffql.QUESTION_LINE_ID = #{questionLineId}
+		</if>
+		<if test="questionId != null">
+			AND ffql.QUESTION_ID = #{questionId}
+		</if>
+	</select>
+</mapper>

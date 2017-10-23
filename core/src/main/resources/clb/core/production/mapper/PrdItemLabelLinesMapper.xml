@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by Rex.Hua on 17/4/12.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdItemLabelLinesMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdItemLabelLines">
+        <id column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="LABEL_ID" property="labelId" jdbcType="DECIMAL" />
+        <result column="LABEL_NAME" property="labelName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectByParam" parameterType="clb.core.production.dto.PrdItemLabelLines" resultMap="BaseResultMap">
+        SELECT pil.label_name
+                ,pill.line_id
+                ,pill.item_id
+                ,pill.label_id
+        FROM   fms_prd_item_labels      pil
+       join fms_prd_item_label_lines pill
+        on  pil.label_id = pill.label_id
+        WHERE 1 = 1
+        <if test="bigClass != null">
+            AND pil.big_class = #{bigClass}
+        </if >
+        <if test="itemId != null">
+            AND pill.item_id = #{itemId}
+        </if >
+        <if test="labelName != null">
+            AND pil.label_name = #{labelName}
+        </if >
+        <if test="labelId != null">
+            AND pil.label_id = #{labelId}
+        </if >
+        ORDER  BY pill.line_id ASC
+    </select>
+
+    <select id="choiceTags" parameterType="clb.core.production.dto.PrdItemLabelLines" resultMap="BaseResultMap">
+        SELECT pil.label_name
+        FROM   fms_prd_item_labels      pil
+        WHERE 1 = 1
+        <if test="bigClass != null">
+            AND pil.big_class = #{bigClass}
+        </if >
+    </select>
+
+    <select id="getCountByItemLabel" parameterType="clb.core.production.dto.PrdItemLabelLines" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM fms_prd_item_label_lines pill
+        WHERE pill.item_id = #{itemId}
+        AND   pill.label_id = #{labelId}
+    </select>
+
+    <select id="deleteByItemLabel" parameterType="clb.core.production.dto.PrdItemLabelLines" resultMap="BaseResultMap">
+        DELETE from fms_prd_item_label_lines
+        WHERE  item_id = #{itemId}
+        AND    EXISTS (SELECT 1
+                FROM   fms_prd_item_labels pil
+                WHERE  pil.label_id = fms_prd_item_label_lines.label_id
+                AND    pil.label_name = #{labelName})
+    </select>
+
+</mapper>

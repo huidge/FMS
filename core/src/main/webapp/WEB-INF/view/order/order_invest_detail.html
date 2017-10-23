@@ -1,0 +1,2717 @@
+<#--
+        * description: 投资移民订单详情页面
+        * version: 1.0
+        * #copyright#
+        * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+        -->
+    <#include "../include/header.html">
+        <script src="${base.contextPath}/clb/common/clbCode?provinceData=PUB.PROVICE" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?cityData=PUB.CITY" type="text/javascript"></script>
+
+        <script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.IMMIGRANT_STATUS" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?payMethodData=CMN.PAY_METHOD" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?contactPersonData=ORD.ORDER_CONTACT_PERSON" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?contactPhoneData=ORD.ORDER_CONTACT_PHONE" type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?addressData=ORD.ORDER_ADDRESS" type="text/javascript"></script>
+
+        <script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?nationList=PUB.NATION&provinceList=PUB.PROVICE&cityList=PUB.CITY"></script>
+        <script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?maritalList=CTM.MARITAL_STATUS"></script>
+        <script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?otherLangData=PUB.OTHER_LANGUAGE"></script>
+        <script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?englishAbilityData=PUB.ENGLISH_ABILITY"></script>
+
+        <link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+        <script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+            var viewModel = kendo.observable({
+                model: {
+                    orderType :"IMMIGRANT",
+                    myInformationFlag:"Y",
+                    payMethod: "WP",
+                    __status:"update"
+                }
+            });
+
+            var ctmViewModel = kendo.observable({
+                model: {
+                    customerType:"APPLICANT",
+                    __status:"update"
+                }
+            });
+            viewModel.model.set("orderId",orderId);
+            //跳转页面查询
+            if(orderId !=-1) {
+                //查询订单信息
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "${base.contextPath}/fms/ord/order/query/immigrant",
+                    data: {orderId: orderId},
+                    success: function (json) {
+                        var row = json.rows[0] || {};
+                        console.log(row);
+                        for (var k in row) {
+                            viewModel.model.set(k, row[k]);
+                        }
+                        viewModel.model.set("payMethod","WP");
+                    }
+                });
+                //查询客户资料
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "${base.contextPath}/fms/ord/customer/query",
+                    data: {orderId: orderId,customerType:"APPLICANT"},
+                    success: function (json) {
+                        var row = json.rows[0] || {};
+                        for (var k in row) {
+                            ctmViewModel.model.set(k, row[k]);
+                        }
+                    }
+                });
+            }
+
+            var currencyAllRows = [];
+            var currencyRows = [];
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "${base.contextPath}/production/itemDetail/queryAllCurrency?enabledFlag=Y",
+                data: {},
+                success: function (json) {
+                    currencyAllRows = json.rows;
+                    if (viewModel.model.itemId != null) {
+                        for (var i=0;i<currencyAllRows.length;i++) {
+                            if (currencyAllRows[i].itemId == viewModel.model.itemId) {
+                                currencyRows.push(currencyAllRows[i]);
+                            }
+                        }
+                    }
+                }
+            });
+
+        </script>
+        <script src="${base.contextPath}/resources/js/operationPermission/core_libs.js" charset="UTF-8"></script>
+        <!--获取控制代码（应用控制代码推荐在页面的结束位置引用,引用的js文件为apply_op_permission.js）-->
+        <script src="${base.contextPath}/resources/js/operationPermission/operationPermission.js" charset="UTF-8"></script>
+
+        <!--关于预先提供的部分js函数封装的说明：这部分函数封装主要是适用于规范的hap开发过程中，
+grid中约定使用情况下的处理，对于不同的项目可以参照着实现；
+这一部分的代码不一定适用于所有项目-->
+        <script src="${base.contextPath}/resources/js/operationPermission/apply_op_permission.js" charset="UTF-8"></script>
+
+        <script type="text/javascript" >
+            $.extend({
+                /**
+                 * 国家、省、市 三级级动
+                 *
+                 * @param nation object类型，对应"国家"。包括 元素Id(带#)、初始数据源、label 三个属性
+                 * @param province 	object类型，对应"省份"。包括 元素Id(带#)、初始数据源、label 三个属性
+                 * @param city 	object类型，对应"国家"城市。包括 元素Id(带#)、初始数据源、label 三个属性
+                 */
+                'clbCascade': function(nation, province, city){
+                    //利用最顶层对组件实行初始化
+                    $(nation.elementId).kendoDropDownList({
+                        optionLabel: nation.label?nation.label:'--国家--',  //当label属性没有传值的时候的时候，默认显示国家
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: nation.source,
+                        //当最顶层发生 change 事件之后，对子层进行筛选
+                        change: function(){
+                            var nationValue = $(nation.elementId).val();    //获取最顶层的值
+                            var provinces = [];
+                            //根据顶层筛选子层的值
+                            for (var i = 0; i < province.source.length; i++) {
+                                if (nationValue && nationValue == province.source[i].parentValue) {
+                                    provinces.push(province.source[i]);
+                                }
+                            }
+                            //更新子层数据源（只是更新dataSource这个值是不起作用的）
+                            $(province.elementId).kendoDropDownList({
+                                optionLabel: province.label?province.label:'--省份--',
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: provinces,
+                                //子层再更新自己下面的子层
+                                change: function(){
+                                    var provinceValue = $(province.elementId).val();
+                                    var citys = [];
+                                    for(var i = 0; i < city.source.length; i++){
+                                        if(provinceValue && provinceValue == city.source[i].parentValue ){
+                                            citys.push(city.source[i]);
+                                        }
+                                    }
+
+                                    $(city.elementId).kendoDropDownList({
+                                        optionLabel: city.label?city.label:'--城市--',
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: citys,
+                                    });
+                                },
+                            });
+
+                            //初始化城市
+                            var provinceValue = $(province.elementId).val();
+                            var citys = [];
+                            for(var k = 0; k < city.source.length; k++){
+                                if(provinceValue && provinceValue == city.source[k].parentValue ){
+                                    citys.push(city.source[k]);
+                                }
+                            }
+                            $(city.elementId).kendoDropDownList({
+                                optionLabel: city.label?city.label:'--城市--',
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: citys,
+                            });
+                        },
+                        //当最顶 databBound 的时候，对子层进行筛选
+                        dataBound: function(){
+                            var nationValue = $(nation.elementId).val();
+                            var provinces = [];
+                            for (var i = 0; i < province.source.length; i++) {
+                                if (nationValue && nationValue == province.source[i].parentValue) {
+                                    provinces.push(province.source[i]);
+                                }
+                            }
+                            $(province.elementId).kendoDropDownList({
+                                optionLabel: province.label?province.label:'--省份--',
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: provinces,
+                                change: function(){
+                                    var provinceValue = $(province.elementId).val();
+                                    var citys = [];
+                                    for(var i = 0; i < city.source.length; i++){
+                                        if(provinceValue && provinceValue == city.source[i].parentValue ){
+                                            citys.push(city.source[i]);
+                                        }
+                                    }
+
+                                    $(city.elementId).kendoDropDownList({
+                                        optionLabel: city.label?city.label:'--城市--',
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: citys,
+                                    });
+                                },
+                                dataBound: function(){
+                                    var provinceValue = $(province.elementId).val();
+                                    var citys = [];
+                                    for(var i = 0; i < city.source.length; i++){
+                                        if(provinceValue && provinceValue == city.source[i].parentValue ){
+                                            citys.push(city.source[i]);
+                                        }
+                                    }
+
+                                    $(city.elementId).kendoDropDownList({
+                                        optionLabel: city.label?city.label:'--城市--',
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: citys,
+                                    });
+                                },
+                            });
+                        },
+                    });
+                },
+
+
+                /**
+                 *  将数字转换成金额的格式
+                 *
+                 *  @param elementId 元素Id(带#)
+                 */
+                'clbFormatNum': function(elementId){
+                    var outputdollars = function (number) {
+                        if (number.length <= 3)
+                            return (number == '' ? '0' : number);
+                        else {
+                            var mod = number.length % 3;
+                            var output = (mod == 0 ? '' : (number.substring(0, mod)));
+                            for (var i = 0; i < Math.floor(number.length / 3); i++) {
+                                if ((mod == 0) && (i == 0))
+                                    output += number.substring(mod + 3 * i, mod + 3 * i + 3);
+                                else
+                                    output += ',' + number.substring(mod + 3 * i, mod + 3 * i + 3);
+                            }
+                            return (output);
+                        }
+                    };
+
+                    var outputcents = function (amount) {
+                        amount = Math.round(((amount) - Math.floor(amount)) * 100);
+                        return (amount < 10 ? '.0' + amount : '.' + amount);
+                    };
+
+
+                    var number = $(elementId).val();
+                    number = number.replace(/\,/g, "");
+                    var isNum = /^((0|[1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+                    if (!isNum.test(number)) {
+
+                        console.log('金额由数字和小数点组成,且值大于或等于0');
+                        $(elementId).val('0.00' + '');
+                        return false;
+                    }
+                    number = Math.round(number * 100) / 100;
+                    if (number < 0) {
+//                    return '-' + outputdollars(Math.floor(Math.abs(number) - 0) + '') + outputcents(Math.abs(number) - 0);
+                        $(elementId).val('0.00' + '');
+                        return false;
+                    } else {
+                        var value = outputdollars(Math.floor(number - 0) + '') + outputcents(number - 0);
+                        $(elementId).val(value);
+                        return false;
+                    }
+
+                },
+            });
+        </script>
+        <div id="upStatusWin" style="display: none;"></div>
+        <div id="proWin" style="display: none;"></div>
+        <div id="appWin" style="display: none;"></div>
+        <div id="insWin" style="display: none;"></div>
+        <div id="reqWin" style="display: none;">
+            <form>
+                <input type="file" id="compact" name="compact"/>
+            </form>
+        </div>
+        <body>
+        <div id="page-content">
+            <div class="panel panel-default">
+                <form class="form-horizontal">
+                    <div class="panel-heading">
+                        <span class="panel-title"> <@spring.message "fms.ordorder.detail"/></span>
+                    </div>
+                    <div class="panel-body">
+                        <!--计划书及申请书copy件-->
+                        <!--<div class="row" style="margin-bottom:10px;margin-top: 10px">
+                            <div class="row" style="margin-bottom:10px;margin-top: 10px">
+                                <div id="requestCopyArchiveDiv" style="margin-right:5%;float: right">
+                                    <label><@spring.message 'fms.ordorder.requestcopyarchive'/>：</label>
+                                    <button type="button" onclick="reqDownload()" class="btn btn-info btn-xs" id="btn_reqDownload" data-toggle="tooltip" data-placement="top" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>
+                                    <button type="button" onclick="reqUpload()" class="btn btn-info btn-xs" id="btn_reqUpload" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                                </div>
+
+                            </div>
+                        </div>-->
+                        <div class="col-xs-12" >
+                            <!--保单信息-->
+                            <div class="col-xs-9" id="policyInfoDiv">
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ordpending.orderinfo"/>
+                                </p>
+                                <!--合同附件上传-->
+                                <div id="compactCopyArchiveDiv" style="margin-right:5%;float: right">
+                                    <label><@spring.message 'fms.ordorder.compact'/>：</label>
+                                    <button type="button" onclick="compactDownload()" class="btn btn-info btn-xs" id="btn_compactDownload" data-toggle="tooltip" data-placement="top" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>
+                                    <button type="button" onclick="compactUpload()" class="btn btn-info btn-xs" id="btn_compactUpload" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                                </div>
+                                <div class="col-xs-12" >
+
+                                    <div class="col-xs-4" id="orderNumberDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ordorder.orderNumber"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="orderNumber" name="orderNumber" type="text" data-bind="value:model.orderNumber" class=" k-textbox" style="width: 100%; background: #DDDDDD" readonly>
+                                                <script>kendo.bind($('#orderNumber'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4" id="channelIdDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.channelName"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="channelId" name="channelId" type="text" data-bind="value:model.channelId,text:model.channelName" style="width: 100%;" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>kendo.bind($('#channelId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4" id="contractRoleIdDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.roleName"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="contractRoleId" name="contractRoleId" type="text" data-bind="value:model.contractRoleId,text:model.roleName" style="width: 100%; background: #DDDDDD" readonly>
+                                                <script>kendo.bind($('#contractRoleId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!--<div class="col-xs-4" id="itemDiv">-->
+                                        <!--<div class="form-group" style="margin-bottom:10px">-->
+                                            <!--<label class="col-xs-4 control-label"-->
+                                                   <!--style="text-align: right"><@spring.message "fms.ordorder.appointment_schedule.item"/></label>-->
+                                            <!--<div class="col-xs-8">-->
+                                                <!--<span tabindex="-1" class="k-dropdown-wrap" onmouseover="showItemClear(1)" onmouseout="showItemClear(2)">-->
+                                                <!--<input type="text" id="item" data-bind="value:model.item" class="k-input" autocomplete="off" style="width:100%;height:25px" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly" required validationMessage='<@spring.message "hap.error.nullexception"/>'>-->
+                                                <!--<span class="k-icon k-i-close popupClear" id="itemClear" role="button" onclick="clearItemData()" style="display:none"></span>-->
+                                                <!--<span onclick="selectItem()" class="k-select" aria-label="select" role="button" tabindex="-1">-->
+                                                <!--<span class="k-icon k-i-search"></span>-->
+                                                <!--</span>-->
+                                                <!--</span>-->
+                                                <!--<script>kendo.bind($('#item'), viewModel);</script>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                </div>
+
+                                <div class="col-xs-12">
+
+                                    <div class="col-xs-4">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ordorder.productsupplier"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="productSupplierId" name="productSupplierId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.productSupplierId,text:model.productSupplierName" style="width: 100%;">
+                                                <script>kendo.bind($('#productSupplierId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ordorder.item"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="itemId" name="itemId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.itemId,text:model.itemName" style="width: 100%;">
+                                                <script>kendo.bind($('#itemId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ordorder.subline"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="sublineId" name="sublineId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.sublineId,text:model.sublineItemName" style="width: 100%;">
+                                                <script>kendo.bind($('#sublineId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-xs-12">
+
+                                    <div class="col-xs-4" id="applicantDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.customer"/></label>
+                                            <div class="col-xs-8">
+                                                <span tabindex="-1" class="k-dropdown-wrap" onmouseover="showApplicantClear(1)" onmouseout="showApplicantClear(2)">
+                                                <input type="text" id="applicant" data-bind="value:model.applicant" class="k-input" autocomplete="off" style="width:100%;height:25px" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <span class="k-icon k-i-close popupClear" id="applicantClear" role="button" onclick="clearApplicantData()" style="display:none"></span>
+                                                <span onclick="selectApplicant()" class="k-select" aria-label="select" role="button" tabindex="-1">
+                                                <span class="k-icon k-i-search"></span>
+                                                </span>
+                                                </span>
+                                                <script>kendo.bind($('#applicant'), viewModel);</script>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4" id="currencyDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.currency"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="currency" name="currency" type="text" data-bind="value:model.currency" style="width: 100%; background: #DDDDDD" readonly>
+                                                <script>kendo.bind($('#currency'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4" id="policyAmountDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "spe.amount"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="policyAmount" name="policyAmount" type="text" data-bind="value:model.policyAmount" style="width: 100%;">
+                                                <script>kendo.bind($('#policyAmount'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-xs-12">
+
+                                    <div class="col-xs-4" id="statusDiv">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.status"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="status" name="status" type="text" data-bind="value:model.status" style="width: 100%; background: #DDDDDD" readonly>
+                                                <script>kendo.bind($('#status'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--状态跟进-->
+                            <div class="col-xs-3" id="statusHisDiv">
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ordorder.statushis"/>
+                                </p>
+                                <div style="clear:both">
+                                    <div id="hisGrid"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--日期信息-->
+                        <p class="bord-btm pad-ver text-main text-bold">
+                            <@spring.message "fms.ordorder.dateinfo"/>
+                        </p>
+
+                        <div class="col-xs-12">
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"><@spring.message "fms.OrdOrder.submitDate"/></label>
+                                    <div class="col-xs-9">
+                                        <input id="submitDate" name="submitDate" type="datetime" data-bind="value:model.submitDate" style="width: 100%; background: #DDDDDD" readonly>
+                                        <script>kendo.bind($('#submitDate'), viewModel);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"><@spring.message "fms.ordorder.negotiationdate"/></label>
+                                    <div class="col-xs-9">
+                                        <input id="reserveDate" name="reserveDate" type="datetime" data-bind="value:model.reserveDate" style="width: 100%;" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                        <script>kendo.bind($('#reserveDate'), viewModel);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-3 control-label"
+                                           style="text-align: right"><@spring.message "fms.ordorder.reservesigndate"/></label>
+                                    <div class="col-xs-9">
+                                        <input id="issueDate" name="issueDate" type="datetime" data-bind="value:model.issueDate" style="width: 100%;" validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                        <script>kendo.bind($('#issueDate'), viewModel);</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--详细信息-->
+                        <p class="bord-btm pad-ver text-main text-bold">
+                            <@spring.message "fms.ordorder.detailinfo"/>
+                        </p>
+
+                        <!--五个TAB-->
+                        <div id="tabstrip" style="clear:both">
+                            <ul>
+                                <li class="k-state-active"><@spring.message "fms.ordorder.reserveconfirminfo"/></li>
+                                <li><@spring.message "fms.ordorder.commissioninfo"/></li>
+                                <li><@spring.message "fms.ordorder.reserveinfo"/></li>
+                            </ul>
+                            <!--预约确认信息-->
+                            <div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.productManager"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="productManager" name="productManager" type="text" pattern="^[\u4e00-\u9fa5]*$" validationMessage='<@spring.message "fms.ctmcustomer.chineseName"/>' data-bind="value:model.productManager" class="k-textbox" style="width: 100%;">
+                                                <script>kendo.bind($('#productManager'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.contactPhone"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="productManagerPhone" name="productManagerPhone" type="text" pattern="^(([\d]{11})|(00852[\d]{8}))$" validationMessage='<@spring.message "fms.ctmcustomer.phonevali"/>' data-bind="value:model.productManagerPhone" class="k-textbox" style="width: 100%;">
+                                                <script>kendo.bind($('#productManagerPhone'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.contactPerson"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="contactPerson" name="contactPerson" type="text" data-bind="value:model.contactPerson" style="width: 100%;">
+                                                <script>kendo.bind($('#contactPerson'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.contactPhone"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="contactPhone" name="contactPhone" type="text" data-bind="value:model.contactPhone" style="width: 100%;">
+                                                <script>kendo.bind($('#contactPhone'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-8" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-2 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.meetAddress"/></label>
+                                            <div class="col-xs-10">
+                                                <input id="meetAddress" name="meetAddress" type="text" data-bind="value:model.meetAddress" style="width: 100%;">
+                                                <script>kendo.bind($('#meetAddress'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                    </div>
+                                </div>
+
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ordorder.traderoute"/>
+                                </p>
+
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.reserveSupplier"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="reserveSupplierId" name="reserveSupplierId" type="text" validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.reserveSupplierId,text:model.reserveSupplierName" style="width: 100%;">
+                                                <script>kendo.bind($('#reserveSupplierId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="clear:both;margin-bottom: 10px">
+                                    <div id="rouGrid"></div>
+                                </div>
+
+                            </div>
+                            <!--佣金信息-->
+                            <div>
+                                <div class="col-xs-12" style="margin-top:15px">
+
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <div class="col-xs-12">
+                                                <input id="companyId" name="companyId" type="text" data-bind="value:model.companyId" style="width: 100%;">
+                                                <script>kendo.bind($('#companyId'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both">
+                                    <div id="comGrid"></div>
+                                </div>
+                            </div>
+                            <!--预约资料-->
+                            <div>
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ordpending.orderinfo"/>
+                                </p>
+
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ordorder.migrateCountry"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="migrateCountry" name="migrateCountry" type="text" class="k-textbox" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.migrateCountry" style="width: 100%;" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>kendo.bind($('#migrateCountry'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.budget"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="budget" name="budget" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.budget" style="width: 100%;">
+                                                <script>kendo.bind($('#budget'), viewModel);
+                                                $("#budget").kendoNumericTextBox({min:0});
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-8" id="itemDiv1">
+                                        <div class="form-group" style="margin-bottom:20px">
+                                            <label class="col-xs-2 control-label"
+                                                   style="text-align: right"><@spring.message "fms.OrdOrder.item"/></label>
+                                            <div class="col-xs-10">
+                                                <span tabindex="-1" class="k-dropdown-wrap" onmouseover="showItemClear(1)" onmouseout="showItemClear(2)">
+                                                <input type="text" id="item1" data-bind="value:model.item" class="k-input" autocomplete="off" style="width:100%;height:25px" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly">
+                                                <span class="k-icon k-i-close popupClear" id="itemClear1" role="button" onclick="clearItemData()" style="display:none"></span>
+                                                <span onclick="selectItem()" class="k-select" aria-label="select" role="button" tabindex="-1">
+                                                <span class="k-icon k-i-search"></span>
+                                                </span>
+                                                </span>
+                                                <script>kendo.bind($('#item1'), viewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ctm.basicInformation"/>
+                                </p>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctm.chineseName"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="chineseName" name="chineseName" type="text" class="k-textbox" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.chineseName" style="width: 100%;">
+                                                <script>kendo.bind($('#chineseName'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.sex"/></label>
+                                            <div class="col-xs-8">
+                                                <div id="sex" style="margin-top:5px;"  data-bind="enabled: isEnabled,value:model.sex"></div>
+                                                <script>
+                                                    kendo.bind($('#sex'), ctmViewModel);
+                                                    $("#sex").kendoRadio({
+                                                        readonly: false,
+                                                        items: [
+                                                            {label: "男", value: "M"},
+                                                            {label: "女", value: "F"}
+                                                        ]
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.birthdate"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="birthDate" name="chineseName" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.birthDate" style="width: 100%;">
+                                                <script>
+                                                    kendo.bind($('#birthDate'), ctmViewModel);
+                                                    $("#birthDate").kendoDatePicker();
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.marriageStatus"/></label>
+                                            <div class="col-xs-8">
+                                                <input style="width:100%" id="marriageStatus" name="marriageStatus"
+                                                       data-bind="source: maritalList, value: model.marriageStatus" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#marriageStatus'), ctmViewModel);
+                                                    $('#marriageStatus').kendoComboBox({
+                                                        valuePrimitive: true,
+                                                        dataTextField: "meaning",
+                                                        dataValueField: "value",
+                                                        dataSource: maritalList,
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="col-xs-12">
+                                        <label class="col-xs-1 control-label"><@spring.message
+                                            "fms.ctmcustomer.identityaddress"/>:</label>
+                                        <div class="col-xs-10">
+                                            <input style="width:30%;float:left; margin-right: 5px" id="identityNation" data-bind="value:model.identityNation" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                            <input style="width:30%;float:left; margin-right: 5px" id="identityProvince" data-bind="value:model.identityProvince" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                            <input style="width:30%;float:left; margin-right: 5px" id="identityCity" data-bind="value:model.identityCity" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                            <input style="width:91%;margin-top: 3px" id="identityAddress" placeholder="详细地址"
+                                                   data-bind="value:model.identityAddress" class="k-textbox" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                            <script>kendo.bind($('#identityNation'), ctmViewModel);
+                                                kendo.bind($('#identityProvince'), ctmViewModel);
+                                                kendo.bind($('#identityCity'), ctmViewModel);
+                                                kendo.bind($('#identityAddress'), ctmViewModel);
+                                            //三级联动延迟300毫秒执行
+                                            setTimeout(function(){
+                                                var identityNation = {elementId: '#identityNation', source: nationList, },
+                                                        identityProvince = {elementId: '#identityProvince', source: provinceList, },
+                                                        identityCity = {elementId: '#identityCity', source: cityList, };
+                                                $.clbCascade(identityNation, identityProvince, identityCity);
+                                            },500);
+                                            </script>
+                                    </div>
+                                </div>-->
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message
+                                                "fms.ctmcustomer.identityaddress"/></label>
+                                            <div class="col-xs-8">
+                                                <input style="width:100%" id="identityNation" name="identityNation"
+                                                       data-bind="value: model.identityNation" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#identityNation'), ctmViewModel);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"></label>
+                                            <div class="col-xs-8">
+                                                <input style="width:100%" id="identityProvince" name="identityProvince"
+                                                       data-bind="value: model.identityProvince" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#identityProvince'), ctmViewModel);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"></label>
+                                            <div class="col-xs-8">
+                                                <input style="width:100%" id="identityCity" name="identityCity"
+                                                       data-bind="value: model.identityCity" class=".k-invalid-msg" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#identityCity'), ctmViewModel);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"></label>
+                                            <div class="col-xs-8">
+                                                <input style="width:100%" id="identityAddress" name="identityAddress"
+                                                       data-bind="value: model.identityAddress" class="k-textbox" placeholder='<@spring.message
+                                                "fms.ctmcustomer.detailAddress"/>'  required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#identityAddress'), ctmViewModel);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    setTimeout(function(){
+                                        var identityNation = {elementId: '#identityNation', source: nationList, },
+                                                identityProvince = {elementId: '#identityProvince', source: provinceList, },
+                                                identityCity = {elementId: '#identityCity', source: cityList, };
+                                        $.clbCascade(identityNation, identityProvince, identityCity);
+                                    },500);
+                                </script>
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ctmcustomer.familyStatus"/>
+                                </p>
+
+                                <div style="clear:both;margin-bottom:20px;">
+                                    <div id="beneGrid"></div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-6 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.abroadLiveFlag"/></label>
+                                            <div class="col-xs-6">
+                                                <div id="abroadLiveFlag" style="margin-top:5px;"  data-bind="enabled: isEnabled,value:model.abroadLiveFlag" ></div>
+                                                <script>
+                                                    kendo.bind($('#abroadLiveFlag'), ctmViewModel);
+                                                    $("#abroadLiveFlag").kendoRadio({
+                                                        readonly: false,
+                                                        items: [
+                                                            {label: "是", value: "Y"},
+                                                            {label: "否", value: "N"}
+                                                        ]
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-6 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.visaRefuseFlag"/></label>
+                                            <div class="col-xs-6">
+                                                <div id="visaRefuseFlag" style="margin-top:5px;"  data-bind="enabled: isEnabled,value:model.visaRefuseFlag" ></div>
+                                                <script>
+                                                    kendo.bind($('#visaRefuseFlag'), ctmViewModel);
+                                                    $("#visaRefuseFlag").kendoRadio({
+                                                        readonly: false,
+                                                        items: [
+                                                            {label: "是", value: "Y"},
+                                                            {label: "否", value: "N"}
+                                                        ],
+                                                        change:function (e) {
+                                                            if (e.values == "Y") {
+                                                                $("#visaRefuseCountryDiv").show();
+                                                                $("#visaRefuseReasonDiv").show();
+                                                            } else {
+                                                                $("#visaRefuseCountryDiv").hide();
+                                                                ctmViewModel.model.set("visaRefuseCountry",null);
+                                                                $("#visaRefuseReasonDiv").hide();
+                                                                ctmViewModel.model.set("visaRefuseReason",null);
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12" id="visaRefuseCountryDiv">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.visaRefuseCountry"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="visaRefuseCountry" name="visaRefuseCountry" type="text" class="k-textbox" data-bind="value:model.visaRefuseCountry" style="width: 100%;">
+                                                <script>kendo.bind($('#visaRefuseCountry'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12" id="visaRefuseReasonDiv">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.visaRefuseReason"/></label>
+                                            <div class="col-xs-9">
+                                                <textarea rows="3" id="visaRefuseReason" name="visaRefuseReason" type="text" class="k-textbox" data-bind="value:model.visaRefuseReason" style="width: 100%;">
+                                                </textarea>
+                                                <script>kendo.bind($('#visaRefuseReason'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ctmcustomer.education"/>
+                                </p>
+                                <div style="clear:both;margin-bottom:20px;">
+                                    <div id="educationGrid"></div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-6 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.abroadEducationFlag"/></label>
+                                            <div class="col-xs-6">
+                                                <div id="abroadEducationFlag" style="margin-top:5px;"  data-bind="enabled: isEnabled,value:model.abroadEducationFlag"></div>
+                                                <script>
+                                                    kendo.bind($('#abroadEducationFlag'), ctmViewModel);
+                                                    $("#abroadEducationFlag").kendoRadio({
+                                                        readonly: false,
+                                                        items: [
+                                                            {label: "是", value: "Y"},
+                                                            {label: "否", value: "N"}
+                                                        ],
+                                                        change:function (e) {
+                                                            if (e.values == "Y") {
+                                                                $("#abroadEducationDiv").show();
+                                                            } else {
+                                                                $("#abroadEducationDiv").hide();
+                                                                ctmViewModel.model.set("abroadEducationCountry",null);
+                                                                ctmViewModel.model.set("abroadEducationSchool",null);
+                                                                ctmViewModel.model.set("abroadEducationProfession",null);
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12" id="abroadEducationDiv">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.abroadEducationCountry"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="abroadEducationCountry" name="abroadEducationCountry" type="text" class="k-textbox" data-bind="value:model.abroadEducationCountry" style="width: 100%;">
+                                                <script>kendo.bind($('#abroadEducationCountry'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.abroadEducationSchool"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="abroadEducationSchool" name="abroadEducationSchool" type="text" class="k-textbox" data-bind="value:model.abroadEducationSchool" style="width: 100%;">
+                                                <script>kendo.bind($('#abroadEducationSchool'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.abroadEducationProfession"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="abroadEducationProfession" name="abroadEducationProfession" type="text" class="k-textbox" data-bind="value:model.abroadEducationProfession" style="width: 100%;">
+                                                <script>kendo.bind($('#abroadEducationProfession'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.englishAbility"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="englishAbility" name="englishAbility" type="text" data-bind="value:model.englishAbility" style="width: 100%;" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>
+                                                    kendo.bind($('#englishAbility'), ctmViewModel);
+                                                    $("#englishAbility").kendoDropDownList({
+                                                        optionLabel: "",
+                                                        dataTextField:"meaning",
+                                                        dataValueField :"value",
+                                                        valuePrimitive: true,
+                                                        dataSource: englishAbilityData
+                                                    })
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-4 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.ieltsScore"/></label>
+                                            <div class="col-xs-8">
+                                                <input id="ieltsScore" name="ieltsScore" type="text"  data-bind="value:model.ieltsScore" style="width: 100%;" required validationMessage='<@spring.message "hap.error.nullexception"/>'>
+                                                <script>kendo.bind($('#ieltsScore'), ctmViewModel);</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4" >
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-xs-3 control-label"
+                                                   style="text-align: right"><@spring.message "fms.ctmcustomer.otherLang"/></label>
+                                            <div class="col-xs-9">
+                                                <input id="otherLang" name="otherLang" type="text" data-bind="value:model.otherLang" style="width: 100%;">
+                                                <script>
+                                                    kendo.bind($('#otherLang'), ctmViewModel);
+                                                    $("#otherLang").kendoDropDownList({
+                                                        optionLabel: "",
+                                                        dataTextField:"meaning",
+                                                        dataValueField :"value",
+                                                        valuePrimitive: true,
+                                                        dataSource: otherLangData
+                                                    })
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                </div>
+                                <div style="clear:both;margin-bottom:20px;">
+                                    <div id="skillGrid"></div>
+                                </div>
+                                <p class="bord-btm pad-ver text-main text-bold">
+                                    <@spring.message "fms.ctmcustomer.work"/>
+                                </p>
+                                <div style="clear:both;margin-bottom:20px;">
+                                    <div id="workGrid"></div>
+                                </div>
+                                <div class="col-xs-12">
+<!--
+                                    <input id="myInformationFlag" name="myInformationFlag" type="checkbox" style="top:6px;" data-bind="value:model.myInformationFlag">
+-->
+                                    <!--<input id="myInformationFlag" type="checkbox" value="Y" checked="Y"  data-bind="value:model.myInformationFlag" /><label style="margin-left:5px;margin-right: 30px;margin-top: 1px">本人确定以上信息君威本人信息，信息真实准确，若因信息虚假造成的一切影响均有本人承担</label>
+
+                                    <script>kendo.bind($("#myInformationFlag"), viewModel);</script>-->
+                                <div class="col-xs-7">
+                                    <div class="form-group" style="margin-bottom:10px">
+                                        <div class="col-xs-12">
+                                            <input id="myInformationFlag" name="myInformationFlag" type="checkbox" style="margin-right: 5px" data-bind="value:model.myInformationFlag">
+                                            <label class="control-label"
+                                                   style="text-align: left;top:6px;"><@spring.message "fms.ctmcustomer.myInformationFlag"/></label>
+                                        </div>
+
+                                    </div>
+                                    <script>
+                                        kendo.bind($('#myInformationFlag'), viewModel);
+                                        $("#myInformationFlag").kendoCheckbox({
+                                            checkedValue: 'Y',
+                                            uncheckedValue: 'N',
+                                            change:function (e) {
+                                                if (e.values === "Y"){
+                                                    document.getElementById("btn_save").addEventListener("click",saveData);
+                                                    $("#btn_save").attr("disabled",false);
+                                                }else {
+                                                    kendo.ui.showConfirmDialog({
+                                                        title: $l('hap.tip.info'),
+                                                        message:'<@spring.message "fms.ctmcustomer.myinformationflag.null"/>'
+                                                    }).done(function (event) {
+                                                        if (event.button == 'OK') {
+                                                            document.getElementById("btn_save").removeEventListener("click",saveData);
+                                                            $("#btn_save").attr("disabled",true);
+                                                        }else {
+                                                            viewModel.model.set("myInformationFlag","Y");
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        });
+                                    </script>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="panel-footer text-right">
+                        <span class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                        <span onclick="updateStatus()" class="btn btn-success" id="btn_update_status" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "fms.ordorder.updateStatus"/></span>
+                        <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+                    </div>
+                    <iframe id="ifile" style="display:none"></iframe>
+                </form>
+            </div>
+        </div>
+        <!--<script>kendo.bind($('#page-content'), viewModel);</script>-->
+
+        <script type="text/javascript">
+            //初始化预约资料的部分字段在特定条件下的隐藏
+            function initHide() {
+                if (viewModel.model.myInformationFlag === 'Y'){
+                    document.getElementById("btn_save").addEventListener("click",saveData);
+                }else {
+                    $("#btn_save").attr("disabled",true);
+                }
+                if (ctmViewModel.model.visaRefuseFlag === 'Y'){
+                    $("#visaRefuseCountryDiv").show();
+                    $("#visaRefuseReasonDiv").show();
+
+                }else {
+                    $("#visaRefuseCountryDiv").hide();
+                    $("#visaRefuseReasonDiv").hide();
+                    ctmViewModel.model.set("visaRefuseFlag",'N');
+                }
+
+                if (ctmViewModel.model.abroadEducationFlag === 'Y'){
+                    $("#abroadEducationDiv").show();
+                }else {
+                    $("#abroadEducationDiv").hide();
+                    ctmViewModel.model.set("abroadEducationFlag",'N');
+                }
+            }
+            initHide();
+            $('#page-content').kendoValidator({
+                errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+            });
+
+            $("#ieltsScore").kendoNumericTextBox({
+                format:"#.0",
+                decimals: 1,
+                min:0
+            });
+
+            $("#channelId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_CHANNEL_USER")}, {
+
+                change:function (e) {
+                    viewModel.model.set("contractRoleId",null);
+                    viewModel.model.set("roleName",null);
+                }
+            }));
+
+            $("#contractRoleId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_CONTRACT_ROLE")}, {
+                query: function(e) {
+                    e.param['channelId'] = viewModel.model.channelId;
+                }
+            }));
+
+            $("#reserveSupplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "CMN_TRADE_ROUTE_OTHER")}, {
+                query: function(e) {
+                    e.param['channelId'] = viewModel.model.channelId;
+                    e.param['itemId'] =  viewModel.model.itemId;
+                    e.param['contributionPeriod'] = viewModel.model.sublineItemName;
+                    e.param['currency'] =  viewModel.model.currency;
+                    e.param['payMethod'] = viewModel.model.payMethod;
+                    e.param['supplierLimit'] = "Y";
+
+                    var d = new Date(viewModel.model.issueDate);
+                    var curr_date = d.getDate();
+                    var curr_month = d.getMonth() + 1;
+                    var curr_year = d.getFullYear();
+                    String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                    String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                    var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+                    e.param['reserveDateSting'] =  date;
+                },
+                select:function (e) {
+                    viewModel.model.set("channelCommissionLineId",e.item.lineId);
+                    viewModel.model.set("signSupplierId",e.item.signSupplierId);
+                    viewModel.model.set("signSupplierName",e.item.signSupplierName);
+                }
+            }));
+
+            $("#signSupplierName").attr("readonly", true).css("background", "#DDDDDD");
+
+            function selectItem(){
+                if (viewModel.model.channelId == null) {
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: "请先填写渠道后再选择产品信息！"
+                    });
+                } else {
+                    var url = 'order_item.html?orderId='+ viewModel.model.orderId  +'&channelId=' + viewModel.model.channelId + '&businessScope=移民投资&bigClass=DC';
+                    var proWin =  $("#proWin").kendoWindow({
+                        width: 800,
+                        height: 300,
+                        title: '<@spring.message "fms.ordorder.item"/>',
+                        content: url,
+                        iframe:  true,
+                        visible: false,
+                        modal:true
+                    }).data("kendoWindow");
+                    proWin.center().open();
+                }
+            }
+            function showItemClear(data){
+                if(data == "1")$("#itemClear").css("display","");
+                else{
+                    $("#itemClear").css("display","none");
+                }
+            };
+            function clearItemData(){
+                $("#item").val('');
+                viewModel.model.set("productSupplierId",null);
+                viewModel.model.set("itemId",null);
+                viewModel.model.set("sublineId",null);
+            }
+
+            function selectApplicant(){
+                var url = 'order_customer.html?cstType="Applicant"&channelId=' + viewModel.model.channelId;
+                var appWin =  $("#appWin").kendoWindow({
+                    width: 800,
+                    height: 600,
+                    title: '<@spring.message "fms.ordorder.applicant"/>',
+                    content: url,
+                    iframe:  true,
+                    visible: false,
+                    modal:true
+                }).data("kendoWindow");
+                appWin.center().open();
+            }
+            function showApplicantClear(data){
+                if(data == "1")$("#applicantClear").css("display","");
+                else{
+                    $("#applicantClear").css("display","none");
+                }
+            };
+            function clearApplicantData(){
+                viewModel.model.set("applicant",null);
+                viewModel.model.set("applicantCustomerId",null);
+            }
+
+            $("#status").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: statusData
+            });
+
+            $("#currency").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: currencyRows,
+                change : function(e) {
+                    if (viewModel.model.channelId != null && viewModel.model.itemId != null && viewModel.model.sublineItemName != null
+                        && viewModel.model.currency != null && viewModel.model.payMethod != null && viewModel.model.issueDate != null) {
+                        var trRows;
+                        var d = new Date(viewModel.model.issueDate);
+                        var curr_date = d.getDate();
+                        var curr_month = d.getMonth() + 1;
+                        var curr_year = d.getFullYear();
+                        String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                        String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                        var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+                        var obj = {};
+                        obj['channelId'] = viewModel.model.channelId;
+                        obj['itemId'] = viewModel.model.itemId ;
+                        obj['contributionPeriod'] = viewModel.model.sublineItemName;
+                        obj['currency'] = viewModel.model.currency ;
+                        obj['payMethod'] = viewModel.model.payMethod;
+                        obj['effectiveDate'] = date;
+                        obj['dealPath'] = viewModel.model.dealPath;
+
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            contentType: 'application/json',
+                            url: "${base.contextPath}/fms/ord/order/validateTradeRoute",
+                            data: JSON.stringify(obj),
+                            success: function (json) {
+                                trRows = json.rows;
+                            }
+                        });
+
+
+
+                        if (trRows.length == 0) {
+                            viewModel.model.set('currency', null);
+                            kendo.ui.showInfoDialog({
+                                title: $l('hap.tip.info'),
+                                message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+                            });
+                        }
+                    }
+
+                },
+
+            });
+
+            $("#productSupplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "CMN_PRODUCT_COMPANY")}, {
+                query: function(e) {
+                    e.param['businessScope'] = "移民投资";
+                },
+                change:function (e) {
+                    viewModel.model.set("itemId",null);
+                    viewModel.model.set("itemName",null);
+                    viewModel.model.set('stockCode', null);
+                    viewModel.model.set('annualInterest', null);
+                    viewModel.model.set('dividendPeriod', null);
+                    viewModel.model.set('subscriptionFee', null);
+                    viewModel.model.set('custodyFee', null);
+
+                },
+                select: function(e) {
+                    viewModel.model.set('productSupplierName', e.item.name);
+
+                }
+            }));
+
+            $("#itemId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_ITEM")}, {
+                query: function(e) {
+                    e.param['bigClass'] = "DC";
+                    if(viewModel.model.productSupplierId != null){
+                        e.param['supplierId'] = viewModel.model.productSupplierId;
+                    }
+                },
+                change:function (e) {
+                    viewModel.model.set("sublineId",null);
+                    viewModel.model.set("sublineItemName",null);
+
+                    if (e.sender._prev == '' || e.sender._prev == null) {
+                        viewModel.model.set('itemName', null);
+                        viewModel.model.set('minClass', null);
+                        viewModel.model.set('fullyear', null);
+                        viewModel.model.set('oneyear', null);
+                        viewModel.model.set('halfyear', null);
+                        viewModel.model.set('quarter', null);
+                        viewModel.model.set('onemonth', null);
+                    }
+
+                    currencyRows = [];
+                    for (var i=0;i<currencyAllRows.length;i++) {
+                        if (currencyAllRows[i].itemId == viewModel.model.itemId) {
+                            currencyRows.push(currencyAllRows[i]);
+                        }
+                    }
+
+                    $("#currency").kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "currency",
+                        dataValueField: "currencyCode",
+                        dataSource: currencyRows,
+                        change : function(e) {
+                            if (viewModel.model.channelId != null && viewModel.model.itemId != null && viewModel.model.sublineItemName != null
+                                && viewModel.model.currency != null && viewModel.model.payMethod != null && viewModel.model.issueDate != null) {
+                                var trRows;
+                                var d = new Date(viewModel.model.issueDate);
+                                var curr_date = d.getDate();
+                                var curr_month = d.getMonth() + 1;
+                                var curr_year = d.getFullYear();
+                                String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                                String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                                var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+                                var obj = {};
+                                obj['channelId'] = viewModel.model.channelId;
+                                obj['itemId'] = viewModel.model.itemId ;
+                                obj['contributionPeriod'] = viewModel.model.sublineItemName;
+                                obj['currency'] = viewModel.model.currency ;
+                                obj['payMethod'] = viewModel.model.payMethod;
+                                obj['effectiveDate'] = date;
+                                obj['dealPath'] = viewModel.model.dealPath;
+
+                                $.ajax({
+                                    type: "POST",
+                                    async: false,
+                                    contentType: 'application/json',
+                                    url: "${base.contextPath}/fms/ord/order/validateTradeRoute",
+                                    data: JSON.stringify(obj),
+                                    success: function (json) {
+                                        trRows = json.rows;
+                                    }
+                                });
+
+                                if (trRows.length == 0) {
+                                    viewModel.model.set('currency', null);
+                                    kendo.ui.showInfoDialog({
+                                        title: $l('hap.tip.info'),
+                                        message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+                                    });
+                                }
+                            }
+
+                        },
+                    });
+
+                },
+                select: function(e) {
+                    viewModel.model.set('itemName', e.item.itemName);
+                    viewModel.model.set('minClass', e.item.minClass);
+                    viewModel.model.set('fullyear', e.item.fullyear);
+                    viewModel.model.set('oneyear', e.item.oneyear);
+                    viewModel.model.set('halfyear', e.item.halfyear);
+                    viewModel.model.set('quarter', e.item.quarter);
+                    viewModel.model.set('onemonth', e.item.onemonth);
+
+                }
+            }));
+
+            $("#sublineId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SUBLINE")}, {
+                query: function(e) {
+                    e.param['channelId'] = viewModel.model.channelId;
+                    if(viewModel.model.itemId != null){
+                        e.param['itemId'] = viewModel.model.itemId;
+                    }
+                },
+                select: function(e) {
+                    viewModel.model.set('sublineItemName', e.item.sublineItemName);
+                },
+                change : function(e) {
+                    if (viewModel.model.channelId != null && viewModel.model.itemId != null && viewModel.model.sublineItemName != null
+                        && viewModel.model.currency != null && viewModel.model.payMethod != null && viewModel.model.issueDate != null) {
+                        var trRows;
+                        var d = new Date(viewModel.model.issueDate);
+                        var curr_date = d.getDate();
+                        var curr_month = d.getMonth() + 1;
+                        var curr_year = d.getFullYear();
+                        String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                        String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                        var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+                        var obj = {};
+                        obj['channelId'] = viewModel.model.channelId;
+                        obj['itemId'] = viewModel.model.itemId ;
+                        obj['contributionPeriod'] = viewModel.model.sublineItemName;
+                        obj['currency'] = viewModel.model.currency ;
+                        obj['payMethod'] = viewModel.model.payMethod;
+                        obj['effectiveDate'] = date;
+                        obj['dealPath'] = viewModel.model.dealPath;
+
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            contentType: 'application/json',
+                            url: "${base.contextPath}/fms/ord/order/validateTradeRoute",
+                            data: JSON.stringify(obj),
+                            success: function (json) {
+                                trRows = json.rows;
+                            }
+                        });
+
+                        if (trRows.length == 0) {
+                            viewModel.model.set('sublineId', null);
+                            viewModel.model.set('sublineItemName', null);
+                            kendo.ui.showInfoDialog({
+                                title: $l('hap.tip.info'),
+                                message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+                            });
+                        }
+                    }
+
+                },
+            }));
+
+            $("#applicantCustomerId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_CUSTOMER")}, {}));
+            $("#policyAmount").kendoNumericTextBox({
+                min:0
+            });
+
+            $("#submitDate").kendoDateTimePicker({
+                format: "yyyy-MM-dd HH:mm:ss"
+            });
+
+            $("#reserveDate").kendoDateTimePicker({
+                format: "yyyy-MM-dd HH:mm"
+            });
+
+            $("#issueDate").kendoDateTimePicker({
+                format: "yyyy-MM-dd HH:mm"
+            });
+            $("#contactPerson").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "meaning",
+                dataValueField: "meaning",
+                dataSource: contactPersonData,
+                clearNoData: false
+            });
+
+            $("#contactPhone").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "contractNum",
+                dataValueField: "contractNum",
+                dataSource: {
+                    transport: {
+                        read:function(options) {
+                            $.ajax({
+                                type   : "POST",
+                                url: "${base.contextPath}/fms/ord/order/queryContactPhone?supplierId=" + viewModel.model.productSupplierId,
+                                data: {},
+                                success: function(json) {
+                                    options.success(json.rows);
+                                }
+                            });
+                        }
+                    }
+                },
+                clearNoData: false
+            });
+
+            $("#meetAddress").kendoComboBox({
+                valuePrimitive: true,
+                dataTextField: "addr",
+                dataValueField: "addr",
+                dataSource: {
+                    transport: {
+                        read:function(options) {
+                            $.ajax({
+                                type   : "POST",
+                                url: "${base.contextPath}/fms/ord/order/queryAddress?supplierId=" + viewModel.model.productSupplierId,
+                                data: {},
+                                success: function(json) {
+                                    options.success(json.rows);
+                                }
+                            });
+                        }
+                    }
+                },
+                clearNoData: false
+            });
+
+            //佣金TAB
+            $("#companyId").kendoDropDownList({
+                valuePrimitive: true,
+                dataTextField: "companyName",
+                dataValueField: "companyId",
+                dataSource: {
+                    transport: {
+                        read:function(options) {
+                            $.ajax({
+                                type   : "POST",
+                                url: "${base.contextPath}/fms/ord/commission/queryCompany?orderId=" + viewModel.model.orderId,
+                                data: {},
+                                success: function(json) {
+                                    options.success(json.rows);
+                                }
+                            });
+                        }
+                    }
+                },
+                select: function (e) {
+                    viewModel.model.set("companyType",e.dataItem.companyType);
+                    viewModel.model.set("companyId",e.dataItem.companyId);
+                    $('#comGrid').data('kendoGrid').dataSource.page(1);
+                }
+            });
+            //附件
+            function onUpload(e){
+
+                e.data = {
+                    modularName:'ORD',
+                    allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+                    maxSize:20480
+                }
+
+            };
+
+            function compactUpload(){
+                if(viewModel.model.contractFileId != "" && typeof(viewModel.model.contractFileId) != "undefined"){
+                    kendo.ui.showConfirmDialog({
+                        message: '<@spring.message "fms.overwrite_file"/>'
+                    }).done(function (e) {
+                        if (e.button == 'OK') {
+                            window.reqWin = $("#reqWin").kendoWindow({
+                                title: '<@spring.message "sysfile.upload"/>',
+                                width: 400,
+                                height: 250,
+                                modal: true
+                            }).data("kendoWindow");
+                            reqWin.center().open();
+                        }
+                    });
+                }else{
+                    window.reqWin = $("#reqWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    reqWin.center().open();
+                }
+            }
+            $("#compact").kendoUpload({
+                async        : {
+                    saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+                },
+                showFileList : false,
+                upload       : onUpload,
+                success      : onCompactSuccess
+            });
+
+            function onCompactSuccess(e){
+                if(e.response.success){
+                    viewModel.model.oldContractFileId = viewModel.model.contractFileId;
+                    viewModel.model.contractFileId = e.response.file.fileId;
+                    viewModel.model.contractToken = e.response.file._token;
+                    viewModel.model.dirty = true;
+                    reqWin.close();
+                    kendo.ui.showInfoDialog({
+                        message  : '<@spring.message "spe.pleasesavedata"/>'
+                    })
+                }else{
+                    kendo.ui.showErrorDialog({
+                        message  : e.response.message
+                    })
+                }
+            }
+
+            function compactDownload() {
+                $.ajax({
+                    url : '${base.contextPath}/commons/attach/validateFile',
+                    type : "POST",
+                    dataType : "json",
+                    data : {
+                        fileId:viewModel.model.contractFileId,
+                        token:viewModel.model.contractToken
+                    },
+                    success : function(json) {
+                        if(json.success == true){
+                            url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+viewModel.model.contractFileId+'&token='+viewModel.model.contractToken;
+                            var iframe = document.getElementById("ifile");
+                            iframe.src=url;
+                            console.log(iframe);
+                        }else{
+                            kendo.ui.showErrorDialog({
+                                message  : '<@spring.message "fms.file_not_exists"/>'
+                            })
+                        }
+                    },
+                })
+
+            }
+            $(document).ready(function() {
+                $("#tabstrip").kendoTabStrip({
+                    animation:  {
+                        open: {
+                            effects: "fadeIn"
+                        }
+                    }
+                });
+            });
+
+            var BaseUrl = _basePath;
+
+            //状态跟进Grid
+            hisDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/status/his/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    update: {
+                        url: BaseUrl + "/fms/ord/status/his/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/status/his/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/status/his/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 200,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "statusHisId",
+                        fields: {}
+                    }
+                }
+            });
+
+            var hisGrid = $("#hisGrid").kendoGrid({
+                dataSource: hisDataSource,
+                height: '236px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                pageable : false,
+                columns: [
+                    {
+                        field: "statusDate",
+                        width: 150,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle; display:none;'
+                        }
+                    },
+                    {
+                        field: "status",
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align:center;vertical-align:middle;display:none;'
+                        },
+                        template: function(dataItem){
+                            var v = dataItem.status;
+                            $.each(statusData,function(i,n){
+                                if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                    v = n.meaning;
+                                    return v;
+                                }
+                            })
+                            if (typeof(v) == "undefined") {
+                                return "";
+                            }
+                            return v;
+                        },
+                        editor: function(container, options){
+                            $('<input name="' + options.field + '">')
+                                    .appendTo(container)
+                                    .kendoComboBox({
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: statusData
+                                    });
+                        },
+                    },
+                ],
+                editable: false
+            }).data("kendoGrid");
+
+            //佣金Grid
+            comDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/commission/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    update: {
+                        url: BaseUrl + "/fms/ord/commission/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/commission/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/commission/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "commissionId",
+                        fields: {}
+                    }
+                }
+            });
+
+            var thisRowData_g;
+
+            function commissionChange() {
+
+                //第一年
+                if (thisRowData_g["theFirstYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("firstYearAmount","");
+                }else {
+                    thisRowData_g.set("firstYearAmount",Math.round(thisRowData_g["theFirstYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第二年
+                if (thisRowData_g["theSecondYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("secondYearAmount","");
+                }else {
+                    thisRowData_g.set("secondYearAmount",Math.round(thisRowData_g["theSecondYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第三年
+                if (thisRowData_g["theThirdYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("thirdYearAmount","");
+                }else {
+                    thisRowData_g.set("thirdYearAmount",Math.round(thisRowData_g["theThirdYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第四年
+                if (thisRowData_g["theFourthYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("fourthYearAmount","");
+                }else {
+                    thisRowData_g.set("fourthYearAmount",Math.round(thisRowData_g["theFourthYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第五年
+                if (thisRowData_g["theFifthYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("fifthYearAmount","");
+                }else {
+                    thisRowData_g.set("fifthYearAmount",Math.round(thisRowData_g["theFifthYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第六年
+                if (thisRowData_g["theSixthYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("sixthYearAmount","");
+                }else {
+                    thisRowData_g.set("sixthYearAmount",Math.round(thisRowData_g["theSixthYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第七年
+                if (thisRowData_g["theSeventhYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("seventhYearAmount","");
+                }else {
+                    thisRowData_g.set("seventhYearAmount",Math.round(thisRowData_g["theSeventhYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第八年
+                if (thisRowData_g["theEightYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("eightYearAmount","");
+                }else {
+                    thisRowData_g.set("eightYearAmount",Math.round(thisRowData_g["theEightYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第九年
+                if (thisRowData_g["theNinthYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("ninthYearAmount","");
+                }else {
+                    thisRowData_g.set("ninthYearAmount",Math.round(thisRowData_g["theNinthYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+                //第十年
+                if (thisRowData_g["theTenthYear"]=='' || thisRowData_g["yearPayAmount"]==null) {
+                    thisRowData_g.set("tenthYearAmount","");
+                }else {
+                    thisRowData_g.set("tenthYearAmount",Math.round(thisRowData_g["theTenthYear"] * thisRowData_g["yearPayAmount"] * 100, 2) / 100);
+                }
+
+            }
+
+            var comGrid = $("#comGrid").kendoGrid({
+                dataSource: comDataSource,
+                height: '300px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                pageable: {
+                    pageSizes: [5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                },
+                columns: [
+                    {
+                        field: "itemName",
+                        title: '<@spring.message "fms.ordorder.item"/>',
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        width: 120,
+                        editor:function (container, options) {
+                            $('<span>'+options.model.itemName+'</span>')
+                                    .appendTo(container)
+                        }
+                    },
+                    {
+                        field: "currency",
+                        title: '<@spring.message "fms.ordorder.currency"/>',
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        width: 120,
+                        template:function(dataItem){
+                            var v = dataItem.currency;
+                            $.each(currencyData,function(i,n){
+                                if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                    v = n.meaning;
+                                    return v;
+                                }
+                            })
+                            return v||'';
+                        },
+                        editor:function (container, options) {
+                            $('<span>'+options.model.currency+'</span>')
+                                    .appendTo(container)
+                        }
+                    }, {
+                        field: "theFirstYear",
+                        title: '<@spring.message "fms.ordcommission.commission"/>',
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        width: 120,
+                        template:function (dataItem) {
+                            return Math.round(dataItem.theFirstYear*10000)/100 + "%";
+                        },
+                        editor: function (container, options) {
+                            //TODO set this row in var
+                            thisRowData_g = options.model;
+                            $('<input onblur="commissionChange()" required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                    min: 0,
+                                    step: 0.01,
+                                }).data("kendoNumericTextBox");
+                        }
+                    },
+                    {
+                        field: "firstYearAmount",
+                        title: '<@spring.message "fms.ordcommission.Amount"/>',
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        width: 120,
+                        editor:function (container, options) {
+                            $('<span>'+options.model.firstYearAmount+'</span>')
+                                .appendTo(container)
+                        }
+                    },
+                    {
+                        field: "firstYearActual",
+                        title: '<@spring.message "fms.ordcommission.Actual"/>',
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        width: 120,
+                        editor:function (container, options) {
+                            $('<span>'+options.model.firstYearActual+'</span>')
+                                .appendTo(container)
+                        }
+                    }],
+                editable: true
+            });
+
+            //交易路线Grid
+            rouDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/trade/route/show/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "orderId",
+                        fields: {}
+                    }
+                }
+            });
+
+            //动态生成交易路线列
+            function rouDynamicColumns(){
+
+                var gridColumns = [];
+                var trChannelCount = viewModel.model.trChannelCount;
+                var channelLevel = trChannelCount;
+
+                for(var i=1;i<= trChannelCount ;i++){
+
+                    var column = {
+                        field: "channelName"+i,
+                        title: channelLevel + '<@spring.message "fms.ordrelation.channelx"/>',
+                        width: 120,
+                        format: "{0: yyyy-MM-dd}" ,
+                        attributes: {style: "text-align:center"},
+                        headerAttributes: {
+                            "class": "table-header-cell",
+                            style: "text-align: center"
+                        },
+                    }
+                    gridColumns.push(column);
+                    channelLevel = channelLevel - 1;
+                }
+
+                var trSupplierCount = viewModel.model.trSupplierCount;
+
+                column = {
+                    field: "supplierName1",
+                    title: '<@spring.message "fms.OrdOrder.ownSupplierName"/>',
+                    width: 120,
+                    format: "{0: yyyy-MM-dd}" ,
+                    attributes: {style: "text-align:center"},
+                    headerAttributes: {
+                        "class": "table-header-cell",
+                        style: "text-align: center"
+                    },
+                }
+                gridColumns.push(column);
+
+                if (trSupplierCount > 2) {
+                    column = {
+                        field: "supplierName2",
+                        title: '<@spring.message "fms.OrdOrder.reserveSupplier"/>',
+                        width: 120,
+                        format: "{0: yyyy-MM-dd}" ,
+                        attributes: {style: "text-align:center"},
+                        headerAttributes: {
+                            "class": "table-header-cell",
+                            style: "text-align: center"
+                        },
+                    }
+                    gridColumns.push(column);
+                } else {
+                    column = {
+                        field: "reserveSupplierName",
+                        title: '<@spring.message "fms.OrdOrder.reserveSupplier"/>',
+                        width: 120,
+                        format: "{0: yyyy-MM-dd}" ,
+                        attributes: {style: "text-align:center"},
+                        headerAttributes: {
+                            "class": "table-header-cell",
+                            style: "text-align: center"
+                        },
+                        template: function(dataItem){
+                            var o = dataItem.supplierName1;
+                            return o;
+                        }
+                    }
+                    gridColumns.push(column);
+                }
+
+                if (trSupplierCount > 4) {
+
+                    for (var j = 3; j <= trSupplierCount - 2; j++) {
+                        column = {
+                            field: "supplierName" + j,
+                            title: '<@spring.message "fms.OrdOrder.middleSupplierName"/>',
+                            width: 120,
+                            format: "{0: yyyy-MM-dd}",
+                            attributes: {style: "text-align:center"},
+                            headerAttributes: {
+                                "class": "table-header-cell",
+                                style: "text-align: center"
+                            },
+                        }
+                        gridColumns.push(column);
+                    }
+                }
+
+                var signSupplierSeq = trSupplierCount - 1;
+                column = {
+                    field: "supplierName" + signSupplierSeq,
+                    title: '<@spring.message "fms.OrdOrder.signSupplierName"/>',
+                    width: 120,
+                    format: "{0: yyyy-MM-dd}",
+                    attributes: {style: "text-align:center"},
+                    headerAttributes: {
+                        "class": "table-header-cell",
+                        style: "text-align: center"
+                    },
+                }
+                gridColumns.push(column);
+
+                column = {
+                    field: "supplierName" + trSupplierCount,
+                    title: '<@spring.message "fms.ordorder.productsupplier"/>',
+                    width: 120,
+                    format: "{0: yyyy-MM-dd}",
+                    attributes: {style: "text-align:center"},
+                    headerAttributes: {
+                        "class": "table-header-cell",
+                        style: "text-align: center"
+                    },
+                }
+                gridColumns.push(column);
+                return gridColumns;
+            }
+            var rouColumns = rouDynamicColumns();
+
+            var rouGrid = $("#rouGrid").kendoGrid({
+                dataSource: rouDataSource,
+                height: '59.5px',
+                resizable: true,
+                scrollable: false,
+                navigatable: false,
+                pageable : false,
+                columns: rouColumns,
+                editable: false
+            }).data("kendoGrid");
+
+            //家庭状况Grid
+            beneDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/beneficiary/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/beneficiary/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/beneficiary/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "ordBeneficiaryId",
+                        fields: {
+                            orderId:{defaultValue:orderId},
+                            chineseName:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            relationship:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            birthDate:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            highestEducation:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            career:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}}
+                        }
+                    }
+                }
+            });
+
+            var beneGrid = $("#beneGrid").kendoGrid({
+                dataSource: beneDataSource,
+                height: '300px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                selectable: 'multiple, rowbox',
+                pageable: {
+                    pageSizes: [5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                },
+                toolbar: [
+                    {
+                        template: '<button type="button"  onclick="newBeneData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+                    },
+                    {
+                        template: '<span onclick="deleteBeneData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+                    },
+                    {
+                        name: "cancel",
+                        template: '<span class="btn btn-default k-grid-cancel-changes">' +
+                        '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+                    }
+                ],
+                columns: [
+                    {
+                        field: "chineseName",
+                        title: '<@spring.message "fms.OrdBeneficiary.chineseName"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                    }, {
+                        field: "relationship",
+                        title: '<@spring.message "fms.ctmcustomer.relationship"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                    }, {
+                        field: "birthDate",
+                        title: '<@spring.message "fms.ctmcustomer.birthdate"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        format : "{0:yyyy-MM-dd}",
+                        editor: function (container, options) {
+                            $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDatePicker();
+                        }
+                    },{
+                        field: "highestEducation",
+                        title: '<@spring.message "fms.OrdBeneficiary.highestEducation"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+
+                    }, {
+                        field: "career",
+                        title: '<@spring.message "fms.OrdBeneficiary.career"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    }
+                ],
+                editable: true
+            }).data("kendoGrid");
+
+            //新增家庭关系
+            function newBeneData() {
+                $('#beneGrid').data('kendoGrid').addRow();
+            }
+            //删除家庭关系
+            function deleteBeneData() {
+
+                Hap.deleteGridSelection({
+                    grid: $('#beneGrid')
+                });
+
+            }
+            //教育经历Grid
+            educationDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/cst/education/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/cst/education/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/cst/education/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "cstEducationId",
+                        fields: {
+                            orderId:{defaultValue:orderId},
+                            educationTime:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            school:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            certificate:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            profession:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}},
+                            fullTimeFlag:{defaultValue: 'Y',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}
+                        }
+                    }
+                }
+            });
+
+            var educationGrid = $("#educationGrid").kendoGrid({
+                dataSource: educationDataSource,
+                height: '300px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                selectable: 'multiple, rowbox',
+                pageable: {
+                    pageSizes: [5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                },
+                toolbar: [
+                    {
+                        template: '<button type="button"  onclick="newEduData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+                    },
+                    {
+                        template: '<span onclick="deleteEduData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+                    },
+                    {
+                        name: "cancel",
+                        template: '<span class="btn btn-default k-grid-cancel-changes">' +
+                        '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+                    }
+                ],
+                columns: [
+                    {
+                        field: "educationTime",
+                        title: '<@spring.message "fms.ctmEducation.educationTime"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        format : "{0:yyyy-MM-dd}",
+                        editor: function (container, options) {
+                            $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDatePicker();
+                        }
+                    }, {
+                        field: "school",
+                        title: '<@spring.message "fms.ctmEducation.school"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                    }, {
+                        field: "certificate",
+                        title: '<@spring.message "fms.ctmEducation.certificate"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    },{
+                        field: "profession",
+                        title: '<@spring.message "fms.ctmEducation.profession"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    }, {
+                        field: "fullTimeFlag",
+                        title: '<@spring.message "fms.ctmEducation.fullTimeFlag"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        attributes: {style: "text-align:center"}
+                    }
+                ],
+                editable: true
+            }).data("kendoGrid");
+            //新增教育经历
+            function newEduData() {
+                $('#educationGrid').data('kendoGrid').addRow();
+            }
+            //删除教育经历
+            function deleteEduData() {
+
+                Hap.deleteGridSelection({
+                    grid: $('#educationGrid')
+                });
+
+            }
+            //技能特长Grid
+            skillDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/cst/skill/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/cst/skill/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/cst/skill/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "cstSkillId",
+                        fields: {
+                            orderId:{defaultValue:orderId},
+                            skillName:{validation:{required:true,validationMessage:'<@spring.message "hap.error.nullexception"/>'}}
+                        }
+                    }
+                }
+            });
+
+            var skillGrid = $("#skillGrid").kendoGrid({
+                dataSource: skillDataSource,
+                height: '300px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                selectable: 'multiple, rowbox',
+                pageable: {
+                    pageSizes: [5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                },
+                toolbar: [
+                    {
+                        template: '<button type="button"  onclick="newSkillData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+                    },
+                    {
+                        template: '<span onclick="deleteSkillData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+                    },
+                    {
+                        name: "cancel",
+                        template: '<span class="btn btn-default k-grid-cancel-changes">' +
+                        '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+                    }
+                ],
+                columns: [
+                    {
+                        field: "skillName",
+                        title: '<@spring.message "fms.ctmSkill.skillName"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                    }, {
+                        field: "certificate",
+                        title: '<@spring.message "fms.ctmSkill.certificate"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                    }, {
+                        field: "description",
+                        title: '<@spring.message "fms.ctmSkill.description"/>',
+                        width: 120,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    }],
+                editable: true
+            }).data("kendoGrid");
+            //新增技能特长
+            function newSkillData() {
+                $('#skillGrid').data('kendoGrid').addRow();
+            }
+            //删除技能特长
+            function deleteSkillData() {
+
+                Hap.deleteGridSelection({
+                    grid: $('#skillGrid')
+                });
+
+            }
+            //工作经历Grid
+            workDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: BaseUrl + "/fms/ord/cst/work/query",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: BaseUrl + "/fms/ord/cst/work/remove",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    create: {
+                        url: BaseUrl + "/fms/ord/cst/work/submit",
+                        type: "POST",
+                        contentType: "application/json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type)
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "cstWorkId",
+                        fields: {
+                            orderId:{defaultValue:orderId}
+                        }
+                    }
+                }
+            });
+
+            var workGrid = $("#workGrid").kendoGrid({
+                dataSource: workDataSource,
+                height: '300px',
+                resizable: true,
+                scrollable: true,
+                navigatable: false,
+                selectable: 'multiple, rowbox',
+                pageable: {
+                    pageSizes: [5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                },
+                toolbar: [
+                    {
+                        template: '<button type="button"  onclick="newWorkData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+                    },
+                    {
+                        template: '<span onclick="deleteWorkData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                        '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+                    },
+                    {
+                        name: "cancel",
+                        template: '<span class="btn btn-default k-grid-cancel-changes">' +
+                        '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+                    }
+                ],
+                columns: [
+                    {
+                        field: "startDate",
+                        title: '<@spring.message "fms.ctmWork.startDate"/>',
+                        width: 100,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        format : "{0:yyyy-MM-dd}",
+                        editor: function (container, options) {
+                            $('<input name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDatePicker();
+                        }
+                    }, {
+                        field: "endDate",
+                        title: '<@spring.message "fms.ctmWork.endDate"/>',
+                        width: 100,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        },
+                        format : "{0:yyyy-MM-dd}",
+                        editor: function (container, options) {
+                            $('<input name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDatePicker();
+                        }
+                    }, {
+                        field: "companyName",
+                        title: '<@spring.message "fms.ctmWork.companyName"/>',
+                        width: 100,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    }, {
+                        field: "description",
+                        title: '<@spring.message "fms.ctmWork.description"/>',
+                        width: 200,
+                        headerAttributes: {
+                            'class':'table-header-cell',
+                            style:'text-align: center;vertical-align:middle;'
+                        }
+                    }],
+                editable: true
+            }).data("kendoGrid");
+            //新增工作经历
+            function newWorkData() {
+                $('#workGrid').data('kendoGrid').addRow();
+            }
+            //删除工作经历
+            function deleteWorkData() {
+
+                Hap.deleteGridSelection({
+                    grid: $('#workGrid')
+                });
+
+            }
+            //页面提交保存
+            function saveData () {
+                //验证Form页面
+                var validator = $("#page-content").data("kendoValidator");
+                if (!validator.validate()) {
+                    kendo.ui.showErrorDialog({
+                        message  : '<@spring.message "fms.cnlchannel.validate_false"/>'
+                    })
+                }else {
+                        //var unique = zeroModal.loading(6);
+                        //提交订单信息
+                        Hap.submitForm({
+                            url: '${base.contextPath}/fms/ord/order/submit',
+                            formModel: viewModel.model,
+                            grid: {
+                                ordBeneficiary: $('#beneGrid'),
+                                ordCstEducation : $('#educationGrid'),
+                                ordCstSkill : $('#skillGrid'),
+                                ordCstWork : $('#workGrid'),
+                            },
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                        //提交客户信息
+                        Hap.submitForm({
+                            url: '${base.contextPath}/fms/ord/customer/submit',
+                            formModel: ctmViewModel.model,
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                        kendo.ui.showInfoDialog({
+                            title: $l('hap.tip.info'),
+                            message: $l('hap.tip.success')
+                        });
+                }
+            }
+            function updateStatus(){
+                var url = 'order_invest_update_status.html?orderId='+ orderId + '&status=' + viewModel.model.status + '&type=FORM';
+                var updateStatusWin =  $("#upStatusWin").kendoWindow({
+                    width: 600,
+                    height: 400,
+                    title: '<@spring.message "fms.ordorder.updateStatus"/>',
+                    content: url,
+                    iframe:  true,
+                    visible: false,
+                    modal:true
+                }).data("kendoWindow");
+                updateStatusWin.center().open();
+                updateStatusWin.setOptions({title: '<@spring.message "fms.ordorder.updateStatus"/>'})
+            }
+            //返回按钮
+            function cancelData() {
+                parent.closeTab("order_invest_detail"+viewModel.model.orderId);
+            }
+        </script>
+        </body>
+        </html>

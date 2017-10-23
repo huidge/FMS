@@ -1,0 +1,2206 @@
+<#include "../include/header.html">
+<style>
+    label.col-sm-3.control-label {
+        text-align: right;
+        padding-top: 7px;
+    }
+    #query-form .row{
+        margin-bottom: 10px;
+    }
+    #Grid th{
+        text-align: center;
+        padding-bottom: 22px;
+    }
+</style>
+<script src="${base.contextPath}/clb/common/clbCode?currency=PUB.CURRENCY&payMethod=CMN.PAY_METHOD&priceType=CMN.PRICE_TYPE&channelTypeCode=CNL.CHANNEL_CLASS"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        checkFunction: function () {
+        	var grid = $("#Grid").data("kendoGrid");
+        	var dataRows = grid.items();
+        	var selectRows =$('#Grid tr.k-state-selected');
+        	$("#checkGrid").data("kendoGrid").dataSource.page(1);
+        	//$("#checkGrid").data("kendoGrid").dataSource._data = [];
+        	if (selectRows.length > 0) {
+        		setTimeout(function() {
+        			for (var i=0; i<selectRows.length; i++) {
+            			// 获取行号
+                    	var rowIndex = dataRows.index(selectRows[i]);
+                    	// 获取行对象
+                    	var data = grid.dataItem(selectRows[i]);
+                    	var version=1;
+                    	if(data.extraId){
+                    		version=data.version;
+                    	}
+                    	var data={supplierId:data.supplierId,supplierName:data.supplierName,parentExtraId:data.extraId,superiorSupplierId:data.superiorSupplierId,
+                    			parentSupplierName:data.parentSupplierName,channelTypeCode:data.channelTypeCode,itemId:data.itemId,itemCode:data.itemCode,
+                    			itemName:data.itemName,itemSupplierName:data.itemSupplierName,contributionPeriod:data.contributionPeriod,
+                    			currency:data.currency,payMethod:data.payMethod,policyholdersMinAge:data.policyholdersMinAge,
+                    			policyholdersMaxAge:data.policyholdersMaxAge,superiorExtra1:data.extra1,superiorExtra2:data.extra2,
+                    			superiorExtra3:data.extra3,superiorExtra4:data.extra4,superiorExtra5:data.extra5,
+                    			superiorExtra6:data.extra6,superiorExtra7:data.extra7,superiorExtra8:data.extra8,superiorExtra9:data.extra9,
+                    			superiorExtra10:data.extra10,version:version,effectiveStartDate:data.effectiveStartDate,effectiveEndDate:data.effectiveEndDate,
+                    			extra1:0,extra2:0,extra3:0,extra4:0,extra5:0,extra6:0,extra7:0,extra8:0,extra9:0,extra10:0,
+                    			adjustment1:1,adjustment2:1,adjustment3:1,adjustment4:1,adjustment5:1,adjustment6:1,adjustment7:1,adjustment8:1,adjustment9:1,adjustment10:1};
+                    	$("#checkGrid").data("kendoGrid").dataSource._data.push(data);
+            		}
+            	}, 1000);
+        	}else{
+        		kendo.ui.showErrorDialog({
+                    title: '提示信息',
+                    message: '请选中数据!'
+                }).done(function (event) {
+                });
+        		return false;
+        	}
+        },
+        //返回
+        replyFunction: function () {
+        	window.location.href="${base.contextPath}/commission/cmn_extra.html";
+        },
+        saveFunction:function(){
+        	var checkGrid=$("#checkGrid").data("kendoGrid").dataSource;
+        	for (var i=0; i<checkGrid._data.length; i++) {
+        		if(checkGrid._data[i].supplierId==null || checkGrid._data[i].supplierId==undefined || checkGrid._data[i].supplierName==undefined || checkGrid._data[i].supplierName==''){
+                    kendo.ui.showErrorDialog({
+                        message:"第"+(i+1)+"条数据，供应商不能为空"
+                    });
+                    return false;
+                }else if(checkGrid._data[i].policyholdersMinAge>=checkGrid._data[i].policyholdersMaxAge){
+                    kendo.ui.showErrorDialog({
+                        message:"第"+(i+1)+"条数据，年龄范围不合法"
+                    });
+                    return false;
+                }else if(checkGrid._data[i].channelTypeCode==null || checkGrid._data[i].channelTypeCode==undefined){
+                    kendo.ui.showErrorDialog({
+                        message:"第"+(i+1)+"条数据，渠道不能为空!"
+                    });
+                    return false;
+                }
+        	}
+        	
+        	for (var i=0; i<checkGrid._data.length; i++) {
+        		
+        		$.ajax({
+                    	async : false,
+                    	url:"${base.contextPath}/fms/cmn/extra/queryMaxVersion",
+                        method:"POST",
+                        contentType:"application/json",
+                        dataType:"json",
+                        data:JSON.stringify(checkGrid._data[i]),
+                        error:function(data){
+                        	
+                        },
+                        success:function (data) {
+                            var num=i;
+                            var maxVersion = data.version;
+                            if(maxVersion && new Date(data.effectiveStartDate)>=checkGrid._data[num].effectiveStartDate){
+                            	kendo.ui.showInfoDialog({
+                                    message:"第"+(num+1)+"条数据操作失败。存在旧版本数据，设置的开始有效时间必须大于旧版本的开始有效时间。旧版本的开始有效时间是："+data.effectiveStartDate
+                                });
+                            }else{
+                            	maxVersion=maxVersion||0;
+	                            if(maxVersion>=1){
+	                            	kendo.ui.showConfirmDialog({
+	                                    title: '提示',
+	                                    message:"第"+(num+1)+"条数据，存在旧版本数据,是否生成新版本?"
+	                                }).done(function(event) {
+	                                	if (event.button == 'OK') {
+	                                    	$.ajax({
+	                                        	async : false,
+	                                        	url:"${base.contextPath}/fms/cmn/extra/addVersion/"+maxVersion,
+	                                            method:"POST",
+	                                            contentType:"application/json",
+	                                            dataType:"json",
+	                                            data:JSON.stringify(checkGrid._data[num]),
+	                                            success:function (data) {
+	                                                if(data.success){
+	                                                    kendo.ui.showInfoDialog({
+	                                                        message:"第"+(num+1)+"条数据，操作成功"
+	                                                    }).done(function () {
+	                                                        
+	                                                    });
+	                                                }else {
+	                                                    kendo.ui.showInfoDialog({
+	                                                        message:"第"+(num+1)+"条数据，操作失败"
+	                                                    });
+	                                                }
+	                                            }
+	                                        });
+	                                    }
+	                                })
+	                            }else {
+	                            	$.ajax({
+	                            		async : false,
+	                            		url:"${base.contextPath}/fms/cmn/extra/submitExtra",
+	                                    method:"POST",
+	                                    contentType:"application/json",
+	                                    dataType:"json",
+	                                    data:JSON.stringify(checkGrid._data[num]),
+	                                    success:function (data) {
+	                                        if(data.success){
+	                                            kendo.ui.showInfoDialog({
+	                                                message:"第"+(num+1)+"条数据，操作成功"
+	                                            }).done(function () {
+	                                                
+	                                            });
+	                                        }else {
+	                                            kendo.ui.showInfoDialog({
+	                                                message:"第"+(num+1)+"条数据，操作失败"
+	                                            });
+	                                        }
+	                                    }
+	                                });
+	                            }
+                            }
+                        }
+                    });
+        	}
+        },
+        queryResource: function (e) {
+            grid.dataSource.page(1);
+        },
+        resetForm:function (e) {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        },
+        cancelFunction:function (e) {
+        	$("#checkGrid").data("kendoGrid").dataSource.page(1);
+        }
+    });
+</script>
+<body>
+<div id="page-content">
+    <!--查询面板-->
+    <div class="panel">
+        <div id="query-form">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="itemSupplierId" class="col-sm-3 control-label"><@spring.message "CmnOverride.itemSupplierName"/></label>
+                            <div class="col-sm-9">
+                                <input id="itemSupplierId" style="width:100%"
+                                       data-bind="value:model.itemSupplierId">
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="itemName" class="col-sm-3 control-label"><@spring.message "CmnBasic.itemName"/></label>
+                            <div class="col-sm-9">
+                                <input id="itemName" style="width:100%"
+                                       data-bind="value:model.itemName">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="contributionPeriod" class="col-sm-3 control-label"><@spring.message "CmnBasic.contributionPeriod"/></label>
+                            <div class="col-sm-9">
+                                <input id="contributionPeriod" style="width:100%" class="k-textbox"
+                                       data-bind="value:model.contributionPeriod">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="currency" class="col-sm-3 control-label"><@spring.message "CmnBasic.currency"/></label>
+                            <div class="col-sm-9">
+                                <input id="currency" style="width:100%"
+                                       data-bind="value:model.currency">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="payMethod" class="col-sm-3 control-label"><@spring.message "CmnBasic.payMethod"/></label>
+                            <div class="col-sm-9">
+                                <input id="payMethod" style="width:100%"
+                                       data-bind="value:model.payMethod">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <span class="btn btn-primary" style="width:70px" data-bind="click:queryResource">
+                <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/>
+            </span>
+            <span class="btn btn-default" style="width:70px" data-bind="click:resetForm">
+                <i class="fa fa-refresh" style="margin-right:3px;"></i><@spring.message "hap.reset"/>
+            </span>
+        </div>
+    </div>
+
+    <div class="pull-left" id="toolbar-btn" style="margin-bottom:10px;">
+        <span style="float:left;margin-right:5px;" class="btn btn-primary" data-bind="click:checkFunction">
+          <i class="fa fa-check" style="margin-right:3px;"></i>选中并设置我的Extra
+        </span>
+        <span style="float:left;margin-right:5px;" class="btn btn-success" data-bind="click:replyFunction">
+            <i class="fa fa-reply" style="margin-right:3px;"></i>返回至汇总页面
+        </span>
+        <!-- <span style="float:left;margin-right:5px;" class="btn btn-success" data-bind="click:saveFunction">
+            <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/>
+        </span>
+        <span style="float:left;margin-right:5px;" class="btn btn-default" data-bind="click:cancelFunction">
+            <i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/>
+        </span> -->
+    </div>
+    <div class="panel" style="clear:both">
+        <div id="Grid" class="table"></div>
+    </div>
+    
+    <div id="checkData">
+	    <div class="pull-left" style="margin-bottom:10px;" >
+		      	<span id="saveBtn" style="float:left;margin-right:5px;" class="btn btn-success" data-bind="click:saveFunction">
+		            <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/>
+		        </span>
+		        <span style="float:left;margin-right:5px;" class="btn btn-default" data-bind="click:cancelFunction">
+            		<i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/>
+            	</span>
+		 </div> 
+		<div class="panel" style="height; clear:both">
+		        <div id="checkGrid" class="table"></div>
+	   </div>
+   	</div>
+</div>
+
+
+<script type="text/javascript">
+
+    var BaseUrl = _basePath;
+
+    $('#itemSupplierId').kendoLov({
+        code: "CMN_PRODUCT_COMPANY",
+        contextPath: '${base.contextPath}',
+        locale: '${base.locale}'
+    });
+
+    $('#itemName').kendoLov({
+        code: "CMN_PRODUCT_NAME",
+        contextPath: '${base.contextPath}',
+        locale: '${base.locale}',
+        textField:'itemId',
+        dataTextField:'itemId',
+    });
+
+    $('#currency').kendoDropDownList({
+        optionLabel: "-请选择币种-",
+        filter: "contains",
+        valuePrimitive: true,
+        dataTextField : "meaning",
+        dataValueField : "value",
+        dataSource:currency
+    });
+
+    $('#payMethod').kendoDropDownList({
+        optionLabel: "-请选择繳款方式-",
+        filter: "contains",
+        valuePrimitive: true,
+        dataTextField : "meaning",
+        dataValueField : "value",
+        dataSource:payMethod
+    });
+
+
+    kendo.bind($('#page-content'), viewModel);
+
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cmn/extra/queryExtraBasic",
+                type: "POST",
+                dataType: "json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "extraId",
+                fields: {
+                	superiorExtra1:{type: "number",defaultValue:0},
+                    extra1:{type: "number",defaultValue:0},
+                    adjustment1:{type: "number",defaultValue:0},
+                    superiorExtra2:{type: "number",defaultValue:0},
+                    extra2:{type: "number",defaultValue:0},
+                    adjustment2:{type: "number",defaultValue:0},
+                    superiorExtra3:{type: "number",defaultValue:0},
+                    extra3:{type: "number",defaultValue:0},
+                    adjustment3:{type: "number",defaultValue:0},
+                    superiorExtra4:{type: "number",defaultValue:0},
+                    extra4:{type: "number",defaultValue:0},
+                    adjustment4:{type: "number",defaultValue:0},
+                    superiorExtra5:{type: "number",defaultValue:0},
+                    extra5:{type: "number",defaultValue:0},
+                    adjustment5:{type: "number",defaultValue:0},
+                    superiorExtra6:{type: "number",defaultValue:0},
+                    extra6:{type: "number",defaultValue:0},
+                    adjustment6:{type: "number",defaultValue:0},
+                    superiorExtra7:{type: "number",defaultValue:0},
+                    extra7:{type: "number",defaultValue:0},
+                    adjustment7:{type: "number",defaultValue:0},
+                    superiorExtra8:{type: "number",defaultValue:0},
+                    extra8:{type: "number",defaultValue:0},
+                    adjustment8:{type: "number",defaultValue:0},
+                    superiorExtra9:{type: "number",defaultValue:0},
+                    extra9:{type: "number",defaultValue:0},
+                    adjustment9:{type: "number",defaultValue:0},
+                    superiorExtra10:{type: "number",defaultValue:0},
+                    extra10:{type: "number",defaultValue:0},
+                    adjustment10:{type: "number",defaultValue:0},
+                    policyholdersMinAge:{type: "number",defaultValue:0},
+                    policyholdersMaxAge:{type: "number",defaultValue:100},
+                    version:{type: "number",defaultValue:1},
+                    effectiveStartDate:{type: "date",defaultValue:new Date()},
+                    effectiveEndDate:{type: "date",defaultValue:'2099-12-31'}
+                },
+                editable:function (col) {
+                    return !(this.extraId != "" || col == "version");
+                }
+            }
+        }
+    });
+    
+    dataSourceCheck = new kendo.data.DataSource({
+    	transport: {
+    		read: {
+                url: BaseUrl + "/fms/cmn/override/queryEmptyData",
+                type: "POST",
+                dataType: "json"
+            },
+           parameterMap: function(options, type) {
+           	if (type !== "read" && options.models) {
+                   var datas = options.models
+                   if (type == 'create' || type == 'update') {
+                       datas = options.models.map(function (data) {
+                           data['__status'] = (type == 'create' ? 'add' : 'update');
+                           return data;
+                       })
+                   }
+                   return kendo.stringify(datas);
+               } else if (type === "read") {
+                   var map = viewModel.model.toJSON();
+                   map.page = options.page;
+                   map.pagesize = options.pageSize;
+                   for (var k in map) {
+                       if (map[k] === '' || map[k] === null || map[k] === undefined)
+                           delete map[k]
+                   }
+                   return map;
+               }  
+           }
+       },
+       batch: true,
+       serverPaging: true,
+       pageSize: 10,
+       schema: {
+           data:'rows',
+           total:'total',
+           model: {
+               id: "extraId",
+               fields: {
+            	   supplierId:{validation:{required:true}},
+            	   superiorExtra1:{type: "number",defaultValue:0},
+                   extra1:{type: "number",defaultValue:0},
+                   adjustment1:{type: "number",defaultValue:0},
+                   superiorExtra2:{type: "number",defaultValue:0},
+                   extra2:{type: "number",defaultValue:0},
+                   adjustment2:{type: "number",defaultValue:0},
+                   superiorExtra3:{type: "number",defaultValue:0},
+                   extra3:{type: "number",defaultValue:0},
+                   adjustment3:{type: "number",defaultValue:0},
+                   superiorExtra4:{type: "number",defaultValue:0},
+                   extra4:{type: "number",defaultValue:0},
+                   adjustment4:{type: "number",defaultValue:0},
+                   superiorExtra5:{type: "number",defaultValue:0},
+                   extra5:{type: "number",defaultValue:0},
+                   adjustment5:{type: "number",defaultValue:0},
+                   superiorExtra6:{type: "number",defaultValue:0},
+                   extra6:{type: "number",defaultValue:0},
+                   adjustment6:{type: "number",defaultValue:0},
+                   superiorExtra7:{type: "number",defaultValue:0},
+                   extra7:{type: "number",defaultValue:0},
+                   adjustment7:{type: "number",defaultValue:0},
+                   superiorExtra8:{type: "number",defaultValue:0},
+                   extra8:{type: "number",defaultValue:0},
+                   adjustment8:{type: "number",defaultValue:0},
+                   superiorExtra9:{type: "number",defaultValue:0},
+                   extra9:{type: "number",defaultValue:0},
+                   adjustment9:{type: "number",defaultValue:0},
+                   superiorExtra10:{type: "number",defaultValue:0},
+                   extra10:{type: "number",defaultValue:0},
+                   adjustment10:{type: "number",defaultValue:0},
+                   policyholdersMinAge:{type: "number",defaultValue:0},
+                   policyholdersMaxAge:{type: "number",defaultValue:100},
+                   version:{type: "number",defaultValue:1},
+                   effectiveStartDate:{type: "date",defaultValue:new Date()},
+                   effectiveEndDate:{type: "date",defaultValue:'2099-12-31'}
+               }
+           }
+       }
+    });
+    
+
+    var grid = $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '400px',
+        resizable: true,
+        scrollable: true,
+        rownumber: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            //供应商名称
+            {
+                field: "parentSupplierName",
+                title: '<@spring.message "CmnOverride.parentSupplierName"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输"  name="' + options.field + '"/>')
+                        .appendTo(container).kendoLov({
+                        code: "CMN_SUPPLIER",
+                        contextPath: '${base.contextPath}',
+                        locale: '${base.locale}',
+                        model: options.model,
+                        textField: 'supplierName',
+                        select: function (e) {
+                            options.model.set('supplierId',e.item.supplierId);
+                            options.model.set('supplierName',e.item.name);
+                        }
+                    });
+                }
+            },
+            //产品公司
+            {
+                field: "itemSupplierName",
+                title: '<@spring.message "CmnOverride.itemSupplierName"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input disabled style="background-color: #eee;" class="k-textbox" name="' + options.field + '"/>')
+                        .appendTo(container);
+                }
+            },
+            //产品编号
+            {
+                field: "itemCode",
+                title: '<@spring.message "CmnOverride.itemCode"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输"  name="' + options.field + '"/>')
+                        .appendTo(container).kendoLov({
+                        code: "CMN_PRODUCT",
+                        contextPath: '${base.contextPath}',
+                        locale: '${base.locale}',
+                        model: options.model,
+                        textField: 'itemCode',
+                        select: function (e) {
+                            options.model.set('itemId',e.item.itemId);
+                            options.model.set('itemCode',e.item.itemCode);
+                            options.model.set('itemSupplierName',e.item.name);
+                            options.model.set('itemSupplierId',e.item.supplierId);
+                            options.model.set('itemName',e.item.itemName);
+                        },
+                        change:function(e){
+                            if(e.sender._prev == '' || e.sender._prev == null){
+                                options.model.set('itemId',null);
+                                options.model.set('itemCode',null);
+                                options.model.set('itemSupplierId',null);
+                                options.model.set('itemSupplierName',null);
+                                options.model.set('itemName',null);
+                            }
+                        }
+                    });
+                }
+            },
+            //产品名称
+            {
+                field: "itemName",
+                title: '<@spring.message "CmnOverride.itemName"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input disabled style="background-color: #eee;" class="k-textbox" name="' + options.field + '"/>')
+                        .appendTo(container);
+                }
+            },
+            //供款期
+            {
+                field: "contributionPeriod",
+                title: '<@spring.message "CmnBasic.contributionPeriod"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input class=\"k-textbox\"  required data-required-msg="必输"  name="' + options.field + '"/>')
+                        .appendTo(container);
+                }
+            },
+            //币种
+            {
+                field: "currency",
+                title: '<@spring.message "CmnBasic.currency"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                template: function (dataItem) {
+                    for (var i in currency) {
+                        if (dataItem.currency == currency[i].value) {
+                            return currency[i].meaning;
+                        }
+                    }
+                    return "";
+                },
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            optionLabel: "-请选择币种-",
+                            filter: "contains",
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            valuePrimitive: true,
+                            dataSource: currency
+                        });
+                }
+            },
+            //缴费方式
+            {
+                field: "payMethod",
+                title: '<@spring.message "CmnBasic.payMethod"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                template: function (dataItem) {
+                    for (var i in payMethod) {
+                        if (dataItem.payMethod == payMethod[i].value) {
+                            return payMethod[i].meaning;
+                        }
+                    }
+                    return "";
+                },
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            optionLabel: "-请选择缴款方式-",
+                            filter: "contains",
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            valuePrimitive: true,
+                            dataSource: payMethod
+                        });
+                }
+            },
+            //受保人年龄起
+            {
+                field: "policyholdersMinAge",
+                title: '<@spring.message "CmnBasic.policyholdersMinAge"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            format: "#. ",
+                            min: 0,
+                            max: 100,
+                            step: 1
+                        });
+                }
+            },
+            //受保人年龄至
+            {
+                field: "policyholdersMaxAge",
+                title: '<@spring.message "CmnBasic.policyholdersMaxAge"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                editor: function (container, options) {
+                    $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            format: "#. ",
+                            min: 1,
+                            max: 100,
+                            step: 1
+                        });
+                }
+            },
+            //第一年佣金
+             	  {
+                        field: "superiorExtra1",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra1*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra1",
+                        title: '第一年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra1*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment1",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment1*100,2) + "%";
+                        }
+                    },
+            //第二年佣金
+            		{
+                        field: "superiorExtra2",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra2*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra2",
+                        title: '第二年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra2*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment2",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment2*100,2) + "%";
+                        }
+                    },
+            //第三年佣金
+                    {
+                        field: "superiorExtra3",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra3*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra3",
+                        title: '第三年Extrae',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra3*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment3",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment3*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra4",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra4*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra4",
+                        title: '第四年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra4*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment4",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment4*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra5",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra5*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra5",
+                        title: '第五年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra5*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment5",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment5*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra6",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra6*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra6",
+                        title: '第六年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra6*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment6",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment6*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra7",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra7*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra7",
+                        title: '第七年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra7*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment7",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment7*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra8",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra8*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra8",
+                        title: '第八年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra8*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment8",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment8*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra9",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra9*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra9",
+                        title: '第九年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra9*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment9",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment9*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "superiorExtra10",
+                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.superiorExtra10*100,2) + "%";
+                        }
+                    },
+                    {
+                        field: "extra10",
+                        title: '第十年Extra',
+                        width: 120,
+                        attributes: {style: "text-align:center"},
+                        template:function (dataItem) {
+                            return toFixed(dataItem.extra10*100,2) + "%";
+                        },
+                        editor: function (container, options) {
+                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoNumericTextBox({
+                                	format: "p2",
+                                    decimals: 4,
+                                	min: 0,
+                                    step: 0.01
+                                });
+                        }
+                    },
+                    {
+                        field: "adjustment10",
+                        title: '<@spring.message "CmnOverride.adjustment"/>',
+                        hidden:true,
+                        template:function (dataItem) {
+                            return toFixed(dataItem.adjustment10*100,2) + "%";
+                        }
+                    },
+            //版本
+            {
+                field: "version",
+                title: '<@spring.message "CmnBasic.version"/>',
+                width: 120,
+                attributes: {style: "text-align:center"}
+            },
+            //有效期起
+            {
+                field: "effectiveStartDate",
+                title: '<@spring.message "CmnBasic.effectiveStartDate"/>',
+                width: 150,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                },
+                editor: function(container, options) {
+                    var max = options.model.effectiveEndDate||undefined;
+                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDatePicker({
+                            format:"yyyy-MM-dd",
+                            max:max,
+                            min:new Date(),
+                            open: function() {
+                                var maxChange = options.model.effectiveEndDate||undefined;
+                                this.max(maxChange);
+                            }
+                        });
+                }
+            },
+            //有效期至
+            {
+                field: "effectiveEndDate",
+                title: '<@spring.message "CmnBasic.effectiveEndDate"/>',
+                width: 150,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                },
+                editor: function(container, options) {
+                    var min = options.model.effectiveStartDate||undefined;
+                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDatePicker({
+                            format:"yyyy-MM-dd",
+                            min:min,
+                            open: function() {
+                                var minChange = options.model.effectiveStartDate||undefined;
+                                this.min(minChange);
+                            }
+                        });
+                }
+            }
+        ],
+        editable: false
+    }).data('kendoGrid');
+    
+
+	var checkGrid = $("#checkGrid").kendoGrid({
+	    	dataSource: dataSourceCheck,
+	        //width:500,
+	        height:'400px',
+	        navigatable: true,
+	        resizable: true,
+	        scrollable: true,
+	        editable: true,
+	        columns: [
+	            //供应商名称
+	            {
+	                field: "supplierId",
+	                title: '<@spring.message "CmnOverride.supplierName"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                template: function (dataItem) {
+	                    return dataItem.supplierName||'';
+	                },
+	                editor: function (container, options) {
+	                	if(options.model.supplierName  && !(options.model.isAdmin) ){
+	                		container.html(options.model.supplierName);
+	                	}else{
+	                		$('<input required data-required-msg="必输"  name="' + options.field + '"/>')
+	                        .appendTo(container).kendoLov({
+		                        code: "CMN_SUPPLIER",
+		                        contextPath: '${base.contextPath}',
+		                        locale: '${base.locale}',
+		                        model: options.model,
+		                        textField: 'supplierName',
+		                        query: function(e) {
+			                           e.param['notSupplierId'] = options.model.superiorSupplierId;
+			                    },
+		                        select: function (e) {
+		                        	options.model.set('isAdmin','Y');
+		                            options.model.set('supplierId',e.item.supplierId);
+		                            options.model.set('supplierName',e.item.name);
+		                        },
+		                        change:function(e){
+		                            changePrd(options);
+		                        }
+		                    });
+	                	}
+	                }
+	            },
+	            //上级供应商
+	            {
+	                field: "parentSupplierName",
+	                title: '<@spring.message "CmnOverride.parentSupplierName"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.parentSupplierName);
+	                }
+	            },
+	            //渠道分类
+	            {
+	                field: "channelTypeCode",
+	                title: '<@spring.message "CmnOverride.channelTypeCode"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                template: function (dataItem) {
+	                    for (var i in channelTypeCode) {
+	                        if (dataItem.channelTypeCode == channelTypeCode[i].value) {
+	                            return channelTypeCode[i].meaning;
+	                        }
+	                    }
+	                    return "";
+	                },
+	                editor: function (container, options) {
+	                	$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            filter: "contains",
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            valuePrimitive: true,
+                            dataSource:channelTypeCode,
+                            change:function (e){
+                            	changePrd(options);
+                            }
+                        });
+	                }
+	            },
+	            //产品公司
+	            {
+	                field: "itemSupplierName",
+	                title: '<@spring.message "CmnOverride.itemSupplierName"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.itemSupplierName);
+	                }
+	            },
+	            //产品编号
+	            {
+	                field: "itemCode",
+	                title: '<@spring.message "CmnOverride.itemCode"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.itemCode);
+	                }
+	            },
+	            //产品名称
+	            {
+	                field: "itemName",
+	                title: '<@spring.message "CmnOverride.itemName"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.itemName);
+	                }
+	            },
+	            //供款期
+	            {
+	                field: "contributionPeriod",
+	                title: '<@spring.message "CmnBasic.contributionPeriod"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.contributionPeriod);
+	                }
+	            },
+	            //币种
+	            {
+	                field: "currency",
+	                title: '<@spring.message "CmnBasic.currency"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                template: function (dataItem) {
+	                    for (var i in currency) {
+	                        if (dataItem.currency == currency[i].value) {
+	                            return currency[i].meaning;
+	                        }
+	                    }
+	                    return "";
+	                },
+	                editor: function (container, options) {
+	                	container.html(options.model.currency);
+	                }
+	            },
+	            //缴费方式
+	            {
+	                field: "payMethod",
+	                title: '<@spring.message "CmnBasic.payMethod"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                template: function (dataItem) {
+	                    for (var i in payMethod) {
+	                        if (dataItem.payMethod == payMethod[i].value) {
+	                            return payMethod[i].meaning;
+	                        }
+	                    }
+	                    return "";
+	                },
+	                editor: function (container, options) {
+	                	container.html(options.model.payMethod);
+	                }
+	            },
+	            //投保人年龄起
+	            {
+	                field: "policyholdersMinAge",
+	                title: '<@spring.message "CmnBasic.policyholdersMinAge"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.policyholdersMinAge);
+	                }
+	            },
+	            //投保人年龄至
+	            {
+	                field: "policyholdersMaxAge",
+	                title: '<@spring.message "CmnBasic.policyholdersMaxAge"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"},
+	                editor: function (container, options) {
+	                	container.html(options.model.policyholdersMaxAge);
+	                }
+	            },
+	            //第一年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theFirstYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra1",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra1*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra1);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra1",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra1*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra1);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment1",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment1*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第二年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theSecondYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra2",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra2*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra2);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra2",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra2*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra2);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment2",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment2*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第三年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theThirdYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra3",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra3*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra3);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra3",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra3*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra3);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment3",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment3*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第四年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theFourthYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra4",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra4*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra4);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra4",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra4*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra4);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment4",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment4*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第五年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theFifthYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra5",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra5*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra5);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra5",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra5*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra5);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment5",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment5*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第六年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theSixthYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra6",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra6*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra6);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra6",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra6*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra6);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment6",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment6*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第七年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theSeventhYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra7",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra7*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra7);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra7",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra7*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra7);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment7",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment7*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第八年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theEightYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra8",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra8*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra8);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra8",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra8*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra8);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment8",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment8*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第九年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theNinthYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra9",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra9*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra9);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra9",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra9*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra9);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment9",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment9*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //第十年佣金
+	            {
+	                title: '<@spring.message "CmnOverride.theTenthYear"/>',
+	                width: 120,
+	                headerAttributes: {
+	                    style  : "padding-bottom: 8px; "
+	                },
+	                columns:[
+	                    {
+	                        field: "superiorExtra10",
+	                        title: '<@spring.message "CmnExtra.superiorExtra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.superiorExtra10*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		$('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+	                        	}else{
+	                        		container.html(options.model.superiorExtra10);
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "extra10",
+	                        title: '<@spring.message "CmnExtra.extra"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.extra10*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                        	if(options.model.channelTypeCode=='YT' && options.model.parentSupplierName==options.model.itemSupplierName){
+	                        		container.html(options.model.extra10);
+	                        	}else{
+		                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                	format: "p2",
+	                                    decimals: 4,
+	                                	min: 0,
+	                                    step: 0.01
+	                                });
+
+	                        	}
+	                        }
+	                    },
+	                    {
+	                        field: "adjustment10",
+	                        title: '<@spring.message "CmnExtra.adjustment"/>',
+	                        width: 120,
+	                        attributes: {style: "text-align:center"},
+	                        headerAttributes: {
+	                            style  : "padding-bottom: 8px; "
+	                        },
+	                        template:function (dataItem) {
+	                            return toFixed(dataItem.adjustment10*100,2) + "%";
+	                        },
+	                        editor: function (container, options) {
+	                            $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+	                                .appendTo(container)
+	                                .kendoNumericTextBox({
+	                                    format: "p2",
+	                                    decimals: 4,
+	                                    min: 0,
+	                                    step: 0.01
+	                                });
+	                        }
+	                    }
+	                ]
+	            },
+	            //版本
+	            {
+	                field: "version",
+	                title: '<@spring.message "CmnBasic.version"/>',
+	                width: 120,
+	                attributes: {style: "text-align:center"}
+	            },
+	            //有效期起
+	            {
+	                field: "effectiveStartDate",
+	                title: '<@spring.message "CmnBasic.effectiveStartDate"/>',
+	                width: 150,
+	                format: "{0:yyyy-MM-dd}",
+	                attributes: {style: "text-align:center"},
+	                headerAttributes: {
+	                    style  : "text-align: center"
+	                },
+	                editor: function(container, options) {
+	                    var max = options.model.effectiveEndDate||undefined;
+	                    var min = options.model.effectiveStartDate||undefined;
+	                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+	                        .appendTo(container)
+	                        .kendoDatePicker({
+	                            format:"yyyy-MM-dd",
+	                            max:max,
+	                            min:min,
+	                            open: function() {
+	                                var maxChange = options.model.effectiveEndDate||undefined;
+	                                this.max(maxChange);
+	                            }
+	                        });
+	                }
+	            },
+	            //有效期至
+	            {
+	                field: "effectiveEndDate",
+	                title: '<@spring.message "CmnBasic.effectiveEndDate"/>',
+	                width: 150,
+	                format: "{0:yyyy-MM-dd}",
+	                attributes: {style: "text-align:center"},
+	                headerAttributes: {
+	                    style  : "text-align: center"
+	                },
+	                editor: function(container, options) {
+	                    var min = options.model.effectiveStartDate||undefined;
+	                    $('<input  required data-required-msg="必输" name="' + options.field + '"/>')
+	                        .appendTo(container)
+	                        .kendoDatePicker({
+	                            format:"yyyy-MM-dd",
+	                            min:min,
+	                            open: function() {
+	                                var minChange = options.model.effectiveStartDate||undefined;
+	                                this.min(minChange);
+	                            }
+	                        });
+	                }
+	            }
+	          ]
+	    }).data('kendoGrid');
+	
+	
+	function changePrd(options){
+		if(options.model.supplierId!=null && options.model.supplierId!='' &&  options.model.channelTypeCode!=null && options.model.channelTypeCode!=''){
+			if(options.model.parentSupplierName==options.model.itemSupplierName && options.model.channelTypeCode!='YT'){
+				$.ajax({
+	            	async : false,
+	            	url:"${base.contextPath}/fms/cmn/extra/queryYTDate",
+	                method:"POST",
+	                contentType:"application/json",
+	                dataType:"json",
+	                data:JSON.stringify(options.model),
+	                error:function(data){
+	                	kendo.ui.showInfoDialog({
+	                        message:"系统异常"
+	                    });
+	                },
+	                success:function (data) {
+	                    if(data.version){
+	                    	options.model.set('superiorExtra1',data.superiorExtra1);
+	                    	options.model.set('superiorExtra2',data.superiorExtra2);
+	                    	options.model.set('superiorExtra3',data.superiorExtra3);
+	                    	options.model.set('superiorExtra4',data.superiorExtra4);
+	                    	options.model.set('superiorExtra5',data.superiorExtra5);
+	                    	options.model.set('superiorExtra6',data.superiorExtra6);
+	                    	options.model.set('superiorExtra7',data.superiorExtra7);
+	                    	options.model.set('superiorExtra8',data.superiorExtra8);
+	                    	options.model.set('superiorExtra9',data.superiorExtra9);
+	                    	options.model.set('superiorExtra10',data.superiorExtra10);
+	                    }else{
+	                    	kendo.ui.showInfoDialog({
+	    	                    message:"查询不到源头数据，请先设置源头"
+	    	                });
+	    					options.model.set('channelTypeCode','YT');
+	                    }
+	                }
+	            });
+			}else{
+				
+				if(options.model.parentSupplierName!=options.model.itemSupplierName &&options.model.channelTypeCode=='YT'){
+					kendo.ui.showInfoDialog({
+	                    message:"该数据上级非产品公司，渠道分类不允许设置成源头"
+	                });
+					options.model.set('channelTypeCode','GYS');
+				}
+			}
+		}
+	}
+</script>
+</body>
+</html>

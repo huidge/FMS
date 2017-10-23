@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.SysCommonFileMapper">
+	<resultMap id="BaseResultMap" type="clb.core.sys.dto.SysCommonFile">
+		<result column="COMMON_FILE_ID" property="commonFileId" jdbcType="DECIMAL" />
+		<result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+		<result column="DATUM_TYPE" property="datumType" jdbcType="VARCHAR" />
+		<result column="USE_TYPE" property="useType" jdbcType="VARCHAR" />
+		<result column="CONTENT" property="content" jdbcType="VARCHAR" />
+		<result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+		<result column="DOWNLOAD_TIMES" property="downloadTimes" jdbcType="DECIMAL" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="NAME" property="name"  />
+		<result column="FILE_NAME" property="fileName"  />
+		<result column="FILE_PATH" property="filePath"  />
+		<result column="FILE_SIZE" property="fileSize"  />
+		<result column="UPLOAD_DATE" property="uploadDate" />
+	</resultMap>
+
+	<select id="selectSysCommonFileInfo" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysCommonFile">
+		select fscf.*,
+		fss.`NAME`,
+		sf.FILE_NAME,
+		sf.FILE_PATH,
+		sf.FILE_SIZE,
+		sf.UPLOAD_DATE
+		from fms_sys_common_file fscf
+		JOIN fms_spe_supplier fss ON fscf.SUPPLIER_ID = fss.SUPPLIER_ID
+		LEFT JOIN sys_file sf ON fscf.FILE_ID = sf.FILE_ID
+		<where>
+		  <if test="supplierId != null and supplierId != ''">
+		     and fscf.supplier_id = #{supplierId}
+		  </if>
+		  <if test="content != null and content != ''">
+		     and fscf.content like CONCAT('%', #{content}, '%')
+		  </if>
+		  <if test="useType != null and useType != ''">
+		     and fscf.use_type = #{useType}
+		  </if>
+		  <if test="datumType != null and datumType != ''">
+		     and fscf.datum_type = #{datumType}
+		  </if>
+		  <if test="name != null and name != ''">
+		     and fss.`NAME` = #{name}
+		  </if>
+		</where>
+		order by fss.`NAME` ASC
+	</select>	
+
+</mapper>

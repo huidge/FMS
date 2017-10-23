@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetActualPaymentMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetActualPayment">
+        <result column="PAYMENT_ID" property="paymentId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_SUMMARY_ID" property="paymentSummaryId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_TYPE" property="paymentType" jdbcType="VARCHAR" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="EXCHANGE_RATE" property="exchangeRate" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="ACTUAL_DATE" property="actualDate" jdbcType="DATE" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="ORDER_CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+         <result column="APPLICANT_NAME" property="applicantName" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+     </resultMap>
+     
+     <select id="getData" parameterType="clb.core.forecast.dto.FetActualPayment" resultMap="BaseResultMap">
+     			SELECT
+					ffap.*, 
+				 	foo.ORDER_NUMBER,
+					fpi.ITEM_NAME,
+					fcc.CHINESE_NAME APPLICANT_NAME,
+					fpis.SUBLINE_ITEM_NAME
+				FROM
+					fms_fet_actual_payment ffap
+					LEFT JOIN fms_ord_order foo on ffap.ORDER_ID = foo.ORDER_ID
+					LEFT JOIN fms_prd_items fpi on ffap.ITEM_ID = fpi.ITEM_ID
+					LEFT JOIN fms_prd_item_subline fpis on foo.SUBLINE_ID = fpis.SUBLINE_ID
+					LEFT JOIN fms_ctm_customer fcc on fcc.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+				<where>
+				<if test="paymentType != null">
+					AND ffap.PAYMENT_TYPE = #{paymentType}
+				</if>
+				<if test="paymentSummaryId != null">
+					AND ffap.PAYMENT_SUMMARY_ID = #{paymentSummaryId}
+				</if>
+				<if test="comments != null">
+					AND ffap.COMMENTS like CONCAT(CONCAT('%',#{comments}),'%')
+				</if>
+				<if test="orderNumber != null">
+					AND ffap.ORDER_ID in (
+						select foo.ORDER_ID
+						from fms_ord_order foo
+						where foo.ORDER_NUMBER like CONCAT(CONCAT('%',#{orderNumber}),'%')
+					)
+				</if>
+				</where>
+     </select>
+</mapper>

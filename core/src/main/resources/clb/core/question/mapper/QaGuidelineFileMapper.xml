@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.question.mapper.QaGuidelineFileMapper">
+    <resultMap id="BaseResultMap" type="clb.core.question.dto.QaGuidelineFile">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="GUIDELINE_ID" property="guidelineId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="RANK" property="rank" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="FileResultMap" type="clb.core.question.dto.QaGuidelineFile">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="GUIDELINE_ID" property="guidelineId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="RANK" property="rank" jdbcType="DECIMAL" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
+        <result column="FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<delete id="removeByFileId" parameterType="java.lang.Long">
+		delete from fms_qa_guideline_file where FILE_ID = #{fileId}
+	</delete>
+
+    <select id="queryFileInfo" parameterType="clb.core.question.dto.QaQuestionConsult"
+            resultMap="FileResultMap">
+        SELECT
+            qgf.LINE_ID,
+              qgf.GUIDELINE_ID,
+              qgf.RANK,
+              qgf.FILE_ID,
+              sf.FILE_PATH,
+              sf.FILE_NAME,
+              sf.FILE_SIZE,
+              sf.FILE_TYPE,
+              qgf.PROGRAM_ID,
+              qgf.REQUEST_ID
+        FROM
+            fms_qa_guideline_file qgf,
+            sys_file sf
+        WHERE
+            qgf.FILE_ID = sf.FILE_ID
+        <if test="guidelineId != null and guidelineId != ''">
+            AND qgf.GUIDELINE_ID = #{guidelineId}
+        </if >
+        <if test="lineId != null and lineId != ''">
+            AND qgf.LINE_ID = #{lineId}
+        </if >
+        <if test="fileId != null and fileId != ''">
+            AND qgf.FILE_ID = #{fileId}
+        </if >
+        ORDER BY qgf.RANK DESC
+    </select>
+    
+    <select id="quertSort" parameterType="clb.core.question.dto.QaGuidelineFile" resultMap="FileResultMap">
+   			SELECT
+				fqgf.LINE_ID,
+				fqgf.GUIDELINE_ID,
+				fqgf.FILE_ID,
+				fqgf.RANK,
+				sf.FILE_PATH,
+              	sf.FILE_NAME,
+              	sf.FILE_TYPE,
+				sf.FILE_SIZE
+			FROM
+				fms_qa_guideline_file fqgf,
+				sys_file sf
+			WHERE
+				fqgf.FILE_ID = sf.FILE_ID AND fqgf.GUIDELINE_ID = #{guidelineId} ORDER BY fqgf.RANK DESC
+    </select>
+    
+<select id="queryMaxRank" resultType="java.lang.Long">
+	SELECT  MAX(RANK) RANK from fms_qa_guideline_file WHERE GUIDELINE_ID = #{guidelineId}
+</select>
+
+
+<select id="queryDownRank" parameterType="clb.core.question.dto.QaGuidelineFile" resultMap="BaseResultMap">
+	SELECT * FROM fms_qa_guideline_file WHERE GUIDELINE_ID = #{guidelineId} AND RANK &lt; #{rank} ORDER BY RANK DESC LIMIT 1
+</select>
+
+
+<select id="queryUpRank" parameterType="clb.core.question.dto.QaGuidelineFile" resultMap="BaseResultMap">
+	SELECT * FROM fms_qa_guideline_file WHERE GUIDELINE_ID = #{guidelineId} AND RANK &gt; #{rank} ORDER BY RANK ASC LIMIT 1
+</select>
+
+</mapper>

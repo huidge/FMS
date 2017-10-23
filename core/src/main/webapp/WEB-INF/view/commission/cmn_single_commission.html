@@ -1,0 +1,155 @@
+<#-- 
+ * description: 单个渠道计算佣金值
+ * version: 1.0 
+ * author: jiaolong.li@hand-china.com
+ * -->
+<#include "../include/header.html">
+    <style>
+        #progressBar {
+            display: block;
+            width: 60%;
+            margin: auto;
+            margin-top: 256.6px;
+        }
+        #exams {
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            background: #fff;
+            filter: alpha(opacity = 70);
+            opacity: 0.9;
+            background-image: url("${base.contextPath}/resources/images/loading.gif");
+            background-repeat:no-repeat;
+            background-position: center;
+            background-size:100% 100%;
+            z-index:9999;
+        }
+    </style>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        //多语言常量
+        var viewModel = kendo.observable({
+            model: {
+            }
+        });
+    </script>
+<body>
+<div id="page-content" style ="margin-top:50px">
+    <!-- 参数渠道 -->
+    <form class="form-horizontal">
+        <div class="row" style="margin-bottom:100px;margin-left:70px;width:60%">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-6 control-label"><@spring.message "CmnChannelCommission.channelName"/></label>
+                    <div class="col-sm-6">
+                        <input id="channelId" style="width: 100%" data-bind="value:model.channelId">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row" style="margin-bottom: 20px;margin-left:30%;width:60%">
+          <span class="btn btn-success" style="margin-left:12%;margin-right:5px;" onclick="submit()" type="button">
+              <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.submit"/>
+          </span>
+          <span class="btn btn-default" style="margin-right:5px;" onclick="cancel()">
+              <i class="fa fa-rotate-left"></i><@spring.message "hap.cancel"/>
+          </span>
+    </div>
+</div>
+<div id="exams"></div>
+
+<script>
+kendo.bind($('#page-content'), viewModel);
+
+// 渠道名称
+$('#channelId').kendoLov({
+    code: "CMN_CALCULATE_CHANNEL",
+    contextPath: '${base.contextPath}',
+    locale: '${base.locale}'
+});
+
+// 批次ID
+var batchId="";
+
+// 确定按钮
+function submit(){
+    kendo.ui.showConfirmDialog({
+        title:'确认框',
+        message:'确认执行该渠道佣金计算？',
+    }).done(function (e) {
+        $.ajax({
+            url : '${base.contextPath}/fms/cmn/channel/commission/calculateSingleCmn',
+            type : "POST",
+            dataType : "json",
+            data :{
+                'channelId':$("#channelId").data('kendoLov').value()
+            },
+            success : function(json) {
+                $("#exams").show();
+                batchId = json.message;
+                console.log(batchId);
+                setTimeout(getRunResultData, 5000);
+            },
+            error : function(json) {
+                $("#exams").hide();
+                kendo.ui.showInfoDialog({
+                    message:json.errors
+                })
+            }
+        });
+    });
+}
+
+// 取消按钮
+function cancel(){
+	window.parent.$("#dialog").data("kendoWindow").close();
+}
+
+// 获取结果
+function getRunResultData() {
+    $.ajax({
+        url : '${base.contextPath}/fms/cmn/channel/commission/getSingleResult',
+        type : "POST",
+        data : {
+            batchId : batchId
+        },
+        success : function(json) {
+            console.log(json);
+            if(json.code == -1){
+                setTimeout(getRunResultData, 10000);
+            }else{
+                $("#exams").hide();
+                if (json.success) {
+                    window.parent.kendo.ui.showInfoDialog({
+                        title    : '提示',
+                        message  :'计算成功，请重新查询'
+                    });
+                    window.parent.dataSource.read();
+                    window.parent.$("#dialog").data("kendoWindow").close();
+                } else {
+                    kendo.ui.showInfoDialog({
+                        title    : '错误',
+                        message:json.message
+                    })
+                }
+            }
+        },
+        error : function(json) {
+            kendo.ui.showInfoDialog({
+                message:json.errors
+            })
+        }
+    });
+}
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdBeneficiaryMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdBeneficiary">
+        <result column="ORD_BENEFICIARY_ID" property="ordBeneficiaryId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="CHINESE_NAME" property="chineseName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="AGE" property="age" jdbcType="DECIMAL" />
+        <result column="IDENTITY_NUMBER" property="identityNumber" jdbcType="VARCHAR" />
+        <result column="RELATIONSHIP" property="relationship" jdbcType="VARCHAR" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="BIRTH_DATE" property="birthDate" jdbcType="DATE" />
+        <result column="HIGHEST_EDUCATION" property="highestEducation" jdbcType="VARCHAR" />
+        <result column="CAREER" property="career" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdBeneficiary" parameterType="clb.core.order.dto.OrdBeneficiary" resultMap="BaseResultMap" >
+        SELECT
+        fob.ORD_BENEFICIARY_ID,
+        fob.ORDER_ID,
+        fob.CHINESE_NAME,
+        fob.ENGLISH_NAME,
+        fob.AGE,
+        fob.IDENTITY_NUMBER,
+        fob.RELATIONSHIP,
+        fob.RATE,
+        fob.PROGRAM_ID,
+        fob.REQUEST_ID,
+        fob.HIGHEST_EDUCATION,
+        fob.BIRTH_DATE,
+        fob.CAREER
+        FROM
+        fms_ord_beneficiary AS fob
+        WHERE 1=1
+        <if test = "orderId != null"> AND fob.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+
+    <select id="queryWsOrdBeneficiary" parameterType="clb.core.order.dto.OrdBeneficiary" resultMap="BaseResultMap" >
+        SELECT
+        fob.ORD_BENEFICIARY_ID,
+        fob.ORDER_ID,
+        fob.CHINESE_NAME,
+        fob.ENGLISH_NAME,
+        fob.AGE,
+        fob.IDENTITY_NUMBER,
+        fob.RELATIONSHIP,
+        fob.RATE,
+        fob.PROGRAM_ID,
+        fob.REQUEST_ID,
+        fob.BIRTH_DATE,
+        fob.HIGHEST_EDUCATION,
+        fob.CAREER
+        FROM
+        fms_ord_beneficiary AS fob
+        WHERE 1=1
+        <if test = "orderId != null"> AND fob.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "ordBeneficiaryId != null"> AND fob.ORD_BENEFICIARY_ID = #{ordBeneficiaryId , jdbcType=DECIMAL} </if>
+        <if test = "identityNumber != null"> AND fob.IDENTITY_NUMBER = #{identityNumber , jdbcType=VARCHAR} </if>
+        <if test = "career != null"> AND fob.CAREER = #{career , jdbcType=VARCHAR} </if>
+    </select>
+    
+    <!-- 查询所有受益人 -->
+    <select id="selectAllBeneficiary" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        fob.ORD_BENEFICIARY_ID,
+        fob.ORDER_ID,
+        fob.CHINESE_NAME,
+        fob.ENGLISH_NAME,
+        fob.AGE,
+        fob.IDENTITY_NUMBER,
+        fob.RELATIONSHIP,
+        fob.RATE,
+        fob.PROGRAM_ID,
+        fob.REQUEST_ID,
+        fob.HIGHEST_EDUCATION,
+        fob.BIRTH_DATE,
+        fob.CAREER
+        FROM
+        fms_ord_beneficiary AS fob
+        WHERE fob.ORDER_ID = #{orderId}
+    </select>
+
+</mapper>

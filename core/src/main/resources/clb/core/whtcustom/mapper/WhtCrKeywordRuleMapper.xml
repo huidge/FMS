@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtCrKeywordRuleMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtCrKeywordRule">
+        <result column="RULE_ID" property="ruleId" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="RULE_NAME" property="ruleName" jdbcType="VARCHAR" />
+        <result column="REPLY_ALL_FLAG" property="replyAllFlag" jdbcType="VARCHAR" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="RULE_OPERATION" property="ruleOperation" jdbcType="VARCHAR" />
+        <result column="ORIGINAL_ID" property="originalId" jdbcType="VARCHAR" />
+        <result column="RULE_PICTURE_ID" property="rulePictureId" jdbcType="VARCHAR" />
+        <result column="RULE_VOICE_ID" property="ruleVoiceId" jdbcType="VARCHAR" />
+        <result column="RULE_VIDEO_ID" property="ruleVideoId" jdbcType="VARCHAR" />
+        <result column="RULE_PICTURE_TEXT" property="rulePictureText" jdbcType="VARCHAR" />
+        <result column="WHT_RULE_ATTACH_CONTENT" property="whtRuleAttachContent" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.whtcustom.dto.WhtCrKeywordRule"
+		resultMap="BaseResultMap">
+		SELECT
+		fwckr.*
+		FROM fms_wht_cr_keyword_rule fwckr
+		WHERE 1=1
+		<if test="ruleId!=null and ruleId!=''">
+			and fwckr.RULE_ID =#{ruleId}
+		</if>
+		<if test="originalId !=null and originalId !=''">
+			and fwckr.ORIGINAL_ID =#{originalId}
+		</if>
+	</select>
+
+</mapper>

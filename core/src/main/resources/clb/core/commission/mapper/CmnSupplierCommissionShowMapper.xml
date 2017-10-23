@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnSupplierCommissionShowMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnSupplierCommissionShow">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_SUPPLIER_ID" property="superiorSupplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="DATE" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="DATE" />
+        <result column="BASIC_ID" property="basicId" jdbcType="DECIMAL" />
+        <result column="OVERRIDE_ID" property="overrideId" jdbcType="DECIMAL" />
+        <result column="EXTRA_ID" property="extraId" jdbcType="DECIMAL" />
+        <result column="LEVEL_NUMBER" property="levelNumber" jdbcType="DECIMAL" />
+        <result column="COMMISSION_NUM" property="commissionNum" jdbcType="VARCHAR" />
+        <result column="PARENT_COMMISSION_NUM" property="parentCommissionNum" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <!--清除供应商佣金表数据-->
+    <delete id="deleteCmnData" parameterType="clb.core.commission.dto.CmnSupplierCommissionShow">
+        delete from
+        fms_cmn_supplier_commission_show
+        WHERE 1 = 1
+    </delete>
+
+    <!--从临时表迁移数据-->
+    <insert id="insertShowCmnData">
+        INSERT INTO fms_cmn_supplier_commission_show
+        SELECT * FROM fms_cmn_supplier_commission WHERE 1=1
+    </insert>
+
+</mapper>

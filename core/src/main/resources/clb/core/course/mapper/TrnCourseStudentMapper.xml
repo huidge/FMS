@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnCourseStudentMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnCourseStudent">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="PHONE_NUMBER" property="phoneNumber" jdbcType="VARCHAR" />
+        <result column="MAIL_ADDRESS" property="mailAddress" jdbcType="VARCHAR" />
+        <result column="JOIN_METHOD" property="joinMethod" jdbcType="TINYINT" />
+        <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+        <result column="POSITION" property="position" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="BELONG_TO" property="belongTo" jdbcType="VARCHAR" />
+        <result column="TOTAL" property="total" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="PAY_STATUS" property="payStatus" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<resultMap id="AllFieldsMap" type="clb.core.course.dto.TrnCourseStudent">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="PHONE_NUMBER" property="phoneNumber" jdbcType="VARCHAR" />
+        <result column="MAIL_ADDRESS" property="mailAddress" jdbcType="VARCHAR" />
+        <result column="JOIN_METHOD" property="joinMethod" jdbcType="TINYINT" />
+        <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+        <result column="POSITION" property="position" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="BELONG_TO" property="belongTo" jdbcType="VARCHAR" />
+        <result column="TOTAL" property="total" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="SHALONG_NUM" property="shalongNum" jdbcType="VARCHAR" />
+        <result column="PEIXUN_NUM" property="peixunNum" jdbcType="VARCHAR" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="PAY_STATUS" property="payStatus" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy"/>
+        <result column="CREATED_NAME" property="createdName"/>
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnCourseStudent"
+		resultMap="AllFieldsMap">
+		SELECT
+		ftcs.LINE_ID,
+		ftcs.COURSE_ID,
+		ftcs.NAME,
+		ftcs.PHONE_CODE,
+		ftcs.PHONE_NUMBER,
+		ftcs.MAIL_ADDRESS,
+		ftcs.JOIN_METHOD,
+		ftcs.COMPANY,
+		ftcs.POSITION,
+		ftcs.LAST_UPDATE_DATE,
+		ftcs.PAY_STATUS,
+		ftcs.CREATED_BY,
+		su.USER_NAME createdName,
+		ftcs.CHANNEL_ID,
+		(
+        select c.CHANNEL_NAME from fms_cnl_channel c WHERE c.CHANNEL_ID=ftcs.CHANNEL_ID
+        ) CHANNEL_NAME,
+		ftcs.BELONG_TO,
+		(
+        SELECT count(1) FROM fms_trn_course ftc WHERE ftc.COURSE_ID = ftcs.COURSE_ID and ftc.TYPE="salon"
+        ) SHALONG_NUM,
+        (
+        SELECT count(1) FROM fms_trn_course ftc WHERE ftc.COURSE_ID = ftcs.COURSE_ID and ftc.TYPE="train"
+        ) PEIXUN_NUM,
+        (
+        select (SELECT count(1) FROM fms_trn_course ftc WHERE ftc.COURSE_ID = ftcs.COURSE_ID and ftc.TYPE="train")+(SELECT count(1) FROM fms_trn_course ftc WHERE ftc.COURSE_ID = ftcs.COURSE_ID and ftc.TYPE="salon") from fms_trn_course ftc where ftc.COURSE_ID=ftcs.COURSE_ID
+		) TOTAL
+		FROM fms_trn_course_student ftcs
+		LEFT JOIN sys_user su 
+		ON su.USER_ID = ftcs.CREATED_BY 
+		WHERE 1=1
+		<if test="courseId!=null and courseId!=''">
+			and ftcs.COURSE_ID =#{courseId}
+		</if>
+		<if test="belongTo!=null and belongTo!=''">
+			and ftcs.BELONG_TO like CONCAT('%', #{belongTo}, '%')
+		</if>
+		
+		<if test="phoneNumber!=null and phoneNumber!=''">
+			and ftcs.PHONE_NUMBER like CONCAT('%', #{phoneNumber}, '%')
+		</if>
+		
+		<if test = "contactPhoneComb != null"> 
+			AND CONCAT(ftcs.PHONE_CODE,' ',ftcs.PHONE_NUMBER) like CONCAT('%', #{contactPhoneComb}, '%')</if>
+		
+		<if test="company!=null and company!=''">
+			and ftcs.COMPANY =#{company}
+		</if>
+		
+		<if test="joinMethod !=null">
+			and ftcs.JOIN_METHOD =#{joinMethod}
+		</if>
+		
+		<if test="position!=null and position!=''">
+			and ftcs.POSITION like CONCAT('%', #{position}, '%')
+		</if>
+		order by ftcs.LAST_UPDATE_DATE desc 
+	</select>	
+	
+	<select id="checkingPhone" parameterType="clb.core.course.dto.TrnCourseStudent"
+		resultMap="AllFieldsMap">
+		SELECT
+		ftcs.LINE_ID,
+		ftcs.COURSE_ID,
+		ftcs.NAME,
+		ftcs.PHONE_CODE,
+		ftcs.PHONE_NUMBER,
+		ftcs.MAIL_ADDRESS,
+		ftcs.JOIN_METHOD,
+		ftcs.COMPANY,
+		ftcs.POSITION,
+		ftcs.LAST_UPDATE_DATE,
+		ftcs.PAY_STATUS,
+		ftcs.CREATED_BY,
+		ftcs.BELONG_TO,
+		ftcs.CHANNEL_ID,
+		su.USER_NAME createdName,
+		c.CHANNEL_NAME CHANNEL_NAME,
+		(select count(*) from fms_trn_course_student t,fms_trn_course tr WHERE t.PHONE_NUMBER=ftcs.PHONE_NUMBER and tr.COURSE_ID = t.COURSE_ID  and tr.TYPE='salon' ) SHALONG_NUM,
+		(select count(*) from fms_trn_course_student t,fms_trn_course tr WHERE t.PHONE_NUMBER=ftcs.PHONE_NUMBER and tr.COURSE_ID = t.COURSE_ID and tr.TYPE='train') PEIXUN_NUM,
+		(select count(*) from fms_trn_course_student t WHERE t.PHONE_NUMBER=ftcs.PHONE_NUMBER) TOTAL
+		FROM fms_trn_course_student ftcs
+		LEFT JOIN sys_user su 
+		ON su.USER_ID = ftcs.CREATED_BY
+		LEFT JOIN fms_cnl_channel c
+		ON c.CHANNEL_ID=ftcs.CHANNEL_ID
+		WHERE not exists
+		(select 1 from fms_trn_course_student where PHONE_NUMBER=ftcs.PHONE_NUMBER and LAST_UPDATE_DATE>ftcs.LAST_UPDATE_DATE)
+		<if test="courseId!=null and courseId!=''">
+			and ftcs.COURSE_ID =#{courseId}
+		</if>
+		<if test="belongTo!=null and belongTo!=''">
+			and ftcs.BELONG_TO like CONCAT('%', #{belongTo}, '%')
+		</if>
+		
+		<if test="phoneNumber!=null and phoneNumber!=''">
+			and ftcs.PHONE_NUMBER like CONCAT('%', #{phoneNumber}, '%')
+		</if>
+		
+		<if test="joinMethod !=null">
+			and ftcs.JOIN_METHOD =#{joinMethod}
+		</if>
+		
+		<if test = "contactPhoneComb != null"> 
+			AND CONCAT(ftcs.PHONE_CODE,' ',ftcs.PHONE_NUMBER) like CONCAT('%', #{contactPhoneComb}, '%')</if>
+		
+		<if test="company!=null and company!=''">
+			and ftcs.COMPANY =#{company}
+		</if>
+		
+		<if test="position!=null and position!=''">
+			and ftcs.POSITION like CONCAT('%', #{position}, '%')
+		</if>
+		<!-- order by ftcs.LAST_UPDATE_DATE desc  -->
+	</select>	
+	
+	<select id="selectEnrollByParams" parameterType="clb.core.course.dto.TrnCourseStudent"
+		resultMap="AllFieldsMap">
+		SELECT * from fms_trn_course_student where 1=1
+		<if test="courseId!=null ">
+			and COURSE_ID =#{courseId}
+		</if>
+		<if test="phoneNumber!=null and phoneNumber!='' and channelId!=null">
+			and (PHONE_NUMBER =#{phoneNumber} OR CHANNEL_ID =#{channelId}) 
+		</if>
+		<if test="phoneNumber!=null and phoneNumber!='' and channelId==null">
+			and (PHONE_NUMBER =#{phoneNumber} ) 
+		</if>
+		<if test="phoneNumber==null and channelId!=null">
+			and CHANNEL_ID =#{channelId}
+		</if>
+		<if test="joinMethod !=null">
+			and JOIN_METHOD =#{joinMethod}
+		</if>
+		
+		<if test="createdBy!=null">
+			and created_by =#{createdBy}
+		</if>
+	</select>
+</mapper>

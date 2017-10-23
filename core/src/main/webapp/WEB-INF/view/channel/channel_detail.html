@@ -1,0 +1,1732 @@
+<#--
+ * description: 渠道维护页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/4/18 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?provinceData=PUB.PROVICE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?cityData=PUB.CITY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?channelTypeData=CNL.CHANNEL_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?industryBackgroundData=CNL.INDUSTRY_BACKGROUND" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?yesNoData=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?exhibitionModeData=CNL.EXHIBITION_MODE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?exhibitionRangeData=CNL.EXHIBITION_RANGE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?contactObjectData=CNL.CONTACT_OBJECT" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?contractTypeData=CNL.CONTRACT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?channelClassData=CNL.CHANNEL_CLASS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?statusData=CNL.CHANNEL_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?partyTypeData=CNL.PARTY_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?productDivisionData=PRD.PRODUCT_DIVISION" type="text/javascript"></script>
+<script type="text/javascript" src="${base.contextPath}/clb/common/clbCode?cartificateData=CNL.CERTIFICATE_TYPE"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var channelId = <#if RequestParameters.channelId?exists> ${RequestParameters.channelId} <#else>-1</#if>;
+    var newFlag = <#if RequestParameters.newFlag?exists> ${RequestParameters.newFlag} <#else>"N"</#if>;
+    var viewModel = kendo.observable({
+        model: {
+            statusCode : "CREATED"
+        }
+    });
+
+    if(channelId !=-1) {
+        viewModel.model.set("channelId",channelId);
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/cnl/channel/query",
+            data: {channelId: channelId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    if (k != "creationDate") {
+                        viewModel.model.set(k, row[k]);
+                    }
+                }
+            }
+        });
+    }
+
+    var userData = [];
+    $.ajax({
+        type: "POST",
+        async: false,
+        url: "${base.contextPath}/fms/ord/order/queryUserRole?userId=" + ${Session.userId},
+        data: {},
+        success: function (json) {
+            userData = json.rows;
+        }
+    });
+    var flag = "N";
+    for (var i=0;i<userData.length;i++) {
+        if (userData[i].userType == "OPERATOR") {
+            flag = "Y";
+        }
+    }
+
+    for (var i=0;i<userData.length;i++) {
+        if (userData[i].userType == "OPERATOR" && userData[i].roleCode == "ADMIN") {
+            flag = "N";
+        } else if (userData[i].userType == "OPERATOR" && userData[i].roleCode == "PM Commissioner") {
+            flag = "N";
+        }
+    }
+
+</script>
+<div id="fileWin" style="display: none;">
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.cnlchannel.channel_detail"/></span>
+            </div>
+            <div class="panel-body">
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.baseinfo"/>
+            </p>
+
+            <div class="col-xs-12" >
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.channelCode"/></label>
+                        <div class="col-xs-8">
+                            <input id="channelCode" name="channelCode" type="text" data-bind="value:model.channelCode" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.channelName"/> *</label>
+                        <div class="col-xs-8">
+                            <input id="channelName" name="channelName" type="text" data-bind="value:model.channelName" required validationMessage='<@spring.message "hap.error.nullexception"/>' class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.cnlchannel.chinesename"/></label>
+                        <div class="col-xs-8">
+                            <input id="chineseName" name="chineseName" type="text" data-bind="value:model.chineseName" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12">
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.cnlchannel.englishname"/></label>
+                        <div class="col-xs-8">
+                            <input id="englishName" name="englishName" type="text" data-bind="value:model.englishName" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "employee.certificatetype"/></label>
+                        <div class="col-xs-8" style="text-align: left">
+                            <input type="text" style="width:100%" id="certificateType" name="certificateType" data-bind="source: cartificateList, value:model.certificateType" >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.ctmcustomer.certificatenumber"/></label>
+                        <div class="col-xs-8">
+                            <input id="certificateNumber" style="width:100%" name="certificateNumber" data-bind="value:model.certificateNumber" class="k-textbox">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12">
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.contactPerson"/></label>
+                        <div class="col-xs-8">
+                            <input id="contactPerson" name="contactPerson" type="text" data-bind="value:model.contactPerson" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.contactPhone"/> *</label>
+                        <div class="col-xs-4">
+                            <input id="phoneCode" name="phoneCode" type="text" data-bind="value:model.phoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                        </div>
+                        <div class="col-xs-4">
+                            <input id="contactPhone" name="contactPhone" type="text" data-bind="value:model.contactPhone" required validationMessage='<@spring.message "hap.error.nullexception"/>' class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.email"/></label>
+                        <div class="col-xs-8">
+                            <input id="email" name="email" type="text" data-bind="value:model.email" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12" style="margin-bottom:20px;">
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.area"/></label>
+                        <div class="col-xs-4">
+                            <input id="province" name="province" type="text" data-bind="value:model.province,text:model.provinceMeaning" style="width: 100%;">
+                        </div>
+                        <div class="col-xs-4">
+                            <input id="city" name="city" type="text" data-bind="value:model.city,text:model.cityMeaning" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-8" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.address"/></label>
+                        <div class="col-xs-10">
+                            <input id="address" name="address" type="text" data-bind="value:model.address" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.backgroundinfo"/>
+            </p>
+
+            <div class="col-xs-12" >
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.channelType"/></label>
+                        <div class="col-xs-8">
+                            <input id="channelTypeCode" name="channelTypeCode" type="text" data-bind="value:model.channelTypeCode" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.industryBackground"/></label>
+                        <div class="col-xs-8">
+                            <input id="industryBackground" name="industryBackground" type="text" data-bind="value:model.industryBackground" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.experienceFlag"/></label>
+                        <div class="col-xs-8">
+                            <input id="experienceFlag" name="experienceFlag" type="text" data-bind="value:model.experienceFlag" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12" style="margin-bottom:20px;">
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.exhibitionMode"/></label>
+                        <div class="col-xs-8">
+                            <input id="exhibitionMode" name="exhibitionMode" type="text" data-bind="value:model.exhibitionMode" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.exhibitionRange"/></label>
+                        <div class="col-xs-8">
+                            <input id="exhibitionRange" name="exhibitionRange" type="text" data-bind="value:model.exhibitionRange" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.contact"/>
+            </p>
+
+            <div style="clear:both;margin-bottom:20px;">
+                <div id="conGrid"></div>
+            </div>
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.bankaccount"/>
+            </p>
+
+            <div class="col-xs-12" >
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.hkBank"/></label>
+                        <div class="col-xs-8">
+                            <input id="hkBank" name="hkBank" type="text" data-bind="value:model.hkBank,text:model.hkBankName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.hkBankAccountName"/></label>
+                        <div class="col-xs-8">
+                            <input id="hkBankAccountName" name="hkBankAccountName" type="text" data-bind="value:model.hkBankAccountName" class ="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.hkBankAccountNum"/></label>
+                        <div class="col-xs-8">
+                            <input id="hkBankAccountNum" name="hkBankAccountNum" type="text" data-bind="value:model.hkBankAccountNum" class ="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12" style="margin-bottom:20px;">
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.ilBank"/></label>
+                        <div class="col-xs-8">
+                            <input id="ilBank" name="ilBank" type="text" data-bind="value:model.ilBank,text:model.ilBankName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.ilBankAccountName"/></label>
+                        <div class="col-xs-8">
+                            <input id="ilBankAccountName" name="ilBankAccountName" type="text" data-bind="value:model.ilBankAccountName" class ="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.ilBankAccountNum"/></label>
+                        <div class="col-xs-8">
+                            <input id="ilBankAccountNum" name="ilBankAccountNum" type="text" data-bind="value:model.ilBankAccountNum" class ="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.archiveinfo"/>
+            </p>
+
+            <div style="clear:both;margin-bottom:20px;">
+                <div id="arcGrid"></div>
+            </div>
+
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.contractinfo"/>
+            </p>
+
+            <div style="clear:both;margin-bottom:20px;">
+                <div id="corGrid"></div>
+            </div>
+
+            <p class="bord-btm pad-ver text-main text-bold">
+                <@spring.message "fms.cnlchannel.statusinfo"/>
+            </p>
+
+            <div class="col-xs-12" >
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.status"/> *</label>
+                        <div class="col-xs-9">
+                            <input id="statusCode" name="statusCode" type="text" data-bind="value:model.statusCode" required validationMessage='<@spring.message "hap.error.nullexception"/>' style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-4" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.CnlChannel.pendingPerson"/></label>
+                        <div class="col-xs-9">
+                            <input id="pendingPerson" name="pendingPerson" type="text" data-bind="value:model.pendingPerson" class=" k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+            <iframe id="ifile" style="display:none"></iframe>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+
+    $(document).ready(function() {
+        checkPhone();
+        if (flag == "Y") {
+            $('#btn_save').hide();
+            $('#btn_newConData').hide();
+            $('#btn_deleteConData').hide();
+
+            $('#btn_newArcData').hide();
+            $('#btn_deleteArcData').hide();
+
+            $('#btn_newCorData').hide();
+            $('#btn_deleteCorData').hide();
+        }
+
+    });
+
+    $('#certificateType').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: cartificateData,
+    });
+
+    $("#province").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+        query: function(e) {
+            e.param['codeName'] = "PUB.PROVICE";
+        },
+        change:function () {
+            viewModel.model.set("city",null);
+            viewModel.model.set("cityMeaning",null);
+        }
+    }));
+
+    $("#city").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+        query: function(e) {
+            e.param['codeName'] = "PUB.CITY";
+            e.param['parentValue'] = viewModel.model.province;
+        },
+    }));
+
+    $("#channelTypeCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: channelTypeData
+    });
+
+    $("#industryBackground").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: industryBackgroundData
+    });
+
+    $("#experienceFlag").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: yesNoData
+    });
+
+    $("#exhibitionMode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: exhibitionModeData
+    });
+
+    $("#exhibitionRange").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: exhibitionRangeData
+    });
+
+    $("#phoneCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "value",
+        dataValueField: "value",
+        dataSource: phoneCodeData,
+        change: checkPhone
+    });
+
+    function checkPhone(){
+        if (viewModel.model.phoneCode == null || viewModel.model.phoneCode == ""||$("#contactPhone").val()=="") {
+            $("#contactPhone").removeAttr("pattern");
+            $("#contactPhone").attr("required","required");
+            $("#contactPhone").attr("validationmessage","字段不能为空");
+        } else if (viewModel.model.phoneCode == "86") {
+            $("#contactPhone").attr("pattern","^\\d{11}$");
+            $("#contactPhone").removeAttr("required");
+            $("#contactPhone").removeAttr("validationmessage");
+        } else if (viewModel.model.phoneCode == "00886") {
+            $("#contactPhone").attr("pattern","^\\d{9}$");
+            $("#contactPhone").removeAttr("required");
+            $("#contactPhone").removeAttr("validationmessage");
+        } else {
+            $("#contactPhone").attr("pattern","^\\d{8}$");
+            $("#contactPhone").removeAttr("required");
+            $("#contactPhone").removeAttr("validationmessage");
+        }
+    }
+
+    $("#contactPhone").on("change",function(){
+        checkPhone();
+    });
+
+    $("#hkBank").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+        query: function(e) {
+            e.param['codeName'] = "PUB.HK_BANK";
+        },
+    }));
+    $("#ilBank").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PUB_CODE_VALUE")}, {
+        query: function(e) {
+            e.param['codeName'] = "PUB.IL_BANK";
+        },
+    }));
+
+    $("#statusCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: statusData
+    });
+
+    $("#channelCode").attr("readonly",true).css("background", "#DDDDDD");
+
+    if (newFlag == "Y") {
+        $("#statusCode").data("kendoComboBox").readonly(true);
+        $("input[name='statusCode_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+        $("input[name='statusCode_input']").css("background", "#DDDDDD");
+        $("input[name='statusCode_input']").next().next().unbind();
+    }
+
+    var BaseUrl = _basePath;
+    conDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cnl/channel/contact/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/cnl/channel/contact/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/cnl/channel/contact/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/cnl/channel/contact/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: false,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "channelContactId",
+                fields: {
+                    contactObject : {validation: { required: true }},
+                    contactPerson : {validation: { required: true }}
+                }
+            }
+        }
+    });
+
+    var conGrid=$("#conGrid").kendoGrid({
+        dataSource: conDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+            {
+                template: '<button type="button" id="btn_newConData" onclick="newConData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+            },
+            {
+                template: '<span onclick="deleteConData()" id="btn_deleteConData" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+            },
+            {
+                name: "cancel",
+                template: '<span id="btn_cancelConData" class="btn btn-default k-grid-cancel-changes">' +
+                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+            }
+        ],
+        columns: [
+            {
+                field: "contactObject",
+                title: '<@spring.message "fms.CnlChannelContact.contactObject"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.contactObject;
+                    $.each(contactObjectData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: contactObjectData
+                        });
+                },
+            },
+            {
+                field: "contactPerson",
+                title: '<@spring.message "fms.CnlChannelContact.contactPerson"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+            {
+                field: "ilPhone",
+                title: '<@spring.message "fms.CnlChannelContact.ilPhone"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "hkPhone",
+                title: '<@spring.message "fms.CnlChannelContact.hkPhone"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "email",
+                title: '<@spring.message "fms.CnlChannelContact.email"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+    arcDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cnl/channel/archive/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/cnl/channel/archive/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/cnl/channel/archive/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/cnl/channel/archive/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: false,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "channelArchiveId",
+                fields: {
+                    name : {validation: { required: true }}
+                }
+            }
+        }
+    });
+
+    var arcGrid=$("#arcGrid").kendoGrid({
+        dataSource: arcDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+            {
+                template: '<button type="button" id="btn_newArcData" onclick="newArcData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+            },
+            {
+                template: '<span onclick="deleteArcData()" id="btn_deleteArcData" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+            },
+            {
+                name: "cancel",
+                template: '<span id="btn_cancelArcData" class="btn btn-default k-grid-cancel-changes">' +
+                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+            }
+        ],
+        columns: [
+            {
+                field: "name",
+                title: '<@spring.message "fms.CnlChannelArchive.archivename"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor: function (container, options) {
+                    $('<input type="text" class="k-textbox" onchange="validateGridName(\''+options.model.uid+'\')" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                        .appendTo(container)
+                }
+            },
+            {
+                field: "comments",
+                title: '<@spring.message "fms.CnlChannelArchive.comments"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "fileSize",
+                title: '<@spring.message "fms.CnlChannelArchive.fileSize"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor:function (container, options) {
+                    if (options.model.fileSize) {
+                        $('<span>'+ options.model.fileSize +'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                }
+            },
+            {
+                field: "uploadDate",
+                title: '<@spring.message "fms.CnlChannelArchive.uploadDate"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor:function (container, options) {
+                    if (options.model.uploadDate) {
+                        $('<span>'+options.model.uploadDate+'</span>').appendTo(container)
+                    }else {
+                        $('<span></span>').appendTo(container)
+                    }
+                }
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    var buttons = '';
+                    if(dataItem.fileId != '' && dataItem.fileId != undefined){
+                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    }
+                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    if (flag == "Y") {
+                        return buttons;
+                    } else if(dataItem.name == ""){
+                        return '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" disabled="disabled" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+                    }
+                    return '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+                }
+            }
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+    corDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/cnl/channel/contract/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/cnl/channel/contract/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/cnl/channel/contract/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/cnl/channel/contract/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "channelContractId",
+                fields: {
+                    startDate : {type : "date",defaultValue : new Date()},
+                    endDate : {type : "date",defaultValue : new Date(2099,11,31)},
+                    contractCode : {validation: { required: true }},
+                    contractTypeCode : {validation: { required: true }},
+                    supplierName : {validation: { required: true }},
+                    channelTypeCode : {validation: { required: true }}
+                }
+            }
+        }
+    });
+
+    var corGrid=$("#corGrid").kendoGrid({
+        dataSource: corDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+            {
+                template: '<button type="button" id="btn_newCorData" onclick="newCorData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+            },
+            {
+                template: '<span onclick="deleteCorData()" id="btn_deleteCorData" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+            },
+            {
+                name: "cancel",
+                template: '<span id="btn_cancelCorData" class="btn btn-default k-grid-cancel-changes">' +
+                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+            }
+        ],
+        columns: [
+            {
+                field: "contractCode",
+                title: '<@spring.message "fms.CnlChannelContract.contractCode"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor: function (container, options) {
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                            .appendTo(container)
+                    } else {
+                        $('<span>'+options.model.contractCode+'</span>')
+                            .appendTo(container)
+                    }
+                }
+            },
+            {
+                field: "contractTypeCode",
+                title: '<@spring.message "fms.CnlChannelContract.contractTypeCode"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.contractTypeCode;
+                    $.each(contractTypeData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: contractTypeData
+                            });
+                    }else {
+                        var v = options.model.contractTypeCode;
+                        $.each(contractTypeData,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                            }
+                        });
+
+                        $('<span>'+v+'</span>')
+                            .appendTo(container)
+                    }
+                },
+            },
+            {
+                field: "productDivision",
+                title: '<@spring.message "cnlpaymentterm.prdclass"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align:center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.productDivision;
+                    $.each(productDivisionData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined" || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: productDivisionData
+                            });
+                    }else {
+                        var v = options.model.productDivision;
+                        $.each(productDivisionData,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                            }
+                        });
+                        $('<span>'+v+'</span>').appendTo(container)
+                    }
+                },
+            },
+            {
+                field: "partyType",
+                title: '<@spring.message "fms.CnlChannelContract.partyType"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.partyType;
+                    $.each(partyTypeData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined" || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options) {
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: partyTypeData,
+                                change: function () {
+                                    options.model.set('partyName', '');
+                                    options.model.set('partyId', '');
+                                },
+                                select: function (e) {
+                                    if (e.dataItem.value == "CHANNEL") {
+                                        options.model.set('channelTypeCode', '');
+                                    }
+                                }
+                            });
+                    } else {
+                        var v = options.model.partyType;
+                        $.each(partyTypeData, function (i, n) {
+                            if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                v = n.meaning;
+                            }
+                        });
+                        $('<span>' + v + '</span>').appendTo(container)
+                    }
+                }
+            },
+            {
+                field: "partyName",
+                title: '<@spring.message "fms.CnlChannelContract.partyName"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function (dataItem) {
+                    return dataItem['partyName'] || ''
+                },
+                editor:function (container, options) {
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "CNL_PARTY"/>, {
+                                textField: 'partyName',
+                                valueField: 'partyId',
+                                model: options.model,
+                                query: function (e) {
+                                    e.param['partyType'] = options.model.partyType;
+                                },
+                                select: function (e) {
+                                    options.model.set('partyName', e.item.partyName);
+                                    options.model.set('partyId', e.item.partyId);
+                                },
+                                change: function (e) {
+                                    if (e.sender._prev == '' || e.sender._prev == null) {
+                                        options.model.set('partyName', '');
+                                        options.model.set('partyId', '');
+                                    }
+                                }
+                            }));
+                    }else {
+                        $('<span>' + options.model.partyName + '</span>').appendTo(container)
+                    }
+
+                }
+
+            },
+            {
+                field: "channelTypeCode",
+                title: '<@spring.message "fms.cnlchannelcontract.channelclass"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.channelTypeCode;
+                    $.each(channelClassData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined" || v == null) {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                        if (options.model.partyType == "SUPPLIER") {
+                            if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                                $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                                    .appendTo(container)
+                                    .kendoComboBox({
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: channelClassData
+                                    });
+                            } else {
+                                var v = options.model.channelTypeCode;
+                                $.each(channelClassData, function (i, n) {
+                                    if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                        v = n.meaning;
+                                    }
+                                });
+                                $('<span>' + v + '</span>').appendTo(container)
+                            }
+                        } else {
+                            $('<span>' + options.model.channelTypeCode + '</span>')
+                                .appendTo(container)
+                        }
+
+
+                },
+            },
+            {
+                field: "startDate",
+                title: '<@spring.message "fms.CnlChannelContract.startDate"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                format: "{0: yyyy-MM-dd}" ,
+                editor: function(container, options) {
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        var end = options.model.endDate;
+                        var d;
+                        if (end) {
+                            d = end;
+                        }
+                        $('<input id="startDate" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDatePicker({
+                                format: "yyyy-MM-dd",
+                                max: d,
+                                change: function () {
+                                    if (this.value() != null) {
+                                        d = this.value();
+                                    } else {
+                                        d = new Date(1900, 0, 1);
+                                    }
+                                }
+                            });
+                    } else {
+                        var d = new Date(options.model.startDate);
+                        var curr_date = d.getDate();
+                        var curr_month = d.getMonth() + 1;
+                        var curr_year = d.getFullYear();
+                        String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                        String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                        var date = curr_year + "-" + curr_month +"-"+ curr_date;
+                        $('<span>' + date + '</span>')
+                            .appendTo(container)
+                    }
+                }
+            },
+            {
+                field: "endDate",
+                title: '<@spring.message "fms.CnlChannelContract.endDate"/> *',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                format: "{0: yyyy-MM-dd}" ,
+                editor: function(container, options) {
+                    if (options.model.channelContractId == null || options.model.channelContractId == '') {
+                        var start = options.model.startDate;
+                        var d;
+                        if(start){
+                            d=start;
+                        }
+                        $('<input id="endDate" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDatePicker({
+                                format:"yyyy-MM-dd",
+                                min:d,
+                                change:function(){
+                                    if(this.value()!=null){
+                                        d = this.value();
+                                    }else{
+                                        d= new Date(2099, 0, 1);
+                                    }
+                                }
+                            });
+                    } else {
+                        var d = new Date(options.model.endDate);
+                        var curr_date = d.getDate();
+                        var curr_month = d.getMonth() + 1;
+                        var curr_year = d.getFullYear();
+                        String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+                        String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+                        var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+                        $('<span>' + date + '</span>')
+                            .appendTo(container)
+                    }
+                }
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.channelContractId) {
+                        return '<a href="#"  onclick="openContractWin('+dataItem.channelContractId+',\''+dataItem.contractCode+'\',' + dataItem.channelId + ')"><@spring.message "fms.view_detail"/></a>';
+                    } else {
+                        return '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                    }
+                }
+            },
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+    function openContractWin(channelContractId,contractCode,channelId) {
+
+        if (channelContractId != null) {
+            parent.openTab("channelContract" + channelContractId,contractCode + " " + '<@spring.message "fms.cnlchannel.channel_contract"/>',"channel/channel_contract.html?channelContractId="+channelContractId + "&channelId=" + channelId)
+        }
+
+    }
+
+    function newConData() {
+        $('#conGrid').data('kendoGrid').addRow();
+    }
+
+    function newArcData() {
+        var grid = $("#arcGrid").data('kendoGrid');
+        var gridData = arcDataSource.data();
+        if(gridData.length == 0){
+            grid.addRow();
+        }else{
+            if(gridData[0].name == ""){
+                return;
+            }
+            if(gridData[0].fileSize == "" || typeof(gridData[0].fileSize)=="undefined"){
+                kendo.ui.showErrorDialog({
+                    message: '<@spring.message "fms.please_upload_file"/>'
+                })
+            }
+            else grid.addRow();
+        }
+    }
+
+    function newCorData() {
+        $('#corGrid').data('kendoGrid').addRow();
+    }
+
+//    function deleteConData() {
+//
+//        Hap.deleteGridSelection({
+//            grid: $('#conGrid')
+//        });
+//    }
+
+    //删除数据
+    function deleteConData(){
+        var checked = conGrid.selectedDataItems();
+        if (conGrid.selectedDataItems().length) {
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: $l('hap.tip.delete_confirm')
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    $.ajax({
+                        url: "${base.contextPath}/fms/cnl/channel/contact/remove",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(checked),
+                        success: function (res) {
+                            if (res.success) {
+                                datas = conDataSource.data();
+                                for (var i = 0; i < datas.length; i++) {
+                                    for (var j = 0; j < checked.length; j++) {
+                                        if (datas[i].uid == checked[j].uid) {
+                                            conDataSource.remove(datas[i]);
+                                        }
+                                    }
+                                }
+                                conGrid.refresh();
+                                kendo.ui.showInfoDialog({
+                                    title: '提示',
+                                    message: '<@spring.message "spe.deletesuccess"/>'
+                                })
+                            } else {
+                                kendo.ui.showErrorDialog({
+                                    title: '错误',
+                                    message: res.message
+                                })
+                            }
+                        },
+                    })
+                }
+            });
+        }
+    };
+
+    function deleteArcData() {
+        var grid = $("#arcGrid").data("kendoGrid");
+        var checked = grid.selectedDataItems();
+        if (grid.selectedDataItems().length) {
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: $l('hap.tip.delete_confirm')
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    $.each(checked, function (i, v) {
+                        if(v.fileId != "" && v._token != "" && v.fileId != undefined && v._token != undefined) {
+                            $.ajax({
+                                url:"${base.contextPath}/supplier/archives/attach/remove",
+                                type : "POST",
+                                data:{
+                                    fileId:v.fileId,
+                                    token:v._token
+                                }
+                            })
+                        }
+                    })
+
+                    $.ajax({
+                        url:"${base.contextPath}/fms/cnl/channel/archive/remove",
+                        type : "POST",
+                        contentType : "application/json",
+                        data:JSON.stringify(checked),
+                        success : function(res) {
+                            if(res.success){
+                                datas = arcDataSource.data();
+                                for(var i = 0;i < datas.length; i ++){
+                                    for(var j=0;j<checked.length;j++){
+                                        if(datas[i].uid == checked[j].uid){
+                                            arcDataSource.remove(datas[i]);
+                                        }
+                                    }
+                                }
+                                arcGrid.refresh();
+                                kendo.ui.showInfoDialog({
+                                    title    : '提示',
+                                    message  : '<@spring.message "spe.deletesuccess"/>'
+                                })
+                            }else{
+                                kendo.ui.showErrorDialog({
+                                    title    : '错误',
+                                    message  : res.message
+                                })
+                            }
+                        },
+                    })
+
+                }
+            })
+        }
+    }
+
+    function deleteCorData() {
+
+        var checked = corGrid.selectedDataItems();
+        if (corGrid.selectedDataItems().length) {
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: $l('hap.tip.delete_confirm')
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    $.ajax({
+                        url: "${base.contextPath}/fms/cnl/channel/contract/remove",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(checked),
+                        success: function (res) {
+                            if (res.success) {
+                                datas = corDataSource.data();
+                                for (var i = 0; i < datas.length; i++) {
+                                    for (var j = 0; j < checked.length; j++) {
+                                        if (datas[i].uid == checked[j].uid) {
+                                            corDataSource.remove(datas[i]);
+                                        }
+                                    }
+                                }
+                                corGrid.refresh();
+                                kendo.ui.showInfoDialog({
+                                    title: '提示',
+                                    message: '<@spring.message "spe.deletesuccess"/>'
+                                })
+                            } else {
+                                kendo.ui.showErrorDialog({
+                                    title: '错误',
+                                    message: res.message
+                                })
+                            }
+                        },
+                    })
+                }
+            });
+        }
+
+    }
+
+    function validateGridName(uid){
+        if($("#gridName").val() != ""){
+            document.getElementById("attacheUpload"+uid).disabled="";
+        }else{
+            document.getElementById("attacheUpload"+uid).disabled="disabled";
+        }
+    };
+
+    var uidData;
+    var isUpload;
+    function upload(uid){
+        uidData = uid;
+        data = arcDataSource.getByUid(uidData);
+        if(data.fileId != "" && typeof(data.fileId) != "undefined"){
+            kendo.ui.showConfirmDialog({
+                message: '<@spring.message "fms.overwrite_file"/>'
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    isUpload = true;
+                    window.fileWin = $("#fileWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open();
+                }else{
+                    isUpload = false;
+                }
+            });
+        }
+        else{
+            isUpload = false;
+            window.fileWin = $("#fileWin").kendoWindow({
+                title: '<@spring.message "sysfile.upload"/>',
+                width: 400,
+                height: 250,
+                modal: true
+            }).data("kendoWindow");
+            fileWin.center().open();
+        }
+
+    }
+    $("#files").kendoUpload({
+        async        : {
+            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        },
+        showFileList : false,
+        upload       : onUpload,
+        success      : onSuccess
+    });
+
+    function onUpload(e){
+
+        e.data = {
+            modularName:'CNL',
+            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+            maxSize:20480
+        }
+
+    };
+    function onSuccess(e){
+        if(e.response.success){
+            var grid = $("#arcGrid").data("kendoGrid");
+            var data = grid.dataSource.getByUid(uidData);
+            data.fileSize = Math.ceil((e.response.file.fileSize)/1024);
+            data.oldFileId = data.fileId;
+            data.fileId = e.response.file.fileId;
+            data._token = e.response.file._token;
+            var newTime = new Date(e.response.file.uploadDate);
+            newTime = Hap.formatDateTime(newTime);
+            data.uploadDate = newTime;
+            data.dirty = true;
+            grid.refresh();
+            document.getElementById("attacheDownload"+uidData).disabled="";
+            fileWin.close();
+            kendo.ui.showInfoDialog({
+                title    : '成功',
+                message  : '<@spring.message "spe.pleasesavedata"/>'
+            })
+        }else{
+            kendo.ui.showErrorDialog({
+                message  : e.response.message
+            })
+        }
+    }
+
+    function downloadFile(uid)
+    {
+        data = arcDataSource.getByUid(uid);
+        $.ajax({
+            url : '${base.contextPath}/commons/attach/validateFile',
+            type : "POST",
+            dataType : "json",
+            data : {
+                fileId:data.fileId,
+                token:data._token
+            },
+            success : function(json) {
+                if(json.success == true){
+                    url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                    var iframe = document.getElementById("ifile");
+                    iframe.src=url;
+                }else{
+                    kendo.ui.showErrorDialog({
+                        message  : '<@spring.message "fms.file_not_exists"/>'
+                    })
+                }
+            },
+        })
+
+    };
+
+    function saveData () {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.cnlchannel.validate_false"/>'
+            })
+        }else {
+            conGrid._validationEditCell();
+            arcGrid._validationEditCell();
+            corGrid._validationEditCell();
+            if ((conGrid.editable && conGrid.editable.end() || !conGrid.editable)
+                && (arcGrid.editable && arcGrid.editable.end() || !arcGrid.editable)
+                && (corGrid.editable && corGrid.editable.end() || !corGrid.editable)) {
+                var conData = conDataSource.data();
+                var conSaveFlag = "N"; 
+                for (var i = 0; i < conData.length; i++) { 
+                    if (conData[i].contactObject == "SIGN") { 
+                        conSaveFlag = "Y"; 
+                    } 
+                }
+                var corData = corDataSource.data();
+                var corSaveFlag = "Y";
+                var corUniqueFlag = "Y";
+                var contractCode;
+                for (var i = 0; i < corData.length; i++) {
+                    for (var j = i+1; j < corData.length; j++) {
+                        if (corData[i].contractCode == corData[j].contractCode) {
+                            corSaveFlag = "N";
+                            contractCode = corData[i].contractCode;
+                        }
+                        if (corData[i].productDivision == corData[j].productDivision &&
+                            corData[i].partyId == corData[j].partyId &&
+                            corData[i].partyType == corData[j].partyType &&
+                            (corData[i].channelTypeCode == corData[j].channelTypeCode || corData[i].partyType == "CHANNEL")) {
+                            corUniqueFlag = "N";
+                        }
+                    }
+                }
+
+
+                var arcData = arcDataSource.data();
+                var idSaveFlag = "N"; 
+                var comSaveFlag = "N"; 
+                for (var i = 0; i < arcData.length; i++) { 
+                    if (arcData[i].name == "公司证明") { 
+                        comSaveFlag = "Y"; 
+                    } 
+                    if (arcData[i].name == "身份证副本") { 
+                        idSaveFlag = "Y"; 
+                    } 
+                }
+
+//                if (conSaveFlag == "N") {
+//                    kendo.ui.showInfoDialog({
+//                        message: '<@spring.message "fms.cnlchannel.contact.validate"/>'
+//                    })
+//                }
+//                else if (idSaveFlag == "N" || comSaveFlag == "N") {
+//                    kendo.ui.showInfoDialog({
+//                        message: '<@spring.message "fms.cnlchannel.archive.validate"/>'
+//                    })
+//                }
+//                else
+                if (corData.length == 0) {
+                    kendo.ui.showInfoDialog({
+                        message: '<@spring.message "fms.cnlchannel.contract.validate"/>'
+                    })
+                } else if (corSaveFlag == "N") {
+                    kendo.ui.showInfoDialog({
+                        message: '合约编号' + contractCode + '重复，请重新维护！'
+                    })
+                } else if (corUniqueFlag == "N") {
+                    kendo.ui.showInfoDialog({
+                        message: '已存在重复的合约行记录，请重新维护！'
+                    })
+                } else {
+                    var unique = zeroModal.loading(6);
+
+                    if (viewModel.model.channelId == null) {
+                        viewModel.model.__status = 'add';
+                    }else {
+                        viewModel.model.__status = 'update';
+                    }
+
+                    Hap.submitForm({
+                        url: '${base.contextPath}/fms/cnl/channel/submit',
+                        formModel: viewModel.model,
+                        grid: {
+                            cnlChannelContact: $('#conGrid'),
+                            cnlChannelArchive: $('#arcGrid'),
+                            cnlChannelContract: $('#corGrid')
+                        },
+                        success: function (data) {
+                            $('#corGrid').data('kendoGrid').dataSource.page(1);
+                            zeroModal.close(unique);
+                            kendo.ui.showInfoDialog({
+                                title: $l('hap.tip.info'),
+                                message: $l('hap.tip.success')
+                            });
+
+                        },
+                        failure : function(msg){
+                            zeroModal.close(unique);
+                            kendo.ui.showErrorDialog({
+                                title:'失败！',
+                                message: msg.message
+                            })
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    function cancelData() {
+        if (newFlag == "Y") {
+            parent.closeTab("channelDetail");
+        }else {
+            parent.closeTab("channelDetail"+viewModel.model.channelId);
+        }
+
+    }
+
+
+</script>
+</body>
+</html>

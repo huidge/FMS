@@ -1,0 +1,488 @@
+<#--
+ * description: 订单预约确认信息
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?ynData=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?contactPhoneData=ORD.ORDER_CONTACT_PHONE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?addressData=ORD.ORDER_ADDRESS" type="text/javascript"></script>
+<script type="text/javascript">
+
+    var channelId = <#if RequestParameters.channelId?exists> ${RequestParameters.channelId} <#else>-1</#if>;
+    var itemId = <#if RequestParameters.itemId?exists> ${RequestParameters.itemId} <#else>-1</#if>;
+    var insurantAge = <#if RequestParameters.insurantAge?exists> ${RequestParameters.insurantAge} <#else>-1</#if>;
+    var productSupplierId = <#if RequestParameters.productSupplierId?exists> ${RequestParameters.productSupplierId} <#else>-1</#if>;
+
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    var functionCode = '${RequestParameters.functionCode!}';
+    var type = '${RequestParameters.type!}';
+    var reserveSupplierId;
+
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    viewModel.model.set("orderId",orderId);
+    viewModel.model.set("functionCode",functionCode);
+    if(orderId !=-1) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/query",
+            data: {
+                orderId: orderId,
+                functionCode: functionCode
+            },
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+                reserveSupplierId = viewModel.model.reserveSupplierId;
+            }
+
+        });
+    }
+
+</script>
+
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.reserveconfirminfo"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.reserveDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="reserveDate" name="reserveDate" type="text" data-bind="value:model.reserveDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.reserveArrivalDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="reserveArrivalDate" name="reserveArrivalDate" type="text" data-bind="value:model.reserveArrivalDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.reserveCheckDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="reserveCheckDate" name="reserveCheckDate" type="text" data-bind="value:model.reserveCheckDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.reserveSupplier"/></label>
+                        <div class="col-xs-8">
+                            <input id="reserveSupplierId" name="reserveSupplierId" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.reserveSupplierId,text:model.reserveSupplierName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.signSupplierName"/></label>
+                        <div class="col-xs-8">
+                            <input id="signSupplierName" name="signSupplierName" type="text" class="k-textbox" data-bind="value:model.signSupplierName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.signPerson"/></label>
+                        <div class="col-xs-8">
+                            <input id="signPerson" name="signPerson" type="text" data-bind="value:model.signPerson,text:model.signPerson" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.eleInsuranceFlag"/></label>
+                        <div class="col-xs-8">
+                            <input id="eleInsuranceFlag" name="eleInsuranceFlag" type="text" data-bind="value:model.eleInsuranceFlag" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.meetAddress"/></label>
+                        <div class="col-xs-8">
+                            <input id="meetAddress" name="meetAddress" type="text" data-bind="value:model.meetAddress" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.signAddress"/></label>
+                        <div class="col-xs-8">
+                            <input id="signAddress" name="signAddress" type="text" data-bind="value:model.signAddress" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.contactPerson"/></label>
+                        <div class="col-xs-8">
+                            <input id="contactPerson" name="contactPerson" type="text" data-bind="value:model.contactPerson" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.contactPhone"/></label>
+                        <div class="col-xs-8">
+                            <input id="contactPhone" name="contactPhone" type="text" data-bind="value:model.contactPhone" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.reserveComment"/></label>
+                        <div class="col-xs-8">
+                            <input id="reserveComment" name="reserveComment" type="text" class="k-textbox" data-bind="value:model.reserveComment" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#reserveDate").kendoDateTimePicker({
+        format: "yyyy-MM-dd HH:mm"
+    });
+
+    $("#reserveArrivalDate").kendoDateTimePicker({
+        format: "yyyy-MM-dd HH:mm"
+    });
+
+    $("#reserveCheckDate").kendoDateTimePicker({
+        format: "yyyy-MM-dd HH:mm"
+    });
+
+    $("#reserveSupplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "CMN_TRADE_ROUTE")}, {
+        query: function(e) {
+            e.param['channelId'] = channelId;
+            e.param['itemId'] = itemId;
+            e.param['insurantAge'] = insurantAge;
+            e.param['contributionPeriod'] = viewModel.model.sublineItemName;
+            e.param['currency'] =  viewModel.model.currency;
+            e.param['payMethod'] = viewModel.model.payMethod;
+            e.param['supplierLimit'] = "Y";
+
+            var addData;
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "${base.contextPath}/fms/ord/addition/query?orderId=" + viewModel.model.orderId + "&pagesize="+1000,
+                data: {},
+                success: function (json) {
+                    addData = json.rows;
+                }
+            });
+
+            var addItems="";
+            var addCount=0;
+            for (var i = 0; i < addData.length; i++) {
+                if (addData[i].itemId != null && addData[i].sublineItemName != null && addData[i].sublineItemName != "") {
+                    addItems = addItems + "," + addData[i].itemId + "-" + addData[i].sublineItemName;
+                    addCount = addCount + 1;
+                }
+            }
+            if (addItems != "") {
+                addItems = addItems + ",";
+                e.param['addItems'] = addItems;
+                e.param['addCount'] = addCount;
+            }
+
+            var d = new Date(viewModel.model.reserveDate);
+            var curr_date = d.getDate();
+            var curr_month = d.getMonth() + 1;
+            var curr_year = d.getFullYear();
+            String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
+            String(curr_date).length < 2 ? (curr_date = "0" + curr_date): curr_date;
+            var date = curr_year + "-" + curr_month +"-"+ curr_date;
+
+            e.param['reserveDateSting'] =  date;
+        },
+        select:function (e) {
+
+            viewModel.model.set("channelCommissionLineId",e.item.lineId);
+            viewModel.model.set("reserveSupplierName",e.item.reserveSupplierName);
+            viewModel.model.set("signSupplierId",e.item.signSupplierId);
+            viewModel.model.set("signSupplierName",e.item.signSupplierName);
+            viewModel.model.set("ownSupplierId",e.item.ownSupplierId);
+            viewModel.model.set("channelContractId",e.item.channelContractId)
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("channelCommissionLineId",null);
+                viewModel.model.set("reserveSupplierName",null);
+                viewModel.model.set("signSupplierId",null);
+                viewModel.model.set("signSupplierName",null);
+                viewModel.model.set("ownSupplierId",null);
+                viewModel.model.set("signPerson",null);
+                viewModel.model.set("channelContractId",null);
+            }
+        }
+    }));
+
+    $("#signSupplierName").attr("readonly", true).css("background", "#DDDDDD");
+
+    $("#signPerson").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SIGN_TR")}, {
+        query: function(e) {
+            e.param['supplierId'] =  viewModel.model.signSupplierId;
+        },
+        select:function (e) {
+            viewModel.model.set("signPerson",e.item.employeeName);
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("signPerson",null);
+            }
+        }
+    }));
+
+    $("#eleInsuranceFlag").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: ynData
+    });
+
+    $("#contactPerson").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "contractPerson",
+        dataValueField: "contractPerson",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/order/queryContactPerson?supplierId=" + productSupplierId,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        clearNoData: false
+    });
+
+    $("#contactPhone").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "contractNum",
+        dataValueField: "contractNum",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/order/queryContactPhone?supplierId=" + productSupplierId,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        clearNoData: false
+    });
+
+    $("#signAddress").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "addr",
+        dataValueField: "addr",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/order/queryAddress?supplierId=" +productSupplierId,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        clearNoData: false
+    });
+
+    $("#meetAddress").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "addr",
+        dataValueField: "addr",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/order/queryAddress?supplierId=" + productSupplierId,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        clearNoData: false
+    });
+
+    $(document).ready(function() {
+        $("#reserveArrivalDate").data("kendoDateTimePicker").enable(false);
+        if (type == "READ") {
+            $("#reserveDate").data("kendoDateTimePicker").enable(false);
+            $("#reserveCheckDate").data("kendoDateTimePicker").enable(false);
+            $("#reserveSupplierId").data("kendoLov").enable(false);
+            $("#signPerson").data("kendoLov").enable(false);
+            $("#eleInsuranceFlag").data("kendoComboBox").enable(false);
+            $("#contactPhone").data("kendoComboBox").enable(false);
+            $("#contactPerson").data("kendoComboBox").enable(false);
+            $("#signAddress").data("kendoComboBox").enable(false);
+            $("#meetAddress").data("kendoComboBox").enable(false);
+            $("#reserveComment").attr("readonly", true).css("background", "#DDDDDD");
+            $("#btn_save").hide();
+        }
+    })
+
+    function saveData() {
+        viewModel.model.set("signPerson",$("#signPerson").val());
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+
+
+            var checked = window.parent.grid.selectedDataItems();
+            if (window.parent.grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: '<@spring.message "fms.ordorder.confirmupdate"/>'
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+                        var flag = "N";
+                        if (reserveSupplierId != null && reserveSupplierId != "" && reserveSupplierId != viewModel.model.reserveSupplierId) {
+                            kendo.ui.showConfirmDialog({
+                                title: $l('hap.tip.info'),
+                                message: '是否确认修改预约供应商'
+                            }).done(function (event) {
+                                if (event.button == 'OK') {
+                                    $.each(checked, function (i, v) {
+                                        v.reserveDate = viewModel.model.reserveDate;
+                                        v.reserveArrivalDate = viewModel.model.reserveArrivalDate;
+                                        v.reserveCheckDate = viewModel.model.reserveCheckDate;
+                                        v.reserveSupplierId = viewModel.model.reserveSupplierId;
+                                        v.reserveSupplierName = viewModel.model.reserveSupplierName;
+                                        v.signSupplierId = viewModel.model.signSupplierId;
+                                        v.signSupplierName = viewModel.model.signSupplierName;
+                                        v.ownSupplierId = viewModel.model.ownSupplierId;
+                                        v.signPerson = viewModel.model.signPerson;
+                                        v.eleInsuranceFlag = viewModel.model.eleInsuranceFlag;
+                                        v.contactPerson = viewModel.model.contactPerson;
+                                        v.contactPhone = viewModel.model.contactPhone;
+                                        v.signAddress = viewModel.model.signAddress;
+                                        v.meetAddress = viewModel.model.meetAddress;
+                                        v.channelCommissionLineId = viewModel.model.channelCommissionLineId;
+                                        v.channelContractId = viewModel.model.channelContractId;
+                                        v.reserveComment = viewModel.model.reserveComment;
+                                        v.dirty = true;
+                                    })
+                                    window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                                    window.parent.$("#rcWin").data("kendoWindow").close();
+                                }
+                            })
+                        } else {
+                            $.each(checked, function (i, v) {
+                                v.reserveDate = viewModel.model.reserveDate;
+                                v.reserveArrivalDate = viewModel.model.reserveArrivalDate;
+                                v.reserveCheckDate = viewModel.model.reserveCheckDate;
+                                v.reserveSupplierId = viewModel.model.reserveSupplierId;
+                                v.reserveSupplierName = viewModel.model.reserveSupplierName;
+                                v.signSupplierId = viewModel.model.signSupplierId;
+                                v.signSupplierName = viewModel.model.signSupplierName;
+                                v.ownSupplierId = viewModel.model.ownSupplierId;
+                                v.signPerson = viewModel.model.signPerson;
+                                v.eleInsuranceFlag = viewModel.model.eleInsuranceFlag;
+                                v.contactPerson = viewModel.model.contactPerson;
+                                v.contactPhone = viewModel.model.contactPhone;
+                                v.signAddress = viewModel.model.signAddress;
+                                v.meetAddress = viewModel.model.meetAddress;
+                                v.channelCommissionLineId = viewModel.model.channelCommissionLineId;
+                                v.channelContractId = viewModel.model.channelContractId;
+                                v.reserveComment = viewModel.model.reserveComment;
+                                v.dirty = true;
+                            })
+                            window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                            window.parent.$("#rcWin").data("kendoWindow").close();
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#rcWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<#-- 
+ * description:渠道对账问题反馈页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?questionStatus=FET.QUESTION_STATUS" type="text/javascript"></script>
+<link href="${base.contextPath}/resources/css/forecast/bubble.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<body>
+<div id="fileWin" style="display: none;">
+	<form>
+	<input type="file" id="files" name="files"></input>
+	</form>
+</div>
+<iframe id="ifile" style="display:none"></iframe>
+<div class="parent">
+	<div id="title" class="title">
+	</div>
+	<div id="talk" class="talk">
+		
+	</div>
+	<div id="editor" class="editor" contenteditable="true">
+	</div>
+	<div id="fileList" class="fileList">
+	</div>
+	<div class="footer">
+	    <span onclick="save()" class="btn btn-default" id="btn_cancel" style="margin-right:49px;float:right"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.submit"/></span>
+		<span onclick="uploadFile()" class="btn btn-success" id="btn_save" type="submit" style="margin-right:5px;float:right"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "fms.ord.uploadfile"/></span>
+    </div>
+</div>
+	<script type="text/javascript">
+
+	
+	//用于计算文件数量
+	var fileNumber = 1;
+	//用于生成文件Id
+	var fileIndex = 1;
+	//文件数组
+	var fileArray = [];
+	//被删除文件数组
+	var deleteFileArray = [];
+	//当前数据状态
+	var dataStatus;
+	/*
+     *这三个字段从渠道对账页面获取
+     *
+     */
+    //对账期间
+    var parentCheckPeriod = '${RequestParameters.checkPeriod!0}';
+  	//付款方类型
+    var parentPaymentCompanyType = '${RequestParameters.paymentCompanyType!0}';
+  	//付款方Id
+    var parentPaymentCompanyId = '${RequestParameters.paymentCompanyId!0}';
+    //渠道Id
+    var parentChannelId = '${RequestParameters.channelId!0}';
+  	//版本
+    var parentVersion = '${RequestParameters.version!0}';
+    //父页面状态
+    var parentStatus = '${RequestParameters.parentStatus!0}';
+    
+    /*
+     *这四个字段从问题反馈汇总页面获取
+     *
+     */
+     
+  	//问题编号
+    var questionNumber = '${RequestParameters.questionNumber!0}';
+  	//问题状态
+    var status = '${RequestParameters.status!0}';
+  	//问题Id
+    var questionId = '${RequestParameters.questionId!0}';
+    
+    if (questionId != 0 && questionId != undefined) {
+    	fillDataByQuestionId(questionId);
+	}else{
+		if (parentCheckPeriod != 0 && parentCheckPeriod != undefined) {
+	    	fillDataByCheckPeriod(parentCheckPeriod,parentPaymentCompanyType,parentPaymentCompanyId,parentChannelId,parentVersion);
+		}
+	}
+    
+    
+    
+    /**
+     * 通过CheckPeriod填充数据
+     */
+     function fillDataByCheckPeriod(parentCheckPeriod,parentPaymentCompanyType,parentPaymentCompanyId,parentChannelId,parentVersion){
+     	$.ajax({
+ 	           url: '${base.contextPath}/fet/question/line/querybycheckperiod',
+ 	           type : "POST",
+ 	           async:false,
+ 	           data : {checkPeriod:parentCheckPeriod,paymentCompanyType:parentPaymentCompanyType,paymentCompanyId:parentPaymentCompanyId,channelId:parentChannelId,version:parentVersion,},
+ 	           success: function (args) {
+ 	        	  if(args.success){
+ 	        		 fillData(args);
+ 	        	  }else{
+ 	        		 kendo.ui.showErrorDialog({
+ 	                    title    : '错误',
+ 	                    message  : args.message
+ 	                })
+ 	        	  }
+ 	           }
+ 	       });
+     }
+    
+    /**
+    * 通过questionId填充数据
+    */
+    function fillDataByQuestionId(questionId){
+    	$.ajax({
+	           url: '${base.contextPath}/fet/question/line/query',
+	           type : "POST",
+	           async:false,
+	           data : {questionId:questionId},
+	           success: function (args) {
+	        	   if(args.success){
+	 	        		 fillData(args); 
+ 	        	   }else{
+ 	        		  kendo.ui.showErrorDialog({
+ 	                     title    : '错误',
+ 	                     message  : args.message
+ 	                 })
+ 	        	   }
+	           }
+	       });
+    }
+    
+    /**
+    * 填充留言数据和标题
+    */
+    function fillData(args){
+    	if(args.total > 0){
+    		$("#talk").html('');
+    	   //获取问题数据
+  		   var question = args.rows[0];
+    	   //获取行表
+    	   var lines = question.lines;
+    	   for(var i=0;i<lines.length;i++){
+    		   if(lines[i].isRight){
+    			   appendRightDiv(lines[i].submitDate,lines[i].userName,lines[i].content); 
+    		   }else{
+    			   appendLeftDiv(lines[i].submitDate,lines[i].userName,lines[i].content); 
+				}
+    	   }
+    	   fillTitle(question.questionNumber,question.status);
+    	   questionId = question.questionId;
+    	   dataStatus = 'update';
+    	   status = question.status;
+  	   	}else{
+  	   		fillTitle('','');
+  	   		dataStatus = 'add';
+  	   		status = 'WJJ';
+  	   	}
+    	if(status == 'YJJ' || parentStatus == 'YSX' || parentStatus == 'YQR'){
+    		$("#btn_cancel").attr({"disabled":"disabled"});
+    		$("#btn_save").attr({"disabled":"disabled"});
+    		$("#btn_cancel").removeAttr("onclick");
+    		$("#btn_save").removeAttr("onclick");
+    	}
+    }
+    
+    /**
+     * 填充标题数据
+     */
+    function fillTitle(number,status){
+    	var v = status;
+        $.each(questionStatus,function(i,n){
+            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                v = n.meaning;
+            }
+        })
+        if(v != undefined){
+        	status = v;
+        }
+    	$("#title").html("<b>问题编号："+number+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;问题状态："+status+"</b>");
+    }
+    
+    //最多输入200个字符
+	window.onkeydown = function(e){
+        var len = document.getElementById('editor').innerHTML.length;
+        if(len > 200 && e.keyCode != 8) {
+            return false;
+        }
+    }
+	
+	$(document).ready(function(){
+		$("#editor").html("");
+	});
+	
+	function uploadFile(){
+		if(fileNumber == 6){
+			kendo.ui.showErrorDialog({
+                title    : '错误',
+                message  : '最多上传五个文件！'
+            });
+			return;
+		}
+		window.fileWin = $("#fileWin").kendoWindow({
+            title: '<@spring.message "sysfile.upload"/>',
+            width: 400,
+            height: 250,
+            modal: true
+        }).data("kendoWindow");
+        fileWin.center().open();
+	}
+	
+	
+
+	$("#files").kendoUpload({
+	    async        : {
+	        saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+	    },
+	    showFileList : false,
+	    upload       : onUpload,
+	    success      : onSuccess
+	});
+	
+    function onUpload(e){
+    		e.data = {
+    				modularName:'FET',
+    				maxSize:20480
+    	    }
+    };
+    
+	function onSuccess(e){
+		if(e.response.success){
+			var file = {};
+			file.fileId = e.response.file.fileId;
+			file._token = e.response.file._token;
+			file.fileName = e.response.file.fileName;
+			file.filePath = e.response.file.filePath;
+			appendFile(file);
+			fileArray.push(file);
+			fileWin.close();
+    		kendo.ui.showInfoDialog({
+                title    : '成功',
+                message  : '<@spring.message "spe.pleasesavedata"/>'
+            })
+		}else{
+			kendo.ui.showErrorDialog({
+                title    : '错误',
+                message  : e.response.message
+            })
+		}
+	}
+	
+	/**
+	*  在文本区添加文件
+	*/
+	function appendFile(file){
+		var fileName = file.fileName;
+		var fileId = file.fileId;
+		var fileDiv = "<div id=\"file"+fileIndex+"\" style=\"margin-right:50px;color:black;float:left;text-align:center;width:70px;position:relative\" contenteditable=\"false\" onmouseover=\"showClear(1,"+fileIndex+")\" onmouseout=\"showClear(2,"+fileIndex+")\">"+
+			 "<a href=\"javascript:void(0)\" onclick=\"deleteFile("+fileIndex+","+fileId+")\" id=\"delete"+fileIndex+"\" style=\"display:none\" class=\"delete\"><i class=\"fa fa-times\"></i></a>"+
+			 "<img src=\"${base.contextPath}/resources/images/forecast/file.png\" height=\"40\" width=\"40\"/>"+
+			 "<br>"+fileName+
+			 "</div>";
+		fileNumber=fileNumber+1;
+		fileIndex=fileIndex+1;
+		$("#fileList").append(fileDiv);
+	}
+	
+	/* function upload(){
+		var fileName = "fdsdsaaaaaaaaaaa.jpg";
+		var fileId = "12";
+		var token = "fdsf";
+		var fileDiv = "";
+		if(fileNumber == 1){
+			var html = $("#editor").html();
+			var index = html.indexOf('<br>');
+			if(index == -1)fileDiv = "<br>";
+		}
+		fileDiv = fileDiv+
+			 "<div id=\"file"+fileIndex+"\" style=\"margin-right:20px;word-break:break-all;color:black;float:left;text-align:center;width:70px;position:relative\" contenteditable=\"false\" onmouseover=\"showClear(1,"+fileIndex+")\" onmouseout=\"showClear(2,"+fileIndex+")\">"+
+			 "<a href=\"javascript:void(0)\" onclick=\"deleteFile("+fileIndex+","+fileId+")\" id=\"delete"+fileIndex+"\" style=\"display:none\" class=\"delete\"><i class=\"fa fa-times\"></i></a>"+
+			 "<i class=\"fa fa-file\" style=\"font-size:150%\"></i>"+
+			 "<br>"+fileName+
+			 "</div>";
+		fileNumber=fileNumber+1;
+		fileIndex=fileIndex+1;
+		var file = {};
+		file.fileId = fileId;
+		file._token = token;
+		file.fileName = fileName;
+		fileArray.push(file);
+		$("#fileList").append(fileDiv);
+	} */
+	
+	function save(){
+		var html = $("#editor").html();
+		var text = $("#editor").text();
+		if((text.length==0 || text.trim().length == 0) && fileArray.length == 0){
+			kendo.ui.showErrorDialog({
+                title    : '错误',
+                message  : '请输入文字或上传文件！'
+            })
+            return;
+		}
+		var index = html.indexOf('<br>');
+		if(index != -1){
+			html = html.substring(0,index);
+		}
+		if(fileArray.length != 0 && (text.length==0 || text.trim().length == 0)){
+			html = "请查收附件:<br>";
+		}else if(fileArray.length != 0 && (text.length!=0 && text.trim().length != 0)){
+			html = html+"<br>";
+		}
+		for(var i=0;i<fileArray.length;i++){
+			html = html+
+			 "<div class=\"file\" style=\"font-size:12px\""+
+			 'onclick="downloadFile('+fileArray[i].fileId+',\''+fileArray[i].filePath+'\')">'+
+			 "<img src=\"{root}/resources/images/forecast/download.png\" height=\"40\" width=\"40\"/>"+
+			 "<br>"+fileArray[i].fileName+
+			 "</div>";
+		}
+		//发送Ajax请求，保存数据
+		var requestData = wrapRequestData(html);
+		var unique = zeroModal.loading(6);
+		$.ajax({
+			  url : '${base.contextPath}/fet/question/saveData',
+              type : "POST",
+              dataType : "json",
+              contentType : "application/json",
+              data : JSON.stringify(requestData),
+              success : function(json) {
+                  if(json.success){
+                	  fillDataByQuestionId(json.rows[0].questionId);
+              		  $("#editor").html("");
+              		  $("#fileList").html("");
+            		  fileNumber = 1;
+            		  fileArray = [];
+            		  deleteFileArray = [];
+                	  zeroModal.close(unique);
+                  }else{
+                	  zeroModal.close(unique);
+                	  kendo.ui.showErrorDialog({
+                          title    : '错误',
+                          message  : json.message
+                      })
+                  }
+              },
+              failure : function(msg){
+              	zeroModal.close(unique);
+              	kendo.ui.showErrorDialog({
+  		        	title:'失败！',
+  		        	message: msg.message
+  		        })
+              }
+		})
+	}
+	
+	/**
+	*  显示/隐藏删除按钮
+	*/
+	function showClear(data,index){
+	  	  if(data == "1")$("#delete"+index).css("display","");
+	  	  else{
+	  		  $("#delete"+index).css("display","none");
+	  	  }
+	};
+	
+	/**
+	*  删除文件
+	*/
+	function deleteFile(number,id){
+		var fileId = "file"+number;
+		var index = -1;
+		$("#"+fileId).remove();
+		fileNumber = fileNumber-1;
+		for(var i=0;i<fileArray.length;i++){
+			if(fileArray[i].fileId == id){
+				deleteFileArray.push(fileArray[i]);
+				index = i;
+				break;
+			}
+		}
+		if(index != -1){
+			fileArray.splice(index,1);
+		}
+	}
+	
+	/**
+	*  下载文件
+	*/
+	function downloadFile(fileId,url) 
+	{ 
+		var token = "";
+		$.ajax({
+			 url : '${base.contextPath}/fet/question/getToken',
+             type : "POST",
+             dataType : "json",
+             async:false,
+             data : {
+            	 fileId:fileId
+             },
+             success : function(data){
+            	 if(data == ""){
+            		 kendo.ui.showErrorDialog({
+                         title    : '错误',
+                         message  : '<@spring.message "fms.file_not_exists"/>'
+                     })
+            	 }else{
+            		 token = data;
+            	 }
+          	 }
+		})
+		$.ajax({
+			 url : '${base.contextPath}/commons/attach/validateFile',
+             type : "POST",
+             dataType : "json",
+             data : {
+            	 fileId:fileId,
+                 token:token
+             },
+             success : function(json) {
+                    if(json.success == true){
+                    	url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+fileId+'&token='+token;
+               	   		var iframe = document.getElementById("ifile");
+               	   		iframe.src=url;
+                    }else{
+                    	if(json.message != "" && json.message != undefined && json.message != null){
+                    		kendo.ui.showErrorDialog({
+                                title    : '错误',
+                                message  : json.message
+                            })
+                    	}else{
+                    		kendo.ui.showErrorDialog({
+                                title    : '错误',
+                                message  : '<@spring.message "fms.file_not_exists"/>'
+                            })
+                    	}
+                    	
+                    }
+             }
+		}) 
+	};
+		
+	function appendRightDiv(time,userName,html){
+		var div="<div class=\"right\">"+
+		 "<div class=\"time_head_right\">"+time+"</div>"+
+		 "<div class=\"org_box_right\">"+
+   		"<div class=\"header_right\">"+
+   		"<i class=\"fa fa-user\" style=\"font-size:300%\"></i><br>"+
+   		userName+
+   		"</div>"+
+   		"<span class=\"org_box_cor_right\">"+
+   		"</span><div class=\"org_box_text_right\">"+html+
+		"</div></div>"+
+		"</div>";
+		$("#talk").append(div);
+		scrollBottom();
+	}
+	
+	function appendLeftDiv(time,userName,html){
+		var div="<div class=\"left\">"+
+		 "<div class=\"time_head_left\">"+time+"</div>"+
+		 "<div class=\"org_box_left\">"+
+   		"<div class=\"header_left\">"+
+   		"<i class=\"fa fa-user\" style=\"font-size:300%\"></i><br>"+
+   		userName+
+   		"</div>"+
+   		"<span class=\"org_box_cor_left\">"+
+   		"</span><div class=\"org_box_text_left\">"+html+
+		"</div></div>"+
+		"</div>";
+		$("#talk").append(div);
+		scrollBottom();
+	}
+	
+	/**
+	* 将滚动条滚动到最底部
+	*/
+	function scrollBottom(){
+		var div = document.getElementById('talk');
+		div.scrollTop = div.scrollHeight;
+	}
+	
+	/**
+	* 封装请求数据
+	*/
+	function wrapRequestData(html){
+		var requestData = {};
+		//行表
+		var line = {};
+		var lines = [];
+		if(dataStatus == 'add'){
+			requestData.checkPeriod = parentCheckPeriod;
+			requestData.paymentCompanyType = parentPaymentCompanyType;
+			requestData.paymentCompanyId = parentPaymentCompanyId;
+			requestData.channelId = parentChannelId;
+			requestData.version = parentVersion;
+			requestData.status = 'WJJ';
+			line.content = html;
+		}else{
+			line.content = html;
+			line.questionId = questionId;
+		}
+		requestData.__status = dataStatus;
+		line.__status = 'add';
+		lines.push(line);
+		//删除文件列表
+		requestData.deleteFiles = deleteFileArray;
+		requestData.lines = lines;
+		return requestData;
+	}
+	</script>
+</body>
+</html>

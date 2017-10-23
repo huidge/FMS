@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by Rex.Hua on 17/4/20.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdItemPaymodeMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdItemPaymode">
+        <id column="PAYMODE_ID" property="paymodeId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CURRENCY_CODE" property="currencyCode" jdbcType="VARCHAR" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<select id="queryCurrencyByItemId" parameterType="clb.core.production.dto.PrdItemPaymode" resultMap="BaseResultMap">
+	SELECT
+		fpi.PAYMODE_ID,
+		fpi.ITEM_ID,
+		fpi.CURRENCY_CODE,
+		fpi.ENABLED_FLAG
+	FROM
+		fms_prd_item_paymode AS fpi
+	WHERE
+		 fpi.ITEM_ID = #{itemId} 
+		 AND 
+		 fpi.ENABLED_FLAG = #{enabledFlag}
+	</select>
+
+	<select id="queryAllCurrency" parameterType="clb.core.production.dto.PrdItemPaymode" resultMap="BaseResultMap">
+		SELECT
+		fpi.PAYMODE_ID,
+		fpi.ITEM_ID,
+		fpi.CURRENCY_CODE,
+		fpi.ENABLED_FLAG,
+		scvb.MEANING CURRENCY
+		FROM
+		fms_prd_item_paymode AS fpi
+		LEFT JOIN sys_code_b sc
+		ON SC.code = 'PUB.CURRENCY'
+		LEFT JOIN sys_code_value_b scvb
+		ON scvb.code_id=sc.code_id
+		AND scvb.value=fpi.CURRENCY_CODE
+		LEFT JOIN sys_code_value_tl scvt
+		ON scvt.code_value_id=scvb.code_value_id
+		AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+		WHERE 1=1
+		<if test="itemId != null"> AND fpi.ITEM_ID = #{itemId} </if >
+		<if test="enabledFlag != null"> AND fpi.ENABLED_FLAG = #{enabledFlag}  </if >
+
+	</select>
+
+
+</mapper>

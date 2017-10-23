@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by Rex.Hua on 17/4/12.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdItemsMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdItems">
+        <id column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS_NAME" property="bigClassName" jdbcType="VARCHAR" />
+        <result column="MID_CLASS_NAME" property="midClassName" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS_NAME" property="minClassName" jdbcType="VARCHAR" />
+        <result column="ATT_SET_ID" property="attSetId" jdbcType="DECIMAL" />
+        <result column="SET_NAME" property="attSetName" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PICTURE_FILE_ID" property="pictureFileId" jdbcType="DECIMAL" />
+        <result column="PICTURE_FILE_PATH" property="pictureFilePath" jdbcType="VARCHAR" />
+        <result column="FULLYEAR" property="fullyear" jdbcType="VARCHAR" />
+        <result column="ONEYEAR" property="oneyear" jdbcType="VARCHAR" />
+        <result column="HALFYEAR" property="halfyear" jdbcType="VARCHAR" />
+        <result column="QUARTER" property="quarter" jdbcType="VARCHAR" />
+        <result column="ONEMONTH" property="onemonth" jdbcType="VARCHAR" />
+        <result column="PREPAY_FLAG" property="prepayFlag" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ONEYEAR_RATE" property="oneyearRate"/>
+        <result column="HALFYEAR_RATE" property="halfyearRate"/>
+        <result column="QUARTER_RATE" property="quarterRate"/>
+        <result column="ONEMONTH_RATE" property="onemonthRate"/>
+    </resultMap>
+
+    <select id="selectByParam" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+        SELECT fpi.item_id
+              ,fpi.item_code
+              ,fpi.item_name
+              ,fpi.big_class
+              ,fpi.mid_class
+              ,fpi.min_class
+              ,fpi.att_set_id
+              ,fpas.SET_NAME
+              ,fpi.supplier_id
+              ,fss.name SUPPLIER_NAME
+              ,fpi.enabled_flag
+              ,fpi.comments
+              ,fpi.PICTURE_FILE_ID
+              ,(select file_path from sys_file where file_id = fpi.PICTURE_FILE_ID) PICTURE_FILE_PATH
+              ,fpi.FULLYEAR
+              ,fpi.ONEYEAR
+              ,fpi.HALFYEAR
+              ,fpi.QUARTER
+              ,fpi.ONEMONTH
+              ,fpi.PREPAY_FLAG
+                ,(select concat(scv1.meaning,'-',scv2.meaning,'-',scv3.meaning)
+                from  sys_code_b scb1,
+                sys_code_value_b scv1,
+                sys_code_b scb2,
+                sys_code_value_b scv2,
+                sys_code_b scb3,
+                sys_code_value_b scv3
+                where scb1.code = 'PRD.PRODUCT_DIVISION'
+                and   scb1.code_id = scv1.code_id
+                and   scv1.value = fpi.big_class
+                and   scb2.code = 'PRD.PRODUCT_CLASS'
+                and   scb2.code_id = scv2.code_id
+                and   scv2.value = fpi.mid_class
+                and   scb3.code = 'PRD.PRODUCT_CATAGORY'
+                and   scb3.code_id = scv3.code_id
+                and   scv3.value = fpi.min_class)   CLASS_NAME,
+                fpi.ATTRIBUTE1  ,
+                fpi.ATTRIBUTE2  ,
+                fpi.ATTRIBUTE3  ,
+                fpi.ATTRIBUTE4  ,
+                fpi.ATTRIBUTE5  ,
+                fpi.ATTRIBUTE6  ,
+                fpi.ATTRIBUTE7  ,
+                fpi.ATTRIBUTE8  ,
+                fpi.ATTRIBUTE9  ,
+                fpi.ATTRIBUTE10 ,
+                fpi.ATTRIBUTE11 ,
+                fpi.ATTRIBUTE12 ,
+                fpi.ATTRIBUTE13 ,
+                fpi.ATTRIBUTE14 ,
+                fpi.ATTRIBUTE15 ,
+                fpi.ATTRIBUTE16 ,
+                fpi.ATTRIBUTE17 ,
+                fpi.ATTRIBUTE18 ,
+                fpi.ATTRIBUTE19 ,
+                fpi.ATTRIBUTE20 ,
+                fpi.ATTRIBUTE21 ,
+                fpi.ATTRIBUTE22 ,
+                fpi.ATTRIBUTE23 ,
+                fpi.ATTRIBUTE24 ,
+                fpi.ATTRIBUTE25 ,
+                fpi.ATTRIBUTE26 ,
+                fpi.ATTRIBUTE27 ,
+                fpi.ATTRIBUTE28 ,
+                fpi.ATTRIBUTE29 ,
+                fpi.ATTRIBUTE30 ,
+                fpi.ATTRIBUTE31 ,
+                fpi.ATTRIBUTE32 ,
+                fpi.ATTRIBUTE33 ,
+                fpi.ATTRIBUTE34 ,
+                fpi.ATTRIBUTE35 ,
+                fpi.ATTRIBUTE36 ,
+                fpi.ATTRIBUTE37 ,
+                fpi.ATTRIBUTE38 ,
+                fpi.ATTRIBUTE39 ,
+                fpi.ATTRIBUTE40 ,
+                fpi.ATTRIBUTE41 ,
+                fpi.ATTRIBUTE42 ,
+                fpi.ATTRIBUTE43 ,
+                fpi.ATTRIBUTE44 ,
+                fpi.ATTRIBUTE45 ,
+                fpi.ATTRIBUTE46 ,
+                fpi.ATTRIBUTE47 ,
+                fpi.ATTRIBUTE48 ,
+                fpi.ATTRIBUTE49 ,
+                fpi.ATTRIBUTE50 ,
+                fpi.ATTRIBUTE51 ,
+                fpi.ATTRIBUTE52 ,
+                fpi.ATTRIBUTE53 ,
+                fpi.ATTRIBUTE54 ,
+                fpi.ATTRIBUTE55 ,
+                fpi.ATTRIBUTE56 ,
+                fpi.ATTRIBUTE57 ,
+                fpi.ATTRIBUTE58 ,
+                fpi.ATTRIBUTE59 ,
+                fpi.ATTRIBUTE60 ,
+                fpi.ATTRIBUTE61 ,
+                fpi.ATTRIBUTE62 ,
+                fpi.ATTRIBUTE63 ,
+                fpi.ATTRIBUTE64 ,
+                fpi.ATTRIBUTE65 ,
+                fpi.ATTRIBUTE66 ,
+                fpi.ATTRIBUTE67 ,
+                fpi.ATTRIBUTE68 ,
+                fpi.ATTRIBUTE69 ,
+                fpi.ATTRIBUTE70 ,
+                fpi.ATTRIBUTE71 ,
+                fpi.ATTRIBUTE72 ,
+                fpi.ATTRIBUTE73 ,
+                fpi.ATTRIBUTE74 ,
+                fpi.ATTRIBUTE75 ,
+                fpi.ATTRIBUTE76 ,
+                fpi.ATTRIBUTE77 ,
+                fpi.ATTRIBUTE78 ,
+                fpi.ATTRIBUTE79 ,
+                fpi.ATTRIBUTE80 ,
+                fpi.ATTRIBUTE81 ,
+                fpi.ATTRIBUTE82 ,
+                fpi.ATTRIBUTE83 ,
+                fpi.ATTRIBUTE84 ,
+                fpi.ATTRIBUTE85 ,
+                fpi.ATTRIBUTE86 ,
+                fpi.ATTRIBUTE87 ,
+                fpi.ATTRIBUTE88 ,
+                fpi.ATTRIBUTE89 ,
+                fpi.ATTRIBUTE90 ,
+                fpi.ATTRIBUTE91 ,
+                fpi.ATTRIBUTE92 ,
+                fpi.ATTRIBUTE93 ,
+                fpi.ATTRIBUTE94 ,
+                fpi.ATTRIBUTE95 ,
+                fpi.ATTRIBUTE96 ,
+                fpi.ATTRIBUTE97 ,
+                fpi.ATTRIBUTE98 ,
+                fpi.ATTRIBUTE99 ,
+                fpi.ATTRIBUTE100,
+                fpi.ATTRIBUTE101,
+                fpi.ATTRIBUTE102,
+                fpi.ATTRIBUTE103,
+                fpi.ATTRIBUTE104,
+                fpi.ATTRIBUTE105,
+                fpi.ATTRIBUTE106,
+                fpi.ATTRIBUTE107,
+                fpi.ATTRIBUTE108,
+                fpi.ATTRIBUTE109,
+                fpi.ATTRIBUTE110,
+                fpi.ATTRIBUTE111,
+                fpi.ATTRIBUTE112,
+                fpi.ATTRIBUTE113,
+                fpi.ATTRIBUTE114,
+                fpi.ATTRIBUTE115,
+                fpi.ATTRIBUTE116,
+                fpi.ATTRIBUTE117,
+                fpi.ATTRIBUTE118,
+                fpi.ATTRIBUTE119,
+                fpi.ATTRIBUTE120,
+                fpi.ONEYEAR_RATE,
+                fpi.HALFYEAR_RATE,
+                fpi.QUARTER_RATE,
+                fpi.ONEMONTH_RATE
+        FROM   fms_prd_items fpi,
+               fms_spe_supplier fss,
+               fms_prd_attribute_set fpas
+        WHERE  fpi.supplier_id = fss.supplier_id
+        and	   fpi.att_set_id = fpas.att_set_id
+        <if test="bigClass != null">
+            AND fpi.big_class = #{bigClass}
+        </if >
+        <if test="midClass != null">
+            AND fpi.mid_class = #{midClass}
+        </if >
+        <if test="minClass != null">
+            AND fpi.min_class = #{minClass}
+        </if >
+        <if test="supplierId != null">
+            AND fss.supplier_id = #{supplierId}
+        </if >
+        <if test="itemId != null">
+            AND fpi.item_id = #{itemId}
+        </if >
+        <if test="itemName != null">
+            AND fpi.item_name like concat('%',concat(#{itemName},'%'))
+        </if >
+        ORDER  BY item_id ASC
+    </select>
+
+    <select id="getMaxItemsCode" resultType="java.lang.Integer">
+        select ifnull(max(substring(item_code
+                     , 3
+                     , 1000)),0)
+        from fms_prd_items
+        where item_code like concat('%',concat(#{bigClass},'%'))
+    </select>
+
+    <select id="queryitemBySupplierId" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+    	SELECT
+	fpi.ITEM_ID,
+	fpi.ITEM_CODE,
+	fpi.ITEM_NAME,
+	fpi.BIG_CLASS,
+	fpi.MID_CLASS,
+	fpi.MIN_CLASS,
+	fpi.ATT_SET_ID,
+	fpi.SUPPLIER_ID,
+	fpi.ENABLED_FLAG,
+	fpi.COMMENTS,
+	fpi.PICTURE_FILE_ID,
+	fpi.FULLYEAR,
+	fpi.ONEYEAR,
+	fpi.HALFYEAR,
+	fpi.`QUARTER`,
+	fpi.ONEMONTH,
+	fpi.PREPAY_FLAG,
+	fpi.OBJECT_VERSION_NUMBER,
+	fpi.PROGRAM_ID,
+	fpi.REQUEST_ID,
+	fpi.CREATION_DATE,
+	fpi.CREATED_BY,
+	fpi.LAST_UPDATED_BY,
+	fpi.LAST_UPDATE_DATE,
+	fpi.LAST_UPDATE_LOGIN,
+	fpi.ATTRIBUTE_CATEGORY,
+	fpi.ATTRIBUTE1,
+	fpi.ATTRIBUTE2,
+	fpi.ATTRIBUTE3,
+	fpi.ATTRIBUTE4,
+	fpi.ATTRIBUTE5,
+	fpi.ATTRIBUTE6,
+	fpi.ATTRIBUTE7,
+	fpi.ATTRIBUTE8,
+	fpi.ATTRIBUTE9,
+	fpi.ATTRIBUTE10,
+	fpi.ATTRIBUTE11,
+	fpi.ATTRIBUTE12,
+	fpi.ATTRIBUTE13,
+	fpi.ATTRIBUTE14,
+	fpi.ATTRIBUTE15,
+	fpi.ATTRIBUTE16,
+	fpi.ATTRIBUTE17,
+	fpi.ATTRIBUTE18,
+	fpi.ATTRIBUTE19,
+	fpi.ATTRIBUTE20,
+	fpi.ATTRIBUTE21,
+	fpi.ATTRIBUTE22,
+	fpi.ATTRIBUTE23,
+	fpi.ATTRIBUTE24,
+	fpi.ATTRIBUTE25,
+	fpi.ATTRIBUTE26,
+	fpi.ATTRIBUTE27,
+	fpi.ATTRIBUTE28,
+	fpi.ATTRIBUTE29,
+	fpi.ATTRIBUTE30,
+	fpi.ATTRIBUTE31,
+	fpi.ATTRIBUTE32,
+	fpi.ATTRIBUTE33,
+	fpi.ATTRIBUTE34,
+	fpi.ATTRIBUTE35,
+	fpi.ATTRIBUTE36,
+	fpi.ATTRIBUTE37,
+	fpi.ATTRIBUTE38,
+	fpi.ATTRIBUTE39,
+	fpi.ATTRIBUTE40,
+	fpi.ATTRIBUTE41,
+	fpi.ATTRIBUTE42,
+	fpi.ATTRIBUTE43,
+	fpi.ATTRIBUTE44,
+	fpi.ATTRIBUTE45,
+	fpi.ATTRIBUTE46,
+	fpi.ATTRIBUTE47,
+	fpi.ATTRIBUTE48,
+	fpi.ATTRIBUTE49,
+	fpi.ATTRIBUTE50,
+	fpi.ATTRIBUTE51,
+	fpi.ATTRIBUTE52,
+	fpi.ATTRIBUTE53,
+	fpi.ATTRIBUTE54,
+	fpi.ATTRIBUTE55,
+	fpi.ATTRIBUTE56,
+	fpi.ATTRIBUTE57,
+	fpi.ATTRIBUTE58,
+	fpi.ATTRIBUTE59,
+	fpi.ATTRIBUTE60,
+	fpi.ATTRIBUTE61,
+	fpi.ATTRIBUTE62,
+	fpi.ATTRIBUTE63,
+	fpi.ATTRIBUTE64,
+	fpi.ATTRIBUTE65,
+	fpi.ATTRIBUTE66,
+	fpi.ATTRIBUTE67,
+	fpi.ATTRIBUTE68,
+	fpi.ATTRIBUTE69,
+	fpi.ATTRIBUTE70,
+	fpi.ATTRIBUTE71,
+	fpi.ATTRIBUTE72,
+	fpi.ATTRIBUTE73,
+	fpi.ATTRIBUTE74,
+	fpi.ATTRIBUTE75,
+	fpi.ATTRIBUTE76,
+	fpi.ATTRIBUTE77,
+	fpi.ATTRIBUTE78,
+	fpi.ATTRIBUTE79,
+	fpi.ATTRIBUTE80,
+	fpi.ATTRIBUTE81,
+	fpi.ATTRIBUTE82,
+	fpi.ATTRIBUTE83,
+	fpi.ATTRIBUTE84,
+	fpi.ATTRIBUTE85,
+	fpi.ATTRIBUTE86,
+	fpi.ATTRIBUTE87,
+	fpi.ATTRIBUTE88,
+	fpi.ATTRIBUTE89,
+	fpi.ATTRIBUTE90,
+	fpi.ATTRIBUTE91,
+	fpi.ATTRIBUTE92,
+	fpi.ATTRIBUTE93,
+	fpi.ATTRIBUTE94,
+	fpi.ATTRIBUTE95,
+	fpi.ATTRIBUTE96,
+	fpi.ATTRIBUTE97,
+	fpi.ATTRIBUTE98,
+	fpi.ATTRIBUTE99,
+	fpi.ATTRIBUTE100,
+	fpi.ATTRIBUTE101,
+	fpi.ATTRIBUTE102,
+	fpi.ATTRIBUTE103,
+	fpi.ATTRIBUTE104,
+	fpi.ATTRIBUTE105,
+	fpi.ATTRIBUTE106,
+	fpi.ATTRIBUTE107,
+	fpi.ATTRIBUTE108,
+	fpi.ATTRIBUTE109,
+	fpi.ATTRIBUTE110,
+	fpi.ATTRIBUTE111,
+	fpi.ATTRIBUTE112,
+	fpi.ATTRIBUTE113,
+	fpi.ATTRIBUTE114,
+	fpi.ATTRIBUTE115,
+	fpi.ATTRIBUTE116,
+	fpi.ATTRIBUTE117,
+	fpi.ATTRIBUTE118,
+	fpi.ATTRIBUTE119,
+	fpi.ATTRIBUTE120
+FROM
+	fms_prd_items AS fpi
+WHERE
+	fpi.SUPPLIER_ID = #{supplierId}
+    
+    </select>
+
+
+    <select id="wsSelectByParam" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+        SELECT fpi.item_id
+        ,fpi.item_code
+        ,fpi.item_name
+        ,fpi.big_class
+        ,fpi.mid_class
+        ,fpi.min_class
+        ,fpi.att_set_id
+        ,fpas.SET_NAME
+        ,fpi.supplier_id
+        ,fss.name SUPPLIER_NAME
+        ,fpi.enabled_flag
+        ,fpi.comments
+        ,(select file_path from sys_file where file_id = fpi.PICTURE_FILE_ID) PICTURE_FILE_PATH
+        ,fpi.PICTURE_FILE_ID
+        ,fpi.FULLYEAR
+        ,fpi.ONEYEAR
+        ,fpi.HALFYEAR
+        ,fpi.QUARTER
+        ,fpi.ONEMONTH
+        ,fpi.PREPAY_FLAG
+        ,(select concat(scv1.meaning,'-',scv2.meaning,'-',scv3.meaning)
+        from  sys_code_b scb1,
+        sys_code_value_b scv1,
+        sys_code_b scb2,
+        sys_code_value_b scv2,
+        sys_code_b scb3,
+        sys_code_value_b scv3
+        where scb1.code = 'PRD.PRODUCT_DIVISION'
+        and   scb1.code_id = scv1.code_id
+        and   scv1.value = fpi.big_class
+        and   scb2.code = 'PRD.PRODUCT_CLASS'
+        and   scb2.code_id = scv2.code_id
+        and   scv2.value = fpi.mid_class
+        and   scb3.code = 'PRD.PRODUCT_CATAGORY'
+        and   scb3.code_id = scv3.code_id
+        and   scv3.value = fpi.min_class)   CLASS_NAME,
+        (select scv.meaning
+        from  sys_code_b scb,
+        sys_code_value_b scv
+        where scb.code = 'PRD.PRODUCT_DIVISION'
+        and   scb.code_id = scv.code_id
+        and   scv.value = fpi.big_class) BIG_CLASS_NAME,
+        (select scv.meaning
+        from  sys_code_b scb,
+        sys_code_value_b scv
+        where scb.code = 'PRD.PRODUCT_CLASS'
+        and   scb.code_id = scv.code_id
+        and   scv.value = fpi.mid_class) MID_CLASS_NAME,
+        (select scv.meaning
+        from  sys_code_b scb,
+        sys_code_value_b scv
+        where scb.code = 'PRD.PRODUCT_CATAGORY'
+        and   scb.code_id = scv.code_id
+        and   scv.value = fpi.min_class) MIN_CLASS_NAME,
+        fpi.ATTRIBUTE1  ,
+        fpi.ATTRIBUTE2  ,
+        fpi.ATTRIBUTE3  ,
+        fpi.ATTRIBUTE4  ,
+        fpi.ATTRIBUTE5  ,
+        fpi.ATTRIBUTE6  ,
+        fpi.ATTRIBUTE7  ,
+        fpi.ATTRIBUTE8  ,
+        fpi.ATTRIBUTE9  ,
+        fpi.ATTRIBUTE10 ,
+        fpi.ATTRIBUTE11 ,
+        fpi.ATTRIBUTE12 ,
+        fpi.ATTRIBUTE13 ,
+        fpi.ATTRIBUTE14 ,
+        fpi.ATTRIBUTE15 ,
+        fpi.ATTRIBUTE16 ,
+        fpi.ATTRIBUTE17 ,
+        fpi.ATTRIBUTE18 ,
+        fpi.ATTRIBUTE19 ,
+        fpi.ATTRIBUTE20 ,
+        fpi.ATTRIBUTE21 ,
+        fpi.ATTRIBUTE22 ,
+        fpi.ATTRIBUTE23 ,
+        fpi.ATTRIBUTE24 ,
+        fpi.ATTRIBUTE25 ,
+        fpi.ATTRIBUTE26 ,
+        fpi.ATTRIBUTE27 ,
+        fpi.ATTRIBUTE28 ,
+        fpi.ATTRIBUTE29 ,
+        fpi.ATTRIBUTE30 ,
+        fpi.ATTRIBUTE31 ,
+        fpi.ATTRIBUTE32 ,
+        fpi.ATTRIBUTE33 ,
+        fpi.ATTRIBUTE34 ,
+        fpi.ATTRIBUTE35 ,
+        fpi.ATTRIBUTE36 ,
+        fpi.ATTRIBUTE37 ,
+        fpi.ATTRIBUTE38 ,
+        fpi.ATTRIBUTE39 ,
+        fpi.ATTRIBUTE40 ,
+        fpi.ATTRIBUTE41 ,
+        fpi.ATTRIBUTE42 ,
+        fpi.ATTRIBUTE43 ,
+        fpi.ATTRIBUTE44 ,
+        fpi.ATTRIBUTE45 ,
+        fpi.ATTRIBUTE46 ,
+        fpi.ATTRIBUTE47 ,
+        fpi.ATTRIBUTE48 ,
+        fpi.ATTRIBUTE49 ,
+        fpi.ATTRIBUTE50 ,
+        fpi.ATTRIBUTE51 ,
+        fpi.ATTRIBUTE52 ,
+        fpi.ATTRIBUTE53 ,
+        fpi.ATTRIBUTE54 ,
+        fpi.ATTRIBUTE55 ,
+        fpi.ATTRIBUTE56 ,
+        fpi.ATTRIBUTE57 ,
+        fpi.ATTRIBUTE58 ,
+        fpi.ATTRIBUTE59 ,
+        fpi.ATTRIBUTE60 ,
+        fpi.ATTRIBUTE61 ,
+        fpi.ATTRIBUTE62 ,
+        fpi.ATTRIBUTE63 ,
+        fpi.ATTRIBUTE64 ,
+        fpi.ATTRIBUTE65 ,
+        fpi.ATTRIBUTE66 ,
+        fpi.ATTRIBUTE67 ,
+        fpi.ATTRIBUTE68 ,
+        fpi.ATTRIBUTE69 ,
+        fpi.ATTRIBUTE70 ,
+        fpi.ATTRIBUTE71 ,
+        fpi.ATTRIBUTE72 ,
+        fpi.ATTRIBUTE73 ,
+        fpi.ATTRIBUTE74 ,
+        fpi.ATTRIBUTE75 ,
+        fpi.ATTRIBUTE76 ,
+        fpi.ATTRIBUTE77 ,
+        fpi.ATTRIBUTE78 ,
+        fpi.ATTRIBUTE79 ,
+        fpi.ATTRIBUTE80 ,
+        fpi.ATTRIBUTE81 ,
+        fpi.ATTRIBUTE82 ,
+        fpi.ATTRIBUTE83 ,
+        fpi.ATTRIBUTE84 ,
+        fpi.ATTRIBUTE85 ,
+        fpi.ATTRIBUTE86 ,
+        fpi.ATTRIBUTE87 ,
+        fpi.ATTRIBUTE88 ,
+        fpi.ATTRIBUTE89 ,
+        fpi.ATTRIBUTE90 ,
+        fpi.ATTRIBUTE91 ,
+        fpi.ATTRIBUTE92 ,
+        fpi.ATTRIBUTE93 ,
+        fpi.ATTRIBUTE94 ,
+        fpi.ATTRIBUTE95 ,
+        fpi.ATTRIBUTE96 ,
+        fpi.ATTRIBUTE97 ,
+        fpi.ATTRIBUTE98 ,
+        fpi.ATTRIBUTE99 ,
+        fpi.ATTRIBUTE100,
+        fpi.ATTRIBUTE101,
+        fpi.ATTRIBUTE102,
+        fpi.ATTRIBUTE103,
+        fpi.ATTRIBUTE104,
+        fpi.ATTRIBUTE105,
+        fpi.ATTRIBUTE106,
+        fpi.ATTRIBUTE107,
+        fpi.ATTRIBUTE108,
+        fpi.ATTRIBUTE109,
+        fpi.ATTRIBUTE110,
+        fpi.ATTRIBUTE111,
+        fpi.ATTRIBUTE112,
+        fpi.ATTRIBUTE113,
+        fpi.ATTRIBUTE114,
+        fpi.ATTRIBUTE115,
+        fpi.ATTRIBUTE116,
+        fpi.ATTRIBUTE117,
+        fpi.ATTRIBUTE118,
+        fpi.ATTRIBUTE119,
+        fpi.ATTRIBUTE120,
+        fpi.oneyear_rate,
+        fpi.halfyear_rate,
+        fpi.quarter_rate,
+        fpi.onemonth_rate
+        FROM   fms_prd_items fpi
+        join fms_spe_supplier fss
+        on fpi.supplier_id = fss.supplier_id
+        join  fms_prd_attribute_set fpas
+        on fpi.att_set_id = fpas.att_set_id
+        LEFT join fms_prd_hot_recommend fphr
+        on fphr.product_type = fpi.big_class
+        AND fphr.item_id = fpi.item_id
+        WHERE  1 = 1
+        <if test="bigClass != null">
+            AND fpi.big_class = #{bigClass}
+        </if >
+        <if test="midClass != null">
+            AND fpi.mid_class = #{midClass}
+        </if >
+        <if test="minClass != null">
+            AND fpi.min_class = #{minClass}
+        </if >
+        <if test="hotRecommendFlag == 'Y'.toString()">
+            AND exists (select 1
+                        from  fms_prd_hot_recommend fphr2
+                        where fphr2.item_id = fpi.item_id)
+        </if >
+        <if test="discountFlag == 'Y'.toString()">
+            AND exists (select 1
+                        from  fms_prd_discount prd2
+                        where prd2.item_id = fpi.item_id
+                        and   ((prd2.date_from &lt;= CURDATE() or prd2.date_from is null)
+                              and (prd2.date_to &gt;= CURDATE() or prd2.date_to is null))
+                        and   prd2.notice_id is not null)
+        </if >
+        <if test="bigClassName != null">
+            AND fpi.big_class = (select scv.value
+            from sys_code_b scb,sys_code_value_b scv
+            where scb.code_id = scv.code_id
+            and scb.code = (select fpcs.class_name1_code
+            from fms_prd_class_set fpcs
+            where fpcs.set_code = 'PRODUCTION_CLASS')
+            and scv.meaning = #{bigClassName})
+        </if >
+        <if test="midClassName != null">
+            AND fpi.mid_class = (select scv.value
+            from sys_code_b scb,sys_code_value_b scv
+            where scb.code_id = scv.code_id
+            and scb.code = (select fpcs.class_name2_code
+            from fms_prd_class_set fpcs
+            where fpcs.set_code = 'PRODUCTION_CLASS')
+            and scv.meaning = #{midClassName})
+        </if >
+        <if test="minClassName != null">
+            AND fpi.min_class = (select scv.value
+            from sys_code_b scb,sys_code_value_b scv
+            where scb.code_id = scv.code_id
+            and scb.code = (select fpcs.class_name3_code
+            from fms_prd_class_set fpcs
+            where fpcs.set_code = 'PRODUCTION_CLASS')
+            and scv.meaning = #{minClassName})
+        </if >
+        <if test="supplierName != null">
+            AND fss.name = #{supplierName}
+        </if >
+        <if test="ageFrom != null and ageTo != null">
+            AND ((fpi.attribute2 &lt;= cast(#{ageFrom} as SIGNED INTEGER) and fpi.attribute3 &gt;= cast(#{ageFrom} as SIGNED INTEGER))
+                 OR (fpi.attribute2 &lt;= cast(#{ageTo} as SIGNED INTEGER) and fpi.attribute3 &gt;= cast(#{ageTo} as SIGNED INTEGER)))
+        </if >
+        <if test="ageFrom != null and ageTo == null">
+            AND (fpi.attribute2 &lt;= cast(#{ageFrom} as SIGNED INTEGER) and fpi.attribute3 &gt;= cast(#{ageFrom} as SIGNED INTEGER))
+        </if >
+        <if test="ageFrom == null and ageTo != null">
+            AND (fpi.attribute2 &lt;= cast(#{ageTo} as SIGNED INTEGER) and fpi.attribute3 &gt;= cast(#{ageTo} as SIGNED INTEGER))
+        </if >
+        <if test="annualInterestFrom != null">
+            AND substring_index(fpi.attribute52,'%',1)  &gt;= #{annualInterestFrom}
+        </if >
+        <if test="annualInterestTo != null">
+            AND substring_index(fpi.attribute52,'%',1) &lt;= #{annualInterestTo}
+        </if >
+        <if test="marketValueFrom != null">
+            AND fpi.attribute54 &gt;= CONVERT(#{marketValueFrom},SIGNED)
+        </if >
+        <if test="marketValueTo != null">
+            AND fpi.attribute54 &lt;= CONVERT(#{marketValueTo},SIGNED)
+        </if >
+        <if test="investmentAmountFrom != null">
+            AND fpi.attribute73 &gt;= CONVERT(#{investmentAmountFrom},SIGNED)
+        </if >
+        <if test="investmentAmountTo != null">
+            AND fpi.attribute73 &lt;= CONVERT(#{investmentAmountTo},SIGNED)
+        </if >
+        <if test="transactionDataFrom != null">
+            AND substring_index(fpi.attribute71,'个月',1) &gt;= CONVERT(#{transactionDataFrom},SIGNED)
+        </if >
+        <if test="transactionDataTo != null">
+            AND substring_index(fpi.attribute71,'个月',1) &lt;= CONVERT(#{transactionDataTo},SIGNED)
+        </if >
+        <if test="itemName != null">
+            AND fpi.item_name like concat('%',concat(#{itemName},'%'))
+        </if >
+        <if test="itemId != null">
+            AND fpi.item_id = #{itemId}
+        </if >
+        <if test="supplierId != null">
+            AND fpi.supplier_id = #{supplierId}
+        </if >
+        <if test="attSetId != null">
+            AND fpi.att_set_id = #{attSetId}
+        </if >
+        <if test="enabledFlag != null">
+            AND fpi.enabled_flag = #{enabledFlag}
+        </if >
+        <if test="unAdditionalRiskFlag == 'Y'.toString()">
+            AND fpi.mid_class <![CDATA[  <>  ]]> "FJX"
+        </if >
+        <if test="sublineItemName != null">
+            AND exists (select 1 from fms_prd_item_subline fpis
+            where fpis.ITEM_ID = fpi.ITEM_ID
+            and fpis.SUBLINE_ITEM_NAME like concat('%',concat(#{sublineItemName},'%')))
+        </if >
+        <if test="currencyCode != null">
+            AND exists (select 1 from fms_prd_item_paymode fpip
+            where fpip.ITEM_ID = fpi.ITEM_ID
+            and fpip.currency_code = #{currencyCode} )
+        </if >
+        <if test="itemLabel != null">
+            AND exists (select 1 from fms_prd_item_labels fpil,fms_prd_item_label_lines fpill
+            where fpill.ITEM_ID = fpi.ITEM_ID
+            AND  fpill.label_id = fpil.label_id
+            and fpil.label_name = #{itemLabel} )
+        </if >
+       ${attributeCondition}
+        order by if(isnull(fphr.seq_num),0,1) desc ,fphr.seq_num  asc,fpi.ITEM_ID asc
+    </select>
+    <select id="queryitemClass" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+    	SELECT
+    		DISTINCT
+			fpi.MID_CLASS,
+			(select scv.meaning
+	        from  sys_code_b scb,
+	        sys_code_value_b scv
+	        where scb.code = 'PRD.PRODUCT_CLASS'
+	        and   scb.code_id = scv.code_id
+	        and   scv.value = fpi.mid_class) MID_CLASS_NAME
+		FROM
+		fms_prd_items fpi
+		WHERE
+			1 = 1
+			 <if test="bigClass != null and bigClass !=''">
+           		AND fpi.BIG_CLASS = #{bigClass} 
+        	</if >
+			 <if test="midClass != null and midClass !=''">
+           		AND fpi.MID_CLASS = #{midClass}
+        	</if >
+        	AND fpi.MID_CLASS != "" AND fpi.MID_CLASS IS NOT NULL
+    </select>
+    
+    <select id="selectAllInfo" parameterType="clb.core.production.dto.PrdItems" resultType="clb.core.production.dto.PrdItems">
+       select * from fms_prd_items fpi
+       <where>
+       <if test="itemId != null">
+            AND fpi.item_id = #{itemId}
+        </if>
+       </where>
+    </select>
+
+
+    <select id="selectByChannel" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+        SELECT
+        fpi.*
+        FROM
+        fms_prd_items fpi
+        LEFT JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+        JOIN fms_cnl_pro_sup_relation fcpsr
+        ON (fpi.ITEM_ID = fcpsr.PRODUCT_ID AND fcpsr.CHANNEL_ID = #{channelId})
+        <where>
+            <if test="itemName!=null and itemName!=''">
+                and fpi.item_name regexp #{itemName}
+            </if>
+            <if test="itemCode!=null and itemCode!=''">
+                and fpi.item_code regexp #{itemCode}
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and fpi.supplier_id= #{supplierId}
+            </if>
+            <if test="attribute1!=null and attribute1!=''">
+                and fpi.attribute1= #{attribute1}
+            </if>
+            <if test="bigClass != null and bigClass !=''">
+                AND fpi.BIG_CLASS = #{bigClass}
+            </if >
+        </where>
+        GROUP BY fpi.item_id
+    </select>
+
+
+	<select id="selectByItemName" parameterType="clb.core.production.dto.PrdItems" resultMap="BaseResultMap">
+		select * from fms_prd_items 
+		<where>
+            <if test="itemName!=null and itemName!=''">
+                and item_name = #{itemName}
+            </if>
+            <if test="supplierId!=null">
+                and supplier_id = #{supplierId}
+            </if>
+         </where>
+	</select>
+	
+	    <!-- 通过产品名称查询产品id -->
+	<select id="selectItemIdByItemName" parameterType="java.lang.String" resultType="java.lang.Long">
+		select item_id from fms_prd_items
+		where item_name = #{itemName}
+	</select>
+
+    <!--根据产品查询供应商年龄计算标准-->
+    <select id="selectSupplierAgeTypeByItem" parameterType="java.lang.Long" resultType="java.lang.String">
+        SELECT
+        fss.AGE_CALCULATE_STANDARD
+        FROM
+        fms_spe_supplier fss,
+        fms_prd_items fpi
+        WHERE
+        fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND fpi.ITEM_ID = #{itemId}
+    </select>
+
+</mapper>

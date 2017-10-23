@@ -1,0 +1,425 @@
+<#--
+        * description: 财联邦员工管理界面
+        * version: 1.0
+        * author: jiaolong.li@hand-china.com
+        *
+        -->
+<#include "../include/header.html">
+    <script src="${base.contextPath}/clb/common/clbCode?sysEmployeeStatusData=SYS.STATUS_CODE" type="text/javascript"></script>
+    <script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+    <script src="${base.contextPath}/clb/common/clbCode?employeeOwnershipData=HR.EMPLOYEE_OWNERSHIP" type="text/javascript"></script>
+    <script type="text/javascript">
+        var viewModel = kendo.observable({
+            model: {},
+            createFunction: function () {
+                $('#Grid').data('kendoGrid').addRow();
+            },
+            saveFunction: function () {
+                $('#Grid').data('kendoGrid').saveChanges();
+            },
+            queryResource: function (e) {
+                $('#Grid').data('kendoGrid').dataSource.page(1);
+            },
+            cancelFunction: function(e){
+                $('#Grid').data('kendoGrid').cancelChanges();
+            },
+            resetForm: function () {
+                var formData = viewModel.model.toJSON();
+                for (var k in formData) {
+                    viewModel.model.set(k, null);
+                }
+            }
+        });
+
+        function deleteData() {
+            var checked = grid.selectedDataItems();
+            if (grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: $l('hap.tip.delete_confirm')
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+                        $.each(checked, function (i, v) {
+                            grid.dataSource.remove(v)
+                        })
+                        grid.dataSource.sync();
+                    }
+                })
+            }
+        }
+    </script>
+    <body>
+    <div id="page-content">
+        <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+            <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;"
+                  data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+            <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction"
+                  style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
+            <span class="btn btn-default k-grid-cancel-changes" data-bind="click:cancelFunction"
+                  style="float:left;margin-right:5px;"><@spring.message "hap.cancel"/></span>
+            <span onclick="deleteData()" class="btn btn-danger"
+                  style="float:left;"><@spring.message "hap.delete"/></span>
+        </div>
+        <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+        <div class="pull-right" id="query-form" style="padding-bottom:10px;">
+            <div style="float:left;margin-right:5px;">
+                <input type="text" id="ownershipName" placeholder='<@spring.message "employee.ownershipName"/>'
+                       style="width:150px;" data-bind="value:model.ownershipName">
+            </div>
+            <div style="float:left;margin-right:5px;">
+                <input placeholder='<@spring.message "ClbEmployee.employeeCode"/>' type="text"
+                       style="float:left;width:150px;margin-right:5px;" data-bind="value:model.employeeCode"
+                       class="k-textbox">
+            </div>
+            <div style="float:left;margin-right:5px;">
+                <input placeholder='<@spring.message "ClbEmployee.name"/>' type="text"
+                       style="float:left;width:150px;margin-right:5px;" data-bind="value:model.name"
+                       class="k-textbox">
+            </div>
+
+            <span class="btn btn-primary" style="float:left;margin-right:5px;" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
+            <span class="btn btn-default" style="float:left;margin-right:5px;" type="button" data-bind="click:resetForm">
+                                <@spring.message "hap.reset"/></span>
+            <div style="clear:both"></div>
+        </div>
+        <script>kendo.bind($('#query-form'), viewModel);</script>
+        <div style="clear:both">
+            <div id="Grid"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        // 归属方
+        $('#ownershipName').kendoLov({
+            code: "HR_OWNERSHIP_NAME",
+            contextPath: '${base.contextPath}',
+            locale: '${base.locale}'
+        });
+
+        var BaseUrl = _basePath;
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: BaseUrl + "/clb/hr/employee/query",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url: BaseUrl + "/clb/hr/employee/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                destroy: {
+                    url: BaseUrl + "/clb/hr/employee/remove",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                create: {
+                    url: BaseUrl + "/clb/hr/employee/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type)
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    }
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "employeeId",
+                    fields: {
+                        enabledFlag:{type:'string', defaultValue:'Y'},
+                        effectiveStartDate:{type:'date'},
+                        effectiveEndDate:{type:'date', defaultValue:null},
+                        status:{type:'string', defaultValue:'NORMAL'},
+                        phoneCode:{type:'string', defaultValue:'86'},
+                        ownershipType:{type:'string', defaultValue:''},
+                        ownershipName:{type:'string'}
+                    },
+                    editable: function (col) {
+                        if (col == 'employeeCode') {
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+            }
+        });
+
+        $("#Grid").kendoGrid({
+            dataSource: dataSource,
+            height: '100%',
+            resizable: true,
+            scrollable: true,
+            navigatable: false,
+            selectable: 'multiple, rowbox',
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            columns: [
+                {
+                    field: "employeeId",
+                    title: '<@spring.message "ClbEmployee.employeeId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "employeeCode",
+                    title: '<@spring.message "ClbEmployee.employeeCode"/>',
+                    width: 100,
+                    editor: function (container, options) {
+                        $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                            .appendTo(container)
+                    }
+                },
+                {
+                    field: "name",
+                    title: '<@spring.message "ClbEmployee.name"/>',
+                    width: 100,
+                    editor: function (container, options) {
+                        $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                            .appendTo(container)
+                    }
+                },
+                {
+                    field: "ownershipType",
+                    title: '<@spring.message "ClbEmployee.ownershipType"/>',
+                    width: 100,
+                    template: function(dataItem){
+                        var v = dataItem.ownershipType;
+                        $.each(employeeOwnershipData, function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                            return v;
+                        });
+                        return v;
+                    },
+                    editor: function(container, options){
+                        $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>"  name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDropDownList({
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: employeeOwnershipData
+                            });
+                    }
+                },
+                {
+                    field: "ownershipId",
+                    title: '<@spring.message "ClbEmployee.ownershipName"/>',
+                    width: 100,
+                    template: function (dataItem) {
+                        return dataItem['ownershipName'] || ''
+                    },
+                    editor: function (container, options) {
+                        $('<input id="ownershipIdLov"  name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "HR_OWNERSHIP"/>, {
+                            textField: 'ownershipName',
+                            model: options.model,
+                            query: function (e) {
+                                if (options.model.ownershipType == 'CLB_SUPPLIER') {
+                                    e.param['keyType'] = 'SUPPLIER';
+                                } else {
+                                    e.param['keyType'] = options.model.ownershipType; //传入限制参数
+                                }
+                            }
+                        }));
+                    }
+                },
+                {
+                    field: "supplierId",
+                    title: '<@spring.message "ClbEmployee.supplierId"/>',
+                    width: 120,
+                    template: function (dataItem) {
+                        return dataItem['supplierName'] || ''
+                    },
+                    editor: function (container, options) {
+                        $('<input id="supplierIdLov"  name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoLov($.extend(<@lov "CMN_SUPPLIER"/>, {
+                            textField: 'supplierName',
+                            model: options.model,
+                        }));
+                    },
+                    hidden: true
+                },
+                {
+                    field: "bornDate",
+                    title: '<@spring.message "ClbEmployee.bornDate"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "email",
+                    title: '<@spring.message "ClbEmployee.email"/>',
+                    width: 140,
+                    editor: function (container, options) {
+                        $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                            .appendTo(container)
+                    }
+                },
+                { field: "phoneCode",
+                  title: '<@spring.message "ClbEmployee.phoneCode"/>',
+                  width: 130,
+                  template: function (dataItem) {
+                        var v = dataItem.phoneCode;
+                        $.each(phoneCodeData, function (i, n) {
+                            if ((n.value || '').toLowerCase() === (v || '').toLowerCase()) {
+                                v = n.meaning;
+                                return v;
+                            }
+                        });
+                        return v;
+                  },
+                  editor: function (container, options) {
+                        $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>').appendTo(container).kendoDropDownList({
+                                valuePrimitive: true,
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: phoneCodeData
+                            });
+                  }
+                },
+                {
+                    field: "mobil",
+                    title: '<@spring.message "ClbEmployee.mobil"/>',
+                    width: 100,
+                    editor: function (container, options) {
+                        $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                            .appendTo(container)
+                    }
+                },
+                {
+                    field: "effectiveStartDate",
+                    attributes: {style: "text-align:center"},
+                    title: '<@spring.message "employee.effectivestartdate"/>',
+                    width: 100,
+                    headerAttributes: {
+                        "class": "table-header-cell",
+                        style: "text-align: center"
+                    },
+                    template:function(dataItem){
+                        return Hap.formatDate(dataItem.effectiveStartDate);
+                    },
+                    editor:function(container, options){
+                        //获得到期时间
+                        var end = options.model.effectiveEndDate;
+                        var opts={
+                            format:"yyyy-MM-dd"
+                        }
+                        if(end){
+                            opts.max=end;
+                        }
+                        $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDatePicker(opts).data("kendoDatePicker");
+                    }
+                },
+                {
+                    field: "effectiveEndDate",
+                    attributes: {style: "text-align:center"},
+                    title: '<@spring.message "employee.effectiveenddate"/>',
+                    width: 100,
+                    headerAttributes: {
+                        "class": "table-header-cell",
+                        style: "text-align: center"
+                    },
+                    template:function(dataItem){
+                        return Hap.formatDate(dataItem.effectiveEndDate);
+                    },
+                    editor:function(container, options){
+                        //获得开始时间
+                        var start = options.model.effectiveStartDate;
+                        var opts={
+                            format:"yyyy-MM-dd"
+                        }
+                        //设置min属性 限制最小的可选日期
+                        if(start){
+                            opts.min=start;
+                        }
+                        $('<input required data-required-msg="必输" name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDatePicker(opts).data("kendoDatePicker");
+                    }
+                },
+                {
+                    field: "joinDate",
+                    title: '<@spring.message "ClbEmployee.joinDate"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "gender",
+                    title: '<@spring.message "ClbEmployee.gender"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "certificateId",
+                    title: '<@spring.message "ClbEmployee.certificateId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "status",
+                    title: '<@spring.message "ClbEmployee.status"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "enabledFlag",
+                    title: '<@spring.message "ClbEmployee.enabledFlag"/>',
+                    width: 100,
+                    template: function (dataItem) {
+                        var v = dataItem.enabledFlag;
+                        $.each(sysEmployeeStatusData, function (i, n) {
+                            if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                v = n.meaning;
+                                return v;
+                            }
+                        });
+                        return v;
+                    },
+                    editor: function (container, options) {
+                        $('<input  required validationMessage="<@spring.message "hap.error.nullexception"/>"  name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDropDownList({
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: sysEmployeeStatusData
+                            });
+                    }
+                },
+            ],
+            editable: true
+        });
+
+        function deleteData() {
+
+            Hap.deleteGridSelection({
+                grid: $('#Grid')
+            });
+
+        }
+
+        Hap.autoResizeGrid("#Grid");
+
+
+    </script>
+    </body>
+    </html>

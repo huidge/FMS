@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnSupportTeacherMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnSupportTeacher">
+        <result column="TEACHER_ID" property="teacherId" jdbcType="DECIMAL" />
+        <result column="SUPPORT_ID" property="supportId" jdbcType="DECIMAL" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="ARRIVE_TIME" property="arriveTime" jdbcType="TIMESTAMP" />
+        <result column="TRANSPROT_TYPE" property="transprotType" jdbcType="VARCHAR" />
+        <result column="ARRIVE_PLACE" property="arrivePlace" jdbcType="VARCHAR" />
+        <result column="LEAVE_TIME" property="leaveTime" jdbcType="TIMESTAMP" />
+        <result column="TOLL_STANDARD" property="tollStandard" jdbcType="VARCHAR" />
+        <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnSupportTeacher"
+		resultMap="BaseResultMap">
+		SELECT
+		t.*,
+		CONCAT(t.PHONE_CODE,' ',t.PHONE) CONTACT_PHONE_COMB
+		from (SELECT ftst.* from fms_trn_support_teacher ftst where 1=1 and ftst.SUPPORT_ID IS NULL union SELECT ftst.* from fms_trn_support_teacher ftst where 1=1 and ftst.SUPPORT_ID = 0 ) t
+		WHERE 1=1
+		<!-- <if test="supportId!=null and supportId!=''">
+			and ftst.SUPPORT_ID IS NULL
+		</if> -->
+		
+		<if test="name!=null and name!=''">
+			and t.NAME like CONCAT('%', #{name}, '%')
+		</if>
+	</select>
+	
+	<select id="selectLecturer" parameterType="clb.core.course.dto.TrnSupportTeacher"
+		resultMap="BaseResultMap">
+		SELECT
+		ftst.*,
+		CONCAT(ftst.PHONE_CODE,' ',ftst.PHONE) CONTACT_PHONE_COMB
+		from fms_trn_support_teacher ftst
+		WHERE 1=1
+		<if test="supportId!=null and supportId!=''">
+			and ftst.SUPPORT_ID =#{supportId}
+		</if>
+		
+		<if test="userId !=null and userId !=''">
+			and ftst.USER_ID =#{userId}
+		</if>
+		
+		<if test="name!=null and name!=''">
+			and ftst.NAME like CONCAT('%', #{name}, '%')
+		</if>
+	</select>
+
+</mapper>

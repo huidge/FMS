@@ -1,0 +1,305 @@
+<#--
+ * description: 供应商账号管理页面
+ * version: 1.0
+ * #copyright#
+ * author bo.wu@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?userStatusData=SYS.USER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?userTypeData=SYS.USER_TYPE" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var supplierId = '${RequestParameters.supplierId!0}';
+
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    $(document).ready(function(){
+    	 if(supplierId !=0) {
+    	        viewModel.model.set("supplierId",supplierId);
+    	        viewModel.model.set("userType","SUPPLIER");
+    	        viewModel.model.set("relatedPartyId",supplierId);
+    	        $.ajax({
+    	            type: "POST",
+    	            async: false,
+    	            url: "${base.contextPath}/clb/sys/user/query?userType=SUPPLIER&relatedPartyId=" + supplierId,
+    	            success: function (json) {
+    	            	//没有用户
+    	                if (json.total == 0) {
+    	                    viewModel.model.set("userId",null);
+    	                    showDiv(1);
+    	                    $.ajax({
+    	                        type: "POST",
+    	                        async: false,
+    	                        url: "${base.contextPath}/sys/config/query?configCode=DEFAULT_PASSWORD",
+    	                        success: function (json) {
+    	                            var row = json.rows[0] || {};
+    	                            for (var k in row) {
+    	                                if (k == "configValue") {
+    	                                    viewModel.model.set("defaultPassWord", row[k]);
+    	                                }
+    	                            }
+    	                        }
+    	                    });
+    	                    viewModel.model.set("status","INACTIVE");
+    	                    viewModel.model.set("userType","SUPPLIER");
+							
+    	                    //用户密码不可编辑
+    	                    $("#defaultPassWord").attr("readonly", true).css("background","#EFEFEF");
+    	                    //用户类型不可编辑
+    	                    $("#userType").data("kendoComboBox").enable(false);
+    	                }else{
+    	                	showDiv(2);
+    						var row = json.rows[0] || {};
+    	                    for (var k in row) {
+    	                       viewModel.model.set(k, row[k]);
+    	                    }
+    	                    //用户名不可编辑
+    	                    $("#userName1").attr("readonly", true).css("background","#EFEFEF");
+    	                  	//用户类型不可编辑
+    	                    $("#userType1").data("kendoComboBox").enable(false);
+    	                }
+    	            }
+    	        });
+    	    }
+    });
+   
+    
+    function showDiv(type){
+    	$("#page-content").show();  
+    	if(type == 1){
+    		$("#nousertitle").show();  
+    		$("#nouserbody").show();  
+    		$("#usertitle").hide();  
+    		$("#userbody").hide();  
+    	}else if(type == 2){
+    		$("#nousertitle").hide();  
+    		$("#nouserbody").hide();  
+    		$("#usertitle").show();  
+    		$("#userbody").show();  
+    	}
+    }
+
+</script>
+<body>
+    <div style="display:none" id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div id="nousertitle" class="panel-heading">
+                <span class="panel-title">新建账号</span>
+            </div>
+            <div id="usertitle" class="panel-heading">
+                <span class="panel-title">编辑账号</span>
+            </div>
+            <div id="nouserbody" class="panel-body">
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户名</label>
+                        <div class="col-xs-8">
+                            <input id="userName" name="userName" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.userName" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="defaultPassWordDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">默认登录密码</label>
+                        <div class="col-xs-8">
+                            <input id="defaultPassWord" name="defaultPassWord" type="text" data-bind="value:model.defaultPassWord" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户类型</label>
+                        <div class="col-xs-8">
+                            <input id="userType" name="userType" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.userType" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户状态</label>
+                        <div class="col-xs-8">
+                            <input id="status" name="status" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div id="userbody" class="panel-body">
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户名</label>
+                        <div class="col-xs-8">
+                            <input id="userName1" name="userName1" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.userName" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="defaultPassWordDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">重置密码</label>
+                        <div class="col-xs-8">
+                            <input id="password" name="password" type="password" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.password" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xs-12"  id="defaultPassWordDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">再次输入密码</label>
+                        <div class="col-xs-8">
+                            <input id="password2" name="password2" type="password" required validationMessage='<@spring.message "hap.error.nullexception"/>' class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户类型</label>
+                        <div class="col-xs-8">
+                            <input id="userType1" name="userType1" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.userType" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">用户状态</label>
+                        <div class="col-xs-8">
+                            <input id="status1" name="status1" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+	//验证
+	$("#nouserbody").kendoValidator({
+		messages: {
+	        required: "required"
+		}
+	});
+	
+	$("#userbody").kendoValidator({
+		messages: {
+	        required: "required"
+		}
+	});
+
+    $("#userType").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: userTypeData
+    });
+    
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: userStatusData
+    });
+    
+    $("#userType1").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: userTypeData
+    });
+    
+    $("#status1").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: userStatusData
+    });
+
+    function validatePassword(pass1,pass2){
+    	if(pass1 != pass2){
+    		return false;
+    	}
+    	return true;
+    }
+
+
+
+    function saveData() {
+    	var validator = '';
+        if (viewModel.model.userId == null) {
+            viewModel.model.__status = 'add';
+            validator = $("#nouserbody").data("kendoValidator");
+        }else {
+            viewModel.model.__status = 'update';
+            validator = $("#userbody").data("kendoValidator");
+        }
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+			
+            if(viewModel.model.__status == 'update'){
+            	if(!validatePassword($('#password').val(),$('#password2').val())){
+            		 kendo.ui.showErrorDialog({
+                         message  : '<@spring.message "error.user.two_password_not_match"/>'
+                     })
+                 	return;
+            	}
+            }
+            Hap.submitForm({
+                url: '${base.contextPath}/clb/sys/user/submit',
+                formModel: viewModel.model,
+                success: function (data) {
+                    if(data.success){
+                    	window.parent.kendo.ui.showInfoDialog({
+                            title: $l('hap.tip.info'),
+                            message: '操作成功！'
+                        });
+                    	window.parent.$("#dialog").data("kendoWindow").close();
+                    }else{
+                    	kendo.ui.showErrorDialog({
+                            title: $l('hap.tip.error'),
+                            message: data.message
+                        });
+                    }
+                 }
+            });
+
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#dialog").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

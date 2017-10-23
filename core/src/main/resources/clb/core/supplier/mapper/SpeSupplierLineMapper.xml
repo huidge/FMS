@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeSupplierLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeSupplierLine">
+        <result column="SPE_LINE_ID" property="speLineId" />
+        <result column="SUPPLIER_ID" property="supplierId" />
+        <result column="ADDR_NAME" property="addrName" />
+        <result column="ADDR" property="addr" />
+        <result column="CONTRACT_PERSON" property="contractPerson" />
+        <result column="CONTRACT_NUM" property="contractNum" />
+        
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,558 @@
+<#--
+        * description: 产品属性维护界面
+        * version: 1.0
+        * author: jiaolong.li@hand-china.com
+        * -->
+    <#include "../include/header.html">
+
+        <body>
+        <script src="${base.contextPath}/clb/common/clbCode?prdAttributesStatusData=SYS.STATUS_CODE"
+                type="text/javascript"></script>
+        <script src="${base.contextPath}/clb/common/clbCode?prdAttributeFieldTypeData=PRD.ATTRIBUTE_FIELD_TYPE_CODE"
+                type="text/javascript"></script>
+        <script type="text/javascript">
+            viewModel = kendo.observable({
+                model: {},
+                prdAttributesStatusData: prdAttributesStatusData,
+                prdAttributeFieldTypeData: prdAttributeFieldTypeData,
+                createFunction: function () {
+                    $('#attributeGrid').data('kendoGrid').addRow();
+                },
+                saveFunction: function () {
+                    $('#attributeGrid').data('kendoGrid').saveChanges();
+                },
+                queryFunction: function () {
+                    $('#attributeGrid').data('kendoGrid').dataSource.page(1);
+                },
+                resetForm: function () {
+                    var formData = viewModel.model.toJSON();
+                    for (var k in formData) {
+                        viewModel.model.set(k, null);
+                    }
+                }
+            });
+
+        </script>
+
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <form class="form-horizontal" style="margin-top: 5px;">
+                        <div class="panel-body">
+
+                            <div class="col-xs-12" >
+                                <div class="col-xs-4" >
+                                    <div class="form-group" style="margin-bottom:10px">
+                                        <label class="col-xs-4 control-label"
+                                               style="text-align: right"><@spring.message "PrdAttributes.attName"/></label>
+                                        <div class="col-xs-8">
+                                            <input type="text" style="width:100%" data-bind="value:model.attName"
+                                                   class="k-textbox">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4" >
+                                    <div class="form-group" style="margin-bottom:10px">
+                                        <label class="col-xs-4 control-label"
+                                               style="text-align: right"><@spring.message "PrdAttributes.fieldCode"/></label>
+                                        <div class="col-xs-8">
+                                            <input type="text" style="width:100%" data-bind="value:model.fieldCode"
+                                                   class="k-textbox">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12" >
+                                <div class="col-xs-4" >
+                                    <div class="form-group" style="margin-bottom:10px">
+                                        <label class="col-xs-4 control-label"
+                                               style="text-align: right"><@spring.message "PrdAttributes.fieldType"/></label>
+                                        <div class="col-xs-8">
+                                            <select data-role="combobox" data-value-primitive="true"
+                                                    data-text-field="meaning" data-value-field="value"
+                                                    data-bind="source: prdAttributeFieldTypeData,value:model.fieldType"
+                                                    style="width: 100%;"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4" >
+                                    <div class="form-group" style="margin-bottom:10px">
+                                        <label class="col-xs-4 control-label"
+                                               style="text-align: right"><@spring.message
+                                            "PrdAttributes.statusCode"/></label>
+                                        <div class="col-xs-8">
+                                            <select data-role="combobox" data-value-primitive="true"
+                                                    data-text-field="meaning" data-value-field="value"
+                                                    data-bind="source: prdAttributesStatusData,value:model.statusCode"
+                                                    style="width: 100%;"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="panel-footer text-right">
+                            <span class="btn btn-primary" data-bind="click:queryFunction" type="submit">
+                                <i class="fa fa-search"
+                                   style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                            <span class="btn btn-default" type="button" data-bind="click:resetForm">
+                                <i class="fa fa-eraser"
+                                   style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                        </div>
+                    </form>
+                </div>
+
+                <div id='grid-container'>
+                    <div id="attributeGrid" class="table"></div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/x-kendo-template" id="template">
+            <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;">
+                    <i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/>
+                </span>
+                <span class="btn btn-primary" style="float:left;margin-right:5px;"  onclick="editFunctionResources()">
+                    <i class="fa fa-edit" style="margin-right:3px;"></i><@spring.message "hap.edit"/>
+                </span>
+                <span class="btn btn-success k-grid-save-changes" style="float:left;margin-right:5px;" onclick="saveData()">
+                    <i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/>
+                </span>
+                <span class="btn btn-default k-grid-cancel-changes">
+                    <i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/>
+                </span>
+            </div>
+        </script>
+
+        <script type="text/javascript">
+
+            // 新建按钮
+            function newData() {
+                $('#attributeGrid').data('kendoGrid').addRow();
+            }
+
+            // 保存按钮
+            function saveData() {
+                $('#attributeGrid').data('kendoGrid').saveChanges();
+            }
+
+            // bind
+            kendo.bind($('#page-content'), viewModel);
+
+            //url
+            var BaseUrl = '${base.contextPath}/production/attribute';
+
+            //transport
+            var transport = {
+                read: {
+                    url: BaseUrl + "/query",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url: BaseUrl + "/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                destroy: {
+                    url: BaseUrl + "/remove",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                create: {
+                    url: BaseUrl + "/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type)
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    }
+                }
+            };
+
+            //schema
+            var schema = {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "attId",
+                    fields: {
+                        attName: {validation: {required: true }  },
+                        fieldCode: {validation: {required: true}  },
+                        fieldType: {validation: {required: true,
+                            FieldTypevalidation: function (input) {
+                                //console.log($("input[name='fieldType']").val());
+                                if( input.is("[name='fieldType']")
+                                    && $("input[name='fieldType']").val() != "VALUESET"){
+                                    //this.model.fields.valueSetId = null;
+                                    //this.model.fields.defaultValue = null;
+                                    $("#valueSetIdLov").data("kendoLov").text("");
+                                }
+                               return true;
+                            }
+                          }
+                        },
+                        valueSetId: {
+                            validation: {
+                                ValueSetIdvalidation: function (input) {
+                                    var valueSetId = $("input[name='valueSetId']").val();
+                                    var fieldType = $("input[name='fieldType']").val();
+
+                                    //console.log("valueSetId:" + valueSetId);
+                                    //console.log("fieldType:" + valueSetId);
+                                    if (input.is("[name='valueSetId']")
+                                        && "VALUESET" == fieldType
+                                        && (null == valueSetId || "" == valueSetId)
+                                         ){
+                                        input.attr("data-ValueSetIdvalidation-msg", "当字段类型为值列表时，值列表名不能为空");
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+                            }
+                        },
+                        //valueSetName: {},
+                        defaultValue: {
+                            validation: {
+                                DefaultValuevalidation: function (input) {
+                                    var fieldType = $("input[name='fieldType']").val();
+                                    var defaultValue = $("input[name='defaultValue']").val();
+                                    var valueSetId = $("input[name='valueSetId']").val();
+
+                                    function checkDateString(dateString){
+                                        var reg = /^\d{4,}\/(?:0?\d|1[12])\/(?:[012]?\d|3[01])$/;
+                                            var r = dateString.match(reg);
+                                             if(r == null){
+                                                 return false;
+                                             }else{
+                                                 return true;
+                                             }
+                                    }
+
+                                    function checkEncharString(dateString){
+                                        var reg = /^[a-zA-Z]*$/g;
+                                        var r = dateString.match(reg);
+                                        if(r == null){
+                                            return false;
+                                        }else{
+                                            return true;
+                                        }
+                                    }
+
+                                    function checkValueSet(codeId, meaning){
+                                        var result = false;
+                                        $.ajax({async:false,
+                                                type:"post",
+                                                url:'${base.contextPath}/production/attribute/queryDefaultValue',
+                                                data:{codeId:codeId, meaning:meaning},
+                                                success:function(data){
+                                                    if(null != data && "" != data){
+                                                        result = true;
+                                                    } else {
+                                                        result = false;
+                                                    }
+                                                }});
+                                        //console.log(result);
+                                        return result;
+                                    }
+
+                                    // 数字校验
+                                    if(  input.is("[name='defaultValue']")
+                                        && fieldType == "NUMBER"
+                                        && (null != defaultValue && "" != defaultValue)
+                                        && isNaN(defaultValue)
+                                     ){
+                                        input.attr("data-DefaultValuevalidation-msg", "请输入数字");
+                                        return false;
+                                    }
+
+                                    // 日期格式校验
+                                    if(  input.is("[name='defaultValue']")
+                                        && fieldType == "DATETIME"
+                                        && (null != defaultValue && "" != defaultValue)
+                                        && !checkDateString(defaultValue)
+                                    ){
+                                        input.attr("data-DefaultValuevalidation-msg", "日期格式为YYYY/MM/DD");
+                                        return false;
+                                    }
+
+                                    // 英文字母
+                                    if(  input.is("[name='defaultValue']")
+                                        && fieldType == "ENCHAR"
+                                        && (null != defaultValue && "" != defaultValue)
+                                        && !checkEncharString(defaultValue)
+                                    ){
+                                        input.attr("data-DefaultValuevalidation-msg", "请输入英文字母组合");
+                                        return false;
+                                    }
+
+                                    // 值列表
+                                    if(  input.is("[name='defaultValue']")
+                                        && fieldType == "VALUESET"
+                                        && (null != defaultValue && "" != defaultValue)
+                                        && !checkValueSet(valueSetId, defaultValue)
+                                    ){
+                                        input.attr("data-DefaultValuevalidation-msg", "请输入值列表中的值");
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+                            }
+                        },
+                        fieldComments: {},
+                        fieldDisplayLength: {type: 'number',validation: {required: true}  },
+                        statusCode: {defaultValue: "Y", validation: {required: true}   }
+                    }
+                },
+                errors: function (res) {
+                    if (!res.success && res.message) {
+                        return res.message;
+                    }
+                }
+            };
+
+            //dataSource
+            var dataSource = new kendo.data.DataSource({
+                batch: true,
+                serverPaging: true,
+                pageSize: 10,
+                transport: transport,
+                schema: schema,
+                error: function (e) {
+                    kendo.ui.showErrorDialog({
+                        message: e.errors
+                    });
+                }
+            });
+
+            //grid
+            var grid = $("#attributeGrid").kendoGrid({
+                dataSource: dataSource,
+                navigatable: false,
+                rownumber: true,
+                selectable : 'multiple, rowbox',
+                height: '100%',
+                resizable: true,
+                scrollable: true,
+                //editable: true,
+                editable: {mode: "inline"},
+                pageable: {
+                    pageSizes: [10, 20, 50, 500],
+                    refresh: true,
+                    buttonCount: 5
+                },
+//                toolbar: [
+//                    {
+//                        template: '<button type="button"  onclick="newData()" class="btn btn-primary">' +
+//                        '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+//                    },
+//                    {
+//                        name: "save",
+//                        template: '<span class="btn btn-success k-grid-save-changes">' +
+//                        '<i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>'
+//                    },
+//                    {
+//                        name: "cancel",
+//                        template: '<span class="btn btn-default k-grid-cancel-changes">' +
+//                        '<i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+//                    }
+//                ],
+                columns: [
+//                    {
+//                        title: '<@spring.message "hap.action"/>',
+//                        width: 80,
+//                        command: [{
+//                            name: 'edit',
+//                            template: "<a title='修改' class='k-button k-button-icontext k-grid-edit'><span class='fa fa-pencil-square-o'></span></a>"
+//                        }],
+//                        headerAttributes: {
+//                            'class': 'table-header-cell',
+//                            style: 'text-align: center'
+//                        },
+//                        attributes: {
+//                            "class": "table-cell",
+//                            style: "text-align:center;"
+//                        }
+//                    },
+                    {
+                        field: "attName",
+                        title: '<@spring.message "PrdAttributes.attName"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        editor: function (container, options) {
+                            $('<input type="text" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                                .appendTo(container)
+                        }
+                    },
+                    {
+                        field: "fieldCode",
+                        title: '<@spring.message "PrdAttributes.fieldCode"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        template: function (dataItem) {
+                            return dataItem['fieldCode'] || ''
+                        },
+                        editor: function (container, options) {
+                            $('<input  required validationMessage="<@spring.message "hap.error.nullexception"/>"  name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_ATTRIBUTE_FIELD")},
+                                    {
+                                        textField: 'fieldCode',
+                                        model: options.model,
+                                        select: function (e) {
+                                            options.model.set('fieldCode', e.item.columnName);
+                                        }
+                                    }))
+                        }
+                    },
+                    {
+                        field: "fieldType",
+                        title: '<@spring.message "PrdAttributes.fieldType"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        template: function (dataItem) {
+                            var v = dataItem.fieldType;
+                            $.each(prdAttributeFieldTypeData, function (i, n) {
+                                if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                    v = n.meaning;
+                                    return v;
+                                }
+                            })
+                            return v;
+                        },
+                        editor: function (container, options) {
+                            $('<input required validationMessage="<@spring.message "hap.error.nullexception"/>"  name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    valuePrimitive: true,
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdAttributeFieldTypeData,
+                                    change:function () {
+                                        //console.log(options.model.fieldType);
+                                        if (options.model.fieldType == "VALUESET") {
+                                            var lov = $("#valueSetIdLov").data("kendoLov");
+                                            lov.enable(true);
+                                        } else {
+                                            var lov = $("#valueSetIdLov").data("kendoLov");
+                                            lov.enable(false);
+                                        }
+                                    }
+                                });
+                        }
+                    },
+                    {
+                        field: "valueSetId",   // valueSetName
+                        title: '<@spring.message "PrdAttributes.valueSet"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        template: function (dataItem) {
+                            return dataItem['valueSetName'] || ''
+                        },
+                        editor: function (container, options) {
+                            $('<input id="valueSetIdLov"  name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_VALUE_SET")},
+                                        {
+                                            textField: 'valueSetName',
+                                            model: options.model,
+                                            change: function (e) {
+                                                if (e.sender._prev == "") {
+                                                    //当lov中数据清除时，绑定的值也清空
+                                                    options.model.set('valueSetId', '');
+                                                }
+                                            }
+                            }))
+                        }
+                    },
+                    {
+                        field: "defaultValue",
+                        title: '<@spring.message "PrdAttributes.defaultValue"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120
+                    },
+                    {
+                        field: "fieldComments",
+                        title: '<@spring.message "PrdAttributes.fieldComments"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120
+                    },
+                    {
+                        field: "fieldDisplayLength",
+                        title: '<@spring.message "PrdAttributes.fieldDisplayLength"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        editor: function (container, options) {
+                            $('<input type="number" class="k-textbox" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+                                .appendTo(container)
+                        }
+                    },
+                    {
+                        field: "statusCode",
+                        title: '<@spring.message "PrdAttributes.statusCode"/>',
+                        headerAttributes: {style: "text-align:center"},
+                        attributes: {style: "text-align:center"},
+                        width: 120,
+                        template: function (dataItem) {
+                            var v = dataItem.statusCode;
+                            $.each(prdAttributesStatusData, function (i, n) {
+                                if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                    v = n.meaning;
+                                    return v;
+                                }
+                            })
+                            return v;
+                        },
+                        editor: function (container, options) {
+                            $('<input  required validationMessage="<@spring.message "hap.error.nullexception"/>"  name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    valuePrimitive: true,
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    dataSource: prdAttributesStatusData
+                                });
+                        }
+                    }
+                ],
+                toolbar: kendo.template($("#template").html()),
+                editable: {mode: "inline"},
+            }).data("kendoGrid");
+
+
+            function editFunctionResources(){
+                var grid = $("#attributeGrid").data("kendoGrid");
+                var checked = grid.selectedDataItems();
+                if(checked.length == 1){
+                    var data = grid.dataItem(grid.select());
+                    grid.editRow(data);
+                }else{
+                    kendo.ui.showInfoDialog({
+                        message: $l('hap.tip.selectrow')
+                    })
+                }
+            };
+
+
+            //自动根据当前屏幕大小调整表格
+            Hap.autoResizeGrid("#attributeGrid");
+
+        </script>
+        </body>
+        </html>

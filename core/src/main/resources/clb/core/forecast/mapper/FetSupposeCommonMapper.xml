@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetSupposeCommonMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetSupposeCommon">
+    
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="EXPECT_COOL_DATE" property="expectCoolDate" jdbcType="DATE" />
+        <result column="ISSUE_DATE" property="issueDate" jdbcType="DATE" />
+        <result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="SIGN_FEE" property="signFee" jdbcType="DECIMAL" />
+        <result column="CARD_FEE" property="cardFee" jdbcType="DECIMAL" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+        <result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+        <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
+        
+        
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="ITEM_COMPANY_ID" property="itemCompanyId" jdbcType="VARCHAR" />
+        <result column="ITEM_COMPANY_NAME" property="itemCompanyName" jdbcType="VARCHAR" />
+        
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR"/>
+     </resultMap>
+     
+     <select id="getOrderData" parameterType="clb.core.forecast.dto.FetSupposeCommon" resultMap="BaseResultMap">
+     				SELECT
+					foo.ORDER_ID,
+					foo.ITEM_ID,
+					foo.ORDER_NUMBER,
+					foo.EXPECT_COOL_DATE,
+					foo.ISSUE_DATE,
+					foo.RENEWAL_DUE_DATE,
+					foo.POLICY_AMOUNT,
+					foo.YEAR_PAY_AMOUNT,
+					foo.SIGN_FEE,
+					foo.CARD_FEE,
+					foo.PAY_PERIODS,
+					foo.CURRENCY,
+					foo.POLICY_NUMBER,
+					foo.ORDER_TYPE,
+					fpi.ITEM_NAME,
+					fpi.BIG_CLASS,
+					fpi.SUPPLIER_ID ITEM_COMPANY_ID,
+					fss.NAME ITEM_COMPANY_NAME,
+					fpis.SUBLINE_ITEM_NAME
+					FROM
+						fms_ord_order foo,
+						fms_prd_items fpi,
+						fms_prd_item_subline fpis,
+  						fms_spe_supplier fss
+					WHERE
+					foo.ITEM_ID = fpi.ITEM_ID
+					AND foo.SUBLINE_ID = fpis.SUBLINE_ID 
+					AND fss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+					AND (
+							(
+								foo. STATUS = 'POLICY_EFFECTIVE'
+								AND foo.ORDER_TYPE = 'INSURANCE'
+							)
+							OR (
+								foo. STATUS = 'ISSUE_SUCCESS'
+								AND foo.ORDER_TYPE = 'BOND'
+							)
+							OR (
+								foo. STATUS = 'BUY_SUCCESS'
+								AND foo.ORDER_TYPE = 'IMMIGRANT'
+							)
+						)
+					<if test = "orderNumber != null" >
+						AND foo.ORDER_NUMBER LIKE CONCAT(
+						CONCAT('%',#{orderNumber}),'%')
+					</if>
+					<if test = "orderId != null" >
+						AND foo.ORDER_ID = #{orderId}
+					</if>
+					<if test = "itemName != null" >
+						AND fpi.ITEM_NAME LIKE CONCAT(
+							CONCAT('%',#{itemName}),'%')
+					</if>
+     </select>
+     
+     <select id="getOne" parameterType="clb.core.forecast.dto.FetSupposeCommon" resultMap="BaseResultMap">
+     				SELECT
+					foo.ORDER_ID,
+					foo.ITEM_ID,
+					foo.ORDER_NUMBER,
+					foo.EXPECT_COOL_DATE,
+					foo.ISSUE_DATE,
+					foo.RENEWAL_DUE_DATE,
+					foo.POLICY_AMOUNT,
+					foo.YEAR_PAY_AMOUNT,
+					foo.SIGN_FEE,
+					foo.CARD_FEE,
+					foo.PAY_PERIODS,
+					foo.CURRENCY,
+					foo.POLICY_NUMBER,
+					foo.ORDER_TYPE,
+					fpi.ITEM_NAME,
+					fpi.BIG_CLASS,
+					fpi.SUPPLIER_ID ITEM_COMPANY_ID,
+					fss.NAME ITEM_COMPANY_NAME,
+					fpis.SUBLINE_ITEM_NAME
+					FROM
+						fms_ord_order foo,
+						fms_prd_items fpi,
+						fms_prd_item_subline fpis,
+  						fms_spe_supplier fss
+					WHERE
+					foo.ITEM_ID = fpi.ITEM_ID
+					AND foo.SUBLINE_ID = fpis.SUBLINE_ID 
+					AND fss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+					AND (
+							(
+								foo. STATUS = 'POLICY_EFFECTIVE'
+								AND foo.ORDER_TYPE = 'INSURANCE'
+							)
+							OR (
+								foo. STATUS = 'ISSUE_SUCCESS'
+								AND foo.ORDER_TYPE = 'BOND'
+							)
+							OR (
+								foo. STATUS = 'BUY_SUCCESS'
+								AND foo.ORDER_TYPE = 'IMMIGRANT'
+							)
+						)
+					<if test = "orderNumber != null" >
+						AND foo.ORDER_NUMBER = #{orderNumber}
+					</if>
+					<if test = "orderId != null" >
+						AND foo.ORDER_ID = #{orderId}
+					</if>
+     </select>
+     
+     <select id="getAll" resultMap="BaseResultMap">
+     				SELECT
+					foo.ORDER_ID,
+					foo.ITEM_ID,
+					foo.ORDER_NUMBER,
+					foo.EXPECT_COOL_DATE,
+					foo.ISSUE_DATE,
+					foo.RENEWAL_DUE_DATE,
+					foo.POLICY_AMOUNT,
+					foo.YEAR_PAY_AMOUNT,
+					foo.SIGN_FEE,
+					foo.CARD_FEE,
+					foo.PAY_PERIODS,
+					foo.CURRENCY,
+					foo.POLICY_NUMBER,
+					foo.ORDER_TYPE,
+					fpi.ITEM_NAME,
+					fpi.BIG_CLASS,
+					fpi.SUPPLIER_ID ITEM_COMPANY_ID,
+					fss.NAME ITEM_COMPANY_NAME,
+					fpis.SUBLINE_ITEM_NAME
+					FROM
+						fms_ord_order foo,
+						fms_prd_items fpi,
+						fms_prd_item_subline fpis,
+  						fms_spe_supplier fss
+					WHERE
+					foo.ITEM_ID = fpi.ITEM_ID
+					AND foo.SUBLINE_ID = fpis.SUBLINE_ID 
+					AND fss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+					AND (
+							(
+								foo. STATUS = 'POLICY_EFFECTIVE'
+								AND foo.ORDER_TYPE = 'INSURANCE'
+							)
+							OR (
+								foo. STATUS = 'ISSUE_SUCCESS'
+								AND foo.ORDER_TYPE = 'BOND'
+							)
+							OR (
+								foo. STATUS = 'BUY_SUCCESS'
+								AND foo.ORDER_TYPE = 'IMMIGRANT'
+							)
+						)
+					<!-- <choose>
+						<when test = "receiveCompanyType != null and receiveCompanyId != null and paymentCompanyType != null and paymentCompanyId != null" >
+							AND EXISTS(
+								SELECT 1
+								FROM 
+									fms_ord_commission foc1,fms_ord_commission foc2
+								WHERE
+									foc1.COMPANY_TYPE = #{receiveCompanyType}
+									and foc1.COMPANY_ID = #{receiveCompanyId}
+									and foc2.COMPANY_TYPE = #{paymentCompanyType}
+									and foc2.COMPANY_ID = #{paymentCompanyId}
+									and foc1.SEQ_NUM = foc2.SEQ_NUM-1
+									and foc1.ORDER_ID = foc2.ORDER_ID
+									and foc1.ORDER_ID = foo.ORDER_ID
+							)
+						</when>
+						<when test = "receiveCompanyType != null and receiveCompanyId != null" >
+							AND EXISTS(
+							SELECT 1
+							FROM 
+								fms_ord_commission foc1
+							WHERE
+								foc1.COMPANY_TYPE = #{receiveCompanyType}
+								and foc1.COMPANY_ID = #{receiveCompanyId}
+								and foc1.ORDER_ID = foo.ORDER_ID
+							)
+						</when>
+						<when test = "paymentCompanyType != null and paymentCompanyId != null" >
+							AND EXISTS(
+							SELECT 1
+							FROM 
+								fms_ord_commission foc1
+							WHERE
+								foc1.COMPANY_TYPE = #{paymentCompanyType}
+								and foc1.COMPANY_ID = #{paymentCompanyId}
+								and foc1.ORDER_ID = foo.ORDER_ID
+							)
+						</when>
+						<otherwise>
+						</otherwise>
+					</choose> -->
+	</select>
+	
+	<select id="getOrderIds" parameterType="clb.core.forecast.dto.FetSupposeCommon" resultType="java.lang.Long">
+     			SELECT DISTINCT foc1.ORDER_ID
+				FROM 
+					fms_ord_commission foc1,fms_ord_commission foc2,fms_ord_order foo
+				WHERE
+					foc1.COMPANY_TYPE = #{receiveCompanyType}
+					and foc1.COMPANY_ID = #{receiveCompanyId}
+					and foc2.COMPANY_TYPE = #{paymentCompanyType}
+					and foc2.COMPANY_ID = #{paymentCompanyId}
+					and foc1.SEQ_NUM = foc2.SEQ_NUM-1 	
+					AND foc1.ITEM_ID = foc2.ITEM_ID
+					and foc1.ORDER_ID = foc2.ORDER_ID
+					and foc1.ORDER_ID = foo.ORDER_ID
+					AND (
+							(
+								foo. STATUS = 'POLICY_EFFECTIVE'
+								AND foo.ORDER_TYPE = 'INSURANCE'
+							)
+							OR (
+								foo. STATUS = 'ISSUE_SUCCESS'
+								AND foo.ORDER_TYPE = 'BOND'
+							)
+							OR (
+								foo. STATUS = 'BUY_SUCCESS'
+								AND foo.ORDER_TYPE = 'IMMIGRANT'
+							)
+						)
+	</select>
+
+</mapper>

@@ -1,0 +1,210 @@
+<#--
+ * description: 订单复核页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    var reviewNum = <#if RequestParameters.reviewNum?exists> ${RequestParameters.reviewNum} <#else>-1</#if>;
+    var ownSupplierId = <#if RequestParameters.ownSupplierId?exists> ${RequestParameters.ownSupplierId} <#else>-1</#if>;
+    var channelContractId = <#if RequestParameters.channelContractId?exists> ${RequestParameters.channelContractId} <#else>-1</#if>;
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    
+    var viewModel = kendo.observable({
+        model: {
+            reviewer1Date : new Date(),
+            reviewer2Date : new Date(),
+        }
+    });
+
+
+</script>
+
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.review"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" id="reviewer1Div">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.reviewer1"/></label>
+                        <div class="col-xs-8">
+                            <input id="reviewer1" name="reviewer1" type="text"  data-bind="value:model.reviewer1,text:model.reviewer2Name" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="reviewer2Div">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.reviewer2"/></label>
+                        <div class="col-xs-8">
+                            <input id="reviewer2" name="reviewer2" type="text"  data-bind="value:model.reviewer2,text:model.reviewer2Name" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.reviewerComment"/></label>
+                        <div class="col-xs-8">
+                            <input id="reviewerComment" name="reviewerComment" type="text" data-bind="value:model.reviewerComment" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#reviewer1").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SIGN_ASSISTANT")}, {
+        query: function(e) {
+            e.param['channelContractId'] =  channelContractId;
+        },
+        select:function (e) {
+            viewModel.model.set("reviewer1",e.item.userId);
+            viewModel.model.set("reviewer1Name",e.item.employeeName);
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("reviewer1",null);
+                viewModel.model.set("reviewer1Name",null);
+            }
+        }
+    }));
+
+    $("#reviewer2").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SIGN_ASSISTANT")}, {
+        query: function(e) {
+            e.param['channelContractId'] =  channelContractId;
+        },
+        select:function (e) {
+            viewModel.model.set("reviewer2",e.item.userId);
+            viewModel.model.set("reviewer2Name",e.item.employeeName);
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("reviewer2",null);
+                viewModel.model.set("reviewer2Name",null);
+            }
+        }
+    }));
+
+
+    if (reviewNum == 1) {
+        $("#reviewer1Div").show();
+        $("#reviewer2Div").hide();
+    } else if (reviewNum == 2) {
+        $("#reviewer1Div").hide();
+        $("#reviewer2Div").show();
+    } else {
+        $("#reviewer1Div").hide();
+        $("#reviewer2Div").hide();
+    }
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+            var checked = window.parent.grid.selectedDataItems();
+            if (window.parent.grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: '<@spring.message "fms.ordorder.confirmupdatestatus"/>'
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+
+                        $.each(checked, function (i, v) {
+
+                            if (reviewNum == 1) {
+                                v.reviewer1 = viewModel.model.reviewer1;
+                                v.reviewer1Name = viewModel.model.reviewer1Name;
+                                v.reviewer1Date = viewModel.model.reviewer1Date;
+                            } else if (reviewNum == 2) {
+                                v.reviewer2 = viewModel.model.reviewer2;
+                                v.reviewer2Name = viewModel.model.reviewer2Name;
+                                v.reviewer2Date = viewModel.model.reviewer2Date;
+                            }
+                            v.reviewerComment = viewModel.model.reviewerComment;
+                            v.dirty = true;
+                            
+                            if(reviewNum == 1){
+                            	$.ajax({
+                                	url:"${base.contextPath}/fms/ord/order/addHisStatus2",
+                                    type:"POST",
+                                    dataType:"json",   //返回格式为json
+                                    async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+                                    data:{"status":"REVIEW1",
+                                    	  "statusConfirm":viewModel.model.reviewer1Name,
+                                    	 	"orderId":orderId
+                                    },    //参数值
+                                    success:function(data){
+                                        //请求成功时处理
+                                        if(data.success){
+                                        	window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                                            window.parent.$("#revWin").data("kendoWindow").close();
+                                        }
+                                    }
+                                });
+                            }else if(reviewNum == 2){
+	                            $.ajax({
+	                            	url:"${base.contextPath}/fms/ord/order/addHisStatus2",
+	                                type:"POST",
+	                                dataType:"json",   //返回格式为json
+	                                async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+	                                data:{"status":"REVIEW2",
+	                                	  "statusConfirm":viewModel.model.reviewer2Name,
+	                                	 	"orderId":orderId
+	                                },    //参数值
+	                                success:function(data){
+	                                    //请求成功时处理
+	                                    if(data.success){
+	                                    	window.parent.$('#Grid').data('kendoGrid').saveChanges();
+	                                        window.parent.$("#revWin").data("kendoWindow").close();
+	                                    }
+	                                }
+	                            });
+                            }
+                            
+                        })
+                    }
+                })
+            }
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#revWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

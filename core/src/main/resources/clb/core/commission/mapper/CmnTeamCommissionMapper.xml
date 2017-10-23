@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnTeamCommissionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnTeamCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="SUB_CHANNEL_ID" property="subChannelId" jdbcType="DECIMAL" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="DATE" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+
+
+        <result column="PARENT_CHANNEL_ID" property="parentChannelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_PARENT_NAME" property="parentChannelName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_SUB_NAME" property="subChannelName" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="queryBasic" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnTeamCommission">
+        SELECT
+        fctc.LINE_ID,
+        fctc.CHANNEL_ID,
+        fctc.SUB_CHANNEL_ID,
+        fcc.PARENT_CHANNEL_ID,
+        fcc.CHANNEL_NAME,
+        fccp.CHANNEL_NAME CHANNEL_PARENT_NAME,
+        fccs.CHANNEL_NAME CHANNEL_SUB_NAME,
+        fctc.THE_FIRST_YEAR,
+        fctc.THE_SECOND_YEAR,
+        fctc.THE_THIRD_YEAR,
+        fctc.THE_FOURTH_YEAR,
+        fctc.THE_FIFTH_YEAR,
+        fctc.THE_SIXTH_YEAR,
+        fctc.THE_SEVENTH_YEAR,
+        fctc.THE_EIGHT_YEAR,
+        fctc.THE_NINTH_YEAR,
+        fctc.THE_TENTH_YEAR,
+        fctc.VERSION,
+        fctc.EFFECTIVE_START_DATE,
+        fctc.EFFECTIVE_END_DATE
+        FROM
+        fms_cmn_team_commission AS fctc
+        LEFT JOIN fms_cnl_channel fcc ON fcc.CHANNEL_ID=fctc.CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fccp ON fccp.CHANNEL_ID = fcc.PARENT_CHANNEL_ID
+        LEFT JOIN fms_cnl_channel fccs ON fccs.CHANNEL_ID = fctc.SUB_CHANNEL_ID
+        WHERE 1=1
+            <if test="channelId!=null and channelId!=''">
+                AND fctc.CHANNEL_ID = #{channelId}
+            </if>
+            <if test="subChannelId!=null and subChannelId!=''">
+                AND fctc.SUB_CHANNEL_ID = #{subChannelId}
+            </if>
+            <if test="version!=null and version!=''">
+                AND fctc.VERSION = #{version}
+            </if>
+    </select>
+
+    <select id="queryMaxVersion" resultType="java.lang.Long" parameterType="clb.core.commission.dto.CmnTeamCommission">
+        select max(VERSION) from fms_cmn_team_commission
+        where
+        CHANNEL_ID = #{channelId}
+        AND SUB_CHANNEL_ID = #{subChannelId}
+    </select>
+</mapper>

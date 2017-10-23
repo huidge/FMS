@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.exchangeRate.mapper.FetExchangeRateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.exchangeRate.dto.FetExchangeRate">
+        <result column="RATE_ID" property="rateId" jdbcType="DECIMAL" />
+        <result column="FOREIGN_CURRENCY" property="foreignCurrency" jdbcType="VARCHAR" />
+        <result column="BASE_CURRENCY" property="baseCurrency" jdbcType="VARCHAR" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_DATE_FROM" property="effectiveDateFrom" jdbcType="DATE" />
+        <result column="EFFECTIVE_DATE_TO" property="effectiveDateTo" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+<select id="selectRateByCurrentTime" parameterType="clb.core.exchangeRate.dto.FetExchangeRate" resultMap="BaseResultMap">
+	SELECT
+	fea.RATE_ID,
+	fea.FOREIGN_CURRENCY,
+	fea.BASE_CURRENCY,
+	fea.RATE,
+	fea.EFFECTIVE_DATE_FROM,
+	fea.EFFECTIVE_DATE_TO,
+	fea.PROGRAM_ID,
+	fea.REQUEST_ID,
+	fea.OBJECT_VERSION_NUMBER,
+	fea.CREATION_DATE,
+	fea.CREATED_BY,
+	fea.LAST_UPDATED_BY,
+	fea.LAST_UPDATE_DATE,
+	fea.LAST_UPDATE_LOGIN,
+	fea.ATTRIBUTE_CATEGORY,
+	fea.ATTRIBUTE1,
+	fea.ATTRIBUTE2,
+	fea.ATTRIBUTE3,
+	fea.ATTRIBUTE4,
+	fea.ATTRIBUTE5,
+	fea.ATTRIBUTE6,
+	fea.ATTRIBUTE7,
+	fea.ATTRIBUTE8,
+	fea.ATTRIBUTE9,
+	fea.ATTRIBUTE10,
+	fea.ATTRIBUTE11,
+	fea.ATTRIBUTE12,
+	fea.ATTRIBUTE13,
+	fea.ATTRIBUTE14,
+	fea.ATTRIBUTE15 
+FROM
+	fms_fet_exchange_rate AS fea
+WHERE
+	1 = 1
+	<if test="currentTime != null">
+		AND #{currentTime} BETWEEN EFFECTIVE_DATE_FROM AND EFFECTIVE_DATE_TO
+	</if>
+	<if test="foreignCurrency != null and foreignCurrency != ''">
+		AND fea.FOREIGN_CURRENCY = #{foreignCurrency}
+	</if>
+	<if test="baseCurrency != null and baseCurrency != ''">
+		AND fea.BASE_CURRENCY = #{baseCurrency}
+	</if>
+</select>
+
+<select id="queryByForeignCurrencyAndBaseCurrency" parameterType="clb.core.exchangeRate.dto.FetExchangeRate" resultMap="BaseResultMap">
+	SELECT
+	fea.RATE_ID,
+	fea.FOREIGN_CURRENCY,
+	fea.BASE_CURRENCY,
+	fea.RATE,
+	fea.EFFECTIVE_DATE_FROM,
+	fea.EFFECTIVE_DATE_TO,
+	fea.PROGRAM_ID,
+	fea.REQUEST_ID,
+	fea.OBJECT_VERSION_NUMBER,
+	fea.CREATION_DATE,
+	fea.CREATED_BY,
+	fea.LAST_UPDATED_BY,
+	fea.LAST_UPDATE_DATE,
+	fea.LAST_UPDATE_LOGIN,
+	fea.ATTRIBUTE_CATEGORY,
+	fea.ATTRIBUTE1,
+	fea.ATTRIBUTE2,
+	fea.ATTRIBUTE3,
+	fea.ATTRIBUTE4,
+	fea.ATTRIBUTE5,
+	fea.ATTRIBUTE6,
+	fea.ATTRIBUTE7,
+	fea.ATTRIBUTE8,
+	fea.ATTRIBUTE9,
+	fea.ATTRIBUTE10,
+	fea.ATTRIBUTE11,
+	fea.ATTRIBUTE12,
+	fea.ATTRIBUTE13,
+	fea.ATTRIBUTE14,
+	fea.ATTRIBUTE15
+FROM
+	fms_fet_exchange_rate AS fea
+WHERE
+	1 = 1
+	<if test="foreignCurrency != null and foreignCurrency != ''">
+		AND fea.FOREIGN_CURRENCY = #{foreignCurrency}
+	</if>
+	<if test="baseCurrency != null and baseCurrency != ''">
+		AND fea.BASE_CURRENCY = #{baseCurrency}
+	</if>
+</select>
+
+</mapper>

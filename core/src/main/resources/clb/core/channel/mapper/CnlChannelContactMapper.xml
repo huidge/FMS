@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlChannelContactMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlChannelContact">
+        <result column="CHANNEL_CONTACT_ID" property="channelContactId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTACT_OBJECT" property="contactObject" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="IL_PHONE" property="ilPhone" jdbcType="VARCHAR" />
+        <result column="HK_PHONE" property="hkPhone" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryContact" parameterType="clb.core.channel.dto.CnlChannelContact" resultMap="BaseResultMap">
+        SELECT FCCC.CHANNEL_CONTACT_ID,
+               FCCC.CHANNEL_ID,
+               FCCC.CONTACT_OBJECT,
+               FCCC.CONTACT_PERSON,
+               FCCC.IL_PHONE,
+               FCCC.HK_PHONE,
+               FCCC.EMAIL,
+               FCCC.PROGRAM_ID,
+               FCCC.REQUEST_ID
+        FROM fms_cnl_channel_contact FCCC
+        WHERE 1=1
+        AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+    </select>
+
+</mapper>

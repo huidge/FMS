@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdChangeHeaderMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdChangeHeader">
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <collection property="ordChangeLineList" column="HEADER_ID"                       
+            select="clb.core.order.mapper.OrdChangeLineMapper.queryOrdChangeLineByHeaderId" />
+    </resultMap>
+
+    <select id="queryOrdChangeHis" parameterType="clb.core.order.dto.OrdChangeHeader" resultMap="BaseResultMap" >
+        SELECT
+			och.ORDER_ID,
+			och.HEADER_ID,
+			och.UPDATE_TIME,
+			och.USER_ID,
+			su.USER_NAME
+		FROM
+			fms_ord_change_header och,
+			sys_user su
+		WHERE
+			och.USER_ID = su.USER_ID
+		AND och.ORDER_ID = #{orderId}
+        ORDER BY och.UPDATE_TIME DESC
+    </select>
+</mapper>

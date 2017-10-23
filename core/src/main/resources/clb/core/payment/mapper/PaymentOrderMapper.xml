@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.payment.mapper.PaymentOrderMapper">
+    <resultMap id="BaseResultMap" type="clb.core.payment.dto.PaymentOrder" >
+        <result column="PAYMENT_ID" property="paymentId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUMBER" property="orderNumber" />
+        <result column="PAYMENT_TYPE" property="paymentType" />
+        <result column="CURRENCY" property="currency" />
+        <result column="ORDER_SUBJECT" property="orderSubject" />
+        <result column="ORDER_CONTENT" property="orderContent" />
+        <result column="AMOUNT" property="amount" />
+        <result column="PAY_LIMIT_TIME" property="payLimitTime" />
+        <result column="PAY_DATE" property="payDate" />
+        <result column="STATUS" property="status" />
+        <result column="SOURCE_TYPE" property="sourceType" />
+        <result column="SOURCE_ID" property="sourceId" />
+        <result column="PAYMENT_URL" property="paymentUrl" />
+        <result column="creation_date" property="creationDate" />
+    </resultMap>
+    
+    <select id="queryPayOverdue" parameterType="clb.core.payment.dto.PaymentOrder"
+		resultMap="BaseResultMap">
+    	SELECT * from fms_payment_order  
+		  where ADDDATE(CREATION_DATE,INTERVAL PAY_LIMIT_TIME MINUTE)>NOW() 
+		  and (ATTRIBUTE1 &lt;&gt; 'SEND_NOTICE' or ATTRIBUTE1 is null) 
+		<if test="sourceType!=null and sourceType!=''">
+			and SOURCE_TYPE=#{sourceType}
+		</if>
+    </select>
+</mapper>

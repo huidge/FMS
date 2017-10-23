@@ -1,0 +1,465 @@
+<#--
+ * description: 债券状态修改页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.BOND_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?contactPersonData=ORD.ORDER_CONTACT_PERSON" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?contactPhoneData=ORD.ORDER_CONTACT_PHONE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?addressData=ORD.ORDER_ADDRESS" type="text/javascript"></script>
+<script type="text/javascript">
+    var functionCode = '${RequestParameters.functionCode!}';
+    var uidData = '${RequestParameters.uid!}';
+    var orderId = '${RequestParameters.orderId!}';
+    var orderNumber = '${RequestParameters.orderNumber!}';
+    console.log(uidData);
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    viewModel.model.set("orderId",orderId);
+
+    //跳转页面查询
+    if(orderId !=-1) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/query/bond",
+            data: {
+                orderId: orderId
+            },
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    if (k != "status") {
+                        viewModel.model.set(k, row[k]);
+                    }
+                }
+            }
+
+        });
+    }
+
+
+</script>
+<div id="conWin" style="display: none;">
+    <form>
+        <input type="file" id="conFiles" name="conFiles"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.status"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.status"/></label>
+                        <div class="col-xs-8">
+                            <input id="status" name="status" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="descriptionDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordstatushis.description"/></label>
+                        <div class="col-xs-8">
+                            <textarea id="description" rows="6" name="description" type="text" data-bind="value:model.description" class="k-textbox" style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="productManagerDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.productManager"/></label>
+                        <div class="col-xs-8">
+                            <input id="productManager" name="productManager" type="text" data-bind="value:model.productManager" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="productManagerPhoneDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.productManagerPhone"/></label>
+                        <div class="col-xs-8">
+                            <input id="productManagerPhone" name="productManagerPhone" type="text" data-bind="value:model.productManagerPhone" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="contactPersonDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.contactPerson"/></label>
+                        <div class="col-xs-8">
+                            <input id="contactPerson" name="contactPerson" type="text" data-bind="value:model.contactPerson" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="contactPhoneDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.contactPhone"/></label>
+                        <div class="col-xs-8">
+                            <input id="contactPhone" name="contactPhone" type="text" data-bind="value:model.contactPhone" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="meetAddressDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.meetAddress"/></label>
+                        <div class="col-xs-8">
+                            <input id="meetAddress" name="meetAddress" type="text" data-bind="value:model.meetAddress" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="conUploadDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.contractarchive"/></label>
+                        <div class="col-xs-8">
+                            <button type="button" onclick="conUpload()" class="btn btn-info btn-xs" id="btn_conUpload" style="margin-top: 5px" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="issueDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.issueDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="issueDate" name="issueDate" type="text" validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.issueDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#issueDate").kendoDatePicker();
+
+    $("#descriptionDiv").hide();
+    $("#productManagerDiv").hide();
+    $("#productManagerPhoneDiv").hide();
+    $("#contactPersonDiv").hide();
+    $("#contactPhoneDiv").hide();
+    $("#meetAddressDiv").hide();
+    $("#conUploadDiv").hide();
+    $("#issueDateDiv").hide();
+
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource : statusData,
+//        dataSource: {
+//            transport: {
+//                read:function(options) {
+//                    $.ajax({
+//                        type   : "POST",
+//                        url: "${base.contextPath}/fms/ord/order/queryOrderStatus",
+//                        data: {functionCode : functionCode},
+//                        success: function(json) {
+//                            options.success(json.rows);
+//                        }
+//                    });
+//                }
+//            }
+//        },
+        select: function(e) {
+            if (e.dataItem.value && e.dataItem.value == "RESERVE_SUCCESS") {
+                $("#descriptionDiv").hide();
+                $("#productManagerDiv").show();
+                $("#productManagerPhoneDiv").show();
+                $("#contactPersonDiv").show();
+                $("#contactPhoneDiv").show();
+                $("#meetAddressDiv").show();
+                $("#conUploadDiv").hide();
+                $("#issueDateDiv").hide();
+                viewModel.model.set("productManager","苏伟明");
+                viewModel.model.set("productManagerPhone","18565789981");
+                viewModel.model.set("contactPerson","尖沙咀接待处");
+                viewModel.model.set("contactPhone","（+852）38959800");
+                viewModel.model.set("meetAddress","尖沙咀廣東道15號永明金融大樓703-4室");
+                $("#issueDate").removeAttr("required");
+            } else if (e.dataItem.value && e.dataItem.value == "WAITING_ISSUE") {
+                $("#descriptionDiv").hide();
+                $("#productManagerDiv").hide();
+                $("#productManagerPhoneDiv").hide();
+                $("#contactPersonDiv").hide();
+                $("#contactPhoneDiv").hide();
+                $("#meetAddressDiv").hide();
+                $("#conUploadDiv").show();
+                $("#issueDateDiv").hide();
+                $("#issueDate").removeAttr("required");
+            } else if (e.dataItem.value && e.dataItem.value == "RESERVE_CANCELLED") {
+                $("#descriptionDiv").show();
+                $("#productManagerDiv").hide();
+                $("#productManagerPhoneDiv").hide();
+                $("#contactPersonDiv").hide();
+                $("#contactPhoneDiv").hide();
+                $("#meetAddressDiv").hide();
+                $("#conUploadDiv").hide();
+                $("#issueDateDiv").hide();
+                $("#issueDate").removeAttr("required");
+            } else if (e.dataItem.value && e.dataItem.value == "NEED_REVIEW") {
+                $("#descriptionDiv").show();
+                $("#productManagerDiv").hide();
+                $("#productManagerPhoneDiv").hide();
+                $("#contactPersonDiv").hide();
+                $("#contactPhoneDiv").hide();
+                $("#meetAddressDiv").hide();
+                $("#conUploadDiv").hide();
+                $("#issueDateDiv").hide();
+                $("#issueDate").removeAttr("required");
+            } else if (e.dataItem.value && e.dataItem.value == "ISSUE_SUCCESS") {
+                $("#descriptionDiv").hide();
+                $("#productManagerDiv").hide();
+                $("#productManagerPhoneDiv").hide();
+                $("#contactPersonDiv").hide();
+                $("#contactPhoneDiv").hide();
+                $("#meetAddressDiv").hide();
+                $("#conUploadDiv").hide();
+                $("#issueDateDiv").show();
+                $("#issueDate").attr("required","required");
+            } else {
+                $("#descriptionDiv").hide();
+                $("#productManagerDiv").hide();
+                $("#productManagerPhoneDiv").hide();
+                $("#contactPersonDiv").hide();
+                $("#contactPhoneDiv").hide();
+                $("#meetAddressDiv").hide();
+                $("#conUploadDiv").hide();
+                $("#issueDateDiv").hide();
+                $("#issueDate").removeAttr("required");
+            }
+        },
+    });
+
+    $("#contactPerson").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "meaning",
+        dataSource: contactPersonData,
+        clearNoData: false
+    });
+
+    $("#contactPhone").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "meaning",
+        dataSource: contactPhoneData,
+        clearNoData: false
+    });
+
+    $("#meetAddress").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "meaning",
+        dataSource: addressData,
+        clearNoData: false
+    });
+
+    function conUpload(){
+        if(viewModel.model.contractFileId != "" && typeof(viewModel.model.contractFileId) != "undefined"){
+            kendo.ui.showConfirmDialog({
+                message: '<@spring.message "fms.overwrite_file"/>'
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    window.conWin = $("#conWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    conWin.center().open();
+                }
+            });
+        }else{
+            window.conWin = $("#conWin").kendoWindow({
+                title: '<@spring.message "sysfile.upload"/>',
+                width: 400,
+                height: 250,
+                modal: true
+            }).data("kendoWindow");
+            conWin.center().open();
+        }
+    }
+    $("#conFiles").kendoUpload({
+        async        : {
+            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        },
+        showFileList : false,
+        upload       : onUpload,
+        success      : onConSuccess
+    });
+
+    function onUpload(e){
+
+        e.data = {
+            modularName:'ORD',
+            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+            maxSize:20480
+        }
+
+    };
+
+    function onConSuccess(e){
+        if(e.response.success){
+            viewModel.model.oldContractFileId = viewModel.model.contractFileId;
+            viewModel.model.contractFileId = e.response.file.fileId;
+            viewModel.model.contractToken = e.response.file._token;
+            conWin.close();
+        }else{
+            kendo.ui.showErrorDialog({
+                message  : e.response.message
+            })
+        }
+    }
+
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: '<@spring.message "fms.ordorder.confirmupdatestatus"/>'
+            }).done(function (event) {
+                if (event.button == 'OK') {
+
+                    if (uidData != null && uidData != "") {
+                        var data = window.parent.dataSource.getByUid(uidData);
+                        if (viewModel.model.status == "RESERVE_SUCCESS") {
+
+                            $("#descriptionDiv").show();
+                            $("#productManagerDiv").hide();
+                            $("#productManagerPhoneDiv").hide();
+                            $("#contactPersonDiv").hide();
+                            $("#contactPhoneDiv").hide();
+                            $("#meetAddressDiv").hide();
+                            $("#conUploadDiv").hide();
+
+                            data.productManager = viewModel.model.productManager;
+                            data.productManagerPhone = viewModel.model.productManagerPhone;
+                            data.contactPerson = viewModel.model.contactPerson;
+                            data.contactPhone = viewModel.model.contactPhone;
+                            data.meetAddress = viewModel.model.meetAddress;
+
+                        } else if (viewModel.model.status == "WAITING_ISSUE") {
+
+                            data.oldContractFileId = viewModel.model.oldContractFileId;
+                            data.contractFileId = viewModel.model.contractFileId;
+                            data.contractToken = viewModel.model.contractToken;
+
+                        } else if (viewModel.model.status == "RESERVE_CANCELLED") {
+
+                            data.hisDesc = viewModel.model.description;
+
+                        } else if (viewModel.model.status == "NEED_REVIEW") {
+
+                            data.hisDesc = viewModel.model.description;
+
+                        } else if (viewModel.model.status == "ISSUE_SUCCESS") {
+
+                            data.issueDate = viewModel.model.issueDate;
+
+                        }
+                        data.status = viewModel.model.status;
+                        data.hisStatus = viewModel.model.status;
+                        data.dirty = true;
+                        if (viewModel.model.status == "PENDING") {
+                            window.parent.pendingVM.model.set("orderId",orderId);
+                        } else {
+                            window.parent.pendingVM.model.set("orderId",null);
+                        }
+                        window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                        window.parent.$("#updWin").data("kendoWindow").close();
+                    } else {
+                        if (viewModel.model.status == "RESERVE_SUCCESS") {
+
+                            window.parent.viewModel.model.set("productManager",viewModel.model.productManager);
+                            window.parent.viewModel.model.set("productManagerPhone",viewModel.model.productManagerPhone);
+                            window.parent.viewModel.model.set("contactPerson",viewModel.model.contactPerson);
+                            window.parent.viewModel.model.set("contactPhone",viewModel.model.contactPhone);
+                            window.parent.viewModel.model.set("meetAddress",viewModel.model.meetAddress);
+
+                        } else if (viewModel.model.status == "WAITING_ISSUE") {
+
+                            window.parent.viewModel.model.set("oldContractFileId",viewModel.model.oldContractFileId);
+                            window.parent.viewModel.model.set("contractFileId",viewModel.model.contractFileId);
+                            window.parent.viewModel.model.set("contractToken",viewModel.model.contractToken);
+
+                        } else if (viewModel.model.status == "RESERVE_CANCELLED") {
+
+                            window.parent.viewModel.model.set("hisDesc",viewModel.model.description);
+
+                        } else if (viewModel.model.status == "NEED_REVIEW") {
+
+                            window.parent.viewModel.model.set("hisDesc",viewModel.model.description);
+
+                        } else if (viewModel.model.status == "ISSUE_SUCCESS") {
+
+                            window.parent.viewModel.model.set("issueDate",viewModel.model.issueDate);
+
+                        }
+                        window.parent.viewModel.model.set("status",viewModel.model.status);
+                        window.parent.viewModel.model.set("hisStatus",viewModel.model.status);
+                        window.parent.viewModel.model.set("dirty",true);
+                        if (viewModel.model.status == "PENDING") {
+                            window.parent.pendingVM.model.set("orderId",orderId);
+                        } else {
+                            window.parent.pendingVM.model.set("orderId",null);
+                        }
+                        window.parent.saveData();
+                        window.parent.$("#updWin").data("kendoWindow").close();
+                    }
+
+                }
+            })
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#updWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

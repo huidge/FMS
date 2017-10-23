@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnEPlanTemplateBigMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnEPlanTemplateBig">
+        <result column="BIG_ID" property="bigId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="BIG_TITLE" property="bigTitle" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<select id="queryList" parameterType="clb.core.pln.dto.PlnEPlanTemplateBig" resultMap="BaseResultMap">
+		SELECT
+			big.BIG_ID,
+			big.SEQ_NUM,
+			big.TEMPLATE_ID,
+			big.BIG_TITLE,
+			big.PROGRAM_ID,
+			big.REQUEST_ID
+		FROM
+			fms_pln_e_plan_template_big AS big
+		WHERE
+			1 = 1 
+			<if test="bigId != null">
+				AND big.BIG_ID = #{bigId}
+			</if>
+			<if test="seqNum != null">
+				AND big.SEQ_NUM = #{seqNum}
+			</if>
+			<if test="templateId != null">
+				AND big.TEMPLATE_ID = #{templateId}
+			</if>
+			<if test="bigTitle != null">
+				AND big.BIG_TITLE = #{bigTitle}
+			</if>
+		ORDER BY
+			big.SEQ_NUM ASC
+	</select>
+</mapper>

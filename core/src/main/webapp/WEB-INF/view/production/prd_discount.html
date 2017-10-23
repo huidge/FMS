@@ -1,0 +1,450 @@
+<#-- 
+ * description:产品优惠信息管理
+ * version: 1.0 
+ * author:wanjun.feng@hand-china.com
+ * -->
+<#include "../include/header.html">
+<body>
+<script src="${base.contextPath}/clb/common/clbCode?statusData=SYS.STATUS_CODE" type="text/javascript"></script>
+<script type="text/javascript">
+    var prdDivisionData;
+    var prdClassData;
+    viewModel = kendo.observable({
+    	model: {},
+    	statusData: statusData,
+        createFunction: function(){
+            $('#prdDiscountGrid').data('kendoGrid').addRow();
+        },
+        saveFunction: function(){
+            $('#prdDiscountGrid').data('kendoGrid').saveChanges();
+        },
+        queryFunction: function() {
+            $('#prdDiscountGrid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function() {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+</script>
+<div id="content-container">
+    <div id="page-content">
+    	<form class="form-horizontal">
+        <!--查询面板-->
+	    <div class="panel">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <input type="text" style="width: 100%" placeholder='<@spring.message "prddiscount.prddivision"/>'
+                               data-text-field="meaning" data-value-field="value" data-value-primitive="true"
+                               data-bind="source: prdDivisionData,value:model.prdDivision" id="bigClass" >
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" style="width: 100%"  placeholder='<@spring.message "prddiscount.prdclass"/>'
+                               data-text-field="meaning" data-value-field="value" data-value-primitive="true"
+                               data-bind="source: prdClassData,value:model.prdClass" id="midClass" >
+                    </div>
+                    <div class="col-sm-3">
+                    	<input type="text" class="k-textbox" style="width:100%" placeholder='<@spring.message "prddiscount.prdname"/>'
+                            data-bind="value:model.itemName" id="itemName">
+                    </div>
+                    <div class="col-sm-3">
+                    	<select data-role="combobox" data-value-primitive="true" placeholder='<@spring.message "prddiscount.prdstatuscode"/>'
+							data-text-field="meaning" data-value-field="value" style="width:100%;"
+							data-bind="source:statusData, value:model.statusCode"></select>
+                    </div>
+                </div>
+	        </div>
+	        <div class="panel-footer text-right">
+	            <span class="btn btn-primary" type="submit" data-bind="click:queryFunction">
+	            	<i class="fa fa-search"></i><@spring.message "hap.query"/>
+	            </span>
+	            <span class="btn btn-default" type="button" data-bind="click:resetForm">
+	            	<i class="fa fa-refresh"></i><@spring.message "hap.reset"/>
+	            </span>
+	        </div>
+	    </div>
+	    </form>
+        <div style="clear:both">
+        	<form id="gridForm">
+            	<div id="prdDiscountGrid" class="table"></div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //产品大分类
+        $.ajax({
+            type:"POST",
+            url:"${base.contextPath}/clb/common/lov/PRD_DIVISION",
+            contentType:"application/json",
+            data:{"statusCode":"Y"},
+            success: function(e) {
+                prdDivisionData = e.rows;
+                viewModel.set("prdDivisionData", prdDivisionData);
+            }
+        });
+        $("#bigClass").kendoDropDownList({
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: prdDivisionData,
+            optionLabel:'<@spring.message "prddiscount.prddivision"/>',
+            select:function(e){
+                //产品中分类
+                $.ajax({
+                    type:"POST",
+                    async:false,
+                    url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+                    contentType:"application/x-www-form-urlencoded",
+                    data:{"statusCode":"Y","className1":e.dataItem.value},
+                    success: function(e) {
+                        prdItemsClass = e.rows;
+                        viewModel.set("prdClassData", prdItemsClass);
+                    }
+                });
+            }
+        });
+        //产品中分类
+        $.ajax({
+            type:"POST",
+            url:"${base.contextPath}/clb/common/lov/PRD_CLASS",
+            contentType:"application/json",
+            data:{"statusCode":"Y"},
+            success: function(e) {
+                prdClassData     = e.rows;
+                viewModel.set("prdClassData", prdClassData);
+            }
+        });
+        $("#midClass").kendoDropDownList({
+            dataTextField: "meaning",
+            dataValueField: "value",
+            dataSource: prdClassData,
+            optionLabel:'<@spring.message "prddiscount.prdclass"/>'
+        });
+
+    	kendo.bind($('#page-content'), viewModel);
+        var crudServiceBaseUrl = "${base.contextPath}/production/discount/";
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl+'query',
+                    type: "POST",
+                    dataType: "json"
+                },
+                create : { 
+                    url : crudServiceBaseUrl + "submit",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                update : { 
+                    url : crudServiceBaseUrl + "submit",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                destroy : { 
+                    url : crudServiceBaseUrl + "remove",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                parameterMap: function (options, type) {
+                	if (type !== "read" && options.models) {
+                   		var datas = Hap.prepareSubmitParameter(options, type);
+                       	return kendo.stringify(datas);
+                    } else if (type === "read"){
+                    	return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "discountId",
+                    fields: {
+                    	discountId:{},
+                    	noticeId:{},
+                    	noticeTitle:{},
+                    	prdDivision:{validation:{required:true}},
+                    	prdDivisionName:{validation:{required:true}},
+                    	prdClass:{validation:{required:true}},
+                    	prdClassName:{validation:{required:true}},
+                    	itemId:{validation:{required:true}},
+                    	itemName:{validation:{required:true}},
+                    	content:{validation:{required:true}},
+                    	dateFrom:{type:'date',validation:{required:true}},
+                    	dateTo:{type:'date'},
+                    	statusCode:{}
+                    }
+                }
+            }
+        });
+
+        var grid = $("#prdDiscountGrid").kendoGrid({
+            dataSource: dataSource,
+            navigatable: false,
+            height: '100%',
+            resizable: true,
+            scrollable: true,
+            sortable: true,
+            selectable: "multiple, rowbox",
+            rownumber: true,
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [{
+                template: '<span class="btn btn-primary k-grid-add">'+
+              		'<i class="fa fa-plus-square"></i>'+
+              		'<@spring.message "hap.new"/></span>'
+            },
+            {
+                template: '<span class="btn btn-success k-grid-save-changes">'+
+           		'<i class="fa fa-save"></i>'+
+        		'<@spring.message "hap.save"/></span>'
+            },
+            {
+                template: '<span class="btn btn-danger" onclick="deleteData()">'+
+           		'<i class="fa fa-trash-o"></i>'+
+        		'<@spring.message "hap.delete"/></span>'
+            },
+            {
+                template: '<span class="btn btn-default k-grid-cancel-changes">'+
+           		'<i class="fa fa-rotate-left"></i>'+
+        		'<@spring.message "hap.cancel"/></span>'
+            }],
+            columns: [
+                {
+                    field: "discountId",
+                    title: 'discountId',
+                    width: 50,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    hidden: true
+                },
+                {
+                    field: "itemName",
+                    title: '产品名称',
+                    width: 100,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor          : function (container, options) {
+                        $('<input name="' + options.field + '" required/>')
+                                .appendTo(container)
+                                .kendoLov($.extend(<@lov "PRD_ITEM"/>,{
+                            textField:'itemName',
+                                    valueField:'itemCode',
+                                    query: function(e) {
+                                e.param['enabledFlag'] = 'Y';
+                            },
+                            select: function(e) {
+                                options.model.set('itemId', e.item.itemId);
+                                options.model.set('itemName', e.item.itemName);
+                                options.model.set('prdDivision', e.item.bigClass);
+                                options.model.set('prdDivisionName', e.item.bigClassName);
+                                options.model.set('prdClass', e.item.midClass);
+                                options.model.set('prdClassName', e.item.midClassName);
+                                console.log(e.item,options.model)
+                            },
+                            change : function(e) {
+                                if (e.sender._prev=="") {
+                                    //当lov中数据清除时，绑定的值也清空
+                                    options.model.set('itemId', '');
+                                    options.model.set('itemName', '');
+                                    options.model.set('prdDivision', '');
+                                    options.model.set('prdDivisionName', '');
+                                    options.model.set('prdClass', '');
+                                    options.model.set('prdClassName', '');
+                                }
+                            },
+                            model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                        return dataItem['itemName'] || ''
+                    }
+                },
+                {
+                    field: "prdDivisionName",
+                    title: '产品大分类',
+                    width: 100,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor          : function (container, options) { 
+                    	$('<input type="text" class="k-input k-textbox" name="' + options.field + '" required data-bind="value:' + options.field + '" disabled gray="gray">').appendTo(container);
+                    }
+                },
+                {
+                    field: "prdClassName",
+                    title: '产品中分类',
+                    width: 100,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor          : function (container, options) { 
+                    	$('<input type="text" class="k-input k-textbox" name="' + options.field + '" required data-bind="value:' + options.field + '" disabled gray="gray">').appendTo(container);
+                    }
+                },
+                {
+                    field: "content",
+                    title: '优惠内容',
+                    width: 150,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor: function(container, options){
+               		  	$('<input type="text" class="k-input k-textbox" name="' + options.field + '" required />')
+                          .appendTo(container);
+                	}
+                },
+                {
+                    field: "dateFrom",
+                    title: '优惠时间从',
+                    width: 100,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    format: "{0:yyyy-MM-dd}",
+                    editor: function(container, options){
+                    	//获得到期时间
+                   	  	var end = options.model.dateTo;
+                   	  	var opts={
+                       		format:"yyyy-MM-dd"
+                        }
+                   	  	if(end){
+                   		  	opts.max=end;
+                   	  	}
+               		  	$('<input name="' + options.field + '" required />')
+                          .appendTo(container)
+                          .kendoDatePicker(opts);
+                	}
+                },
+                {
+                    field: "dateTo",
+                    title: '优惠时间至',
+                    width: 100,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    format: "{0:yyyy-MM-dd}",
+                    editor: function(container, options){
+                    	//获得开始时间
+                 	    var start = options.model.dateFrom;
+                 	    var opts={
+                       	  	format:"yyyy-MM-dd"
+                        }
+                 	    //设置min属性 限制最小的可选日期
+                   	  	if(start){
+                   		  	opts.min=start;
+                   	  	}
+               		  	$('<input name="' + options.field + '"/>')
+                          .appendTo(container)
+                          .kendoDatePicker(opts);
+                    }
+                },
+                {
+                    field: "noticeTitle",
+                    title: '关联公告',
+                    width: 150,
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+	                    	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "NTC_RELEASE_ARTICLE_GGL"/>,{
+	                          	textField:'noticeTitle',
+	                          	valueField:'noticeId',
+	                          	query: function(e) {
+	                          		e.param['status'] = 'Y';
+	                          		e.param['noticeType'] = 'Preferential';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('noticeId', e.item.articleId);
+	                          		options.model.set('noticeTitle', e.item.title);
+	                          		console.log(options.model)
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('noticeId', '');
+		                          		options.model.set('noticeTitle', '');
+                                     }
+	                          	}, 
+	                          	model    : options.model
+	                    }));
+                	},
+	                template        : function (dataItem) {
+	                	return dataItem['noticeTitle'] || ''
+	                }
+                }],
+            editable: true
+        }).data("kendoGrid");
+        
+        function deleteData(){
+        	var grid = $("#prdDiscountGrid").data("kendoGrid");
+            var checked = grid.selectedDataItems();
+            if(checked.length){
+            	Hap.deleteGridSelection({
+        	     	grid:$('#prdDiscountGrid')
+        	    });
+            } else {
+            	kendo.ui.showInfoDialog({
+            		title:$l('hap.tip.info'),
+                    message:'你未选中任何要删除的项!'
+                });
+            }
+        }
+        Hap.autoResizeGrid("#prdDiscountGrid");
+    </script>
+</div>
+</body>
+</html>

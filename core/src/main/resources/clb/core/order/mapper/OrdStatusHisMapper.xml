@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdStatusHisMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdStatusHis">
+        <result column="STATUS_HIS_ID" property="statusHisId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="STATUS_DATE" property="statusDate" jdbcType="TIMESTAMP" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="OPERATOR_USER_ID" property="operatorUserId" jdbcType="DECIMAL" />
+        <result column="OPERATOR_USER_NAME" property="operatorUserName" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="MEANING" property="meaning" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdStatusHisAll" parameterType="clb.core.order.dto.OrdStatusHis" resultMap="BaseResultMap" >
+        SELECT
+        fosh.STATUS_HIS_ID,
+        fosh.ORDER_ID,
+        fosh.STATUS_DATE,
+        fosh.STATUS,
+        fosh.OPERATOR_USER_ID,
+        IFNULL(he.`NAME`, '行政') OPERATOR_USER_NAME,
+        fosh.DESCRIPTION,
+        fosh.PROGRAM_ID,
+        fosh.REQUEST_ID,
+        scv.meaning
+        FROM
+        fms_ord_status_his AS fosh
+        JOIN fms_ord_order foo
+        ON foo.order_id = fosh.order_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = case foo.order_type
+        WHEN 'INSURANCE' THEN
+        'ORD.ORDER_HIS_STATUS'
+        WHEN 'BOND' THEN
+        'ORD.BOND_STATUS'
+        WHEN 'IMMIGRANT' THEN
+        'ORD.IMMIGRANT_STATUS'
+        WHEN 'VALUEADD' THEN
+        'ORD.VALUEADD_STATUS'
+        END
+        LEFT JOIN sys_code_value_b scv
+        ON (sc.code_id = scv.code_id AND fosh.status = scv.value)
+        LEFT JOIN sys_user sur ON sur.USER_ID = fosh.OPERATOR_USER_ID
+        LEFT JOIN hr_employee he ON he.EMPLOYEE_ID = sur.RELATED_PARTY_ID
+        WHERE 1=1
+        <if test = "orderId != null"> AND fosh.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        ORDER BY fosh.STATUS_DATE DESC
+    </select>
+
+    <select id="queryOrdStatusHis" parameterType="clb.core.order.dto.OrdStatusHis" resultMap="BaseResultMap" >
+        SELECT
+        fosh.STATUS_HIS_ID,
+        fosh.ORDER_ID,
+        fosh.STATUS_DATE,
+        fosh.STATUS,
+        fosh.DESCRIPTION,
+        fosh.PROGRAM_ID,
+        fosh.REQUEST_ID,
+        scv.meaning
+        FROM
+        fms_ord_status_his AS fosh
+        JOIN fms_ord_order foo
+        ON foo.order_id = fosh.order_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = case foo.order_type
+        WHEN 'INSURANCE' THEN
+        'ORD.ORDER_HIS_STATUS'
+        WHEN 'BOND' THEN
+        'ORD.BOND_STATUS'
+        WHEN 'IMMIGRANT' THEN
+        'ORD.IMMIGRANT_STATUS'
+        WHEN 'VALUEADD' THEN
+        'ORD.VALUEADD_STATUS'
+        END
+        LEFT JOIN sys_code_value_b scv
+        ON (sc.code_id = scv.code_id AND fosh.status = scv.value)
+        WHERE 1=1
+        <if test = "orderId != null"> AND fosh.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fosh.STATUS = #{status , jdbcType=VARCHAR} </if>
+        ORDER BY fosh.STATUS_DATE DESC
+    </select>
+    <select id="queryWsOrdStatusHis" parameterType="clb.core.order.dto.OrdStatusHis" resultMap="BaseResultMap" >
+        SELECT
+            fosh.STATUS_HIS_ID,
+            fosh.ORDER_ID,
+            fosh.STATUS_DATE,
+            fosh.STATUS,
+            fosh.DESCRIPTION,
+            fosh.PROGRAM_ID,
+            fosh.REQUEST_ID,
+            scv.meaning
+        FROM fms_ord_status_his AS fosh
+        JOIN fms_ord_order foo
+        ON foo.order_id = fosh.order_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = case foo.order_type
+                    WHEN 'INSURANCE' THEN
+                    'ORD.ORDER_HIS_STATUS'
+                    WHEN 'BOND' THEN
+                    'ORD.BOND_STATUS'
+                    WHEN 'IMMIGRANT' THEN
+                    'ORD.IMMIGRANT_STATUS'
+                    WHEN 'VALUEADD' THEN
+                    'ORD.VALUEADD_STATUS'
+                    END
+        LEFT JOIN sys_code_value_b scv
+        ON (sc.code_id = scv.code_id AND fosh.status = scv.value)
+        WHERE 1=1
+        <if test = "orderId != null"> AND fosh.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "statusHisId != null"> AND fosh.STATUS_HIS_ID = #{statusHisId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fosh.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "statusDate != null"> AND fosh.STATUS_DATE = #{statusDate , jdbcType=TIMESTAMP} </if>
+        <if test = "description != null"> AND fosh.DESCRIPTION = #{description , jdbcType=VARCHAR} </if>
+        AND fosh.STATUS NOT IN ("CLUB_CONFIRM","UPDATE_APP_STATUS","UPDATE_APP_STATUS2","REVIEW1","REVIEW2","SEND_STATUS")
+        ORDER BY fosh.STATUS_DATE DESC
+    </select>
+
+    <select id="queryOrdStatusHisSimple" parameterType="clb.core.order.dto.OrdStatusHis" resultMap="BaseResultMap" >
+        SELECT
+        fosh.ORDER_ID,
+        fosh.STATUS_DATE
+        FROM fms_ord_status_his AS fosh
+        WHERE 1=1
+        <if test = "status != null"> AND fosh.STATUS = #{status , jdbcType=VARCHAR} </if>
+    </select>
+</mapper>

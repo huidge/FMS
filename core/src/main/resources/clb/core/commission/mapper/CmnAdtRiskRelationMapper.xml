@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnAdtRiskRelationMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnAdtRiskRelation">
+        <result column="RELATION_ID" property="relationId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUB_ITEM_ID" property="subItemId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="DEPEND_MAIN_FLAG" property="dependMainFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        
+         <result column="SUPPLIER_NAME" property="supplierName" jdbcType="DECIMAL" />
+        <result column="SUBITEM_CODE" property="subItemCode" jdbcType="VARCHAR" />
+        <result column="SUBITEM_NAME" property="subItemName" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="queryAll" parameterType="clb.core.commission.dto.CmnAdtRiskRelation" resultMap="BaseResultMap">
+	SELECT
+		fcarr.RELATION_ID,
+		fcarr.SUPPLIER_ID,
+		fcarr.SUB_ITEM_ID,
+		fcarr.ITEM_ID,
+		fcarr.DEPEND_MAIN_FLAG,
+		fcarr.PROGRAM_ID,
+		fcarr.REQUEST_ID,
+		fss.`NAME` SUPPLIER_NAME,
+		fpi.ITEM_CODE,
+		fpi.ITEM_NAME,
+		fpis.ITEM_CODE SUBITEM_CODE,
+		fpis.ITEM_NAME SUBITEM_NAME
+	FROM
+		fms_cmn_adt_risk_relation AS fcarr
+	LEFT JOIN fms_spe_supplier fss ON fcarr.SUPPLIER_ID = fss.SUPPLIER_ID
+	LEFT JOIN fms_prd_items fpi ON fcarr.ITEM_ID = fpi.ITEM_ID
+	LEFT JOIN fms_prd_items fpis ON fcarr.SUB_ITEM_ID = fpis.ITEM_ID
+	
+	WHERE
+		1 = 1
+		<if test="subItemId != null">
+			AND fcarr.SUB_ITEM_ID = #{subItemId}
+		</if>
+		<if test="itemId != null">
+			AND fcarr.ITEM_ID = #{itemId}
+		</if>
+		<if test="supplierId != null">
+			AND fcarr.SUPPLIER_ID = #{supplierId}
+		</if>
+	ORDER BY fcarr.RELATION_ID DESC
+	</select>	
+
+	<select id="queryByCondition" parameterType="clb.core.commission.dto.CmnAdtRiskRelation" resultMap="BaseResultMap">
+		SELECT
+			fcarr.RELATION_ID,
+			fcarr.SUPPLIER_ID,
+			fcarr.SUB_ITEM_ID,
+			fcarr.ITEM_ID,
+			fcarr.DEPEND_MAIN_FLAG,
+			fcarr.PROGRAM_ID,
+			fcarr.REQUEST_ID,
+			fss.`NAME` SUPPLIER_NAME,
+			fpi.ITEM_CODE,
+			fpi.ITEM_NAME,
+			fpis.ITEM_CODE SUBITEM_CODE,
+			fpis.ITEM_NAME SUBITEM_NAME
+		FROM
+			fms_cmn_adt_risk_relation AS fcarr
+		LEFT JOIN fms_spe_supplier fss ON fcarr.SUPPLIER_ID = fss.SUPPLIER_ID
+		LEFT JOIN fms_prd_items fpi ON fcarr.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_prd_items fpis ON fcarr.SUB_ITEM_ID = fpis.ITEM_ID
+		
+		WHERE
+			fcarr.ITEM_ID IS NULL
+			<if test="subItemId != null">
+				AND fcarr.SUB_ITEM_ID = #{subItemId}
+			</if>
+			<if test="supplierId != null">
+				AND fcarr.SUPPLIER_ID = #{supplierId}
+			</if>
+	</select>	
+
+</mapper>

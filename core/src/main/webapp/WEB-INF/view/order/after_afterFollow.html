@@ -1,0 +1,1594 @@
+<#--
+ * description: 售后跟进页面
+ * version: 1.0
+-->
+<#include "../include/header.html">
+<script src="../lib/kendoui/js/kendo.editor.js"></script>
+<script src="${base.contextPath}/clb/common/clbCode?afterStatusData=ORD.AFTER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?afterTypeData=	ORD.AFTER_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?afterProjectData=ORD.APPLY_CLASS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?balancePaymentMethodData=ORD.BALANCE_PAY_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?orderStatusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?payMethodData=CMN.PAY_METHOD" type="text/javascript"></script>
+<script type="text/javascript">
+
+	var templateNameData;
+  
+	//保单信息的viewModel
+	var orderVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//续保信息的viewModel
+	var renewalVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//续保表格的viewModel
+	var renewalGridVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//退保表格的viewModel
+	var exitGridVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//售后跟进表格的viewModel
+	var followGridVM = kendo.observable({
+	        model: {
+	            
+	        }
+	 });
+	
+	//最外层的viewModel
+	 var viewModel = kendo.observable({
+	        model: {
+	        	
+	        }
+	 });
+	
+	//售后状态为资料审核成功之后 弹窗数据
+	 var ordAfterLogVM = kendo.observable({
+	        model: {
+	        	
+	        }
+	 });
+	//售后项目为续保 售后状态为成功之后 弹窗数据
+	 var orderRenewalSuccessInfoVM = kendo.observable({
+	        model: {
+	        	
+	        }
+	 });
+	
+	//获取上一个页面传递过来的值
+	var afterId = '${RequestParameters.afterId!0}';
+	var orderId = '${RequestParameters.orderId!0}';
+	
+	viewModel.model.set("afterId",afterId);
+    viewModel.model.set("orderId",orderId);
+  //跳转页面查询
+    if(afterId != 0) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/after/queryOrderInfoByAfterId",
+            data: {"afterId": afterId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                	orderVM.model.set(k, row[k]);
+                }
+            }
+        });
+        
+        //查询续保信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/after/queryOrderByOrdOrderId",
+            data: {orderId: orderId},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                        renewalVM.model.set(k, row[k]);
+                }
+            }
+        });
+        
+    }
+  
+</script>
+
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading col-xs-12">
+            	<div class="col-xs-9" style="text-align: left"><span class="panel-title">  售后跟进页面 </span></div>
+            	<div class="col-xs-1" style="text-align: right">
+            		<span class="btn btn-default" style="width:100px" onclick="cancelData()">
+					    <i class="fa fa-reply" style="margin-right:3px;"></i>返回上一页
+					</span>
+            	</div>
+            </div>
+            
+            <div class="panel-body">   
+
+                <div class="col-xs-12" >
+
+                    <!--保单信息-->
+                    <div class="col-xs-12" id="policyInfoDiv">
+                        <p class="bord-btm pad-ver text-main text-bold">
+                            		保单信息
+                        </p>
+
+                        <div class="col-xs-12" >
+                        
+                        	  <div class="col-xs-4" id="afterNumDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">售后编号</label>
+                                    <div class="col-xs-8">
+                                        <input id="afterNum" name="afterNum" type="text" data-bind="value:model.afterNum" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#afterNum'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" id="policyNumberDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保单号码</label> 
+                                    <div class="col-xs-8">
+                                        <input id="policyNumber" name="policyNumber" type="text" data-bind="value:model.policyNumber" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#policyNumber'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                          
+
+                            <div class="col-xs-4" id="itemDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">订单信息</label>
+                                    <div class="col-xs-8">
+                                        <input id="item" name="item" type="text" data-bind="value:model.item" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#item'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-12">
+
+                            <div class="col-xs-4" id="channelNameDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">渠道</label>
+                                    <div class="col-xs-8">
+                                        <input id="channelName" name="channelName" type="text" class="k-textbox" data-bind="value:model.channelName,text:model.channelName" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#channelName'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+							<div class="col-xs-4" id="applicantDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">投保人</label>
+                                    <div class="col-xs-8">
+                                        <input id="applicant" name="applicant" type="text" data-bind="value:model.applicant,text:model.applicant" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#applicant'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" id="insurantDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">受保人</label>
+                                    <div class="col-xs-8">
+                                        <input id="insurant" name="insurant" type="text" data-bind="value:model.insurant,text:model.insurant" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#insurant'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-xs-12">
+
+                            <div class="col-xs-4" id="currencyDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">币种</label>
+                                     <div class="col-xs-8">
+                                        <input id="currency" name="currency" type="text" data-bind="value:model.currency" style="width: 100%;">
+                                        <script>kendo.bind($('#currency'), orderVM);</script>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-4" id="yearPayAmountDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保费</label>
+                                     <div class="col-xs-8">
+                                        <input id="yearPayAmount" name="yearPayAmount" type="text" data-bind="value:model.yearPayAmount" style="width: 100%;">
+                                        <script>kendo.bind($('#yearPayAmount'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-4" id="policyAmountDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">保额</label>
+                                     <div class="col-xs-8">
+                                        <input id="policyAmount" name="policyAmount" type="text" data-bind="value:model.policyAmount" style="width: 100%;">
+                                        <script>kendo.bind($('#policyAmount'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-xs-12">
+
+                            <div class="col-xs-4" id="reserveSupplierIdDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">预约公司</label>
+                                    <div class="col-xs-8">
+                                        <input id="reserveSupplierName" name="reserveSupplierName" type="text" data-bind="value:model.reserveSupplierName,text:model.reserveSupplierName" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#reserveSupplierName'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-4" id="preNameDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">对接业务行政</label>
+                                    <div class="col-xs-8">
+                                        <input id="preName" name="preName" type="text" data-bind="value:model.preName" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#preName'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" id="afterProjectDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">售后项目</label>
+                                    <div class="col-xs-8">
+                                        <input id="afterProject" name="afterProject" type="text" data-bind="value:model.afterProject" style="width: 100%;">
+                                        <script>
+                                        	kendo.bind($('#afterProject'), orderVM);
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-12">
+
+                            <div class="col-xs-4" id="afterTypeDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">售后类型</label>
+                                    <div class="col-xs-8">
+                                        <input id="templateId" name="templateId" type="text" data-bind="value:model.templateId,text:model.afterType"  style="width: 100%;" onchange="change()">
+                                        <script>
+                                        	kendo.bind($('#templateId'), orderVM);
+                                        	function change(){
+                                        		viewModel.model.set("content",null);
+                                        		viewModel.model.set("templateName",null);
+												$("#templateName").data("kendoComboBox").setDataSource(null);
+												$.ajax({
+												    type:"POST",
+												    url:"${base.contextPath}/fms/ord/template/queryTemplateNameOnOrdAfter",
+												    data:{"templateId":$("#templateId").val()},
+												    success: function(e) {
+												    	$("#templateName").data("kendoComboBox").setDataSource(e.rows);
+												    }
+												});
+											}
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4" id="handlerUserIdDiv">
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">分配处理人</label>
+                                    <div class="col-xs-8">
+                                        <input id="handlerUserName" name="handlerUserName" type="text" data-bind="value:model.handlerUserName" class=" k-textbox" style="width: 100%;">
+                                        <script>kendo.bind($('#handlerUserName'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">状态</label>
+                                    <div class="col-xs-8">
+                                        <input id="afterStatus" name="afterStatus" type="text" data-bind="value:model.afterStatus" style="width: 100%;">
+                                        <script>kendo.bind($('#afterStatus'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        
+                        <div class="col-xs-12" style="display: none;"><!-- 短信通知 -->
+                            
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right">提交时间</label>
+                                    <div class="col-xs-8">
+                                        <input id="creationDate" name="creationDate" type="datetime" data-bind="value:model.creationDate" style="width: 100%;">
+                                        <script>kendo.bind($('#creationDate'), orderVM);</script>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12" id="renewalInfoDiv">
+                <div class="col-xs-12" >
+                 <!--续保信息-->
+	                <p class="bord-btm pad-ver text-main text-bold">
+	                  		  续保信息
+	                </p>
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">客户编号</label>
+                            <div class="col-xs-9">
+                                <input id="customerNumber" name="customerNumber" type="text" data-bind="value:model.customerNumber" class=" k-textbox" style="width: 100%;">
+                                <script>kendo.bind($('#customerNumber'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">缴费编号</label>
+                            <div class="col-xs-9">
+                                <input id="payNumber" name="payNumber" type="text" data-bind="value:model.payNumber"  class=" k-textbox" style="width: 100%;">
+                                <script>kendo.bind($('#payNumber'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保费递增</label>
+                            <div class="col-xs-9">
+                                        <input id="increaseFlag" name="increaseFlag" type="checkbox" style="top:6px;" data-bind="value:model.increaseFlag">
+                                        <script>kendo.bind($('#increaseFlag'), renewalVM);</script>
+                             </div>
+                        </div>
+                    </div>
+
+                </div>
+                    <div class="col-xs-12">
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">已提交DDA</label>
+                            <div class="col-xs-9">
+                                        <input id="ddaFlag" name="ddaFlag" type="checkbox" style="top:6px;" data-bind="value:model.ddaFlag">
+                                        <script>kendo.bind($('#ddaFlag'), renewalVM);</script>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">DDA提交日期</label>
+                            <div class="col-xs-9">
+                                <input id="ddaSubmitDate" name="ddaSubmitDate" type="datetime" data-bind="value:model.ddaSubmitDate" style="width: 100%;">
+                                <script>kendo.bind($('#ddaSubmitDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">DDA生效日期</label>
+                            <div class="col-xs-9">
+                                <input id="ddaEffectiveDate" name="ddaEffectiveDate" type="datetime" data-bind="value:model.ddaEffectiveDate" style="width: 100%;">
+                                <script>kendo.bind($('#ddaEffectiveDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12">
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">首期保费日</label>
+                            <div class="col-xs-9">
+                                <input id="firstPayDate" name="firstPayDate" type="datetime" data-bind="value:model.firstPayDate" style="width: 100%;">
+                                <script>kendo.bind($('#firstPayDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保单生效日</label>
+                            <div class="col-xs-9">
+                                <input id="effectiveDate" name="effectiveDate" type="datetime" data-bind="value:model.effectiveDate" style="width: 100%;">
+                                <script>kendo.bind($('#effectiveDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">币种</label>
+                            <div class="col-xs-9">
+                                <input id="currency2" data-bind="value:model.currency" style="width: 100%;">
+                                <script>kendo.bind($('#currency2'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="col-xs-12">
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">保费到期日</label>
+                            <div class="col-xs-9">
+                                <input id="renewalDueDate" name="renewalDueDate" type="datetime" data-bind="value:model.renewalDueDate" style="width: 100%;">
+                                <script>kendo.bind($('#renewalDueDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">宽限期</label>
+                            <div class="col-xs-9">
+                                <input id="graceDate" name="graceDate" type="datetime" data-bind="value:model.graceDate"  style="width: 100%;">
+                                <script>kendo.bind($('#graceDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">行政期</label>
+                            <div class="col-xs-9">
+                                <input id="administrativeDate" name="administrativeDate" type="datetime" data-bind="value:model.administrativeDate" style="width: 100%;">
+                                <script>kendo.bind($('#administrativeDate'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xs-12">
+                
+               	 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">供款方式</label>
+                            <div class="col-xs-9">
+                                <input id="payMethod" name="payMethod" type="text" data-bind="value:model.payMethod" style="width: 100%;">
+                                <script>kendo.bind($('#payMethod'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">付款方法</label>
+                            <div class="col-xs-9">
+                                <input id="balancePaymentMethod" name="balancePaymentMethod" type="text" data-bind="value:model.balancePaymentMethod" style="width: 100%;">
+                                <script>kendo.bind($('#balancePaymentMethod'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                  	 <div class="col-xs-4" id="payPeriodsDiv">
+                             <div class="form-group" style="margin-bottom:10px">
+                                 <label class="col-xs-3 control-label"
+                                        style="text-align: right">当前期数</label>
+                                 <div class="col-xs-9">
+                                     <input id="payPeriods" name="payPeriods" type="text" class="k-textbox" data-bind="value:model.payPeriods" style="display: none;">
+                                     <script>kendo.bind($('#payPeriods'), renewalVM);</script>
+                                     <input id="tempPayPeriods" name="tempPayPeriods" type="text" class="k-textbox" style="width: 100%;">
+                                     <script>
+                                     	$("#tempPayPeriods").val(parseInt($("#payPeriods").val()) + 1);
+                                     </script>
+                                 </div>
+                             </div>
+                   	</div>
+
+                </div>
+                <div class="col-xs-12">
+                
+                	<div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">回馈余额</label>
+                            <div class="col-xs-9">
+                                <input id="feedbackBalance" name="feedbackBalance" type="text" data-bind="value:model.feedbackBalance" style="width: 100%;">
+                                <script>kendo.bind($('#feedbackBalance'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">账户余额</label>
+                            <div class="col-xs-9">
+                                <input id="accountBalance" name="accountBalance" type="text" data-bind="value:model.accountBalance" style="width: 100%;">
+                                <script>kendo.bind($('#accountBalance'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">本期缴费金额</label>
+                            <div class="col-xs-9">
+                                <input id="nextPolicyAmount" name="nextPolicyAmount" type="text" data-bind="value:model.nextPolicyAmount" style="width: 100%;">
+                                <script>kendo.bind($('#nextPolicyAmount'), renewalVM);</script>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+				</div>
+                <!--续保表格-->
+                <div class="col-xs-12" id="renewalGridDiv">
+                    <p class="bord-btm pad-ver text-main text-bold">续保表格</p>
+
+                    <div style="clear:both;margin-bottom:20px;">
+                        <div id="renewalGrid"></div>
+                    </div>
+                </div>
+                
+                <!--退保表格-->
+                <div class="col-xs-12" id="exitGridDiv">
+                    <p class="bord-btm pad-ver text-main text-bold">退保表格</p>
+
+                    <div style="clear:both;margin-bottom:20px;">
+                        <div id="exitGrid"></div>
+                    </div>
+                </div>
+                
+                <!-- 售后跟进记录表格 -->
+                <div class="col-xs-12" id="afterFollowGridDiv">
+                    <p class="bord-btm pad-ver text-main text-bold">售后跟进记录</p>
+
+                    <div style="clear:both;margin-bottom:20px;">
+                        <div id="afterFollowGrid"></div>
+                    </div>
+               </div>
+                <!-- 添加售后跟进记录 -->
+                <div class="col-xs-12" id="afterFollowGridDiv">
+                    <p class="bord-btm pad-ver text-main text-bold">添加跟进记录</p>
+
+                   <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">附件上传</label>
+                            <div class="col-xs-1">
+                            	<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" onclick="upload()" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                                <!-- <script>kendo.bind($('#feedbackBalance'), renewalVM);</script> -->
+                            </div>
+                            <div class="col-xs-2">
+                            	<div id="fileName" Style="width: 70px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></div>
+                            </div>
+                        </div>
+                    </div>
+                   <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">话术模板选择</label>
+                            <div class="col-xs-6">
+                                <input id="templateName" name="templateName" type="text" data-bind="value:model.templateName" style="width: 100%;">
+                                <!-- <script>kendo.bind($('#feedbackBalance'), renewalVM);</script> -->
+                            </div>
+                             <div class="col-xs-3">
+                                <span onclick="into()" class="btn btn-success"  style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i>插入</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   </div>
+                   
+                   <div class="col-xs-12">
+	                        <div class="form-group" style="margin-bottom:10px">
+	                            <div class="col-xs-12">
+	                                <textarea  style="width:100%;height:150px" id="content" name="content"data-bind="value:model.content"></textarea>
+	                                	<script>kendo.bind($('#content'), viewModel);</script>
+	                            </div>
+	                        </div>
+	                </div>    
+                    
+               </div>
+               
+               <div class="col-xs-12">
+               	<p class="bord-btm pad-ver text-main text-bold"></p>
+		         <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">分配处理人:</label>
+                            <div class="col-xs-9">
+                                <input id="handlerUserId1" name="handlerUserId1" type="text" data-bind="value:model.handlerUserId1,text:model.handlerUserName1" style="width: 140px;">
+                                <script>kendo.bind($('#handlerUserId1'), viewModel);</script>
+                            </div>
+                        </div>
+                    </div>
+                
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label class="col-xs-3 control-label"
+                                   style="text-align: right">更新状态:</label>
+                            <div class="col-xs-9">
+                                <input id="afterStatus1" name="afterStatus1" type="text" data-bind="value:model.afterStatus1" style="width: 140px;">
+                                <script>kendo.bind($('#afterStatus1'), orderVM);</script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                 <div class="col-xs-4" >
+                        <div class="form-group" style="margin-bottom:10px">
+                            <div class="col-xs-9">
+                                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i>提交</span>
+                            </div>
+                        </div>
+                    </div>
+		         
+            </div>
+            <iframe id="ifile" style="display:none"></iframe>
+            <div id="dialog"></div>
+        </form>
+        </div>
+    </div>
+    <!--<script>kendo.bind($('#page-content'), viewModel);</script>-->
+
+<script type="text/javascript">
+	/* kendo.bind($('#page-content'), viewModel); */
+
+	var BaseUrl = _basePath;
+
+    /* $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    }); */
+
+    $("#afterNum").attr("disabled",true).css("background", "#DDDDDD");
+    $("#policyNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#item").attr("disabled",true).css("background", "#DDDDDD");
+    $("#channelName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#applicant").attr("disabled",true).css("background", "#DDDDDD");
+    $("#insurant").attr("disabled",true).css("background", "#DDDDDD");
+    $("#currency").attr("disabled",true).css("background", "#DDDDDD");
+    $("#afterProject").attr("disabled",true).css("background", "#DDDDDD");
+    $("#yearPayAmount").attr("disabled",true).css("background", "#DDDDDD");
+    $("#policyAmount").attr("disabled",true).css("background", "#DDDDDD");
+    $("#reserveSupplierName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#preName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#handlerUserName").attr("disabled",true).css("background", "#DDDDDD");
+    $("#afterStatus").attr("disabled",true).css("background", "#DDDDDD");
+    $("#increaseFlag").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaFlag").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaSubmitDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#ddaEffectiveDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#firstPayDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#effectiveDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#currency2").attr("disabled",true).css("background", "#DDDDDD");
+    $("#renewalDueDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#nextPolicyDueDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#graceDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#administrativeDate").attr("disabled",true).css("background", "#DDDDDD");
+    $("#balancePaymentMethod").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payPeriods").attr("disabled",true).css("background", "#DDDDDD");
+    $("#tempPayPeriods").attr("disabled",true).css("background", "#DDDDDD");
+    $("#feedbackBalance").attr("disabled",true).css("background", "#DDDDDD");
+    $("#accountBalance").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payMethod").attr("disabled",true).css("background", "#DDDDDD");
+    
+    $("#customerNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#payNumber").attr("disabled",true).css("background", "#DDDDDD");
+    $("#nextPolicyAmount").attr("disabled",true).css("background", "#DDDDDD");
+    
+    $(document).ready(function() {
+    	var afterProject = $('#afterProject').val();
+    	if (afterProject == "RENEWAL") {
+            $("#exitGridDiv").hide();
+            $("#renewalInfoDiv").show();
+            $("#renewalGridDiv").show();
+        } else if(afterProject == "EXIT"){
+            $("#exitGridDiv").show();
+            $("#renewalInfoDiv").hide();
+            $("#renewalGridDiv").hide();
+        }else{
+        	 $("#exitGridDiv").hide();
+        	 $("#renewalInfoDiv").hide();
+        	 $("#renewalGridDiv").hide();
+        } 
+    	
+    	 $("#yearPayAmount").kendoNumericTextBox({
+    	        format:"#,###",
+    	        decimals: 0,
+    	        min:0,
+    	    });
+    	 $("#policyAmount").kendoNumericTextBox({
+    	        format:"#,###",
+    	        decimals: 0,
+    	        min:0,
+    	    });
+    	 $("#feedbackBalance").kendoNumericTextBox({
+    	        format:"#,###",
+    	        decimals: 0,
+    	        min:0,
+    	    });
+    	 $("#accountBalance").kendoNumericTextBox({
+    	        format:"#,###",
+    	        decimals: 0,
+    	        min:0,
+    	    });
+    	 $("#nextPolicyAmount").kendoNumericTextBox({
+    	        format:"#,###",
+    	        decimals: 0,
+    	        min:0,
+    	    });
+    	
+    	//根据售后类型的不同来查找不同的话术模板
+       $.ajax({
+           type   : "POST",
+           url: BaseUrl + "/fms/ord/template/queryTemplateNameOnOrdAfter",
+           data: {
+        	   templateId:orderVM.model.templateId
+           },
+           success: function(json) {
+           		templateNameData = json.rows;
+           		$("#templateName").data("kendoComboBox").setDataSource(json.rows);
+           }
+       });
+    	
+    	//话术模板
+    	$("#templateName").kendoComboBox({
+            placeholder: "-选择话术模板-",
+            valuePrimitive: true,
+            dataTextField: "templateName",
+            dataValueField: "templateContent",
+            dataSource: templateNameData
+        });
+    	
+    	//分配处理人
+    	 $("#handlerUserId1").kendoComboBox({
+            placeholder: "-选择分配处理人-",
+            valuePrimitive: true,
+            dataTextField: "relatedPartyName",
+            dataValueField: "userId",
+            dataSource: {
+                transport: {
+                	read:function(options) {
+                        $.ajax({
+                            type   : "POST",
+                            url: BaseUrl + "/fms/ord/after/queryHandleUserId?orderId="+orderId,
+                            data: {},
+                            success: function(json) {
+                                options.success(json.rows);
+                            }
+                        });
+                    }
+                },
+                select: function (e) {
+                	/* value:model.contractRoleId,text:model.preName */
+                    viewModel.model.set("handlerUserId1",e.dataItem.userId);
+                    viewModel.model.set("handlerUserName1",e.dataItem.relatedPartyName);
+                }
+            }
+        }); 
+    	
+    	/* $("#content").kendoEditor({
+            tools: [
+                
+            ],
+        }); */
+    })
+    
+     $('#afterProject').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: afterProjectData,
+        select : function (e) {
+             if (e.dataItem.value == "RENEWAL") {
+                $("#exitGridDiv").hide();
+                $("#renewalInfoDiv").show();
+                $("#renewalGridDiv").show();
+                orderVM.model.set("afterProject","RENEWAL");
+            } else if(e.dataItem.value == "EXIT"){
+                $("#exitGridDiv").show();
+                $("#renewalInfoDiv").hide();
+                $("#renewalGridDiv").hide();
+                orderVM.model.set("afterProject","EXIT");
+            }else{
+            	 $("#exitGridDiv").hide();
+            	 $("#renewalGridDiv").hide();
+            	 $("#renewalInfoDiv").hide();
+            } 
+        }
+    }); 
+    
+    
+    $('#templateId').kendoComboBox({  
+        valuePrimitive: true,
+        dataTextField: "afterType",
+        dataValueField: "templateId",
+        dataSource: {
+            transport: {
+            	read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: BaseUrl + "/fms/ord/template/queryApplyItem?templateTypeCode=AFTER_SALES_SERVICE&afterProject="+orderVM.model.afterProject,
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            },
+            select: function (e) {
+            	orderVM.model.set("afterType",e.dataItem.afterType);
+            	orderVM.model.set("templateId",e.dataItem.templateId);
+            } 
+        }
+    });
+    
+    $('#afterStatus').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: afterStatusData,
+    });
+    
+    $('#afterStatus1').kendoComboBox({
+    	placeholder: "-选择更新状态-",
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: afterStatusData,
+    });
+    
+    $('#balancePaymentMethod').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: balancePaymentMethodData,
+    });
+    
+    $('#payMethod').kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: payMethodData,
+    });
+
+    
+    $("#currency").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: currencyData
+    });
+    $("#currency2").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: currencyData
+    });
+    
+    $("#increaseFlag").kendoCheckbox({
+        checkedValue: 'Y',
+        uncheckedValue: 'N'
+    });
+
+    $("#ddaFlag").kendoCheckbox({
+        checkedValue: 'Y',
+        uncheckedValue: 'N'
+    });
+    $("#ddaSubmitDate").kendoDatePicker();
+    $("#ddaEffectiveDate").kendoDatePicker();
+    $("#firstPayDate").kendoDatePicker();
+    $("#effectiveDate").kendoDatePicker();
+    $("#nextPolicyDueDate").kendoDatePicker();
+    $("#renewalDueDate").kendoDatePicker();
+    $("#graceDate").kendoDatePicker();
+    $("#administrativeDate").kendoDatePicker();
+    $("#creationDate").kendoDatePicker();
+    
+    //续保表格
+    XBDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/after/queryRenewalInfoByOrderId?orderId="+orderId,
+                type: "POST",
+                dataType: "json"
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "renewalId",
+                fields: {
+                	
+                }
+            }
+        }
+    });
+
+    var grid1 = $("#renewalGrid").kendoGrid({
+        dataSource: XBDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+			{
+			    field: "renewalId",
+			    title: 'renewalId',
+			    hidden:true
+			},   
+            {
+                field: "orderId",
+                title: 'orderId',
+                hidden:true
+            },
+            {
+                field: "itemId",
+                title: 'orderId',
+                hidden:true
+            },
+            {
+                field: "payPeriods",
+                title: '缴费期数',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "itemName",
+                title: '产品',
+                width: 100,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "currency",
+                title: '币种',
+                width: 120,
+               
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.currency;
+                    $.each(currencyData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                 },
+                 editor: function(container, options){
+                     $('<input name="' + options.field + '"/>')
+                     .appendTo(container)
+                     .kendoDropDownList({
+                         dataTextField: "meaning",
+                         dataValueField: "value",
+                         dataSource: currencyData
+                     });
+                 }
+            },
+            {
+                field: "renewalDueDate",
+                title: '保费到期日',
+                width: 120,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+        ],
+        editable: false
+    }).data("kendoGrid");
+    
+    //退保表格
+    TBDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/after/queryExitGridByOrderId?orderId="+orderId,
+                type: "POST",
+                dataType: "json"
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "additionId",
+                fields: {
+       			    surrenderFlag:{type: 'boolean', checkedValue: 'Y', uncheckedValue: 'N'}
+                },
+                editable: function (col) {
+                    if (col == 'itemName' || col == 'status') {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+        }
+    });
+
+    var grid2 = $("#exitGrid").kendoGrid({
+        dataSource: TBDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "additionId",
+                title: 'additionId',
+                hidden:true
+            },
+            {
+                field: "orderId",
+                title: 'orderId',
+                hidden:true
+            },
+            {
+                field: "source",
+                title: '来源',
+                hidden:true
+            },
+            {
+                field: "status",
+                title: '状态',
+                hidden:true
+            },
+            {
+                field: "itemName",
+                title: '产品信息',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor: function (container, options) {
+                    $('<input class="k-textbox" name="' + options.field + '"/>')
+                        .appendTo(container);
+                }
+            },
+            {
+                field: "saveStatus",
+                title: '保单状态',
+                width: 100,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.saveStatus;
+                    $.each(orderStatusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                 },
+                 editor: function(container, options){
+                     $('<input readonly name="' + options.field + '"/>')
+                     .appendTo(container)
+                     .kendoDropDownList({
+                         dataTextField: "meaning",
+                         dataValueField: "value",
+                         dataSource: orderStatusData
+                     });
+                 }
+            },
+            {
+                field: "surrenderFlag",
+                title: '选择退保产品',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    style  : "text-align: center"
+                }
+            }
+        ],
+        editable: false
+    }).data("kendoGrid");
+    
+    /* $("#exitGrid thead>tr th:First").surrenderFlag() */
+    
+    //跟进表格
+    FollowDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/after/queryFollowGridByAfterId?afterId="+afterId,
+                type: "POST",
+                dataType: "json"
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "afterFollowId",
+                fields: {
+                	
+                }
+            }
+        }
+    });
+
+    var grid2 = $("#afterFollowGrid").kendoGrid({
+        dataSource: FollowDataSource,
+        height: '300px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        //selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+			{
+			    field: "afterId",
+			    title: 'afterId',
+			    hidden:true
+			},   
+            {
+                field: "afterFollowId",
+                title: 'afterFollowId',
+                hidden:true
+            },
+            {
+                field: "followUserId",
+                title: 'followUserId',
+                hidden:true
+            },
+            {
+                field: "userName",
+                title: '跟进人',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "followDate",
+                title: '跟进时间',
+                width: 100,
+                format: "{0:yyyy-MM-dd}",
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "content",
+                title: '跟进内容',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "fileId",
+                title: '附件',
+                width: 120,
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template : function (dataItem) {
+                    var buttons = '';
+                    if(dataItem.fileId){
+                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    }
+                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                    return buttons;
+                }
+            },
+            {
+                //field: "跟进",
+                title: '删除',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.afterFollowId) {
+                        return '<a href="#"  onclick="deleteAfterFollow('+dataItem.afterFollowId+')">删除</a>';
+                    } else {
+                        return '<a href="#">删除</a>';
+                    }
+                }
+            },
+            
+        ],
+        editable: false
+    }).data("kendoGrid");
+    
+    //售后跟进记录  删除
+	function deleteAfterFollow(afterFollowId){
+		kendo.ui.showConfirmDialog({
+            title: $l('hap.tip.info'),
+            message: $l('hap.tip.delete_confirm')
+        }).done(function(event){
+       	 if (event.button == 'OK') {
+           	 $.ajax({
+					url:"${base.contextPath}/fms/ord/after/follow/remove?afterFollowId="+afterFollowId+"&afterId="+afterId,
+					success:function(data){
+						if(data.success){
+							//删除之后重新加载页面
+							grid2.refresh();
+							FollowDataSource.read();
+						}else{
+							kendo.ui.showErrorDialog({
+								message : data.message
+							});
+						}
+					}
+				}) 
+       	 }
+        })
+	}
+    
+	//上传附件
+	function upload (){
+	  if(viewModel.model.fileId){
+		  kendo.ui.showConfirmDialog({
+				message : "资料已存在，是否要覆盖"
+			}).done(function (event) {
+	            if (event.button == 'OK') {
+	            	window.reqWin = $("#reqWin").kendoWindow({
+	                    title: '<@spring.message "sysfile.upload"/>',
+	                    width: 400,
+	                    height: 250,
+	                    modal: true
+	                }).data("kendoWindow");
+	                reqWin.center().open();
+	            }
+	         });
+	  }else{
+		  window.reqWin = $("#reqWin").kendoWindow({
+              title: '<@spring.message "sysfile.upload"/>',
+              width: 400,
+              height: 250,
+              modal: true
+          }).data("kendoWindow");
+          reqWin.center().open();
+	  }
+	};
+	
+	$("#reqFiles").kendoUpload({
+		async : {
+			saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		},
+		showFileList : false,
+		upload : onUpload,
+		success : onSuccess
+	});
+	function onUpload(e) {
+		e.data = {
+			modularName : 'AFTER',
+			allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+			maxSize : 20480
+		}
+	};
+	var fileName;
+	function onSuccess(e) {
+		if (e.response.success) {
+			viewModel.model.fileId = e.response.file.fileId;
+			fileName = e.response.file.fileName;
+			document.getElementById("fileName").innerHTML=fileName;
+	
+			reqWin.close();
+	        kendo.ui.showInfoDialog({
+	            message  : '上传成功!'
+	        })
+		} else {
+			kendo.ui.showErrorDialog({
+				message : e.response.message
+			})
+		}
+	};
+    
+	//下载
+	  function downloadFile(uid){
+		  data = FollowDataSource.getByUid(uid);
+       $.ajax({
+           url : '${base.contextPath}/commons/attach/validateFile',
+           type : "POST",
+           dataType : "json",
+           data : {
+               fileId:data.fileId,
+               token:data._token
+           },
+           success : function(json) {
+               if(json.success == true){
+                   url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+                   var iframe = document.getElementById("ifile");
+                   iframe.src=url;
+               }else{
+                   kendo.ui.showErrorDialog({
+                       message  : '<@spring.message "fms.file_not_exists"/>'
+                   })
+               }
+           },
+       })
+   };
+
+   //插入话术模板
+	function into(){
+   	var templateName = $("#templateName").val();
+		if(templateName != undefined && templateName != null){
+			viewModel.model.set("content",templateName);
+		}
+	}
+   
+    //页面提交保存
+    function saveData () {
+    	var handlerUserId1 = $("#handlerUserId1").val();
+    	var afterStatus1 = $("#afterStatus1").val();
+    	var afterProject = $("#afterProject").val();
+    	var payMethod = $("#payMethod").val();
+    	
+    	//跟进记录为必填项
+	   	 if($("#content").val() == ""){
+	   		 kendo.ui.showErrorDialog({
+						message : "请填写跟进记录!"
+					});
+		    	return;
+	   	} 
+    	
+    	if( handlerUserId1 != 'undefined' && handlerUserId1 != ""){
+    		orderVM.model.set("handlerUserId",handlerUserId1);
+    	}else{
+    		kendo.ui.showErrorDialog({
+				message : "请选择分配处理人!"
+			});
+    		return;
+    	}
+    	//状态必须改变  否则不能提交
+    	if(afterStatus1 != undefined && afterStatus1 != ""){
+    		// orderVM.model.set("afterStatus",afterStatus1);
+    		viewModel.model.set("afterStatus",afterStatus1);
+    	}else{
+	    	kendo.ui.showErrorDialog({
+				message : "请选择你将要改变的状态!"
+			});
+    		return;
+    	}
+    	
+    	viewModel.model.set("ordOrderInfo",orderVM.model);
+    	viewModel.model.set("orderRenewalInfo",renewalVM.model);
+    	viewModel.model.set("ordOrderExit",$("#exitGrid").data("kendoGrid").dataSource._data);
+    	
+    	//资料审核成功
+	   	 if(afterStatus1 == "AUDITSCUU"){
+	   		 var url = "order_after_express.html?generalId="+afterId+"&status="+afterStatus1+"&idType=AFTER";
+				var dialog =  $("#dialog").kendoWindow({
+		  			 width: "60%",
+		               height: "55%", 
+		               title: "",
+		               content:url,                  
+		               iframe:  true,
+		               visible: false,
+		               modal:true,
+		                close: function(){
+		       			//关闭之后刷新页面
+		       			if(ordAfterLogVM.model.flag){
+		       				orderVM.model.set("afterStatus",afterStatus1);
+		       				viewModel.model.set("ordAfterLog",ordAfterLogVM.model);
+			       			save();
+		                	window.location.reload();  
+		       			}
+		           	 }
+		            }).data("kendoWindow");
+		 		  	 dialog.center().open();
+	   	 }else if(afterStatus1 == "SUCCESS" && afterProject == "RENEWAL"){
+	   		 var url = "order_after_renewalSuccess.html?orderId="+orderId+"&payMethod="+payMethod;
+				//如果状态是续保成功的时候  要添加信息
+				var dialog =  $("#dialog").kendoWindow({
+		  			 width: "60%",
+		               height: "55%", 
+		               title: "",
+		               content: url,                  
+		               iframe:  true,
+		               visible: false,
+		               modal:true,
+		               close: function(){
+		       			//关闭之后刷新页面
+		            	   if(orderRenewalSuccessInfoVM.model.flag){
+		            		   orderVM.model.set("afterStatus",afterStatus1);
+		       					viewModel.model.set("orderRenewalSuccessInfo",orderRenewalSuccessInfoVM.model);
+				       			save();
+			                	window.location.reload();  
+			       			}
+		               }
+		            }).data("kendoWindow");
+		 		  	 dialog.center().open();
+	   	 }else{
+	   		orderVM.model.set("afterStatus",afterStatus1);
+	   		save();
+	   		window.location.reload();  
+	   	 }
+    } 
+
+    //返回按钮
+    function cancelData() {
+        parent.closeTab("order_after"+afterId);
+    }
+    
+    function save() {
+    	Hap.submitForm({
+            url: '${base.contextPath}/fms/ord/after/submit',
+            formModel: viewModel.model,
+            success: function (data) {
+                 if(data.success){
+                	 //提交成功之后  将跟进记录的表格刷新  将跟进内容和选择的插入模板清空
+                	 grid2.refresh();
+                	 FollowDataSource.read();
+                	 
+                	 viewModel.model.set("fileId",null);
+                	 viewModel.model.set("content",null);
+                	 viewModel.model.set("templateName",null);
+                }else{
+                	kendo.ui.showErrorDialog({
+                        title: $l('hap.tip.error'),
+                        message: data.message
+                    });
+                } 
+             }
+        });
+	}
+
+    
+</script>
+</body>
+</html>

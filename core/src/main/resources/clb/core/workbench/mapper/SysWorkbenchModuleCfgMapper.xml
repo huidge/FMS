@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.workbench.mapper.SysWorkbenchModuleCfgMapper">
+    <resultMap id="BaseResultMap" type="clb.core.workbench.dto.SysWorkbenchModuleCfg">
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_SHOW_NAME" property="functionShowName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="ICON_FILE_ID" property="iconFileId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_ID" property="functionId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="FUNCTION_NAME" property="functionName" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <resultMap id="selectFunctionInfo" type="clb.core.workbench.dto.SysWorkbenchModuleCfg">
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_SHOW_NAME" property="functionShowName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="ICON_FILE_ID" property="iconFileId" jdbcType="DECIMAL" />
+        <result column="FUNCTION_ID" property="functionId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="ORDER_BY" property="orderBy" jdbcType="DECIMAL" />
+        <result column="FUNCTION_NAME" property="functionName" jdbcType="VARCHAR" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="function_code" property="functionCode" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="selectFunctionInfo" parameterType="clb.core.workbench.dto.SysWorkbenchModuleCfg" resultMap="selectFunctionInfo">
+        select fswmc.*, 
+               sfb.FUNCTION_NAME,
+               sf.FILE_NAME,
+               sf.FILE_PATH,
+               sfb.function_code,
+               fswmc.order_by
+        from fms_sys_workbench_module_cfg fswmc, sys_function_b sfb , sys_file sf
+        where fswmc.function_id = sfb.function_id and sf.FILE_ID = fswmc.ICON_FILE_ID
+        <if test="cfgId !=null and cfgId !=''">
+		    AND fswmc.CFG_ID = #{cfgId , jdbcType=DECIMAL} 
+		</if>
+        <if test="functionShowName !=null and functionShowName !=''">
+		    and fswmc.FUNCTION_SHOW_NAME like CONCAT('%', #{functionShowName}, '%')
+		</if>
+        <if test="status !=null and status !=''">
+            and fswmc.status = #{status}
+        </if>
+        <if test="userId !=null and userId !=''">
+            and  exists
+            (select 1
+            from fms_sys_workbench_role fswr,sys_user_role sur
+            where fswr.cfg_id = fswmc.cfg_id
+            AND   fswr.role_id = sur.role_id
+            and	  sur.user_id = #{userId})
+            and exists
+            (select 1
+            from FMS_SYS_USER_CUSTOM_FUNCTION ucf
+            where  ucf.user_id = #{userId}
+            AND fswmc.CFG_ID = ucf.MODULE_CFG_ID)
+        </if>
+        order by fswmc.order_by
+    </select>
+
+    <select id="wsSelectFunctionInfo" parameterType="clb.core.workbench.dto.SysWorkbenchModuleCfg" resultMap="selectFunctionInfo">
+        select fswmc.*,
+        sfb.FUNCTION_NAME,
+        sf.FILE_NAME,
+        sf.FILE_PATH,
+        sfb.function_code,
+        fswmc.order_by
+        from fms_sys_workbench_module_cfg fswmc, sys_function_b sfb , sys_file sf,FMS_SYS_USER_CUSTOM_FUNCTION ucf
+        where fswmc.function_id = sfb.function_id and sf.FILE_ID = fswmc.ICON_FILE_ID
+        and  ucf.user_id = #{userId}
+        AND fswmc.CFG_ID = ucf.MODULE_CFG_ID
+        <if test="cfgId !=null and cfgId !=''">
+            AND fswmc.CFG_ID = #{cfgId , jdbcType=DECIMAL}
+        </if>
+        <if test="functionShowName !=null and functionShowName !=''">
+            and fswmc.FUNCTION_SHOW_NAME like CONCAT('%', #{functionShowName}, '%')
+        </if>
+        <if test="status !=null and status !=''">
+            and fswmc.status = #{status}
+        </if>
+        and  exists
+        (select 1
+        from fms_sys_workbench_role fswr,sys_user_role sur
+        where fswr.cfg_id = fswmc.cfg_id
+        AND   fswr.role_id = sur.role_id
+        and	  sur.user_id = #{userId})
+        order by ucf.line_id,fswmc.order_by
+    </select>
+
+</mapper>

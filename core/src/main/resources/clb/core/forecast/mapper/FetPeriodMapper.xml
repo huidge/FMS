@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetPeriodMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetPeriod">
+        <result column="PERIOD_ID" property="periodId" jdbcType="DECIMAL" />
+        <result column="PERIOD_NAME" property="periodName" jdbcType="VARCHAR" />
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL" />
+        <result column="YEAR" property="year" jdbcType="DECIMAL" />
+        <result column="START_DATE" property="startDate" jdbcType="DATE" />
+        <result column="END_DATE" property="endDate" jdbcType="DATE" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="UPDATE_FLAG" property="updateFlag" jdbcType="VARCHAR" />
+        <result column="QUARTER" property="quarter" jdbcType="TINYINT" />
+        <result column="ADJUST_FLAG" property="adjustFlag" jdbcType="TINYINT" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+</mapper>

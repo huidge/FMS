@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdOrderRenewalMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdOrderRenewal">
+        <result column="RENEWAL_ID" property="renewalId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="FLAG" property="flag" jdbcType="DECIMAL" />
+        <result column="CANCEL_RENEWAL_FLAG" property="cancelRenewalFlag" jdbcType="DECIMAL" />
+        <result column="RENEWAL_STATUS" property="renewalStatus" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        
+        <!-- 产品表  订单属性7 是不是附加险-->
+        <result column="ATTRIBUTE7" property="attribute7" jdbcType="VARCHAR" />
+        
+        <!-- 订单表 -->
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="POLICY_NUMBER" property="policyNumber"
+			jdbcType="VARCHAR" />
+		<result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_NUMBER" property="customerNumber"
+			jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_ID" property="companyChannelId"
+			jdbcType="DECIMAL" />
+		<result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+		<result column="CONTRACT_ROLE_ID" property="contractRoleId"
+			jdbcType="DECIMAL" />
+		<result column="PRODUCT_SUPPLIER_ID" property="productSupplierId"
+			jdbcType="DECIMAL" />
+		<!-- <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" /> -->
+		<result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+		<result column="YEAR_PAY_AMOUNT" property="yearPayAmount"
+			jdbcType="DECIMAL" />
+		<result column="POLICY_AMOUNT" property="policyAmount"
+			jdbcType="DECIMAL" />
+		<result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId"
+			jdbcType="DECIMAL" />
+		<result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId"
+			jdbcType="DECIMAL" />
+		<result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+		<result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+		<result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate"
+			jdbcType="TIMESTAMP" />
+		<result column="RESERVE_CHECK_DATE" property="reserveCheckDate"
+			jdbcType="TIMESTAMP" />
+		<result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+		<result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+		<result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+		<result column="EXPECT_COOL_DATE" property="expectCoolDate"
+			jdbcType="DATE" />
+		<result column="FIRST_PAY_DATE" property="firstPayDate"
+			jdbcType="DATE" />
+		<result column="RENEWAL_DUE_DATE" property="renewalDueDate"
+			jdbcType="DATE" />
+		<result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+		<result column="ADMINISTRATIVE_DATE" property="administrativeDate"
+			jdbcType="DATE" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus"
+			jdbcType="VARCHAR" />
+		<result column="APPLICATION_STATUS" property="applicationStatus"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_USER_ID" property="customerUserId"
+			jdbcType="DECIMAL" />
+		<result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate"
+			jdbcType="TIMESTAMP" />
+		<result column="HK_CONTACT_PERSON" property="hkContactPerson"
+			jdbcType="VARCHAR" />
+		<result column="HK_CONTACT_PHONE" property="hkContactPhone"
+			jdbcType="VARCHAR" />
+		<result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+		<result column="QUICK_CHECK_FLAG" property="quickCheckFlag"
+			jdbcType="VARCHAR" />
+		<result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag"
+			jdbcType="VARCHAR" />
+		<result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+		<result column="SIGN_ASSISTANT" property="signAssistant"
+			jdbcType="VARCHAR" />
+		<result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+		<result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+		<result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+		<result column="CONTACT_PERSON" property="contactPerson"
+			jdbcType="VARCHAR" />
+		<result column="CONTACT_PHONE" property="contactPhone"
+			jdbcType="VARCHAR" />
+		<result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+		<result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="RESERVE_COMMENT" property="reserveComment"
+			jdbcType="VARCHAR" />
+		<result column="RESERVE_USER_ID" property="reserveUserId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_SUPPLIER_ID" property="signSupplierId"
+			jdbcType="DECIMAL" />
+		<result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+		<result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo"
+			jdbcType="VARCHAR" />
+		<result column="RECEPTION_USER_ID" property="receptionUserId"
+			jdbcType="DECIMAL" />
+		<result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+		<result column="REVIEWER1_DATE" property="reviewer1Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+		<result column="REVIEWER2_DATE" property="reviewer2Date"
+			jdbcType="TIMESTAMP" />
+		<result column="REVIEWER_COMMENT" property="reviewerComment"
+			jdbcType="VARCHAR" />
+		<result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+		<result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+		<result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+		<result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+		<result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount"
+			jdbcType="DECIMAL" />
+		<result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate"
+			jdbcType="TIMESTAMP" />
+		<result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod"
+			jdbcType="VARCHAR" />
+		<result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod"
+			jdbcType="VARCHAR" />
+		<result column="RENEWAL_OTHER" property="renewalOther"
+			jdbcType="VARCHAR" />
+		<result column="ITEM" property="item" jdbcType="VARCHAR" />
+		<result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+		<result column="COMPANY_CHANNEL_NAME" property="companyChannelName"
+			jdbcType="VARCHAR" />
+		<result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+		<result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+		<result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+		<result column="SIGN_SUPPLIER_NAME" property="signSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+		<result column="CUSTOMER_EMPLOYEE_NAME" property="customerEmployeeName"
+			jdbcType="VARCHAR" />
+		<result column="FILL_EMPLOYEE_NAME" property="fillEmployeeName"
+			jdbcType="VARCHAR" />
+		<result column="SEND_EMPLOYEE_NAME" property="sendEmployeeName"
+			jdbcType="VARCHAR" />
+		<result column="OWN_SUPPLIER_NAME" property="ownSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="MIDDLE_SUPPLIER_NAME" property="middleSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="INSURANCE_SUPPLIER_NAME" property="insuranceSupplierName"
+			jdbcType="VARCHAR" />
+		<result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+		<result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+		<result column="DDA_SUBMIT_DATE" property="ddaSubmitDate"
+			jdbcType="TIMESTAMP" />
+		<result column="DDA_EFFECTIVE_DATE" property="ddaEffectiveDate"
+			jdbcType="TIMESTAMP" />
+		<result column="FEEDBACK_BALANCE" property="feedbackBalance"
+			jdbcType="DECIMAL" />
+		<result column="ACCOUNT_BALANCE" property="accountBalance"
+			jdbcType="DECIMAL" />
+		<result column="BALANCE_CURRENCY" property="balanceCurrency"
+			jdbcType="VARCHAR" />
+		<result column="BALANCE_PAYMENT_METHOD" property="balancePaymentMethod" jdbcType="VARCHAR" />
+		
+		<result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+		 <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+		  <result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+        
+        
+        
+        <result column="RENEWAL_DATE2" property="renewalDate2" jdbcType="DATE" />
+        <result column="RENEWAL_DATE3" property="renewalDate3" jdbcType="DATE" />
+        <result column="RENEWAL_DATE4" property="renewalDate4" jdbcType="DATE" />
+        <result column="RENEWAL_DATE5" property="renewalDate5" jdbcType="DATE" />
+        <result column="RENEWAL_DATE6" property="renewalDate6" jdbcType="DATE" />
+        <result column="RENEWAL_DATE7" property="renewalDate7" jdbcType="DATE" />
+        <result column="RENEWAL_DATE8" property="renewalDate8" jdbcType="DATE" />
+        <result column="RENEWAL_DATE9" property="renewalDate9" jdbcType="DATE" />
+        <result column="RENEWAL_DATE10" property="renewalDate10" jdbcType="DATE" />
+        <result column="RENEWAL_DATE11" property="renewalDate11" jdbcType="DATE" />
+        <result column="RENEWAL_DATE12" property="renewalDate12" jdbcType="DATE" />
+        <result column="RENEWAL_DATE13" property="renewalDate13" jdbcType="DATE" />
+        <result column="RENEWAL_DATE14" property="renewalDate14" jdbcType="DATE" />
+        <result column="RENEWAL_DATE15" property="renewalDate15" jdbcType="DATE" />
+        <result column="RENEWAL_DATE16" property="renewalDate16" jdbcType="DATE" />
+        <result column="RENEWAL_DATE17" property="renewalDate17" jdbcType="DATE" />
+        <result column="RENEWAL_DATE18" property="renewalDate18" jdbcType="DATE" />
+        <result column="RENEWAL_DATE19" property="renewalDate19" jdbcType="DATE" />
+        <result column="RENEWAL_DATE20" property="renewalDate20" jdbcType="DATE" />
+        <result column="RENEWAL_DATE21" property="renewalDate21" jdbcType="DATE" />
+        <result column="RENEWAL_DATE22" property="renewalDate22" jdbcType="DATE" />
+        <result column="RENEWAL_DATE23" property="renewalDate23" jdbcType="DATE" />
+        <result column="RENEWAL_DATE24" property="renewalDate24" jdbcType="DATE" />
+        <result column="RENEWAL_DATE25" property="renewalDate25" jdbcType="DATE" />
+        <result column="RENEWAL_DATE26" property="renewalDate26" jdbcType="DATE" />
+        <result column="RENEWAL_DATE27" property="renewalDate27" jdbcType="DATE" />
+        <result column="RENEWAL_DATE28" property="renewalDate28" jdbcType="DATE" />
+        <result column="RENEWAL_DATE29" property="renewalDate29" jdbcType="DATE" />
+        <result column="RENEWAL_DATE30" property="renewalDate30" jdbcType="DATE" />
+        <result column="RENEWAL_DATE31" property="renewalDate31" jdbcType="DATE" />
+        <result column="RENEWAL_DATE32" property="renewalDate32" jdbcType="DATE" />
+        <result column="RENEWAL_DATE33" property="renewalDate33" jdbcType="DATE" />
+        <result column="RENEWAL_DATE34" property="renewalDate34" jdbcType="DATE" />
+        <result column="RENEWAL_DATE35" property="renewalDate35" jdbcType="DATE" />
+        <result column="RENEWAL_DATE36" property="renewalDate36" jdbcType="DATE" />
+        <result column="RENEWAL_DATE37" property="renewalDate37" jdbcType="DATE" />
+        <result column="RENEWAL_DATE38" property="renewalDate38" jdbcType="DATE" />
+        <result column="RENEWAL_DATE39" property="renewalDate39" jdbcType="DATE" />
+        <result column="RENEWAL_DATE40" property="renewalDate40" jdbcType="DATE" />
+        <result column="RENEWAL_DATE41" property="renewalDate41" jdbcType="DATE" />
+        <result column="RENEWAL_DATE42" property="renewalDate42" jdbcType="DATE" />
+        <result column="RENEWAL_DATE43" property="renewalDate43" jdbcType="DATE" />
+        <result column="RENEWAL_DATE44" property="renewalDate44" jdbcType="DATE" />
+        <result column="RENEWAL_DATE45" property="renewalDate45" jdbcType="DATE" />
+        <result column="RENEWAL_DATE46" property="renewalDate46" jdbcType="DATE" />
+        <result column="RENEWAL_DATE47" property="renewalDate47" jdbcType="DATE" />
+        <result column="RENEWAL_DATE48" property="renewalDate48" jdbcType="DATE" />
+        <result column="RENEWAL_DATE49" property="renewalDate49" jdbcType="DATE" />
+        <result column="RENEWAL_DATE50" property="renewalDate50" jdbcType="DATE" />
+        <result column="RENEWAL_DATE51" property="renewalDate51" jdbcType="DATE" />
+        <result column="RENEWAL_DATE52" property="renewalDate52" jdbcType="DATE" />
+        <result column="RENEWAL_DATE53" property="renewalDate53" jdbcType="DATE" />
+        <result column="RENEWAL_DATE54" property="renewalDate54" jdbcType="DATE" />
+        <result column="RENEWAL_DATE55" property="renewalDate55" jdbcType="DATE" />
+        <result column="RENEWAL_DATE56" property="renewalDate56" jdbcType="DATE" />
+        <result column="RENEWAL_DATE57" property="renewalDate57" jdbcType="DATE" />
+        <result column="RENEWAL_DATE58" property="renewalDate58" jdbcType="DATE" />
+        <result column="RENEWAL_DATE59" property="renewalDate59" jdbcType="DATE" />
+        <result column="RENEWAL_DATE60" property="renewalDate60" jdbcType="DATE" />
+        <result column="RENEWAL_DATE61" property="renewalDate61" jdbcType="DATE" />
+        <result column="RENEWAL_DATE62" property="renewalDate62" jdbcType="DATE" />
+        <result column="RENEWAL_DATE63" property="renewalDate63" jdbcType="DATE" />
+        <result column="RENEWAL_DATE64" property="renewalDate64" jdbcType="DATE" />
+        <result column="RENEWAL_DATE65" property="renewalDate65" jdbcType="DATE" />
+        <result column="RENEWAL_DATE66" property="renewalDate66" jdbcType="DATE" />
+        <result column="RENEWAL_DATE67" property="renewalDate67" jdbcType="DATE" />
+        <result column="RENEWAL_DATE68" property="renewalDate68" jdbcType="DATE" />
+        <result column="RENEWAL_DATE69" property="renewalDate69" jdbcType="DATE" />
+        <result column="RENEWAL_DATE70" property="renewalDate70" jdbcType="DATE" />
+        <result column="RENEWAL_DATE71" property="renewalDate71" jdbcType="DATE" />
+        <result column="RENEWAL_DATE72" property="renewalDate72" jdbcType="DATE" />
+        <result column="RENEWAL_DATE73" property="renewalDate73" jdbcType="DATE" />
+        <result column="RENEWAL_DATE74" property="renewalDate74" jdbcType="DATE" />
+        <result column="RENEWAL_DATE75" property="renewalDate75" jdbcType="DATE" />
+        <result column="RENEWAL_DATE76" property="renewalDate76" jdbcType="DATE" />
+        <result column="RENEWAL_DATE77" property="renewalDate77" jdbcType="DATE" />
+        <result column="RENEWAL_DATE78" property="renewalDate78" jdbcType="DATE" />
+        <result column="RENEWAL_DATE79" property="renewalDate79" jdbcType="DATE" />
+        <result column="RENEWAL_DATE80" property="renewalDate80" jdbcType="DATE" />
+        <result column="RENEWAL_DATE81" property="renewalDate81" jdbcType="DATE" />
+        <result column="RENEWAL_DATE82" property="renewalDate82" jdbcType="DATE" />
+        <result column="RENEWAL_DATE83" property="renewalDate83" jdbcType="DATE" />
+        <result column="RENEWAL_DATE84" property="renewalDate84" jdbcType="DATE" />
+        <result column="RENEWAL_DATE85" property="renewalDate85" jdbcType="DATE" />
+        <result column="RENEWAL_DATE86" property="renewalDate86" jdbcType="DATE" />
+        <result column="RENEWAL_DATE87" property="renewalDate87" jdbcType="DATE" />
+        <result column="RENEWAL_DATE88" property="renewalDate88" jdbcType="DATE" />
+        <result column="RENEWAL_DATE89" property="renewalDate89" jdbcType="DATE" />
+        <result column="RENEWAL_DATE90" property="renewalDate90" jdbcType="DATE" />
+        <result column="RENEWAL_DATE91" property="renewalDate91" jdbcType="DATE" />
+        <result column="RENEWAL_DATE92" property="renewalDate92" jdbcType="DATE" />
+        <result column="RENEWAL_DATE93" property="renewalDate93" jdbcType="DATE" />
+        <result column="RENEWAL_DATE94" property="renewalDate94" jdbcType="DATE" />
+        <result column="RENEWAL_DATE95" property="renewalDate95" jdbcType="DATE" />
+        <result column="RENEWAL_DATE96" property="renewalDate96" jdbcType="DATE" />
+        <result column="RENEWAL_DATE97" property="renewalDate97" jdbcType="DATE" />
+        <result column="RENEWAL_DATE98" property="renewalDate98" jdbcType="DATE" />
+        <result column="RENEWAL_DATE99" property="renewalDate99" jdbcType="DATE" />
+        <result column="RENEWAL_DATE100" property="renewalDate100" jdbcType="DATE" />
+        <result column="RENEWAL_DATE101" property="renewalDate101" jdbcType="DATE" />
+        <result column="RENEWAL_DATE102" property="renewalDate102" jdbcType="DATE" />
+        <result column="RENEWAL_DATE103" property="renewalDate103" jdbcType="DATE" />
+        <result column="RENEWAL_DATE104" property="renewalDate104" jdbcType="DATE" />
+        <result column="RENEWAL_DATE105" property="renewalDate105" jdbcType="DATE" />
+        <result column="RENEWAL_DATE106" property="renewalDate106" jdbcType="DATE" />
+        <result column="RENEWAL_DATE107" property="renewalDate107" jdbcType="DATE" />
+        <result column="RENEWAL_DATE108" property="renewalDate108" jdbcType="DATE" />
+        <result column="RENEWAL_DATE109" property="renewalDate109" jdbcType="DATE" />
+        <result column="RENEWAL_DATE110" property="renewalDate110" jdbcType="DATE" />
+        <result column="RENEWAL_DATE111" property="renewalDate111" jdbcType="DATE" />
+        <result column="RENEWAL_DATE112" property="renewalDate112" jdbcType="DATE" />
+        <result column="RENEWAL_DATE113" property="renewalDate113" jdbcType="DATE" />
+        <result column="RENEWAL_DATE114" property="renewalDate114" jdbcType="DATE" />
+        <result column="RENEWAL_DATE115" property="renewalDate115" jdbcType="DATE" />
+        <result column="RENEWAL_DATE116" property="renewalDate116" jdbcType="DATE" />
+        <result column="RENEWAL_DATE117" property="renewalDate117" jdbcType="DATE" />
+        <result column="RENEWAL_DATE118" property="renewalDate118" jdbcType="DATE" />
+        <result column="RENEWAL_DATE119" property="renewalDate119" jdbcType="DATE" />
+        <result column="RENEWAL_DATE120" property="renewalDate120" jdbcType="DATE" />
+        <result column="CURRENCY2" property="currency2" jdbcType="VARCHAR" />
+        <result column="CURRENCY3" property="currency3" jdbcType="VARCHAR" />
+        <result column="CURRENCY4" property="currency4" jdbcType="VARCHAR" />
+        <result column="CURRENCY5" property="currency5" jdbcType="VARCHAR" />
+        <result column="CURRENCY6" property="currency6" jdbcType="VARCHAR" />
+        <result column="CURRENCY7" property="currency7" jdbcType="VARCHAR" />
+        <result column="CURRENCY8" property="currency8" jdbcType="VARCHAR" />
+        <result column="CURRENCY9" property="currency9" jdbcType="VARCHAR" />
+        <result column="CURRENCY10" property="currency10" jdbcType="VARCHAR" />
+        <result column="CURRENCY11" property="currency11" jdbcType="VARCHAR" />
+        <result column="CURRENCY12" property="currency12" jdbcType="VARCHAR" />
+        <result column="CURRENCY13" property="currency13" jdbcType="VARCHAR" />
+        <result column="CURRENCY14" property="currency14" jdbcType="VARCHAR" />
+        <result column="CURRENCY15" property="currency15" jdbcType="VARCHAR" />
+        <result column="CURRENCY16" property="currency16" jdbcType="VARCHAR" />
+        <result column="CURRENCY17" property="currency17" jdbcType="VARCHAR" />
+        <result column="CURRENCY18" property="currency18" jdbcType="VARCHAR" />
+        <result column="CURRENCY19" property="currency19" jdbcType="VARCHAR" />
+        <result column="CURRENCY20" property="currency20" jdbcType="VARCHAR" />
+        <result column="CURRENCY21" property="currency21" jdbcType="VARCHAR" />
+        <result column="CURRENCY22" property="currency22" jdbcType="VARCHAR" />
+        <result column="CURRENCY23" property="currency23" jdbcType="VARCHAR" />
+        <result column="CURRENCY24" property="currency24" jdbcType="VARCHAR" />
+        <result column="CURRENCY25" property="currency25" jdbcType="VARCHAR" />
+        <result column="CURRENCY26" property="currency26" jdbcType="VARCHAR" />
+        <result column="CURRENCY27" property="currency27" jdbcType="VARCHAR" />
+        <result column="CURRENCY28" property="currency28" jdbcType="VARCHAR" />
+        <result column="CURRENCY29" property="currency29" jdbcType="VARCHAR" />
+        <result column="CURRENCY30" property="currency30" jdbcType="VARCHAR" />
+        <result column="CURRENCY31" property="currency31" jdbcType="VARCHAR" />
+        <result column="CURRENCY32" property="currency32" jdbcType="VARCHAR" />
+        <result column="CURRENCY33" property="currency33" jdbcType="VARCHAR" />
+        <result column="CURRENCY34" property="currency34" jdbcType="VARCHAR" />
+        <result column="CURRENCY35" property="currency35" jdbcType="VARCHAR" />
+        <result column="CURRENCY36" property="currency36" jdbcType="VARCHAR" />
+        <result column="CURRENCY37" property="currency37" jdbcType="VARCHAR" />
+        <result column="CURRENCY38" property="currency38" jdbcType="VARCHAR" />
+        <result column="CURRENCY39" property="currency39" jdbcType="VARCHAR" />
+        <result column="CURRENCY40" property="currency40" jdbcType="VARCHAR" />
+        <result column="CURRENCY41" property="currency41" jdbcType="VARCHAR" />
+        <result column="CURRENCY42" property="currency42" jdbcType="VARCHAR" />
+        <result column="CURRENCY43" property="currency43" jdbcType="VARCHAR" />
+        <result column="CURRENCY44" property="currency44" jdbcType="VARCHAR" />
+        <result column="CURRENCY45" property="currency45" jdbcType="VARCHAR" />
+        <result column="CURRENCY46" property="currency46" jdbcType="VARCHAR" />
+        <result column="CURRENCY47" property="currency47" jdbcType="VARCHAR" />
+        <result column="CURRENCY48" property="currency48" jdbcType="VARCHAR" />
+        <result column="CURRENCY49" property="currency49" jdbcType="VARCHAR" />
+        <result column="CURRENCY50" property="currency50" jdbcType="VARCHAR" />
+        <result column="CURRENCY51" property="currency51" jdbcType="VARCHAR" />
+        <result column="CURRENCY52" property="currency52" jdbcType="VARCHAR" />
+        <result column="CURRENCY53" property="currency53" jdbcType="VARCHAR" />
+        <result column="CURRENCY54" property="currency54" jdbcType="VARCHAR" />
+        <result column="CURRENCY55" property="currency55" jdbcType="VARCHAR" />
+        <result column="CURRENCY56" property="currency56" jdbcType="VARCHAR" />
+        <result column="CURRENCY57" property="currency57" jdbcType="VARCHAR" />
+        <result column="CURRENCY58" property="currency58" jdbcType="VARCHAR" />
+        <result column="CURRENCY59" property="currency59" jdbcType="VARCHAR" />
+        <result column="CURRENCY60" property="currency60" jdbcType="VARCHAR" />
+        <result column="CURRENCY61" property="currency61" jdbcType="VARCHAR" />
+        <result column="CURRENCY62" property="currency62" jdbcType="VARCHAR" />
+        <result column="CURRENCY63" property="currency63" jdbcType="VARCHAR" />
+        <result column="CURRENCY64" property="currency64" jdbcType="VARCHAR" />
+        <result column="CURRENCY65" property="currency65" jdbcType="VARCHAR" />
+        <result column="CURRENCY66" property="currency66" jdbcType="VARCHAR" />
+        <result column="CURRENCY67" property="currency67" jdbcType="VARCHAR" />
+        <result column="CURRENCY68" property="currency68" jdbcType="VARCHAR" />
+        <result column="CURRENCY69" property="currency69" jdbcType="VARCHAR" />
+        <result column="CURRENCY70" property="currency70" jdbcType="VARCHAR" />
+        <result column="CURRENCY71" property="currency71" jdbcType="VARCHAR" />
+        <result column="CURRENCY72" property="currency72" jdbcType="VARCHAR" />
+        <result column="CURRENCY73" property="currency73" jdbcType="VARCHAR" />
+        <result column="CURRENCY74" property="currency74" jdbcType="VARCHAR" />
+        <result column="CURRENCY75" property="currency75" jdbcType="VARCHAR" />
+        <result column="CURRENCY76" property="currency76" jdbcType="VARCHAR" />
+        <result column="CURRENCY77" property="currency77" jdbcType="VARCHAR" />
+        <result column="CURRENCY78" property="currency78" jdbcType="VARCHAR" />
+        <result column="CURRENCY79" property="currency79" jdbcType="VARCHAR" />
+        <result column="CURRENCY80" property="currency80" jdbcType="VARCHAR" />
+        <result column="CURRENCY81" property="currency81" jdbcType="VARCHAR" />
+        <result column="CURRENCY82" property="currency82" jdbcType="VARCHAR" />
+        <result column="CURRENCY83" property="currency83" jdbcType="VARCHAR" />
+        <result column="CURRENCY84" property="currency84" jdbcType="VARCHAR" />
+        <result column="CURRENCY85" property="currency85" jdbcType="VARCHAR" />
+        <result column="CURRENCY86" property="currency86" jdbcType="VARCHAR" />
+        <result column="CURRENCY87" property="currency87" jdbcType="VARCHAR" />
+        <result column="CURRENCY88" property="currency88" jdbcType="VARCHAR" />
+        <result column="CURRENCY89" property="currency89" jdbcType="VARCHAR" />
+        <result column="CURRENCY90" property="currency90" jdbcType="VARCHAR" />
+        <result column="CURRENCY91" property="currency91" jdbcType="VARCHAR" />
+        <result column="CURRENCY92" property="currency92" jdbcType="VARCHAR" />
+        <result column="CURRENCY93" property="currency93" jdbcType="VARCHAR" />
+        <result column="CURRENCY94" property="currency94" jdbcType="VARCHAR" />
+        <result column="CURRENCY95" property="currency95" jdbcType="VARCHAR" />
+        <result column="CURRENCY96" property="currency96" jdbcType="VARCHAR" />
+        <result column="CURRENCY97" property="currency97" jdbcType="VARCHAR" />
+        <result column="CURRENCY98" property="currency98" jdbcType="VARCHAR" />
+        <result column="CURRENCY99" property="currency99" jdbcType="VARCHAR" />
+        <result column="CURRENCY100" property="currency100" jdbcType="VARCHAR" />
+        <result column="CURRENCY101" property="currency101" jdbcType="VARCHAR" />
+        <result column="CURRENCY102" property="currency102" jdbcType="VARCHAR" />
+        <result column="CURRENCY103" property="currency103" jdbcType="VARCHAR" />
+        <result column="CURRENCY104" property="currency104" jdbcType="VARCHAR" />
+        <result column="CURRENCY105" property="currency105" jdbcType="VARCHAR" />
+        <result column="CURRENCY106" property="currency106" jdbcType="VARCHAR" />
+        <result column="CURRENCY107" property="currency107" jdbcType="VARCHAR" />
+        <result column="CURRENCY108" property="currency108" jdbcType="VARCHAR" />
+        <result column="CURRENCY109" property="currency109" jdbcType="VARCHAR" />
+        <result column="CURRENCY110" property="currency110" jdbcType="VARCHAR" />
+        <result column="CURRENCY111" property="currency111" jdbcType="VARCHAR" />
+        <result column="CURRENCY112" property="currency112" jdbcType="VARCHAR" />
+        <result column="CURRENCY113" property="currency113" jdbcType="VARCHAR" />
+        <result column="CURRENCY114" property="currency114" jdbcType="VARCHAR" />
+        <result column="CURRENCY115" property="currency115" jdbcType="VARCHAR" />
+        <result column="CURRENCY116" property="currency116" jdbcType="VARCHAR" />
+        <result column="CURRENCY117" property="currency117" jdbcType="VARCHAR" />
+        <result column="CURRENCY118" property="currency118" jdbcType="VARCHAR" />
+        <result column="CURRENCY119" property="currency119" jdbcType="VARCHAR" />
+        <result column="CURRENCY120" property="currency120" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG2" property="renewalFlag2" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG3" property="renewalFlag3" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG4" property="renewalFlag4" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG5" property="renewalFlag5" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG6" property="renewalFlag6" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG7" property="renewalFlag7" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG8" property="renewalFlag8" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG9" property="renewalFlag9" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG10" property="renewalFlag10" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG11" property="renewalFlag11" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG12" property="renewalFlag12" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG13" property="renewalFlag13" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG14" property="renewalFlag14" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG15" property="renewalFlag15" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG16" property="renewalFlag16" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG17" property="renewalFlag17" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG18" property="renewalFlag18" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG19" property="renewalFlag19" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG20" property="renewalFlag20" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG21" property="renewalFlag21" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG22" property="renewalFlag22" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG23" property="renewalFlag23" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG24" property="renewalFlag24" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG25" property="renewalFlag25" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG26" property="renewalFlag26" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG27" property="renewalFlag27" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG28" property="renewalFlag28" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG29" property="renewalFlag29" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG30" property="renewalFlag30" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG31" property="renewalFlag31" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG32" property="renewalFlag32" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG33" property="renewalFlag33" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG34" property="renewalFlag34" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG35" property="renewalFlag35" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG36" property="renewalFlag36" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG37" property="renewalFlag37" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG38" property="renewalFlag38" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG39" property="renewalFlag39" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG40" property="renewalFlag40" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG41" property="renewalFlag41" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG42" property="renewalFlag42" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG43" property="renewalFlag43" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG44" property="renewalFlag44" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG45" property="renewalFlag45" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG46" property="renewalFlag46" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG47" property="renewalFlag47" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG48" property="renewalFlag48" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG49" property="renewalFlag49" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG50" property="renewalFlag50" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG51" property="renewalFlag51" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG52" property="renewalFlag52" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG53" property="renewalFlag53" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG54" property="renewalFlag54" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG55" property="renewalFlag55" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG56" property="renewalFlag56" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG57" property="renewalFlag57" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG58" property="renewalFlag58" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG59" property="renewalFlag59" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG60" property="renewalFlag60" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG61" property="renewalFlag61" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG62" property="renewalFlag62" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG63" property="renewalFlag63" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG64" property="renewalFlag64" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG65" property="renewalFlag65" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG66" property="renewalFlag66" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG67" property="renewalFlag67" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG68" property="renewalFlag68" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG69" property="renewalFlag69" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG70" property="renewalFlag70" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG71" property="renewalFlag71" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG72" property="renewalFlag72" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG73" property="renewalFlag73" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG74" property="renewalFlag74" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG75" property="renewalFlag75" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG76" property="renewalFlag76" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG77" property="renewalFlag77" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG78" property="renewalFlag78" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG79" property="renewalFlag79" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG80" property="renewalFlag80" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG81" property="renewalFlag81" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG82" property="renewalFlag82" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG83" property="renewalFlag83" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG84" property="renewalFlag84" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG85" property="renewalFlag85" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG86" property="renewalFlag86" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG87" property="renewalFlag87" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG88" property="renewalFlag88" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG89" property="renewalFlag89" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG90" property="renewalFlag90" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG91" property="renewalFlag91" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG92" property="renewalFlag92" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG93" property="renewalFlag93" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG94" property="renewalFlag94" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG95" property="renewalFlag95" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG96" property="renewalFlag96" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG97" property="renewalFlag97" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG98" property="renewalFlag98" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG99" property="renewalFlag99" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG100" property="renewalFlag100" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG101" property="renewalFlag101" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG102" property="renewalFlag102" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG103" property="renewalFlag103" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG104" property="renewalFlag104" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG105" property="renewalFlag105" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG106" property="renewalFlag106" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG107" property="renewalFlag107" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG108" property="renewalFlag108" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG109" property="renewalFlag109" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG110" property="renewalFlag110" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG111" property="renewalFlag111" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG112" property="renewalFlag112" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG113" property="renewalFlag113" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG114" property="renewalFlag114" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG115" property="renewalFlag115" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG116" property="renewalFlag116" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG117" property="renewalFlag117" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG118" property="renewalFlag118" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG119" property="renewalFlag119" jdbcType="VARCHAR" />
+        <result column="RENEWAL_FLAG120" property="renewalFlag120" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS2" property="renewalStatus2" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS3" property="renewalStatus3" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS4" property="renewalStatus4" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS5" property="renewalStatus5" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS6" property="renewalStatus6" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS7" property="renewalStatus7" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS8" property="renewalStatus8" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS9" property="renewalStatus9" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS10" property="renewalStatus10" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS11" property="renewalStatus11" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS12" property="renewalStatus12" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS13" property="renewalStatus13" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS14" property="renewalStatus14" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS15" property="renewalStatus15" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS16" property="renewalStatus16" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS17" property="renewalStatus17" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS18" property="renewalStatus18" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS19" property="renewalStatus19" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS20" property="renewalStatus20" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS21" property="renewalStatus21" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS22" property="renewalStatus22" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS23" property="renewalStatus23" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS24" property="renewalStatus24" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS25" property="renewalStatus25" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS26" property="renewalStatus26" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS27" property="renewalStatus27" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS28" property="renewalStatus28" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS29" property="renewalStatus29" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS30" property="renewalStatus30" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS31" property="renewalStatus31" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS32" property="renewalStatus32" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS33" property="renewalStatus33" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS34" property="renewalStatus34" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS35" property="renewalStatus35" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS36" property="renewalStatus36" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS37" property="renewalStatus37" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS38" property="renewalStatus38" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS39" property="renewalStatus39" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS40" property="renewalStatus40" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS41" property="renewalStatus41" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS42" property="renewalStatus42" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS43" property="renewalStatus43" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS44" property="renewalStatus44" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS45" property="renewalStatus45" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS46" property="renewalStatus46" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS47" property="renewalStatus47" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS48" property="renewalStatus48" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS49" property="renewalStatus49" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS50" property="renewalStatus50" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS51" property="renewalStatus51" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS52" property="renewalStatus52" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS53" property="renewalStatus53" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS54" property="renewalStatus54" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS55" property="renewalStatus55" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS56" property="renewalStatus56" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS57" property="renewalStatus57" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS58" property="renewalStatus58" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS59" property="renewalStatus59" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS60" property="renewalStatus60" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS61" property="renewalStatus61" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS62" property="renewalStatus62" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS63" property="renewalStatus63" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS64" property="renewalStatus64" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS65" property="renewalStatus65" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS66" property="renewalStatus66" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS67" property="renewalStatus67" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS68" property="renewalStatus68" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS69" property="renewalStatus69" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS70" property="renewalStatus70" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS71" property="renewalStatus71" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS72" property="renewalStatus72" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS73" property="renewalStatus73" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS74" property="renewalStatus74" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS75" property="renewalStatus75" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS76" property="renewalStatus76" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS77" property="renewalStatus77" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS78" property="renewalStatus78" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS79" property="renewalStatus79" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS80" property="renewalStatus80" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS81" property="renewalStatus81" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS82" property="renewalStatus82" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS83" property="renewalStatus83" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS84" property="renewalStatus84" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS85" property="renewalStatus85" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS86" property="renewalStatus86" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS87" property="renewalStatus87" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS88" property="renewalStatus88" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS89" property="renewalStatus89" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS90" property="renewalStatus90" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS91" property="renewalStatus91" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS92" property="renewalStatus92" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS93" property="renewalStatus93" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS94" property="renewalStatus94" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS95" property="renewalStatus95" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS96" property="renewalStatus96" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS97" property="renewalStatus97" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS98" property="renewalStatus98" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS99" property="renewalStatus99" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS100" property="renewalStatus100" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS101" property="renewalStatus101" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS102" property="renewalStatus102" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS103" property="renewalStatus103" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS104" property="renewalStatus104" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS105" property="renewalStatus105" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS106" property="renewalStatus106" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS107" property="renewalStatus107" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS108" property="renewalStatus108" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS109" property="renewalStatus109" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS110" property="renewalStatus110" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS111" property="renewalStatus111" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS112" property="renewalStatus112" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS113" property="renewalStatus113" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS114" property="renewalStatus114" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS115" property="renewalStatus115" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS116" property="renewalStatus116" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS117" property="renewalStatus117" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS118" property="renewalStatus118" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS119" property="renewalStatus119" jdbcType="VARCHAR" />
+        <result column="RENEWAL_STATUS120" property="renewalStatus120" jdbcType="VARCHAR" />
+        <result column="TOTAL_AMOUNT2" property="totalAmount2" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT3" property="totalAmount3" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT4" property="totalAmount4" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT5" property="totalAmount5" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT6" property="totalAmount6" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT7" property="totalAmount7" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT8" property="totalAmount8" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT9" property="totalAmount9" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT10" property="totalAmount10" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT11" property="totalAmount11" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT12" property="totalAmount12" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT13" property="totalAmount13" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT14" property="totalAmount14" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT15" property="totalAmount15" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT16" property="totalAmount16" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT17" property="totalAmount17" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT18" property="totalAmount18" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT19" property="totalAmount19" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT20" property="totalAmount20" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT21" property="totalAmount21" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT22" property="totalAmount22" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT23" property="totalAmount23" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT24" property="totalAmount24" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT25" property="totalAmount25" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT26" property="totalAmount26" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT27" property="totalAmount27" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT28" property="totalAmount28" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT29" property="totalAmount29" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT30" property="totalAmount30" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT31" property="totalAmount31" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT32" property="totalAmount32" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT33" property="totalAmount33" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT34" property="totalAmount34" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT35" property="totalAmount35" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT36" property="totalAmount36" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT37" property="totalAmount37" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT38" property="totalAmount38" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT39" property="totalAmount39" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT40" property="totalAmount40" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT41" property="totalAmount41" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT42" property="totalAmount42" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT43" property="totalAmount43" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT44" property="totalAmount44" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT45" property="totalAmount45" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT46" property="totalAmount46" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT47" property="totalAmount47" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT48" property="totalAmount48" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT49" property="totalAmount49" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT50" property="totalAmount50" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT51" property="totalAmount51" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT52" property="totalAmount52" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT53" property="totalAmount53" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT54" property="totalAmount54" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT55" property="totalAmount55" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT56" property="totalAmount56" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT57" property="totalAmount57" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT58" property="totalAmount58" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT59" property="totalAmount59" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT60" property="totalAmount60" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT61" property="totalAmount61" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT62" property="totalAmount62" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT63" property="totalAmount63" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT64" property="totalAmount64" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT65" property="totalAmount65" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT66" property="totalAmount66" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT67" property="totalAmount67" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT68" property="totalAmount68" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT69" property="totalAmount69" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT70" property="totalAmount70" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT71" property="totalAmount71" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT72" property="totalAmount72" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT73" property="totalAmount73" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT74" property="totalAmount74" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT75" property="totalAmount75" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT76" property="totalAmount76" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT77" property="totalAmount77" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT78" property="totalAmount78" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT79" property="totalAmount79" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT80" property="totalAmount80" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT81" property="totalAmount81" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT82" property="totalAmount82" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT83" property="totalAmount83" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT84" property="totalAmount84" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT85" property="totalAmount85" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT86" property="totalAmount86" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT87" property="totalAmount87" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT88" property="totalAmount88" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT89" property="totalAmount89" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT90" property="totalAmount90" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT91" property="totalAmount91" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT92" property="totalAmount92" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT93" property="totalAmount93" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT94" property="totalAmount94" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT95" property="totalAmount95" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT96" property="totalAmount96" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT97" property="totalAmount97" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT98" property="totalAmount98" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT99" property="totalAmount99" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT100" property="totalAmount100" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT101" property="totalAmount101" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT102" property="totalAmount102" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT103" property="totalAmount103" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT104" property="totalAmount104" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT105" property="totalAmount105" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT106" property="totalAmount106" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT107" property="totalAmount107" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT108" property="totalAmount108" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT109" property="totalAmount109" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT110" property="totalAmount110" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT111" property="totalAmount111" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT112" property="totalAmount112" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT113" property="totalAmount113" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT114" property="totalAmount114" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT115" property="totalAmount115" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT116" property="totalAmount116" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT117" property="totalAmount117" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT118" property="totalAmount118" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT119" property="totalAmount119" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT120" property="totalAmount120" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        
+         <!-- 供应商表 -->
+        <result column="GRACE_PERIOD" property="gracePeriod" jdbcType="DECIMAL" />
+        <result column="ADMINISTRATIVE_PERIOD" property="administrativePeriod" jdbcType="DECIMAL" />
+        <!-- 产品公司的图片id -->
+    	<result column="COMPANY_FILEID" property="companyFileid" jdbcType="DECIMAL"/>
+    </resultMap>
+    <sql id="baseSql">
+        FOOR.FLAG,FOOR.RENEWAL_ID,FOOR.ORDER_ID,FOOR.TYPE,FOOR.ITEM_ID,
+        FOOR.RENEWAL_DATE2,FOOR.RENEWAL_DATE3,FOOR.RENEWAL_DATE4,FOOR.RENEWAL_DATE5,FOOR.RENEWAL_DATE6,FOOR.RENEWAL_DATE7,FOOR.RENEWAL_DATE8,FOOR.RENEWAL_DATE9,FOOR.RENEWAL_DATE10,FOOR.RENEWAL_DATE11,FOOR.RENEWAL_DATE12,FOOR.RENEWAL_DATE13,FOOR.RENEWAL_DATE14,FOOR.RENEWAL_DATE15,FOOR.RENEWAL_DATE16,FOOR.RENEWAL_DATE17,FOOR.RENEWAL_DATE18,FOOR.RENEWAL_DATE19,FOOR.RENEWAL_DATE20,FOOR.RENEWAL_DATE21,FOOR.RENEWAL_DATE22,FOOR.RENEWAL_DATE23,FOOR.RENEWAL_DATE24,FOOR.RENEWAL_DATE25,FOOR.RENEWAL_DATE26,FOOR.RENEWAL_DATE27,FOOR.RENEWAL_DATE28,FOOR.RENEWAL_DATE29,FOOR.RENEWAL_DATE30,FOOR.RENEWAL_DATE31,FOOR.RENEWAL_DATE32,FOOR.RENEWAL_DATE33,FOOR.RENEWAL_DATE34,FOOR.RENEWAL_DATE35,FOOR.RENEWAL_DATE36,FOOR.RENEWAL_DATE37,FOOR.RENEWAL_DATE38,FOOR.RENEWAL_DATE39,FOOR.RENEWAL_DATE40,FOOR.RENEWAL_DATE41,FOOR.RENEWAL_DATE42,FOOR.RENEWAL_DATE43,FOOR.RENEWAL_DATE44,FOOR.RENEWAL_DATE45,FOOR.RENEWAL_DATE46,FOOR.RENEWAL_DATE47,FOOR.RENEWAL_DATE48,FOOR.RENEWAL_DATE49,FOOR.RENEWAL_DATE50,FOOR.RENEWAL_DATE51,FOOR.RENEWAL_DATE52,FOOR.RENEWAL_DATE53,FOOR.RENEWAL_DATE54,FOOR.RENEWAL_DATE55,FOOR.RENEWAL_DATE56,FOOR.RENEWAL_DATE57,FOOR.RENEWAL_DATE58,FOOR.RENEWAL_DATE59,FOOR.RENEWAL_DATE60,FOOR.RENEWAL_DATE61,FOOR.RENEWAL_DATE62,FOOR.RENEWAL_DATE63,FOOR.RENEWAL_DATE64,FOOR.RENEWAL_DATE65,FOOR.RENEWAL_DATE66,FOOR.RENEWAL_DATE67,FOOR.RENEWAL_DATE68,FOOR.RENEWAL_DATE69,FOOR.RENEWAL_DATE70,FOOR.RENEWAL_DATE71,FOOR.RENEWAL_DATE72,FOOR.RENEWAL_DATE73,FOOR.RENEWAL_DATE74,FOOR.RENEWAL_DATE75,FOOR.RENEWAL_DATE76,FOOR.RENEWAL_DATE77,FOOR.RENEWAL_DATE78,FOOR.RENEWAL_DATE79,FOOR.RENEWAL_DATE80,FOOR.RENEWAL_DATE81,FOOR.RENEWAL_DATE82,FOOR.RENEWAL_DATE83,FOOR.RENEWAL_DATE84,FOOR.RENEWAL_DATE85,FOOR.RENEWAL_DATE86,FOOR.RENEWAL_DATE87,FOOR.RENEWAL_DATE88,FOOR.RENEWAL_DATE89,FOOR.RENEWAL_DATE90,FOOR.RENEWAL_DATE91,FOOR.RENEWAL_DATE92,FOOR.RENEWAL_DATE93,FOOR.RENEWAL_DATE94,FOOR.RENEWAL_DATE95,FOOR.RENEWAL_DATE96,FOOR.RENEWAL_DATE97,FOOR.RENEWAL_DATE98,FOOR.RENEWAL_DATE99,FOOR.RENEWAL_DATE100,RENEWAL_DATE101,RENEWAL_DATE102,RENEWAL_DATE103,RENEWAL_DATE104,RENEWAL_DATE105,RENEWAL_DATE106,RENEWAL_DATE107,RENEWAL_DATE108,RENEWAL_DATE109,RENEWAL_DATE110,RENEWAL_DATE111,RENEWAL_DATE112,RENEWAL_DATE113,RENEWAL_DATE114,RENEWAL_DATE115,RENEWAL_DATE116,RENEWAL_DATE117,RENEWAL_DATE118,RENEWAL_DATE119,RENEWAL_DATE120,
+        FOOR.CURRENCY2,FOOR.CURRENCY3,FOOR.CURRENCY4,FOOR.CURRENCY5,FOOR.CURRENCY6,FOOR.CURRENCY7,FOOR.CURRENCY8,FOOR.CURRENCY9,FOOR.CURRENCY10,FOOR.CURRENCY11,FOOR.CURRENCY12,FOOR.CURRENCY13,FOOR.CURRENCY14,FOOR.CURRENCY15,FOOR.CURRENCY16,FOOR.CURRENCY17,FOOR.CURRENCY18,FOOR.CURRENCY19,FOOR.CURRENCY20,FOOR.CURRENCY21,FOOR.CURRENCY22,FOOR.CURRENCY23,FOOR.CURRENCY24,FOOR.CURRENCY25,FOOR.CURRENCY26,FOOR.CURRENCY27,FOOR.CURRENCY28,FOOR.CURRENCY29,FOOR.CURRENCY30,FOOR.CURRENCY31,FOOR.CURRENCY32,FOOR.CURRENCY33,FOOR.CURRENCY34,FOOR.CURRENCY35,FOOR.CURRENCY36,FOOR.CURRENCY37,FOOR.CURRENCY38,FOOR.CURRENCY39,FOOR.CURRENCY40,FOOR.CURRENCY41,FOOR.CURRENCY42,FOOR.CURRENCY43,FOOR.CURRENCY44,FOOR.CURRENCY45,FOOR.CURRENCY46,FOOR.CURRENCY47,FOOR.CURRENCY48,FOOR.CURRENCY49,FOOR.CURRENCY50,FOOR.CURRENCY51,FOOR.CURRENCY52,FOOR.CURRENCY53,FOOR.CURRENCY54,FOOR.CURRENCY55,FOOR.CURRENCY56,FOOR.CURRENCY57,FOOR.CURRENCY58,FOOR.CURRENCY59,FOOR.CURRENCY60,FOOR.CURRENCY61,FOOR.CURRENCY62,FOOR.CURRENCY63,FOOR.CURRENCY64,FOOR.CURRENCY65,FOOR.CURRENCY66,FOOR.CURRENCY67,FOOR.CURRENCY68,FOOR.CURRENCY69,FOOR.CURRENCY70,FOOR.CURRENCY71,FOOR.CURRENCY72,FOOR.CURRENCY73,FOOR.CURRENCY74,FOOR.CURRENCY75,FOOR.CURRENCY76,FOOR.CURRENCY77,FOOR.CURRENCY78,FOOR.CURRENCY79,FOOR.CURRENCY80,FOOR.CURRENCY81,FOOR.CURRENCY82,FOOR.CURRENCY83,FOOR.CURRENCY84,FOOR.CURRENCY85,FOOR.CURRENCY86,FOOR.CURRENCY87,FOOR.CURRENCY88,FOOR.CURRENCY89,FOOR.CURRENCY90,FOOR.CURRENCY91,FOOR.CURRENCY92,FOOR.CURRENCY93,FOOR.CURRENCY94,FOOR.CURRENCY95,FOOR.CURRENCY96,FOOR.CURRENCY97,FOOR.CURRENCY98,FOOR.CURRENCY99,FOOR.CURRENCY100,CURRENCY101,CURRENCY102,CURRENCY103,CURRENCY104,CURRENCY105,CURRENCY106,CURRENCY107,CURRENCY108,CURRENCY109,CURRENCY110,CURRENCY111,CURRENCY112,CURRENCY113,CURRENCY114,CURRENCY115,CURRENCY116,CURRENCY117,CURRENCY118,CURRENCY119,CURRENCY120,
+        FOOR.RENEWAL_FLAG2,FOOR.RENEWAL_FLAG3,FOOR.RENEWAL_FLAG4,FOOR.RENEWAL_FLAG5,FOOR.RENEWAL_FLAG6,FOOR.RENEWAL_FLAG7,FOOR.RENEWAL_FLAG8,FOOR.RENEWAL_FLAG9,FOOR.RENEWAL_FLAG10,FOOR.RENEWAL_FLAG11,FOOR.RENEWAL_FLAG12,FOOR.RENEWAL_FLAG13,FOOR.RENEWAL_FLAG14,FOOR.RENEWAL_FLAG15,FOOR.RENEWAL_FLAG16,FOOR.RENEWAL_FLAG17,FOOR.RENEWAL_FLAG18,FOOR.RENEWAL_FLAG19,FOOR.RENEWAL_FLAG20,FOOR.RENEWAL_FLAG21,FOOR.RENEWAL_FLAG22,FOOR.RENEWAL_FLAG23,FOOR.RENEWAL_FLAG24,FOOR.RENEWAL_FLAG25,FOOR.RENEWAL_FLAG26,FOOR.RENEWAL_FLAG27,FOOR.RENEWAL_FLAG28,FOOR.RENEWAL_FLAG29,FOOR.RENEWAL_FLAG30,FOOR.RENEWAL_FLAG31,FOOR.RENEWAL_FLAG32,FOOR.RENEWAL_FLAG33,FOOR.RENEWAL_FLAG34,FOOR.RENEWAL_FLAG35,FOOR.RENEWAL_FLAG36,FOOR.RENEWAL_FLAG37,FOOR.RENEWAL_FLAG38,FOOR.RENEWAL_FLAG39,FOOR.RENEWAL_FLAG40,FOOR.RENEWAL_FLAG41,FOOR.RENEWAL_FLAG42,FOOR.RENEWAL_FLAG43,FOOR.RENEWAL_FLAG44,FOOR.RENEWAL_FLAG45,FOOR.RENEWAL_FLAG46,FOOR.RENEWAL_FLAG47,FOOR.RENEWAL_FLAG48,FOOR.RENEWAL_FLAG49,FOOR.RENEWAL_FLAG50,FOOR.RENEWAL_FLAG51,FOOR.RENEWAL_FLAG52,FOOR.RENEWAL_FLAG53,FOOR.RENEWAL_FLAG54,FOOR.RENEWAL_FLAG55,FOOR.RENEWAL_FLAG56,FOOR.RENEWAL_FLAG57,FOOR.RENEWAL_FLAG58,FOOR.RENEWAL_FLAG59,FOOR.RENEWAL_FLAG60,FOOR.RENEWAL_FLAG61,FOOR.RENEWAL_FLAG62,FOOR.RENEWAL_FLAG63,FOOR.RENEWAL_FLAG64,FOOR.RENEWAL_FLAG65,FOOR.RENEWAL_FLAG66,FOOR.RENEWAL_FLAG67,FOOR.RENEWAL_FLAG68,FOOR.RENEWAL_FLAG69,FOOR.RENEWAL_FLAG70,FOOR.RENEWAL_FLAG71,FOOR.RENEWAL_FLAG72,FOOR.RENEWAL_FLAG73,FOOR.RENEWAL_FLAG74,FOOR.RENEWAL_FLAG75,FOOR.RENEWAL_FLAG76,FOOR.RENEWAL_FLAG77,FOOR.RENEWAL_FLAG78,FOOR.RENEWAL_FLAG79,FOOR.RENEWAL_FLAG80,FOOR.RENEWAL_FLAG81,FOOR.RENEWAL_FLAG82,FOOR.RENEWAL_FLAG83,FOOR.RENEWAL_FLAG84,FOOR.RENEWAL_FLAG85,FOOR.RENEWAL_FLAG86,FOOR.RENEWAL_FLAG87,FOOR.RENEWAL_FLAG88,FOOR.RENEWAL_FLAG89,FOOR.RENEWAL_FLAG90,FOOR.RENEWAL_FLAG91,FOOR.RENEWAL_FLAG92,FOOR.RENEWAL_FLAG93,FOOR.RENEWAL_FLAG94,FOOR.RENEWAL_FLAG95,FOOR.RENEWAL_FLAG96,FOOR.RENEWAL_FLAG97,FOOR.RENEWAL_FLAG98,FOOR.RENEWAL_FLAG99,FOOR.RENEWAL_FLAG100,RENEWAL_FLAG101,RENEWAL_FLAG102,RENEWAL_FLAG103,RENEWAL_FLAG104,RENEWAL_FLAG105,RENEWAL_FLAG106,RENEWAL_FLAG107,RENEWAL_FLAG108,RENEWAL_FLAG109,RENEWAL_FLAG110,RENEWAL_FLAG111,RENEWAL_FLAG112,RENEWAL_FLAG113,RENEWAL_FLAG114,RENEWAL_FLAG115,RENEWAL_FLAG116,RENEWAL_FLAG117,RENEWAL_FLAG118,RENEWAL_FLAG119,RENEWAL_FLAG120,
+        FOOR.RENEWAL_STATUS2,FOOR.RENEWAL_STATUS3,FOOR.RENEWAL_STATUS4,FOOR.RENEWAL_STATUS5,FOOR.RENEWAL_STATUS6,FOOR.RENEWAL_STATUS7,FOOR.RENEWAL_STATUS8,FOOR.RENEWAL_STATUS9,FOOR.RENEWAL_STATUS10,FOOR.RENEWAL_STATUS11,FOOR.RENEWAL_STATUS12,FOOR.RENEWAL_STATUS13,FOOR.RENEWAL_STATUS14,FOOR.RENEWAL_STATUS15,FOOR.RENEWAL_STATUS16,FOOR.RENEWAL_STATUS17,FOOR.RENEWAL_STATUS18,FOOR.RENEWAL_STATUS19,FOOR.RENEWAL_STATUS20,FOOR.RENEWAL_STATUS21,FOOR.RENEWAL_STATUS22,FOOR.RENEWAL_STATUS23,FOOR.RENEWAL_STATUS24,FOOR.RENEWAL_STATUS25,FOOR.RENEWAL_STATUS26,FOOR.RENEWAL_STATUS27,FOOR.RENEWAL_STATUS28,FOOR.RENEWAL_STATUS29,FOOR.RENEWAL_STATUS30,FOOR.RENEWAL_STATUS31,FOOR.RENEWAL_STATUS32,FOOR.RENEWAL_STATUS33,FOOR.RENEWAL_STATUS34,FOOR.RENEWAL_STATUS35,FOOR.RENEWAL_STATUS36,FOOR.RENEWAL_STATUS37,FOOR.RENEWAL_STATUS38,FOOR.RENEWAL_STATUS39,FOOR.RENEWAL_STATUS40,FOOR.RENEWAL_STATUS41,FOOR.RENEWAL_STATUS42,FOOR.RENEWAL_STATUS43,FOOR.RENEWAL_STATUS44,FOOR.RENEWAL_STATUS45,FOOR.RENEWAL_STATUS46,FOOR.RENEWAL_STATUS47,FOOR.RENEWAL_STATUS48,FOOR.RENEWAL_STATUS49,FOOR.RENEWAL_STATUS50,FOOR.RENEWAL_STATUS51,FOOR.RENEWAL_STATUS52,FOOR.RENEWAL_STATUS53,FOOR.RENEWAL_STATUS54,FOOR.RENEWAL_STATUS55,FOOR.RENEWAL_STATUS56,FOOR.RENEWAL_STATUS57,FOOR.RENEWAL_STATUS58,FOOR.RENEWAL_STATUS59,FOOR.RENEWAL_STATUS60,FOOR.RENEWAL_STATUS61,FOOR.RENEWAL_STATUS62,FOOR.RENEWAL_STATUS63,FOOR.RENEWAL_STATUS64,FOOR.RENEWAL_STATUS65,FOOR.RENEWAL_STATUS66,FOOR.RENEWAL_STATUS67,FOOR.RENEWAL_STATUS68,FOOR.RENEWAL_STATUS69,FOOR.RENEWAL_STATUS70,FOOR.RENEWAL_STATUS71,FOOR.RENEWAL_STATUS72,FOOR.RENEWAL_STATUS73,FOOR.RENEWAL_STATUS74,FOOR.RENEWAL_STATUS75,FOOR.RENEWAL_STATUS76,FOOR.RENEWAL_STATUS77,FOOR.RENEWAL_STATUS78,FOOR.RENEWAL_STATUS79,FOOR.RENEWAL_STATUS80,FOOR.RENEWAL_STATUS81,FOOR.RENEWAL_STATUS82,FOOR.RENEWAL_STATUS83,FOOR.RENEWAL_STATUS84,FOOR.RENEWAL_STATUS85,FOOR.RENEWAL_STATUS86,FOOR.RENEWAL_STATUS87,FOOR.RENEWAL_STATUS88,FOOR.RENEWAL_STATUS89,FOOR.RENEWAL_STATUS90,FOOR.RENEWAL_STATUS91,FOOR.RENEWAL_STATUS92,FOOR.RENEWAL_STATUS93,FOOR.RENEWAL_STATUS94,FOOR.RENEWAL_STATUS95,FOOR.RENEWAL_STATUS96,FOOR.RENEWAL_STATUS97,FOOR.RENEWAL_STATUS98,FOOR.RENEWAL_STATUS99,FOOR.RENEWAL_STATUS100,RENEWAL_STATUS101,RENEWAL_STATUS102,RENEWAL_STATUS103,RENEWAL_STATUS104,RENEWAL_STATUS105,RENEWAL_STATUS106,RENEWAL_STATUS107,RENEWAL_STATUS108,RENEWAL_STATUS109,RENEWAL_STATUS110,RENEWAL_STATUS111,RENEWAL_STATUS112,RENEWAL_STATUS113,RENEWAL_STATUS114,RENEWAL_STATUS115,RENEWAL_STATUS116,RENEWAL_STATUS117,RENEWAL_STATUS118,RENEWAL_STATUS119,RENEWAL_STATUS120,
+        FOOR.TOTAL_AMOUNT2,FOOR.TOTAL_AMOUNT3,FOOR.TOTAL_AMOUNT4,FOOR.TOTAL_AMOUNT5,FOOR.TOTAL_AMOUNT6,FOOR.TOTAL_AMOUNT7,FOOR.TOTAL_AMOUNT8,FOOR.TOTAL_AMOUNT9,FOOR.TOTAL_AMOUNT10,FOOR.TOTAL_AMOUNT11,FOOR.TOTAL_AMOUNT12,FOOR.TOTAL_AMOUNT13,FOOR.TOTAL_AMOUNT14,FOOR.TOTAL_AMOUNT15,FOOR.TOTAL_AMOUNT16,FOOR.TOTAL_AMOUNT17,FOOR.TOTAL_AMOUNT18,FOOR.TOTAL_AMOUNT19,FOOR.TOTAL_AMOUNT20,FOOR.TOTAL_AMOUNT21,FOOR.TOTAL_AMOUNT22,FOOR.TOTAL_AMOUNT23,FOOR.TOTAL_AMOUNT24,FOOR.TOTAL_AMOUNT25,FOOR.TOTAL_AMOUNT26,FOOR.TOTAL_AMOUNT27,FOOR.TOTAL_AMOUNT28,FOOR.TOTAL_AMOUNT29,FOOR.TOTAL_AMOUNT30,FOOR.TOTAL_AMOUNT31,FOOR.TOTAL_AMOUNT32,FOOR.TOTAL_AMOUNT33,FOOR.TOTAL_AMOUNT34,FOOR.TOTAL_AMOUNT35,FOOR.TOTAL_AMOUNT36,FOOR.TOTAL_AMOUNT37,FOOR.TOTAL_AMOUNT38,FOOR.TOTAL_AMOUNT39,FOOR.TOTAL_AMOUNT40,FOOR.TOTAL_AMOUNT41,FOOR.TOTAL_AMOUNT42,FOOR.TOTAL_AMOUNT43,FOOR.TOTAL_AMOUNT44,FOOR.TOTAL_AMOUNT45,FOOR.TOTAL_AMOUNT46,FOOR.TOTAL_AMOUNT47,FOOR.TOTAL_AMOUNT48,FOOR.TOTAL_AMOUNT49,FOOR.TOTAL_AMOUNT50,FOOR.TOTAL_AMOUNT51,FOOR.TOTAL_AMOUNT52,FOOR.TOTAL_AMOUNT53,FOOR.TOTAL_AMOUNT54,FOOR.TOTAL_AMOUNT55,FOOR.TOTAL_AMOUNT56,FOOR.TOTAL_AMOUNT57,FOOR.TOTAL_AMOUNT58,FOOR.TOTAL_AMOUNT59,FOOR.TOTAL_AMOUNT60,FOOR.TOTAL_AMOUNT61,FOOR.TOTAL_AMOUNT62,FOOR.TOTAL_AMOUNT63,FOOR.TOTAL_AMOUNT64,FOOR.TOTAL_AMOUNT65,FOOR.TOTAL_AMOUNT66,FOOR.TOTAL_AMOUNT67,FOOR.TOTAL_AMOUNT68,FOOR.TOTAL_AMOUNT69,FOOR.TOTAL_AMOUNT70,FOOR.TOTAL_AMOUNT71,FOOR.TOTAL_AMOUNT72,FOOR.TOTAL_AMOUNT73,FOOR.TOTAL_AMOUNT74,FOOR.TOTAL_AMOUNT75,FOOR.TOTAL_AMOUNT76,FOOR.TOTAL_AMOUNT77,FOOR.TOTAL_AMOUNT78,FOOR.TOTAL_AMOUNT79,FOOR.TOTAL_AMOUNT80,FOOR.TOTAL_AMOUNT81,FOOR.TOTAL_AMOUNT82,FOOR.TOTAL_AMOUNT83,FOOR.TOTAL_AMOUNT84,FOOR.TOTAL_AMOUNT85,FOOR.TOTAL_AMOUNT86,FOOR.TOTAL_AMOUNT87,FOOR.TOTAL_AMOUNT88,FOOR.TOTAL_AMOUNT89,FOOR.TOTAL_AMOUNT90,FOOR.TOTAL_AMOUNT91,FOOR.TOTAL_AMOUNT92,FOOR.TOTAL_AMOUNT93,FOOR.TOTAL_AMOUNT94,FOOR.TOTAL_AMOUNT95,FOOR.TOTAL_AMOUNT96,FOOR.TOTAL_AMOUNT97,FOOR.TOTAL_AMOUNT98,FOOR.TOTAL_AMOUNT99,FOOR.TOTAL_AMOUNT100,TOTAL_AMOUNT101,TOTAL_AMOUNT102,TOTAL_AMOUNT103,TOTAL_AMOUNT104,TOTAL_AMOUNT105,TOTAL_AMOUNT106,TOTAL_AMOUNT107,TOTAL_AMOUNT108,TOTAL_AMOUNT109,TOTAL_AMOUNT110,TOTAL_AMOUNT111,TOTAL_AMOUNT112,TOTAL_AMOUNT113,TOTAL_AMOUNT114,TOTAL_AMOUNT115,TOTAL_AMOUNT116,TOTAL_AMOUNT117,TOTAL_AMOUNT118,TOTAL_AMOUNT119,TOTAL_AMOUNT120,
+    </sql>
+    
+    <!-- 修改续保表中当前期数下主险和附加险的信息   修改状态  币种  续保到期日-->
+    <update id="updateRenewalByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal">
+    	UPDATE fms_ord_renewal
+    	<set>
+    		<if test="renewalStatus != null and renewalStatus != ''">
+    			RENEWAL_STATUS = #{renewalStatus},
+    		</if>
+    		<if test="renewalStatusColumn != null and renewalStatusColumn != ''">
+    			${renewalStatusColumn} = #{renewalStatus},
+    		</if>
+    		<if test="currencyColumn != null and currencyColumn != ''">
+    			${currencyColumn} = #{currency},
+    		</if>
+    		<if test="renewalFlagColumn != null and renewalFlagColumn != ''">
+    			${renewalFlagColumn} = #{renewalFlag},
+    		</if>
+    		<if test="renewalDateColumn != null and renewalDateColumn != ''">
+    			${renewalDateColumn} = #{renewalDate},
+    		</if>
+    	</set>
+    	WHERE TYPE = "ITEM" AND ORDER_ID = #{orderId}
+    </update>
+    
+    <update id="updateFlagByOrderId" parameterType="clb.core.order.dto.OrdOrderRenewal">
+    	UPDATE fms_ord_renewal
+    	<if test="cancelRenewalFlag != null">
+			SET CANCEL_RENEWAL_FLAG = #{cancelRenewalFlag}
+    	</if>
+    	<if test="flag != null">
+			SET FLAG = #{flag}
+    	</if>
+		WHERE
+			ORDER_ID = #{orderId}
+    </update>
+
+    <select id="queryRenewalByOrder" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseSql"/>
+        CASE WHEN fpi.ITEM_NAME IS NULL THEN '总计'
+        ELSE fpi.ITEM_NAME END ITEM_NAME,
+        foo.PAY_PERIODS
+        FROM
+        fms_ord_renewal FOOR
+        LEFT JOIN
+        fms_prd_items fpi ON FOOR.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN
+        fms_ord_order AS foo ON FOOR.ORDER_ID = foo.ORDER_ID
+        WHERE
+        1=1
+        <if test = "orderId != null"> AND FOOR.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+
+    <select id="queryWsRenewal" parameterType="clb.core.order.dto.OrdOrderRenewal" resultMap="BaseResultMap">
+        SELECT
+          <include refid="baseSql"/>
+          CASE WHEN fpi.ITEM_NAME IS NULL THEN '总计'
+          ELSE fpi.ITEM_NAME END ITEM_NAME,
+          foo.PAY_PERIODS
+        FROM
+          fms_ord_renewal FOOR
+        LEFT JOIN
+          fms_prd_items fpi ON FOOR.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN
+          fms_ord_order AS foo ON FOOR.ORDER_ID = foo.ORDER_ID
+        WHERE
+          1=1
+          <if test = "orderId != null"> AND FOOR.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+          <if test = "renewalId != null"> AND FOOR.RENEWAL_ID = #{renewalId , jdbcType=DECIMAL} </if>
+          <if test = "itemId != null"> AND FOOR.ITEM_ID = #{itemId , jdbcType=DECIMAL} </if>
+    </select>
+</mapper>

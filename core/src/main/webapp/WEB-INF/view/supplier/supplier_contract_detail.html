@@ -1,0 +1,1050 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?supplierType=SPE.SUPPLIER_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?supplierLevel=SPE.SUPPLIER_LEVEL" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?settlementMethod=SPE.SETTLEMENT_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?yesOrNo=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?settleType=SPE.SETTLE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyType=PUB.CURRENCY" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+<script src="${base.contextPath}/clb/common/clbCode?statusData=CNL.CHANNEL_STATUS" type="text/javascript"></script>
+<style>
+        .k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg {
+            left:105px;
+            position: absolute;
+            top: 20px
+        }
+</style>
+<script type="text/javascript">
+
+	//多语言常量
+	validateNotUnique='<@spring.message "spe.notunique"/>';
+	validateNotEmpty='<@spring.message "spe.notempty"/>';
+	validateTelError='<@spring.message "spe.telerror"/>';
+	window.userData = [];
+	var viewModel = kendo.observable({
+        model: {
+        }
+    });
+
+	//全局变量
+	window.parentPage = '';
+    window.contractId = '${RequestParameters.contractId!0}';
+    window.supplierId = '${RequestParameters.supplierId!0}';
+    if (contractId!=0 && contractId!=undefined) {
+	       $.ajax({
+	           url: '${base.contextPath}/spe/contract/query',
+	           type : "POST",
+	           async:false,
+	           data : {contractId:contractId},
+	           success: function (args) {
+	               var a0 = args.rows[0] || {};
+	               for (var k in a0) {
+	               	viewModel.model.set(k,a0[k]);
+	               }
+	               viewModel.model.set("__status","update");
+	            }
+	       });
+	   }
+	   else {
+	   	viewModel.model.set("__status","add");
+	   }
+	   viewModel.model.set("formurl",'${base.contextPath}/spe/contract/query');
+	   viewModel.model.set("supplierId",supplierId);
+  	</script>
+<body>
+<script src="${base.contextPath}/resources/js/common/validate.js" type="text/javascript"></script>
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<div id="dialog" style="display: none;"></div>
+<div id="fileWin" style="display: none;">
+	<form>
+	<input type="file" id="files" name="files"></input>
+	</form>
+</div>
+<div id="page-content">
+	<div class="panel panel-default">
+	<form class="form-horizontal" id="mainform">
+            <div class="panel-heading">
+                <span class="panel-title"><@spring.message "spe.supplier_contract_detail"/></span>
+            </div>
+            <div class="panel-body">
+            <p id="typeTitle" class="pad-ver text-main text-bold">
+             </p>
+            <p class="bord-btm pad-ver text-main text-bold">
+                	<@spring.message "spe.main_contract"/>
+            </p>
+            
+			<div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.contractName"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                    <input style="width: 100%" require="true"  unique="true" id="contractName" name="contractName" style="width: 100%"
+                                           data-bind="value:model.contractName" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.br"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  id="br" name="br" style="width: 100%"
+                                           data-bind="value:model.br" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.ci"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  id="ci" name="ci" style="width: 100%"
+                                           data-bind="value:model.ci" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               
+               <div class="row" style="margin-bottom: 20px;">
+                       
+                         <div class="col-sm-8">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="margin-left:-12.6%"><@spring.message "spe.addressmessage"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input require="true"  maxlength="120" id="addressMessage" name="addressMessage" style="width: 118%"
+                                           data-bind="value:model.addressMessage" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label" style="margin-left:-2.6%"><@spring.message "spe.samesettle"/></label>
+                                 <div class="col-sm-3">
+                                      <input id="checkbox" style="margin-top:5px;"/>
+                                </div>
+                                
+                            </div>
+                        </div>
+               </div>
+    
+    		<p class="bord-btm pad-ver text-main text-bold">
+               			<@spring.message "spe.settlebody"/>
+            </p>
+            <div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.contractname"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                    <input style="width: 100%" require="true" id="settleContractName" name="settleContractName" style="width: 100%"
+                                           data-bind="value:model.settleContractName" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.br"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  id="settleBr" name="settleBr" style="width: 100%"
+                                           data-bind="value:model.settleBr" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.ci"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true"  id="settleCi" name="settleCi" style="width: 100%"
+                                           data-bind="value:model.settleCi" maxlength="80" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               <div class="row" style="margin-bottom: 10px;">
+                       
+                         <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label"><@spring.message "spe.addressmessage"/><font color="red">*</font></label>
+                                 <div class="col-sm-11">
+                                     <input require="true"  maxlength="120" style="width: 99%" id="settleAddressMessage" name="settleAddressMessage" style="width: 50%"
+                                           data-bind="value:model.settleAddressMessage" maxlength="100" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+				<div class="row" style="margin-bottom: 20px;">
+		    		   <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.collectiontermid"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                    <input name="collectionTermId" require="true" id="collectionTermId" style="width: 100%" 
+                                           data-bind="value:model.collectionTermId">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.settletypecode"/><font color="red">*</font></label>
+                                <div class="col-sm-9">
+                                     <input style="width: 100%" require="true" id="settleTypeCode" name="settleTypeCode" style="width: 100%"
+                                           data-bind="value:model.settleTypeCode">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "spe.collectionaccount"/><font color="red">*</font></label>
+                                 <div class="col-sm-9">
+                                     <input style="width: 100%" require="true" id="collectionAccount" name="collectionAccount" style="width: 100%"
+                                           data-bind="value:model.collectionAccount" maxlength="30" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+               </div>
+               
+               <div style="clear:both">
+        			<div id="settlegrid"></div>
+    			</div>
+    			
+    			<!-- toolbar -->
+    			<script type="text/x-kendo-template" id="settletemplate">
+    			    <div class="toolbar">						
+						<span class="btn btn-primary" style="float:left;margin-right:5px;" onclick="addRow('settlegrid')"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+					</div>
+    	        </script>
+               
+               
+        
+        		<!-- toolbar -->
+    			<script type="text/x-kendo-template" id="template">
+    			<div class="toolbar">
+    	        	<span class="btn btn-primary" onclick="addRow('grid')"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+    	        </div>
+    	        </script>
+    	        
+    	        
+    		<p class="bord-btm pad-ver text-main text-bold">
+              		  文档信息
+            </p>
+            
+            
+               	<div style="clear:both">
+        			<div id="grid"></div>
+    			</div>
+        
+         </div>
+               
+                <div class="panel-footer text-right">
+                <span onclick="submit()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancel()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            	</div>
+            	<iframe id="ifile" style="display:none"></iframe>
+        </form>
+    </div>
+    <script>
+    
+		    $("#checkbox").kendoCheckbox({
+		        checkedValue: 'Y',
+		        uncheckedValue: 'N',
+		        change:function(e){
+		        	copyData(e.values);
+		        }
+		    });
+		    
+        	kendo.bind($('#page-content'), viewModel);
+   			
+   		    	
+			$('#mainform :input').bind('input propertychange', function(){
+				var id = $(this)[0].id;
+				validateEmpty(id);
+			});
+			$('#mainform :input').blur(function(){
+				var id = $(this)[0].id;
+				var unique = document.getElementById(id).getAttribute("unique");
+				if(unique == 'true'){
+					uniqueValidator(id);
+				}
+			})
+			
+	        
+	        //收款条件
+			$("#collectionTermId")
+				.kendoDropDownList({
+					dataSource : {
+					transport: {
+	                    read: {
+	                    	type:"POST",
+	                        dataType: "json",
+	                        url: '${base.contextPath}/supplier/collectionterms/getAll'
+	                    }
+	                },
+	                schema: {
+	                	data:'rows'
+	                }
+					},
+	  			dataTextField: "termCode",
+	  			dataValueField: "termId",
+	  			optionLabel:"--请选择--",
+	  			valuePrimitive: true,
+	  			change:function(){
+	   				validateEmpty('collectionTermId');
+	               }
+		 	});
+	        
+	        //支付方式
+			$("#settleTypeCode")
+			.kendoDropDownList({
+				dataSource : settlementMethod,
+  			dataTextField: "meaning",
+  			dataValueField: "value",
+  			valuePrimitive: true,
+  			optionLabel:"--请选择--",
+  			change:function(){
+   				validateEmpty('settleTypeCode');
+               }
+	 		});
+	        
+	       	
+	       	
+			$(document).ready(function(){
+				//设置单选框
+				if(viewModel.model['sameSettle'] == 'Y'){
+	    			$("#checkbox").data('kendoCheckbox').check('Y');
+	    		}
+				
+				//设置附件Grid
+				if(contractId == 0 || grid.dataSource.data().length == 0){
+					var griddata = [];
+					griddata.push({"name":"供应商佣金表","fileSize":"0"});
+					grid.dataSource.data(griddata);
+					grid.refresh();
+				}
+				
+				//设置资产分类
+				var title = '资产分类：'+getTitle(supplierId);
+				console.log(title);
+				$("#typeTitle").html(title);
+				viewModel.model.set('levelOneType',parentPage.levelData['key'+contractId][0].levelValue);
+				viewModel.model.set('levelTwoType',parentPage.levelData['key'+contractId][1].levelValue);
+				viewModel.model.set('levelThreeType',parentPage.levelData['key'+contractId][2].levelValue);
+			});
+   			
+			/* -----------------------------结算Grid-----------------------------*/
+   			var settleBaseUrl = _basePath+"/supplier/settle";
+		    settledataSource = new kendo.data.DataSource({
+		        transport: {
+		            read: {
+		                url: settleBaseUrl + "/query",
+		                type: "POST",
+		                dataType: "json"
+		            },
+		            parameterMap: function (options, type) {
+		            	if (type === "read") {
+		            		var param = {"contractId":contractId};
+		                    return Hap.prepareQueryParameter(param, options)
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: false,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "settleId",
+		                fields: {
+		                	costName:{validation: {required:true}},
+		                	settleTypeCode:{validation: {required:true}},
+							currencyCode:{validation: {required:true}},
+		                	amount: { editable: true,type:"number",validation: { min:0,max:100000000}}
+		                }
+		            }
+		        }
+		    });
+
+		    $("#settlegrid").kendoGrid({
+		        dataSource: settledataSource,
+		        resizable: true,
+		        scrollable: true,
+		        height: '300px',
+		        navigatable: false,
+		        pageable: {
+		            pageSizes: [5, 10, 20, 50],
+		            refresh: true,
+		            buttonCount: 5
+		        },
+		        columns: [
+		            {
+		                field: "costName",
+		                title: '<@spring.message "spe.costName"/>',
+		                width: 60,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    }
+		            },
+		                    {
+		                field: "settleTypeCode",
+		                title: '<@spring.message "spe.settleTypeCode"/>',
+		                width: 100,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template: function(dataItem){
+	                        var v = dataItem.settleTypeCode;
+	                        $.each(settleType,function(i,n){
+	                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                                v = n.meaning;
+	                                return v;
+	                            }
+	                        })
+	                        if(v != undefined) return v;
+	                        return '';
+	                     },
+	                    editor:function(container, options){
+	                    	$('<input name="' + options.field + '" required />')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+	           				   dataSource : settleType,
+	           					valuePrimitive: true,
+	                  			dataTextField: "meaning",
+	                  			dataValueField: "value"
+	             			});
+	                    }
+		            },
+		                    {
+		                field: "amount",
+		                title: '<@spring.message "spe.amount"/>',
+		                width: 80,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    }
+		            },
+		                    {
+		                field: "currencyCode",
+		                title: "<@spring.message "spe.currencyCode"/>",
+		                width: 80,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template: function(dataItem){
+	                        var v = dataItem.currencyCode;
+	                        $.each(currencyType,function(i,n){
+	                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                                v = n.meaning;
+	                                return v;
+	                            }
+	                        })
+	                        if(v != undefined) return v;
+	                        return '';
+	                     },
+	                    editor:function(container, options){
+	                    	$('<input name="' + options.field + '" required />')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+	           				   dataSource : currencyType,
+	           					valuePrimitive: true,
+	                  			dataTextField: "meaning",
+	                  			dataValueField: "value"
+	             			});
+	                    }
+		            },{
+		                title: "<@spring.message "hap.action"/>",
+		                width: 100,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+		                template:function(dataItem){
+		                	return '<input type="button" onclick="deleteLine(\''+dataItem.uid+'\')" class="btn btn-danger" style="width:60px"  value="删除">';
+		                }
+		            }
+		        ],
+		        toolbar: kendo.template($("#settletemplate").html()),
+		        editable: true
+		    });
+		    /* -----------------------------结算Grid-----------------------------*/
+		    
+		    
+		    /* -----------------------------附件Grid-----------------------------*/
+		    var BaseUrl = _basePath;
+		    dataSource = new kendo.data.DataSource({
+		        transport: {
+		            read: {
+		                url: BaseUrl + "/supplier/archives/query",
+		                type: "POST",
+		                async:false,
+		                dataType: "json"
+		            },
+		            parameterMap: function (options, type) {
+		            	if (type === "read") {
+		            		var param = {"contractId":contractId};
+		                    return Hap.prepareQueryParameter(param, options)
+		                }
+		            }
+		        },
+		        batch: true,
+		        serverPaging: false,
+		        pageSize: 10,
+		        schema: {
+		            data: 'rows',
+		            total: 'total',
+		            model: {
+		                id: "archiveId",
+		                fields: {
+		                	name:{type:'string',validation: {
+		                		namevalidation: function (input) {
+	                                if (input.is("[name='name']") && input.val() == "") {
+	                                	input.attr("data-namevalidation-msg", "<@spring.message "spe.documentnamenotempty"/>");
+										return false;
+	                                }
+	                                return true;
+	                            }
+	                        }},
+		                	fileSize: {editable :false},
+		                	uploadDate: {editable :false}
+		                },
+		                editable:function(col){
+		                	if((this.name=="供应商佣金表")&&col=="name"){
+		                		return false;
+		                	}
+		                	return true;
+		                }
+		            }
+		        }
+		    });
+
+		    var grid = $("#grid").kendoGrid({
+		        dataSource: dataSource,
+		        resizable: true,
+		        scrollable: true,
+		        height: '300px',
+		        navigatable: false,
+		        pageable: {
+		            pageSizes: [5, 10, 20, 50],
+		            refresh: true,
+		            buttonCount: 5
+		        },
+		        columns: [
+		            {
+		                field: "name",
+		                title: "<@spring.message "spe.documentname"/>",
+		                width: 60,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    editor: function(container, options){
+	                    	$('<input name="' + options.field + '" type="text" id="gridName" onchange="validateGridName(\''+options.model.uid+'\')" value=\"'+options.model.name+'\" class="k-textbox" style="width:100%">')
+	                        .appendTo(container);
+	                   }
+		            },
+		                    {
+		                field: "comments",
+		                title: "<@spring.message "spe.comments"/>",
+		                width: 100,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    }
+		            },
+		                    {
+		                field: "fileSize",
+		                title: "<@spring.message "spe.filesize"/>",
+		                width: 80,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+	                    template:function(dataItem){
+	                    	return Math.ceil((dataItem.fileSize)/1000);
+	                    }
+		            },
+		                    {
+		                field: "uploadDate",
+		                title: "<@spring.message "spe.uploaddate"/>",
+		                width: 80,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    }
+		            },{
+		                title: "<@spring.message "hap.action"/>",
+		                width: 100,
+		                attributes: {style: "text-align:center"},
+		                headerAttributes: {
+	                        "class": "table-header-cell",
+	                        style: "text-align: center"
+	                    },
+		                template:function(dataItem){
+		                	var buttons = '';
+		                	//当文件名为供应商佣金表时启用
+		                	var specialButtons = '&nbsp;<input type="button" onclick="deleteFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" disabled="disabled" value="<@spring.message "hap.delete"/>">&nbsp;<input type="button" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" value="<@spring.message "hap.download"/>">';
+							//如果没上传文件，删除和下载按钮禁用
+		                	if(dataItem.fileId != '' && dataItem.fileId != undefined){
+    		                	buttons = '&nbsp;<input type="button" onclick="deleteFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" value="<@spring.message "hap.delete"/>">&nbsp;<input type="button" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" value="<@spring.message "hap.download"/>">';
+							}
+							//否则，启用删除和下载
+		                	else buttons = '&nbsp;<input type="button" onclick="deleteFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" disabled="disabled" value="<@spring.message "hap.delete"/>">&nbsp;<input type="button" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" disabled="disabled" value="<@spring.message "hap.download"/>">';
+		                	//文件名为空，不允许上传
+		                	if(dataItem.name == ""){
+    		                	return '<input type="button" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px" disabled="disabled" value="<@spring.message "sysfile.upload"/>">'+buttons;
+							}
+		                	//文件名为特定情况，启用特定按钮
+		                	else if(dataItem.name == "供应商佣金表"){
+		                		return '<input type="button" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px"  value="<@spring.message "sysfile.upload"/>">'+specialButtons;
+							}
+		                	//返回
+		                	return '<input type="button" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" class="btn btn-info" style="width:60px"  value="<@spring.message "sysfile.upload"/>">'+buttons;
+		                }
+		            }
+		        ],
+		        toolbar: kendo.template($("#template").html()),
+		        editable: true
+		    }).data('kendoGrid');;
+		    /* -----------------------------附件Grid-----------------------------*/
+			
+		    /* --------------------------------------------------------函数区--------------------------------------------------------*/
+		    
+		    //复制数据
+		    function copyData(flag){
+		    	if(flag == 'Y'){
+		    		$("#settleContractName").val($("#contractName").val());
+			    	$("#settleBr").val($("#br").val());
+			    	$("#settleCi").val($("#ci").val());
+			    	$("#settleAddressMessage").val($("#addressMessage").val());
+			    	viewModel.model.set("settleContractName",$("#contractName").val());
+			    	viewModel.model.set("settleBr",$("#br").val());
+			    	viewModel.model.set("settleCi",$("#ci").val());
+			    	viewModel.model.set("settleAddressMessage",$("#addressMessage").val());
+			    	validateEmpty("settleContractName");
+			    	validateEmpty("settleBr");
+			    	validateEmpty("settleCi");
+			    	validateEmpty("settleAddressMessage");
+		    	}
+		    }
+		    
+		    //删除行数据
+		    function deleteLine(uid){
+		    	kendo.ui.showConfirmDialog({
+            		title:'确认框',
+                    message:'<@spring.message "spe.deleteconfirm"/>',
+                }).done(function (e) {
+                	if (e.button == 'OK') {
+                		var grid = $("#settlegrid").data("kendoGrid");
+                		var data = settledataSource.getByUid(uid);
+						if(contractId == 0){
+							settledataSource.remove(data);
+            		    	grid.refresh();
+						}else{
+							var array = [];
+							array.push(data);
+							$.ajax({
+                    			url:"${base.contextPath}/supplier/settle/remove",
+                    			type : "POST",
+                    			dataType : "json",
+        	                    contentType : "application/json",
+                    			data:JSON.stringify(array),
+                    			success : function(res) {
+                    				if(res.success == true){
+                    					datas = settledataSource.data();
+                    					for(var i = 0;i < datas.length; i ++){
+                    						if(datas[i].fileId == data.fileId){
+                    							settledataSource.remove(datas[i]);
+                    							grid.refresh();
+                    						}
+                    					}
+                    				}else{
+                    					kendo.ui.showErrorDialog({
+                                            title    : '错误',
+                                            message  : res.message
+                                        })
+                    				}
+            	                },
+                    		})
+						}
+                		
+                	}
+    	        });
+		    };
+    
+		    //关闭tab页
+		    function closeTab(id){
+		    	var parent = window.parent.parent.$("#mainTab");
+		    	var mainTab = parent.data("kendoTabStrip");
+		        var idx = jQuery.inArray(id,mainTab.tabids),
+		        activeIndex = mainTab.tabGroup.children('li.k-state-active').index();
+		        if(idx == -1) return;
+		        mainTab.remove(idx);
+		        if (activeIndex == idx ) {
+		            if (mainTab.tabids.length >= idx + 1) mainTab.select(idx)
+		            else if (idx - 1 >= 0) mainTab.select(idx - 1);
+		        }
+		    };
+		    
+		    //获取标题
+		    function getTitle(supplierId){
+		    	window.parentPage = window.parent;
+		    	console.log(parentPage.levelData);
+		    	var level1 = parentPage.levelData['key'+contractId][0].levelText;
+		    	var level2 = parentPage.levelData['key'+contractId][1].levelText;
+		    	var level3 = parentPage.levelData['key'+contractId][2].levelText;
+		    	var title = level1;
+	    		if(typeof(level2) != "undefined" && level2 != null && level2 != ''){
+		    		title = title+">"+level2;
+		    	}
+		    	if(typeof(level3) != "undefined" && level3 != null && level3 != ''){
+		    		title = title+">"+level3;
+		    	}
+		    	return title;
+		    	
+		    }
+		    
+			//取消按钮
+        	function cancel(){
+        		parentPage.$("#dialog").data("kendoWindow").close();
+   			};
+		    
+		    //添加行数据
+        	function addRow(id){
+        		var grid = $("#"+id).data('kendoGrid');
+        		if(id=="grid"){
+        			var gridData = dataSource.data();
+            		if(gridData.length == 0){
+            			grid.addRow();
+            		}else{
+            			if(gridData[0].name == ""){
+            				return;
+            			}
+            			if(gridData[0].fileSize == ""){
+            				kendo.ui.showErrorDialog({
+                                title    : '错误',
+                                message  : '<@spring.message "spe.pleaseuploadfile"/>'
+                            })
+            			}
+            			else grid.addRow();
+            		}
+        		}else{
+        			grid.addRow();
+        		}
+        		
+        	};
+        	
+        	//提交数据
+        	function submit(){
+        		var settleGridData = settledataSource.data();
+        		for(var i=0;i<settleGridData.length;i++){
+        			if(settleGridData[i].costName == "" || settleGridData[i].settleTypeCode == ""
+        					|| settleGridData[i].amount == "" || settleGridData[i].currencyCode == ""){
+        				kendo.ui.showErrorDialog({
+    	                    title    : '错误',
+    	                    message  : '<@spring.message "spe.settleerror"/>'
+    	                })
+    	                return;
+        			}
+        			for(var j=0;j<settleGridData.length;j++){
+        				if(settleGridData[i].costName == settleGridData[j].costName && i!=j){
+        					kendo.ui.showErrorDialog({
+        	                    title    : '错误',
+        	                    message  : '<@spring.message "spe.settlenamerepeat"/>'
+        	                })
+        	                return;
+        				}
+        			}
+        		}
+        		var gridData = dataSource.data();
+        		if(gridData.length == 0){
+        			kendo.ui.showErrorDialog({
+	                    title    : '错误',
+	                    message  : '<@spring.message "spe.pleaseuploadfile"/>'
+	                })
+	                return;
+        		}
+        		for(var i=0;i<gridData.length;i++){
+        			if(gridData[i].fileId == "" || gridData[i].fileId == 0 || gridData[i].fileId == undefined){
+    					kendo.ui.showErrorDialog({
+    	                    title    : '错误',
+    	                    message  : '<@spring.message "spe.pleaseuploadfile"/>'
+    	                })
+    	                return;
+    				};
+        		}
+        		
+        		var names = [];
+        		for(var i=0;i<gridData.length;i++){
+        			names.push(gridData[i].name);
+        		}
+        		//校验重名
+        		for(var i=0;i<names.length;i++){
+        			for(var j=0;j<names.length;j++){
+            			if(names[i] == names[j] && i!=j){
+            				kendo.ui.showErrorDialog({
+                                title    : '错误',
+                                message  : '<@spring.message "spe.filenamenotsame"/>'
+                            })
+                            return;
+            			}
+            		}
+        		};
+        		if($.inArray("供应商佣金表",names)== -1){
+        			kendo.ui.showErrorDialog({
+                        title    : '错误',
+                        message  : '<@spring.message "spe.musthavefiles"/>'
+                    })
+                    return;
+        		}
+        		var baseIds = getFormIdsByFormId('mainform');
+        		//baseIds.push.apply(baseIds,statusIds);
+        		if(submitValidate(baseIds)){
+        			viewModel.model['sameSettle'] = $("#checkbox").data('kendoCheckbox').value();
+					var unique = zeroModal.loading(6);
+					var grid1 = $('#grid');
+					var grid2 = $('#settlegrid');
+					var requestData = {};
+					requestData["attachData"] = grid1;
+					requestData["settleData"] = grid2;
+					Hap.submitForm({
+            			formModel:viewModel.model,
+            			url : '${base.contextPath}/spe/contract/submit',
+            			grid:requestData,
+            			success : function(json) {
+            				zeroModal.close(unique);    						
+            				if(json.success == true){    							
+            					kendo.ui.showInfoDialog({                		        	
+            						title:'成功',                		        	
+            						message: '<@spring.message "hap.tip.success"/>'                		        
+            					});                        		
+            					viewModel.model.__status="update";                        		
+            					viewModel.model.attachData = null;                        		
+            					var responseData = json.rows[0];                        		
+            					contractId = responseData.contractId;                        		
+            					dataSource.read();                        		
+            					settledataSource.read();                        	
+            				}else{                        		
+            					kendo.ui.showErrorDialog({                		        	
+            						title:'失败！',                		        	
+            						message: json.message                		        
+            						})                        	
+            				}
+                        },
+	                    failure : function(msg){
+	                    	zeroModal.close(unique);
+	                    	kendo.ui.showErrorDialog({
+            		        	title:'失败！',
+            		        	message: msg.message
+            		        })
+	                    }
+            		});
+        		}
+        	};
+        	
+        	//判断文件名是否存在
+        	function validateGridName(uid){
+        		if($("#gridName").val() != ""){
+        			document.getElementById("attacheUpload"+uid).disabled="";
+        		}else{
+        			document.getElementById("attacheUpload"+uid).disabled="disabled";
+        		}
+        	};
+        	
+        	/* --------------------------------------上传--------------------------------------*/
+        	var uidData;
+        	function upload(uid){
+        		uidData = uid;
+        		data = dataSource.getByUid(uidData);
+        		if(data.fileId != "" && data.fileId != undefined){
+        			kendo.ui.showConfirmDialog({
+                		title:'确认框',
+                        message:'<@spring.message "spe.recoverfile"/>',
+                    }).done(function (e) {
+                    	if (e.button == 'OK') {
+                    		window.fileWin = $("#fileWin").kendoWindow({
+                                title: '<@spring.message "sysfile.upload"/>',
+                                width: 400,
+                                height: 250,
+                                modal: true
+                            }).data("kendoWindow");
+                            fileWin.center().open();
+                    	}
+        	        });
+        		}
+        		else{
+        			window.fileWin = $("#fileWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open();
+        		}
+        		
+        	}
+        	$("#files").kendoUpload({
+        	    async        : {
+        	        saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        	    },
+        	    validate:function(e){
+        	    	if(e.files[0].validationErrors != undefined && e.files[0].validationErrors.length != 0){
+        	    		kendo.ui.showErrorDialog({
+        	                title    : '上传失败',
+        	                message  : '只允许上传jpg,png,pdf,doc,xls,xlsx,docx类型!'
+        	            })
+        	    	}
+        	    },
+				validation: {
+        	        allowedExtensions: ['jpg','png','pdf','doc','xls','xlsx','docx']
+        	    },
+        	    showFileList : false,
+        	    upload       : onUpload,
+        	    success      : onSuccess
+        	});
+        	
+    	    function onUpload(e){
+    	    		e.data = {
+    	    				modularName:'SPE',
+    	    				maxSize:51200
+    	    	    }
+    	    };
+        	function onSuccess(e){
+        		if(e.response.success){
+                    var grid = $("#grid").data("kendoGrid");
+                    var data = grid.dataSource.getByUid(uidData);
+                    if(data.fileId != "" && data.fileId != undefined){
+						data.oldFileId = data.fileId;
+                    }
+                    data.fileSize = e.response.file.fileSize;
+                    data.fileId = e.response.file.fileId;
+                    data._token = e.response.file._token;
+                    var newTime = new Date(e.response.file.uploadDate);
+                    newTime = Hap.formatDateTime(newTime);
+                    data.uploadDate = newTime;
+                    data.dirty = true;
+                    grid.refresh();
+            		document.getElementById("attacheDownload"+uidData).disabled="";
+            		fileWin.close();
+            		kendo.ui.showInfoDialog({
+                        title    : '成功',
+                        message  : '<@spring.message "spe.pleasesavedata"/>'
+                    })
+        		}else{
+        			kendo.ui.showErrorDialog({
+                        title    : '错误',
+                        message  : e.response.message
+                    })
+        		}
+        	}
+        	/* --------------------------------------上传--------------------------------------*/
+        	
+        	//删除文件
+        	function deleteFile(uid){
+        		kendo.ui.showConfirmDialog({
+            		title:'确认框',
+                    message:'<@spring.message "hap.tip.delete_confirm"/>',
+                }).done(function (e) {
+                	if (e.button == 'OK') {
+                		var grid = $("#grid").data("kendoGrid");
+                		var data = dataSource.getByUid(uid);
+                		if(data.fileId != "" && data._token != "" && data.fileId != undefined && data._token != undefined){
+                			$.ajax({
+                    			url:"${base.contextPath}/supplier/archives/attach/remove",
+                    			type : "POST",
+                    			data:{
+                    				fileId:data.fileId,
+                    				token:data._token
+                    			},
+                    			success : function(res) {
+                    				if(res.message == "success"){
+                    					datas = dataSource.data();
+                    					for(var i = 0;i < datas.length; i ++){
+                    						if(datas[i].fileId == data.fileId){
+                    							dataSource.remove(datas[i]);
+                    							grid.refresh();
+                    						}
+                    					}
+                    				}else{
+                    					kendo.ui.showErrorDialog({
+                                            title    : '错误',
+                                            message  : res.message
+                                        })
+                    				}
+            	                },
+                    		})
+                		}else{
+                			datas = dataSource.data();
+        					for(var i = 0;i < datas.length; i ++){
+        						if(datas[i].uid == data.uid){
+        							dataSource.remove(datas[i]);
+        							grid.refresh();
+        						}
+        					}
+                		}
+                		
+                	}
+    	        });
+        	};
+        	
+        	//下载文件
+        	function downloadFile(uid) 
+       		{ 
+        		var data = dataSource.getByUid(uid);
+        		$.ajax({
+        			 url : '${base.contextPath}/commons/attach/validateFile',
+	                 type : "POST",
+	                 dataType : "json",
+	                 data : {
+	                	 fileId:data.fileId,
+                         token:data._token
+                     },
+	                 success : function(json) {
+	                        if(json.success == true){
+	                        	url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+	                   	   		var iframe = document.getElementById("ifile");
+	                   	   		iframe.src=url;
+	                        }else{
+	                        	if(json.message != "" && json.message != undefined && json.message != null){
+	                        		kendo.ui.showErrorDialog({
+		                                title    : '错误',
+		                                message  : json.message
+		                            })
+	                        	}else{
+	                        		kendo.ui.showErrorDialog({
+		                                title    : '错误',
+		                                message  : '<@spring.message "fms.file_not_exists"/>'
+		                            })
+	                        	}
+	                        	
+	                        }
+	                 },
+        		})
+       			
+       		};
+       		/* --------------------------------------------------------函数区--------------------------------------------------------*/
+         </script>
+        
+</div>
+
+
+
+
+
+
+</body>
+</html>

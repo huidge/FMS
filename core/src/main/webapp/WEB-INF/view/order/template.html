@@ -1,0 +1,338 @@
+<#--
+ * description: 话术模板
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?templateTypeData=ORD.TEMPLATE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?applyClassData=ORD.APPLY_CLASS" type="text/javascript"></script>
+<link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+</script>
+<div id="appWin" style="display: none;"></div>
+<body>
+<div id="page-content">
+    <div class="panel">
+        <div id="query_form">
+            <form class="form-horizontal" style="margin-top: 5px;">
+                <div class="panel-body">
+                    <div class="col-xs-12" >
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdTemplate.templateType"/></label>
+                                <div class="col-xs-8">
+                                    <input id="templateTypeCode" name="templateTypeCode" type="text" data-bind="value:model.templateTypeCode" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdTemplate.applyClass"/></label>
+                                <div class="col-xs-8">
+                                    <input id="applyClassCode" name="applyClassCode" type="text" data-bind="value:model.applyClassCode" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdTemplate.applyItem"/></label>
+                                <div class="col-xs-8">
+                                    <input id="applyItem" name="applyItem" type="text" data-bind="value:model.applyItem" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="panel-footer text-right">
+                    <span class="btn btn-primary" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                    <span class="btn btn-default" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $("#templateTypeCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: templateTypeData
+    });
+
+
+//    $("#channelSupplierId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "PRD_SUPPLIER_NAME")}, {}));
+
+    $("#applyClassCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: applyClassData
+    });
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/template/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/template/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/template/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/template/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "templateId",
+                fields: {
+                    enableFlag:{defaultValue: 'Y',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}
+                }
+            }
+        }
+    });
+
+    var thisRowData_g;
+
+    var grid = $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+//        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+            {
+                template: '<span onclick="newData()" class="btn btn-primary">' + '<i class="fa fa-plus-square" style="margin-right:3px;"></i>' +
+                '<@spring.message "hap.new"/></span>'
+            },
+            {
+                template: '<span onclick="saveData()" class="btn btn-success">'+ '<i class="fa fa-save"></i>'+
+                '<@spring.message "hap.save"/></span>'
+            },
+//            {
+//                template: '<span onclick="deleteData()" class="btn btn-danger">' + '<i class="fa fa-trash-o" style="margin-right:3px;"></i>' +
+//                '<@spring.message "hap.delete"/></span>'
+//            },
+            {
+                name: "cancel",
+                template: '<span class="btn btn-default k-grid-cancel-changes">' +
+                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+            }
+        ],
+        columns: [
+            {
+                field: "templateTypeCode",
+                title: '<@spring.message "fms.OrdTemplate.templateType"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.templateTypeCode;
+                    $.each(templateTypeData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "undefined") {
+                        return "";
+                    }
+                    return v;
+                },
+                editor: function(container, options){
+                    $('<input name="' + options.field + '" required validationMessage="<@spring.message "hap.error.nullexception"/>">')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            valuePrimitive: true,
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: templateTypeData
+                        });
+                },
+            },
+            {
+                field: "applyClass",
+                title: '<@spring.message "fms.OrdTemplate.applyClass"/>',
+                width: 120,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                editor: function(container, options) {
+                    //TODO set this row in var
+                    thisRowData_g = options.model;
+
+                    $('<span tabindex="-1" class="k-dropdown-wrap" onmouseover="showClear(1)" onmouseout="showClear(2)">' +
+                        '<input type="text" class="k-input" autocomplete="off" style="width:100%;height:25px" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly" name="' + options.field + '" id="applyClassCode">' +
+                        '<span class="k-icon k-i-close popupClear" id="clear" role="button" onclick="clearData()" style="display:none"></span>' +
+                        '<span onclick="select()" class="k-select" aria-label="select" role="button" tabindex="-1">' +
+                        '<span class="k-icon k-i-search"></span></span></span>')
+                        .appendTo(container)
+                }
+            },
+            {
+                field: "applyItem",
+                title: '<@spring.message "fms.OrdTemplate.applyItem"/>',
+                width: 150,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+            },
+            {
+                field: "enableFlag",
+                title: '<@spring.message "fms.OrdTemplate.enableFlag"/>',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {style: "text-align:center"},
+            },
+            {
+                title: '<@spring.message "hap.action"/>',
+                width: 80,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.templateId) {
+                        return '<a href="#" onclick="openTempLineWin('+dataItem.templateId+',\''+dataItem.applyClassCode+'\',\''+dataItem.applyItem+'\')"><@spring.message "prdclassset.manage"/></a>';
+                    } else {
+                        return '<a href="#"><@spring.message "prdclassset.manage"/></a>';
+                    }
+                }
+            },
+        ],
+        editable: true
+    }).data("kendoGrid");
+
+    function select(){
+        var url = 'template_class.html';
+        var appWin =  $("#appWin").kendoWindow({
+            width: 500,
+            height: 500,
+            title: '<@spring.message "fms.ordorder.item"/>',
+            content: url,
+            iframe:  true,
+            visible: false,
+            modal:true
+        }).data("kendoWindow");
+        appWin.center().open();
+    }
+
+    function showClear(data){
+        if(data == "1")$("#clear").css("display","");
+        else{
+            $("#clear").css("display","none");
+        }
+    };
+    function clearData(){
+        thisRowData_g.set('applyClassCode',null);
+    }
+
+    function openTempLineWin(templateId,applyClassCode,applyItem) {
+
+        if (templateId != null) {
+            var v = applyClassCode;
+            $.each(applyClassData,function(i,n){
+                if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                    v = n.meaning;
+                }
+            })
+
+            parent.openTab("template_line" + templateId,'<@spring.message "fms.ordtemplate.manage"/>' + ":" + v + "-" + applyItem + ")","order/template_line.html?templateId="+templateId)
+        }
+
+    }
+
+    function newData() {
+        $('#Grid').data('kendoGrid').addRow();
+    }
+
+    function saveData() {
+        $('#Grid').data('kendoGrid').saveChanges();
+    }
+
+    function deleteData() {
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

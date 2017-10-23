@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnEPlanTemplateSmallMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnEPlanTemplateSmall">
+        <result column="SMALL_ID" property="smallId" jdbcType="DECIMAL" />
+        <result column="BIG_ID" property="bigId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="TITLE" property="title" jdbcType="VARCHAR" />
+        <result column="AMOUNT_FORMULA" property="amountFormula" jdbcType="VARCHAR" />
+        <result column="FIXED_VALUE" property="fixedValue" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+<select id="queryList" parameterType="clb.core.pln.dto.PlnEPlanTemplateSmall" resultMap="BaseResultMap">
+		SELECT
+			small.SMALL_ID,
+			small.BIG_ID,
+			small.SEQ_NUM,
+			small.TITLE,
+			small.AMOUNT_FORMULA,
+			small.FIXED_VALUE,
+			small.PROGRAM_ID,
+			small.REQUEST_ID
+		FROM
+			fms_pln_e_plan_template_small AS small
+		WHERE
+			1 = 1
+			<if test="smallId != null">
+				AND small.SMALL_ID = #{smallId}
+			</if>
+			<if test="seqNum != null">
+				AND small.SEQ_NUM = #{seqNum}
+			</if>
+			<if test="bigId != null">
+				AND small.BIG_ID = #{bigId}
+			</if>
+			<if test="title != null">
+				AND small.TITLE = #{title}
+			</if>
+			<if test="amountFormula != null">
+				AND small.AMOUNT_FORMULA = #{amountFormula}
+			</if>
+			<if test="fixedValue != null">
+				AND small.FIXED_VALUE = #{fixedValue}
+			</if>
+		ORDER BY
+			small.SEQ_NUM ASC
+	</select>
+
+</mapper>

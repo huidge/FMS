@@ -1,0 +1,446 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?yesOrNo=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?fieldControlFunc=SYS.FIELD_CONTROL_FUNC" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?fieldName=SYS.FIELD_NAME" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?fieldValue=SYS.FIELD_VALUE" type="text/javascript"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function (e) {
+        	$(" input[ type='text' ] ").val();
+            var formData = viewModel.model.toJSON();
+            for (k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+    
+    $(document).ready(function(){
+	    //input事件，校验输入
+	    $("input").keyup(function(){
+				var name = $(this)[0].name;
+				addBlank(name);
+		});
+    })
+</script>
+<body>
+<div id="page-content">
+    <div class="panel">
+    <form class="form-horizontal" id="mainform">
+    		<div class="panel-body">
+			<div class="row" style="margin-bottom: 10px;">
+						<div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "sys.operate_permission.roleid"/></label>
+                                <div class="col-sm-9">
+                                    <input id="roleId" name="roleId" style="width: 100%" data-bind="value:model.roleId">
+							    	<script>
+							    	$("#roleId") 
+							    	.kendoLov($.extend(<@lov "LOV_ROLE"/>, {
+					                    	textField: 'roleName'
+					                    }));
+							    	</script>
+							    </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "sys.operate_permission.funcCode"/></label>
+                                <div class="col-sm-9">
+                                    <input  id="funcCode" style="width: 150px;float:left;margin-right:5px;" data-bind="value:model.funcCode">
+							        <script>
+							               $("#funcCode")
+							               .kendoDropDownList({
+						       				   dataSource : fieldControlFunc,
+						       					valuePrimitive: true,
+						              			dataTextField: "meaning",
+						              			dataValueField: "value"
+						         			});
+							        </script>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><@spring.message "sys.operate_permission.fieldName"/></label>
+                                <div class="col-sm-9">
+                                    <input  id="fieldName" style="width: 150px;float:left;margin-right:5px;" data-bind="value:model.fieldName">
+							        <script>
+							              $("#fieldName")
+							   				.kendoDropDownList({
+							   					dataSource : fieldName,
+						       					valuePrimitive: true,
+						              			dataTextField: "meaning",
+						              			dataValueField: "value"
+						         			});
+							        </script>
+                                </div>
+                            </div>
+                        </div>
+              </div>
+              </div>
+              <div class="panel-footer text-right">
+               		<span class="btn btn-success" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+               		<span class="btn btn-success" data-bind="click:resetForm" type="button"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                </div>
+		</form>
+	</div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+    <div style="clear: both;">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+
+				<!-- toolbar -->
+    			<script type="text/x-kendo-template" id="template">
+    			<div class="toolbar">
+    	        	<span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+       				<span class="btn btn-success" style="float:left;margin-right:5px;" onclick="saveData()"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+					<span class="btn btn-default k-grid-cancel-changes" style="float:left;margin-right:5px;"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span> 				
+				</div>
+    	        </script>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}/fms/sys/operate/permission";
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                	viewModel.model.set('permissionType',"FUNCTION");
+                	return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "permissionId",
+                fields: {
+                	roleId:{validation:{required:true}},
+                	funcCode:{validation:{required:true}},
+                	fieldName:{validation:{required:true}},
+                	fieldValue:{validation:{required:true}},
+                	permissionType:{defaultValue:'FUNCTION'},
+                	enableFlag:{validation:{required:true},defaultValue:'Y'}
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+                    {
+                field: "roleId",
+                title: '<@spring.message "sys.operate_permission.roleId"/>',
+                width: 120,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center;vertical-align:middle"
+                },
+                template: function (dataItem) {
+                    return dataItem['roleName'] || ''
+                },
+                editor: function (container, options) {
+                    $('<input required validationMessage="必输" name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoLov($.extend(<@lov "LOV_ROLE"/>, {
+                    	textField: 'roleName',
+                        model: options.model
+                    }));
+                    var name = "roleId_input";
+                    $("input[name$='"+name+"']").keyup(function(){
+        				var name = $(this)[0].name;
+        				addBlank(name);
+        			});
+           		}
+            },
+                    {
+                field: "funcCode",
+                title: '<@spring.message "sys.operate_permission.funcCode"/>',
+                width: 120,
+                template: function(dataItem){
+                    var v = dataItem.funcCode;
+                    $.each(fieldControlFunc,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 },
+                editor:function(container, options){
+                	$('<input required validationMessage="必输"  id="funcCode" name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        change:function(){
+                        	options.model.set('fieldName',null);
+                        	options.model.set('fieldValue',null);
+                        },
+       				   dataSource : {
+       					transport: {
+                               read: {
+                               	type:"POST",
+                                   dataType: "json",
+                                   url: _basePath+'/fms/sys/operate/permission/queryClassSetData?classNameIndex=1'
+                               }
+                           },
+                           schema: {
+                           	data:'rows'
+                           }
+       					},
+       					valuePrimitive: true,
+              			dataTextField: "meaning",
+              			dataValueField: "value"
+         			});
+                }
+                
+            },
+                    {
+                field: "fieldName",
+                title: '<@spring.message "sys.operate_permission.fieldName"/>',
+                width: 120,
+                template: function(dataItem){
+                    var v = dataItem.fieldName;
+                    $.each(fieldName,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 },
+                editor:function(container, options){
+                	$('<input required validationMessage="必输" id="gridfieldName" name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        change:function(){
+                        	options.model.set('fieldValue',"");
+                        },
+       				   dataSource : {
+       					transport: {
+		                        read: {
+		                        	   type:"POST",
+		                            url: _basePath+'/fms/sys/operate/permission/queryClassSetData'
+		                        },
+		       		            parameterMap: function (data,type) {
+		     		            	if (type === "read") {
+		     		            		var param = {"classNameIndex":'2','funcCode':options.model.funcCode};
+		     		                    return Hap.prepareQueryParameter(param, options)
+		     		                }
+		     		            }
+                           },
+                           schema: {
+                           	data:'rows'
+                           }
+       					},
+       					valuePrimitive: true,
+              			dataTextField: "meaning",
+              			dataValueField: "value"
+         			});
+                	if(options.model.funcCode == "" || options.model.funcCode == null || options.model.funcCode == undefined){
+                		var dropdownList = $('#gridfieldName').data("kendoDropDownList");
+                		dropdownList.enable(false);
+                	}
+                }
+            },
+                    {
+                field: "fieldValue",
+                title: '<@spring.message "sys.operate_permission.fieldValue"/>',
+                width: 120,
+                template: function(dataItem){
+                    var v = dataItem.fieldValue;
+                    var pv = dataItem.fieldName;
+                    $.each(fieldValue,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()
+                            && (n.parentValue||'').toLowerCase() == (pv||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 },
+                editor:function(container, options){
+                	$('<input required validationMessage="必输" id="gridfieldValue" name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                    	dataSource : {
+           					transport: {
+    	       						read: {
+    	                           		type:"POST",
+    	                            	url: _basePath+'/spe/Common/getCodeValuesByParentId'
+    	                            },
+    	           		            parameterMap: function (data,type) {
+    	        		            	if (type === "read") {
+    	        		            		var param = {"code":'SYS.FIELD_VALUE','parentValue':options.model.fieldName};
+    	        		                    return Hap.prepareQueryParameter(param, options)
+    	        		                }
+    	        		            }
+                               },
+                               schema: {
+                               	data:'rows'
+                               }
+           				},
+       					valuePrimitive: true,
+              			dataTextField: "meaning",
+              			dataValueField: "value"
+         			});
+                	if(options.model.funcCode == "" || options.model.funcCode == null || options.model.funcCode == undefined
+                	|| options.model.fieldName == "" || options.model.fieldName == null || options.model.fieldName == undefined){
+                		var dropdownList = $('#gridfieldValue').data("kendoDropDownList");
+                		dropdownList.enable(false);
+                	}
+                }
+            },
+                    {
+                field: "enableFlag",
+                title: '<@spring.message "sys.operate_permission.enableFlag"/>',
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center;vertical-align:middle"
+                },
+                width: 120,
+                template: function(dataItem){
+                    var v = dataItem.enableFlag;
+                    $.each(yesOrNo,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if(v != undefined) return v;
+                    return '';
+                 }, 
+                 editor: function(container, options){
+                     $('<input required validationMessage="必输" name="' + options.field + '"/>')
+                     .appendTo(container)
+                     .kendoDropDownList({
+                         dataTextField: "meaning",
+                         dataValueField: "value",
+                         valuePrimitive: true,
+                         dataSource: yesOrNo
+                     });
+                 }
+            }
+        ],
+        toolbar: kendo.template($("#template").html()),
+        editable: true
+    });
+
+    function addBlank(name) {
+    	var data = $("input[name$='"+name+"']").val();
+    	data = jQuery.trim(data)+" ";
+    	var e = jQuery.Event("keydown");//模拟一个键盘事件
+    	e.keyCode = 8;//keyCode=13是回车
+		$("input[name$='"+name+"']").trigger(e);
+    }
+    
+    function getChanges(grid){
+		var dataSource = grid.dataSource;
+    	created = dataSource.created();
+        updated = dataSource.updated();
+    	var changes = [];
+    	for(var i=0;i<created.length;i++){
+    		created[i].__status = 'add';
+    		changes.push(created[i]);
+    	}
+    	for(var i=0;i<updated.length;i++){
+    		updated[i].__status = 'update';
+    		changes.push(updated[i]);
+    	}
+    	return changes;
+	};
+	
+	 //校验是否为数字
+    function validateNumber(val){
+   	 if(!isNaN(val)){
+   		   return true;
+   		}else{
+   		   return false;
+   		}
+    }
+    
+    
+	function saveData() {
+    	var grid = $('#Grid').data('kendoGrid');
+    	var changes = getChanges(grid);
+    	console.log(changes);
+    	var success = false;
+    	for(var i=0;i<changes.length;i++){
+   			if(!validateNumber(changes[i].roleId)){
+   				kendo.ui.showErrorDialog({
+   		        	title:'错误',
+   		        	message: changes[i].roleId+'不存在！'
+   		        })
+   		        success = false;
+   		        return;
+   			}else{
+   				success = true;
+   			}
+    	}
+    	console.log(success);
+    	if(success){
+            $('#Grid').data('kendoGrid').saveChanges();
+		}
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

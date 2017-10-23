@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdAfterFollowMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdAfterFollow">
+        <result column="AFTER_FOLLOW_ID" property="afterFollowId" jdbcType="DECIMAL" />
+        <result column="AFTER_ID" property="afterId" jdbcType="DECIMAL" />
+        <result column="FOLLOW_USER_ID" property="followUserId" jdbcType="DECIMAL" />
+        <result column="FOLLOW_DATE" property="followDate" jdbcType="TIMESTAMP" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    </resultMap>
+
+<select id="queryByAfterId" parameterType="clb.core.order.dto.OrdAfterFollow" resultMap="BaseResultMap">
+	SELECT
+		foaf.AFTER_FOLLOW_ID,
+		foaf.AFTER_ID,
+		foaf.FOLLOW_USER_ID,
+		foaf.FOLLOW_DATE,
+		foaf.CONTENT,
+		foaf.FILE_ID,
+		foaf.PROGRAM_ID,
+		foaf.REQUEST_ID,
+		su.USER_NAME
+	FROM
+		fms_ord_after_follow AS foaf
+	LEFT JOIN sys_user su ON su.USER_ID = foaf.FOLLOW_USER_ID
+	WHERE
+		1 = 1
+		<if test="afterId != null">
+			AND foaf.AFTER_ID = #{afterId}
+		</if>
+		ORDER BY foaf.AFTER_FOLLOW_ID DESC
+</select>
+
+<select id="queryLastOrdAfterFollowByAfterId" parameterType="clb.core.order.dto.OrdAfterFollow" resultMap="BaseResultMap">
+	SELECT
+		foaf.AFTER_FOLLOW_ID,
+		foaf.AFTER_ID,
+		foaf.FOLLOW_USER_ID,
+		foaf.FOLLOW_DATE,
+		foaf.CONTENT,
+		foaf.FILE_ID,
+		foaf.PROGRAM_ID,
+		foaf.REQUEST_ID,
+		su.USER_NAME
+	FROM
+		fms_ord_after_follow AS foaf
+	LEFT JOIN sys_user su ON su.USER_ID = foaf.FOLLOW_USER_ID
+	where 
+		1 = 1
+		<if test="afterId != null">
+			AND foaf.AFTER_ID = #{afterId}
+		</if>
+	ORDER BY foaf.AFTER_FOLLOW_ID DESC limit 1
+</select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdFileMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdFile">
+        <result column="ORD_FILE_ID" property="ordFileId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="FILE_SEQ" property="fileSeq" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryOrdFile" parameterType="clb.core.order.dto.OrdFile" resultMap="BaseResultMap" >
+        SELECT
+        fof.ORD_FILE_ID,
+        fof.ORDER_ID,
+        fof.FILE_SEQ,
+        fof.FILE_ID,
+        fof.PROGRAM_ID,
+        fof.REQUEST_ID
+        FROM
+        fms_ord_file AS fof
+        WHERE 1=1
+        <if test = "orderId != null"> AND fof.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "fileSeq != null"> AND fof.FILE_SEQ = #{fileSeq , jdbcType=DECIMAL} </if>
+    </select>
+
+</mapper>

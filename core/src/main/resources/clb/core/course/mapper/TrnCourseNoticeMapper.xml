@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnCourseNoticeMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnCourseNotice">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="NOTICE" property="notice" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnCourseNotice"
+		resultMap="BaseResultMap">
+		SELECT
+		ftcn.*
+		from fms_trn_course_notice ftcn
+		WHERE 1=1
+		<if test="lineId !=null and lineId !=''">
+			and ftcn.LINE_ID =#{lineId}
+		</if>
+		
+		<if test="courseId !=null and courseId !=''">
+			and ftcn.COURSE_ID =#{courseId}
+		</if>
+	</select>
+
+</mapper>

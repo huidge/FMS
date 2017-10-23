@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.system.mapper.ClbCodeMapper">
+    <resultMap id="BaseResultMap" type="clb.core.system.dto.ClbCode">
+        <id column="CODE_ID" property="codeId" jdbcType="DECIMAL" />
+        <id column="PARENT_ID" property="parentId" jdbcType="DECIMAL" />
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="PARENT_DESCRIPTION" property="parentDescription" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <select id="selectCode" resultMap="BaseResultMap" >
+       SELECT cb.DESCRIPTION, 
+		      cb.parent_id,
+              (select cb2.DESCRIPTION
+                from sys_code_b cb2
+               where cb.parent_id=cb2.code_id) as parentDescription,
+             cb.CODE,
+			 cb.Code_Id,
+			 cb.Enabled_Flag,
+			 cb.Object_Version_Number
+       FROM sys_code_b cb
+		<where>
+			<if
+				test="code !=null and code.code !=null and code.code !=''">
+				and cb.code like concat('%',concat(#{code.code},'%'))
+			</if>
+			<if
+				test="code !=null and code.description !=null and code.description !=''">
+				and cb.description like concat('%',concat(#{code.description},'%'))
+			</if>
+			<if test="code !=null and code.codeId !=null and code.codeId !=''">
+				and cb.code_id = #{code.codeId}
+			</if>
+		</where>
+	</select>
+    
+    <select id="selectParentCode" resultMap="BaseResultMap">
+		SELECT cb.CODE_ID,
+			   cb.CODE,
+			   cb.DESCRIPTION
+          FROM sys_code_b cb
+		<where>
+		  <if test="code != null">
+		      and cb.code like  concat('%',concat(#{code},'%'))
+		  </if>
+		  <if test="description != null">
+		      and cb.description like concat('%',concat(#{description},'%'))
+		  </if>
+		   <if test="codeId != null">
+		      and cb.CODE_ID  <![CDATA[ <> ]]>  #{codeId}
+		  </if>
+		</where>
+	</select>
+
+</mapper>

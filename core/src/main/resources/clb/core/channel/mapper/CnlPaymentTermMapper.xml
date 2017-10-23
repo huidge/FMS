@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wanjun.feng on 17/4/19.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlPaymentTermMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlPaymentTerm">
+        <id column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_TERM_CODE" property="paymentTermCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CLASS_CODE" property="channelClassCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+        <result column="BASIC_DATE" property="basicDate" jdbcType="VARCHAR" />
+        <result column="CALM_PERIOD_NUMBER" property="calmPeriodNumber" jdbcType="VARCHAR" />
+        <result column="CALM_PERIOD_TYPE" property="calmPeriodType" jdbcType="VARCHAR" />
+        <result column="BALANCE_NUMBER" property="balanceNumber" jdbcType="VARCHAR" />
+        <result column="BALANCE_DATE1" property="balanceDate1" jdbcType="VARCHAR" />
+        <result column="BALANCE_DATE2" property="balanceDate2" jdbcType="VARCHAR" />
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <select id="selectMaxTermCode" resultType="java.lang.String">
+       select max(t.PAYMENT_TERM_CODE) from fms_cnl_payment_term t
+	</select>
+    
+    <select id="selectCnlPaymentTerms" resultMap="BaseResultMap">
+       SELECT 
+		  t.PAYMENT_TERM_ID,
+		  t.PAYMENT_TERM_CODE,
+		  t.CHANNEL_CLASS_CODE,
+		  t.CHANNEL_ID,
+		  fcc.CHANNEL_NAME,
+		  t.CLASS_NAME,
+		  t.BASIC_DATE,
+		  t.CALM_PERIOD_NUMBER,
+		  t.CALM_PERIOD_TYPE,
+		  t.BALANCE_NUMBER,
+		  t.BALANCE_DATE1,
+		  t.BALANCE_DATE2,
+		  t.ENABLED_FLAG,
+		  t.REQUEST_ID,
+		  t.PROGRAM_ID,
+		  t.OBJECT_VERSION_NUMBER,
+		  t.CREATED_BY,
+		  t.CREATION_DATE,
+		  t.LAST_UPDATED_BY,
+		  t.LAST_UPDATE_DATE,
+		  t.LAST_UPDATE_LOGIN 
+		FROM
+		  fms_cnl_payment_term t 
+		  LEFT JOIN fms_cnl_channel fcc 
+		    ON t.CHANNEL_ID = fcc.CHANNEL_ID 
+		<where>
+			<if test="paymentTerm !=null and paymentTerm.paymentTermCode !=null and paymentTerm.paymentTermCode !=''">
+				and t.payment_term_code = #{paymentTerm.paymentTermCode}
+			</if>
+			<if test="paymentTerm !=null and paymentTerm.channelId !=null and paymentTerm.channelId !=''">
+				and t.channel_id = #{paymentTerm.channelId}
+			</if>
+			<if test="paymentTerm !=null and paymentTerm.className !=null and paymentTerm.className !=''">
+				and t.class_name LIKE concat('%',concat(#{paymentTerm.className},'%'))
+			</if>
+		</where>
+		ORDER BY payment_term_id ASC
+	</select>
+</mapper>

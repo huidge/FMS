@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.course.mapper.TrnCourseMapper">
+    <resultMap id="BaseResultMap" type="clb.core.course.dto.TrnCourse">
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="COURSE_NUM" property="courseNum" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="IF_RELEASE" property="ifRelease" jdbcType="DECIMAL" />
+        <result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+        <result column="COURSE_DATE" property="courseDate" jdbcType="DATE" />
+        <result column="DURATION" property="duration" jdbcType="DECIMAL" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="TRAINING_METHOD" property="trainingMethod" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="PRD_DIVISION" property="prdDivision" jdbcType="VARCHAR" />
+        <result column="PRD_CLASS" property="prdClass" jdbcType="VARCHAR" />
+        <result column="ITEM_CLASS" property="itemClass" jdbcType="VARCHAR" />
+        <result column="LECTURER" property="lecturer" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+        <result column="CITY" property="city" jdbcType="VARCHAR" />
+        <result column="AREA" property="area" jdbcType="VARCHAR" />
+        <result column="PROVINCE_MEANING" property="provinceMeaning" jdbcType="VARCHAR" />
+        <result column="CITY_MEANING" property="cityMeaning" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="URL" property="url" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+        <result column="APP_FLAG" property="appFlag" jdbcType="VARCHAR" />
+        <result column="WECHAT_FLAG" property="wechatFlag" jdbcType="VARCHAR" />
+        <result column="PC_FLAG" property="pcFlag" jdbcType="VARCHAR" />
+        <result column="APP_PRICE" property="appPrice" />
+        <result column="COURSE_PRICE" property="coursePrice" />
+        <result column="COURSE_STATUS" property="courseStatus" />
+        <result column="BOUTIQUE_VIDEO" property="boutiqueVideo" jdbcType="VARCHAR" />
+        <result column="BOUTIQUE_URL" property="boutiqueUrl" jdbcType="VARCHAR" />
+        <result column="COURSE_INTRODUCTION" property="courseIntroduction" jdbcType="VARCHAR" />
+        <result column="LECTURER_INTRODUCTION" property="lecturerIntroduction" jdbcType="VARCHAR" />
+        <result column="FEEDBACK" property="feedback" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <resultMap id="AllFieldsMap" type="clb.core.course.dto.TrnCourse">
+        <result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="COURSE_NUM" property="courseNum" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="IF_RELEASE" property="ifRelease" jdbcType="DECIMAL" />
+        <result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+        <result column="COURSE_DATE" property="courseDate" jdbcType="TIMESTAMP" />
+        <result column="DURATION" property="duration" jdbcType="DECIMAL" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="TRAINING_METHOD" property="trainingMethod" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PRD_DIVISION" property="prdDivision" jdbcType="VARCHAR" />
+        <result column="PRD_CLASS" property="prdClass" jdbcType="VARCHAR" />
+        <result column="ITEM_CLASS" property="itemClass" jdbcType="VARCHAR" />
+        <result column="LECTURER" property="lecturer" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+        <result column="CITY" property="city" jdbcType="VARCHAR" />
+        <result column="AREA" property="area" jdbcType="VARCHAR" />
+        <result column="PROVINCE_MEANING" property="provinceMeaning" jdbcType="VARCHAR" />
+        <result column="CITY_MEANING" property="cityMeaning" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="URL" property="url" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
+        <result column="APP_FLAG" property="appFlag" jdbcType="VARCHAR" />
+        <result column="WECHAT_FLAG" property="wechatFlag" jdbcType="VARCHAR" />
+        <result column="PC_FLAG" property="pcFlag" jdbcType="VARCHAR" />
+        <result column="APP_PRICE" property="appPrice" />
+        <result column="COURSE_PRICE" property="coursePrice" />
+        <result column="COURSE_STATUS" property="courseStatus" />
+        <result column="BOUTIQUE_VIDEO" property="boutiqueVideo" jdbcType="VARCHAR" />
+        <result column="BOUTIQUE_URL" property="boutiqueUrl" jdbcType="VARCHAR" />
+        <result column="COURSE_INTRODUCTION" property="courseIntroduction" jdbcType="VARCHAR" />
+        <result column="LECTURER_INTRODUCTION" property="lecturerIntroduction" jdbcType="VARCHAR" />
+        <result column="FEEDBACK" property="feedback" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="enroll_Flag" property="enrollFlag"/>
+    </resultMap>
+
+	<resultMap id="AllFieldsMapByApp" type="clb.core.course.dto.AppTrnCourseRecent">
+		<result column="COURSE_ID" property="courseId" jdbcType="DECIMAL" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+		<result column="COURSE_DATE" property="courseDate" jdbcType="TIMESTAMP" />
+		<result column="LECTURER" property="lecturer" jdbcType="VARCHAR" />
+		<result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+		<result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
+		<!--<result column="COURSE_INTRODUCTION" property="courseIntroduction" jdbcType="VARCHAR" />-->
+	</resultMap>
+	
+	<select id="selectAllField" parameterType="clb.core.course.dto.TrnCourse"
+		resultMap="AllFieldsMap">
+		select * from (SELECT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		fss.NAME,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.COURSE_PRICE,
+		ftc.CURRENCY,
+		ftc.PROVINCE,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+        SELECT
+        count(1)
+        FROM
+        fms_trn_course_student ftcs
+        WHERE
+        ftcs.COURSE_ID = ftc.COURSE_ID
+        ) STUDENT_NUM,
+        (CASE WHEN ftc.STATUS != 'CANCELED' and ftc.STATUS != 'UNPUBLISHED' THEN 
+				(case when DATE_ADD(ftc.COURSE_DATE,INTERVAL ftc.DURATION minute) <![CDATA[ < ]]> NOW() then 'COMPLETE'
+					when ftc.COURSE_DATE <![CDATA[ > ]]> NOW() then 'NOTSTARTED' ELSE 'INPROCESS' END
+				)else ftc.STATUS END) COURSE_STATUS, 
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		ftc.COURSE_INTRODUCTION,
+		ftc.LECTURER_INTRODUCTION,
+		ftc.FEEDBACK,
+		sf.FILE_PATH,
+		scvt.meaning PROVINCE_MEANING,
+        scvt1.meaning CITY_MEANING,
+		CONCAT(scvt.meaning,scvt1.meaning) AREA
+		FROM fms_trn_course ftc
+			LEFT JOIN fms_spe_supplier fss 
+			ON fss.SUPPLIER_ID = ftc.SUPPLIER_ID
+			LEFT JOIN sys_file sf 
+			ON sf.FILE_ID = ftc.FILE_ID
+			LEFT JOIN sys_code_b sc
+	        ON SC.code = 'PUB.PROVICE'
+	        LEFT JOIN sys_code_value_b scvb
+	        ON scvb.code_id=sc.code_id
+	        AND scvb.value=ftc.PROVINCE
+	        LEFT JOIN sys_code_value_tl scvt
+	        ON scvt.code_value_id=scvb.code_value_id
+	        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+	        LEFT JOIN sys_code_b sc1
+	        ON SC1.code = 'PUB.CITY'
+	        LEFT JOIN sys_code_value_b scvb1
+	        ON scvb1.code_id=sc1.code_id
+	        AND scvb1.value=ftc.CITY
+	        LEFT JOIN sys_code_value_tl scvt1
+	        ON scvt1.code_value_id=scvb1.code_value_id
+	        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}) v 
+		<where>
+		<if test="courseId!=null and courseId!=''">
+			and v.COURSE_ID = #{courseId}
+		</if>
+		
+		<!-- <if test="startDate != null">
+			and ftc.COURSE_DATE &gt;=#{startDate,jdbcType=DATE}
+		</if>
+		<if test="endDate != null">
+			and ftc.COURSE_DATE &lt;=#{endDate,jdbcType=DATE}
+		</if> -->
+		
+		 <if test="startDate!=null and startDate!=''">
+		<![CDATA[   and DATE_FORMAT(v.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		<if test="endDate!=null and endDate!=''">
+		<![CDATA[    
+					and DATE_FORMAT(v.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if> 
+		
+		<if test="supplierId!=null and supplierId!=''">
+			and v.SUPPLIER_ID = #{supplierId}
+		</if>
+		
+		<!-- <if test="prdDiscount !=null and prdDiscount.prdDivision !=null and prdDiscount.prdDivision !=''">
+				and ftc.prd_division like concat('%',concat(#{prdDiscount.prdDivision},'%'))
+		</if>
+		<if test="prdDiscount !=null and prdDiscount.prdClass !=null and prdDiscount.prdClass !=''">
+				and ftc.prd_class like concat('%',concat(#{prdDiscount.prdClass},'%'))
+		</if>
+		 -->
+		
+		<if test="prdDivision !=null and prdDivision !=''">
+			and v.prd_division =#{prdDivision}
+		</if>
+		
+		<if test="prdClass !=null and prdClass !=''">
+			and v.prd_class =#{prdClass}
+		</if>
+		
+		<if test="itemClass!=null and itemClass!=''">
+			and v.ITEM_CLASS =#{itemClass}
+		</if>
+		
+		<if test = "area != null"> AND CONCAT(scvt.meaning,scvt1.meaning) = #{area , jdbcType=VARCHAR} </if>
+        <if test = "province != null"> AND v.PROVINCE = #{province , jdbcType=VARCHAR} </if>
+        <if test = "city != null"> AND v.CITY = #{city , jdbcType=VARCHAR} </if>
+        
+		<!-- <if test="city!=null and city!=''">
+			and v.CITY =#{city}
+		</if> -->
+		<!-- <if test="courseNum!=null and courseNum!=''">
+			and su.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+		</if> -->
+		
+		<!-- 没有su的表，别搞 -->
+		<if test="courseNum!=null and courseNum!=''">
+			and v.COURSE_NUM =#{courseNum}
+		</if> 
+		<if test="topic!=null and topic!=''">
+			and v.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+		<if test="duration!=null and duration!=''">
+			and v.DURATION =#{duration}
+		</if>
+		<if test="courseStatus !=null and courseStatus !=''">
+			and v.COURSE_STATUS =#{courseStatus}
+		</if>
+		</where>
+		ORDER BY v.COURSE_NUM DESC
+	</select>
+
+	<select id="selectAllFieldByApp" parameterType="clb.core.course.dto.TrnCourse"
+			resultMap="AllFieldsMapByApp">
+		select * from (SELECT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		fss.NAME,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.COURSE_PRICE,
+		ftc.CURRENCY,
+		ftc.PROVINCE,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+		SELECT
+		count(1)
+		FROM
+		fms_trn_course_student ftcs
+		WHERE
+		ftcs.COURSE_ID = ftc.COURSE_ID
+		) STUDENT_NUM,
+		(CASE WHEN ftc.STATUS != 'CANCELED' and ftc.STATUS != 'UNPUBLISHED' THEN
+		(case when DATE_ADD(ftc.COURSE_DATE,INTERVAL ftc.DURATION minute) <![CDATA[ < ]]> NOW() then 'COMPLETE'
+		when ftc.COURSE_DATE <![CDATA[ > ]]> NOW() then 'NOTSTARTED' ELSE 'INPROCESS' END
+		)else ftc.STATUS END) COURSE_STATUS,
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		ftc.COURSE_INTRODUCTION,
+		ftc.LECTURER_INTRODUCTION,
+		ftc.FEEDBACK,
+		sf.FILE_PATH,
+		scvt.meaning PROVINCE_MEANING,
+		scvt1.meaning CITY_MEANING,
+		CONCAT(scvt.meaning,scvt1.meaning) AREA
+		FROM fms_trn_course ftc
+		LEFT JOIN fms_spe_supplier fss
+		ON fss.SUPPLIER_ID = ftc.SUPPLIER_ID
+		LEFT JOIN sys_file sf
+		ON sf.FILE_ID = ftc.FILE_ID
+		LEFT JOIN sys_code_b sc
+		ON SC.code = 'PUB.PROVICE'
+		LEFT JOIN sys_code_value_b scvb
+		ON scvb.code_id=sc.code_id
+		AND scvb.value=ftc.PROVINCE
+		LEFT JOIN sys_code_value_tl scvt
+		ON scvt.code_value_id=scvb.code_value_id
+		AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+		LEFT JOIN sys_code_b sc1
+		ON SC1.code = 'PUB.CITY'
+		LEFT JOIN sys_code_value_b scvb1
+		ON scvb1.code_id=sc1.code_id
+		AND scvb1.value=ftc.CITY
+		LEFT JOIN sys_code_value_tl scvt1
+		ON scvt1.code_value_id=scvb1.code_value_id
+		AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}) v
+		<where>
+			<if test="courseId!=null and courseId!=''">
+				and v.COURSE_ID = #{courseId}
+			</if>
+
+			<!-- <if test="startDate != null">
+                and ftc.COURSE_DATE &gt;=#{startDate,jdbcType=DATE}
+            </if>
+            <if test="endDate != null">
+                and ftc.COURSE_DATE &lt;=#{endDate,jdbcType=DATE}
+            </if> -->
+
+			<if test="startDate!=null and startDate!=''">
+				<![CDATA[   and DATE_FORMAT(v.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')
+					  ]]>
+			</if>
+			<if test="endDate!=null and endDate!=''">
+				<![CDATA[
+					and DATE_FORMAT(v.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+			</if>
+
+			<if test="supplierId!=null and supplierId!=''">
+				and v.SUPPLIER_ID = #{supplierId}
+			</if>
+
+			<!-- <if test="prdDiscount !=null and prdDiscount.prdDivision !=null and prdDiscount.prdDivision !=''">
+                    and ftc.prd_division like concat('%',concat(#{prdDiscount.prdDivision},'%'))
+            </if>
+            <if test="prdDiscount !=null and prdDiscount.prdClass !=null and prdDiscount.prdClass !=''">
+                    and ftc.prd_class like concat('%',concat(#{prdDiscount.prdClass},'%'))
+            </if>
+             -->
+
+			<if test="prdDivision !=null and prdDivision !=''">
+				and v.prd_division =#{prdDivision}
+			</if>
+
+			<if test="prdClass !=null and prdClass !=''">
+				and v.prd_class =#{prdClass}
+			</if>
+
+			<if test="itemClass!=null and itemClass!=''">
+				and v.ITEM_CLASS =#{itemClass}
+			</if>
+
+			<if test = "area != null"> AND CONCAT(scvt.meaning,scvt1.meaning) = #{area , jdbcType=VARCHAR} </if>
+			<if test = "province != null"> AND v.PROVINCE = #{province , jdbcType=VARCHAR} </if>
+			<if test = "city != null"> AND v.CITY = #{city , jdbcType=VARCHAR} </if>
+
+			<!-- <if test="city!=null and city!=''">
+                and v.CITY =#{city}
+            </if> -->
+			<!-- <if test="courseNum!=null and courseNum!=''">
+                and su.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+            </if> -->
+
+			<!-- 没有su的表，别搞 -->
+			<if test="courseNum!=null and courseNum!=''">
+				and v.COURSE_NUM =#{courseNum}
+			</if>
+			<if test="topic!=null and topic!=''">
+				and v.TOPIC like CONCAT('%', #{topic}, '%')
+			</if>
+			<if test="duration!=null and duration!=''">
+				and v.DURATION =#{duration}
+			</if>
+			<if test="courseStatus !=null and courseStatus !=''">
+				and v.COURSE_STATUS =#{courseStatus}
+			</if>
+		</where>
+		ORDER BY v.COURSE_NUM DESC
+	</select>
+	
+	<select id="wsSelectAllField" parameterType="clb.core.course.dto.TrnCourse"
+		resultMap="AllFieldsMap">
+		SELECT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.CURRENCY,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+        SELECT
+        count(1)
+        FROM
+        fms_trn_course_student ftcs
+        WHERE
+        ftcs.COURSE_ID = ftc.COURSE_ID
+        ) STUDENT_NUM,
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		<if test="courseId!=null and courseId!=''">
+		ftc.COURSE_INTRODUCTION,
+		ftc.LECTURER_INTRODUCTION,
+		</if>
+		ftc.FEEDBACK,
+		sf.FILE_PATH 
+		<if test="createdBy!=null">
+		 ,CASE (SELECT ftsc.PAY_STATUS FROM fms_trn_course_student ftsc WHERE ftsc.COURSE_ID=ftc.COURSE_ID and ftsc.CREATED_BY=#{createdBy} and ftc.`STATUS`='NOTSTARTED'  LIMIT 1) 
+	      WHEN 'UNPAID' THEN 'P' 
+	      ELSE 'Q' END enroll_Flag  
+		</if>
+		FROM fms_trn_course_v ftc
+			LEFT JOIN sys_file sf 
+			ON sf.FILE_ID = ftc.FILE_ID
+		where ftc.STATUS in('INPROCESS','NOTSTARTED','COMPLETE')
+		<if test="courseId!=null and courseId!=''">
+			and ftc.COURSE_ID =#{courseId}
+		</if>
+		
+		 <if test="startDate!=null and startDate!=''">
+		<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		
+		<if test="courseDate!=null">
+		<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') =  DATE_FORMAT(#{courseDate}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		
+		<if test="endDate!=null and endDate!=''">
+		<![CDATA[    
+					and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if> 
+		
+		<if test="supplierId!=null and supplierId!=''">
+			and ftc.SUPPLIER_ID =#{supplierId}
+		</if>
+		<if test="itemClass!=null and itemClass!=''">
+			and ftc.ITEM_CLASS =#{itemClass}
+		</if>
+		<if test="city!=null and city!=''">
+			and ftc.CITY like CONCAT('%', #{city}, '%')
+		</if>
+		
+		<if test="address!=null and address!=''">
+			and ftc.address like CONCAT('%', #{address}, '%')
+		</if>
+		
+		<!-- 没有su的表，别搞 -->
+		<if test="courseNum!=null and courseNum!=''">
+			and ftc.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+		</if> 
+		<if test="topic!=null and topic!=''">
+			and ftc.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+		<if test="duration!=null and duration!=''">
+			and ftc.DURATION like CONCAT('%', #{duration}, '%')
+		</if>
+		<if test="status!=null and status!=''">
+			and ftc.STATUS =#{status}
+		</if>
+		<if test="lecturer!=null and lecturer!=''">
+			and ftc.lecturer like CONCAT('%', #{lecturer}, '%') 
+		</if>
+		<if test="appFlag!=null and appFlag!=''">
+			and ftc.APP_FLAG =#{appFlag}
+		</if>
+		<if test="wechatFlag!=null and wechatFlag!=''">
+			and ftc.WECHAT_FLAG =#{wechatFlag}
+		</if>
+		<if test="pcFlag!=null and pcFlag!=''">
+			and ftc.PC_FLAG =#{pcFlag}
+		</if>
+		<if test="prdDivision !=null and prdDivision !=''">
+				and ftc.prd_division =#{prdDivision}
+		</if>
+		<if test="prdClass !=null and prdClass !=''">
+				and ftc.prd_class=#{prdClass}
+		</if>
+		<if test="boutiqueVideo !=null and boutiqueVideo !=''">
+				and ftc.BOUTIQUE_VIDEO=#{boutiqueVideo}
+		</if>
+		<choose>
+	        <when test="orderBy!=null and orderBy!=''">
+	           and ftc.STATUS &lt;&gt; 'COMPLETE' 
+	           ORDER BY
+	           <if test="createdBy!=null">
+				 enroll_Flag ,
+			  	</if>
+	            #{orderBy} DESC
+	        </when>
+	        <otherwise>
+	           ORDER BY
+	           <if test="createdBy!=null">
+				 enroll_Flag ,
+			  	</if>
+	            ftc.COURSE_DATE DESC
+	        </otherwise>
+	    </choose>
+		
+	</select>
+
+    <!--取近期课程只取一个-->
+	<select id="wsSelectRecentCourse" parameterType="clb.core.course.dto.TrnCourse" resultMap="AllFieldsMap">
+		SELECT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.CURRENCY,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+		SELECT
+		count(1)
+		FROM
+		fms_trn_course_student ftcs
+		WHERE
+		ftcs.COURSE_ID = ftc.COURSE_ID
+		) STUDENT_NUM,
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		<if test="courseId!=null and courseId!=''">
+			ftc.COURSE_INTRODUCTION,
+			ftc.LECTURER_INTRODUCTION,
+		</if>
+		ftc.FEEDBACK,
+		sf.FILE_PATH
+		<if test="createdBy!=null">
+			,CASE (SELECT ftsc.PAY_STATUS FROM fms_trn_course_student ftsc WHERE ftsc.COURSE_ID=ftc.COURSE_ID and ftsc.CREATED_BY=#{createdBy} and ftc.`STATUS`='NOTSTARTED'  LIMIT 1)
+			WHEN 'UNPAID' THEN 'P'
+			ELSE 'Q' END enroll_Flag
+		</if>
+		FROM fms_trn_course_v ftc
+		LEFT JOIN sys_file sf
+		ON sf.FILE_ID = ftc.FILE_ID
+		where ftc.STATUS in('INPROCESS','NOTSTARTED','COMPLETE')
+		<if test="courseId!=null and courseId!=''">
+			and ftc.COURSE_ID =#{courseId}
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')
+					  ]]>
+		</if>
+		<if test="courseDate!=null">
+			<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') =  DATE_FORMAT(#{courseDate}, '%Y-%m-%d')
+					  ]]>
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			<![CDATA[
+					and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if>
+		<if test="supplierId!=null and supplierId!=''">
+			and ftc.SUPPLIER_ID =#{supplierId}
+		</if>
+		<if test="itemClass!=null and itemClass!=''">
+			and ftc.ITEM_CLASS =#{itemClass}
+		</if>
+		<if test="city!=null and city!=''">
+			and ftc.CITY like CONCAT('%', #{city}, '%')
+		</if>
+		<if test="address!=null and address!=''">
+			and ftc.address like CONCAT('%', #{address}, '%')
+		</if>
+		<!-- 没有su的表，别搞 -->
+		<if test="courseNum!=null and courseNum!=''">
+			and ftc.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+		</if>
+		<if test="topic!=null and topic!=''">
+			and ftc.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+		<if test="duration!=null and duration!=''">
+			and ftc.DURATION like CONCAT('%', #{duration}, '%')
+		</if>
+		<if test="status!=null and status!=''">
+			and ftc.STATUS =#{status}
+		</if>
+		<if test="lecturer!=null and lecturer!=''">
+			and ftc.lecturer like CONCAT('%', #{lecturer}, '%')
+		</if>
+		<if test="appFlag!=null and appFlag!=''">
+			and ftc.APP_FLAG =#{appFlag}
+		</if>
+		<if test="wechatFlag!=null and wechatFlag!=''">
+			and ftc.WECHAT_FLAG =#{wechatFlag}
+		</if>
+		<if test="pcFlag!=null and pcFlag!=''">
+			and ftc.PC_FLAG =#{pcFlag}
+		</if>
+		<if test="prdDivision !=null and prdDivision !=''">
+			and ftc.prd_division =#{prdDivision}
+		</if>
+		<if test="prdClass !=null and prdClass !=''">
+			and ftc.prd_class=#{prdClass}
+		</if>
+		<if test="boutiqueVideo !=null and boutiqueVideo !=''">
+			and ftc.BOUTIQUE_VIDEO=#{boutiqueVideo}
+		</if>
+		AND ftc.COURSE_DATE <![CDATA[  >=  ]]> current_timestamp()
+		ORDER BY ftc.COURSE_DATE
+	</select>
+
+	<!--取近期课程只取一个-->
+	<select id="wsSelectRecentCourseByApp" parameterType="clb.core.course.dto.TrnCourse" resultMap="AllFieldsMapByApp">
+		SELECT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.CURRENCY,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+		SELECT
+		count(1)
+		FROM
+		fms_trn_course_student ftcs
+		WHERE
+		ftcs.COURSE_ID = ftc.COURSE_ID
+		) STUDENT_NUM,
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		<if test="courseId!=null and courseId!=''">
+			ftc.COURSE_INTRODUCTION,
+			ftc.LECTURER_INTRODUCTION,
+		</if>
+		ftc.FEEDBACK,
+		sf.FILE_PATH
+		<if test="createdBy!=null">
+			,CASE (SELECT ftsc.PAY_STATUS FROM fms_trn_course_student ftsc WHERE ftsc.COURSE_ID=ftc.COURSE_ID and ftsc.CREATED_BY=#{createdBy} and ftc.`STATUS`='NOTSTARTED'  LIMIT 1)
+			WHEN 'UNPAID' THEN 'P'
+			ELSE 'Q' END enroll_Flag
+		</if>
+		FROM fms_trn_course_v ftc
+		LEFT JOIN sys_file sf
+		ON sf.FILE_ID = ftc.FILE_ID
+		where ftc.STATUS in('INPROCESS','NOTSTARTED','COMPLETE')
+		<if test="courseId!=null and courseId!=''">
+			and ftc.COURSE_ID =#{courseId}
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')
+					  ]]>
+		</if>
+		<if test="courseDate!=null">
+			<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') =  DATE_FORMAT(#{courseDate}, '%Y-%m-%d')
+					  ]]>
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			<![CDATA[
+					and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if>
+		<if test="supplierId!=null and supplierId!=''">
+			and ftc.SUPPLIER_ID =#{supplierId}
+		</if>
+		<if test="itemClass!=null and itemClass!=''">
+			and ftc.ITEM_CLASS =#{itemClass}
+		</if>
+		<if test="city!=null and city!=''">
+			and ftc.CITY like CONCAT('%', #{city}, '%')
+		</if>
+		<if test="address!=null and address!=''">
+			and ftc.address like CONCAT('%', #{address}, '%')
+		</if>
+		<!-- 没有su的表，别搞 -->
+		<if test="courseNum!=null and courseNum!=''">
+			and ftc.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+		</if>
+		<if test="topic!=null and topic!=''">
+			and ftc.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+		<if test="duration!=null and duration!=''">
+			and ftc.DURATION like CONCAT('%', #{duration}, '%')
+		</if>
+		<if test="status!=null and status!=''">
+			and ftc.STATUS =#{status}
+		</if>
+		<if test="lecturer!=null and lecturer!=''">
+			and ftc.lecturer like CONCAT('%', #{lecturer}, '%')
+		</if>
+		<if test="appFlag!=null and appFlag!=''">
+			and ftc.APP_FLAG =#{appFlag}
+		</if>
+		<if test="wechatFlag!=null and wechatFlag!=''">
+			and ftc.WECHAT_FLAG =#{wechatFlag}
+		</if>
+		<if test="pcFlag!=null and pcFlag!=''">
+			and ftc.PC_FLAG =#{pcFlag}
+		</if>
+		<if test="prdDivision !=null and prdDivision !=''">
+			and ftc.prd_division =#{prdDivision}
+		</if>
+		<if test="prdClass !=null and prdClass !=''">
+			and ftc.prd_class=#{prdClass}
+		</if>
+		<if test="boutiqueVideo !=null and boutiqueVideo !=''">
+			and ftc.BOUTIQUE_VIDEO=#{boutiqueVideo}
+		</if>
+		AND ftc.COURSE_DATE <![CDATA[  >=  ]]> current_timestamp()
+		ORDER BY ftc.COURSE_DATE
+	</select>
+
+	<select id="wsSelectEnrollCourse" parameterType="clb.core.course.dto.TrnCourse"
+		resultMap="AllFieldsMap">
+		SELECT DISTINCT
+		ftc.COURSE_ID,
+		ftc.FILE_ID,
+		ftc.COURSE_NUM,
+		ftc.STATUS,
+		ftc.IF_RELEASE,
+		ftc.TOPIC,
+		ftc.COURSE_DATE,
+		ftc.DURATION,
+		ftc.TYPE,
+		ftc.TRAINING_METHOD,
+		ftc.SUPPLIER_ID,
+		ftc.PRD_DIVISION,
+		ftc.PRD_CLASS,
+		ftc.ITEM_CLASS,
+		ftc.LECTURER,
+		ftc.PRICE,
+		ftc.APP_PRICE,
+		ftc.CURRENCY,
+		ftc.CITY,
+		ftc.ADDRESS,
+		(
+        SELECT
+        count(1)
+        FROM
+        fms_trn_course_student ftcs
+        WHERE
+        ftcs.COURSE_ID = ftc.COURSE_ID
+        ) STUDENT_NUM,
+		ftc.URL,
+		ftc.PASSWORD,
+		ftc.APP_FLAG,
+		ftc.PC_FLAG,
+		ftc.WECHAT_FLAG,
+		ftc.BOUTIQUE_VIDEO,
+		ftc.BOUTIQUE_URL,
+		ftc.COURSE_INTRODUCTION,
+		ftc.LECTURER_INTRODUCTION,
+		ftc.FEEDBACK,
+		sf.FILE_PATH 
+		 ,CASE ftc.`STATUS` WHEN 'NOTSTARTED' THEN  CASE ftcs.PAY_STATUS WHEN 'PAID' THEN 'Y' ELSE 'P' END else 'Y' END enroll_Flag
+		FROM fms_trn_course_student ftcs inner join fms_trn_course_v ftc on ftcs.COURSE_ID=ftc.COURSE_ID
+			LEFT JOIN sys_file sf 
+			ON sf.FILE_ID = ftc.FILE_ID
+		where ftc.STATUS in('INPROCESS','NOTSTARTED','COMPLETE')  
+		<if test="courseId!=null">
+			and ftcs.CHANNEL_ID=#{channelId}
+		</if>
+		<if test="createdBy!=null">
+			and ftcs.created_by =#{createdBy}
+		</if>
+		<if test="courseId!=null and courseId!=''">
+			and ftc.COURSE_ID =#{courseId}
+		</if>
+		
+		 <if test="startDate!=null and startDate!=''">
+		<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') >=  DATE_FORMAT(#{startDate}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		
+		<if test="courseDate!=null">
+		<![CDATA[   and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') =  DATE_FORMAT(#{courseDate}, '%Y-%m-%d')  
+					  ]]>
+		</if>
+		
+		<if test="endDate!=null and endDate!=''">
+		<![CDATA[    
+					and DATE_FORMAT(ftc.COURSE_DATE, '%Y-%m-%d') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d')  ]]>
+		</if> 
+		
+		<if test="supplierId!=null and supplierId!=''">
+			and ftc.SUPPLIER_ID =#{supplierId}
+		</if>
+		<if test="itemClass!=null and itemClass!=''">
+			and ftc.ITEM_CLASS =#{itemClass}
+		</if>
+		<if test="city!=null and city!=''">
+			and ftc.CITY like CONCAT('%', #{city}, '%')
+		</if>
+		
+		<if test="address!=null and address!=''">
+			and ftc.address like CONCAT('%', #{address}, '%')
+		</if>
+		
+		<!-- 没有su的表，别搞 -->
+		<if test="courseNum!=null and courseNum!=''">
+			and ftc.COURSE_NUM like CONCAT('%', #{courseNum}, '%')
+		</if> 
+		<if test="topic!=null and topic!=''">
+			and ftc.TOPIC like CONCAT('%', #{topic}, '%')
+		</if>
+		<if test="duration!=null and duration!=''">
+			and ftc.DURATION like CONCAT('%', #{duration}, '%')
+		</if>
+		<if test="status!=null and status!=''">
+			and ftc.STATUS =#{status}
+		</if>
+		<if test="lecturer!=null and lecturer!=''">
+			and ftc.lecturer like CONCAT('%', #{lecturer}, '%') 
+		</if>
+		<if test="appFlag!=null and appFlag!=''">
+			and ftc.APP_FLAG =#{appFlag}
+		</if>
+		<if test="wechatFlag!=null and wechatFlag!=''">
+			and ftc.WECHAT_FLAG =#{wechatFlag}
+		</if>
+		<if test="pcFlag!=null and pcFlag!=''">
+			and ftc.PC_FLAG =#{pcFlag}
+		</if>
+		<if test="prdDivision !=null and prdDivision !=''">
+				and ftc.prd_division =#{prdDivision}
+		</if>
+		<if test="prdClass !=null and prdClass !=''">
+				and ftc.prd_class=#{prdClass}
+		</if>
+		<if test="boutiqueVideo !=null and boutiqueVideo !=''">
+				and ftc.BOUTIQUE_VIDEO=#{boutiqueVideo}
+		</if>
+		<choose>
+	        <when test="orderBy!=null and orderBy!=''">
+	           and ftc.STATUS &lt;&gt; 'COMPLETE' 
+	           and COURSE_DATE>=SYSDATE() ORDER BY ftc.COURSE_DATE
+	        </when>
+	        <otherwise>
+	           ORDER BY enroll_Flag, ftc.COURSE_DATE DESC
+	        </otherwise>
+	    </choose>
+		
+	</select>
+	
+	<select id="select70Minute" parameterType="clb.core.course.dto.TrnCourse"
+		resultMap="BaseResultMap">
+		SELECT * from fms_trn_course 
+		  where  DATE_ADD(NOW(),INTERVAL 70 MINUTE)>COURSE_DATE and COURSE_DATE>DATE_ADD(NOW(),INTERVAL 1 HOUR)
+		  and (ATTRIBUTE1 &lt;&gt; 'SEND_NOTICE' or ATTRIBUTE1 is null)
+	</select>
+	
+</mapper>

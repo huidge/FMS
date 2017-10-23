@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Created by wanjun.feng on 17/4/18. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdItemFileMapper">
+	<resultMap id="BaseResultMap" type="clb.core.production.dto.PrdItemFile">
+	    <id column="LINE_ID" property="lineId"/> 
+		<result column="ITEM_ID" property="itemId"/>
+		<result column="TYPE" property="type"/>
+		<result column="FILE_ID" property="fileId"/>
+		<result column="FILE_NAME" property="fileName" />
+		<result column="FILE_SIZE" property="fileSize" />
+		<result column="FILE_PATH" property="filePath" />
+		<result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+		<result column="DOWNLOAD_TIMES" property="downloadTimes"/>
+		<result column="ITEM_NAME" property="itemName"/>
+		<result column="NAME" property="name"/>
+		<result column="BIG_CLASS" property="bigClass"/>
+		<result column="MID_CLASS" property="midClass"/>
+		<result column="SUPPLIER_ID" property="supplierId"/>
+	</resultMap>
+
+    <!-- 根据产品id选择已经上传的文件 -->
+	<select id="selectByItemId"  resultMap="BaseResultMap" parameterType="clb.core.production.dto.PrdItemFile">
+		select
+		fpif.LINE_ID,
+		fpif.ITEM_ID,
+		fpif.TYPE,
+		fpif.FILE_ID,
+		fpif.FILE_NAME,
+		sf.FILE_SIZE,
+		sf.FILE_PATH,
+		fpif.DOWNLOAD_TIMES,
+		sf.LAST_UPDATE_DATE,
+        fpi.ITEM_NAME,
+        fpi.BIG_CLASS,
+        fpi.MID_CLASS,
+        fss.`NAME`,
+        fpi.SUPPLIER_ID
+		from fms_prd_item_file fpif, sys_file sf,fms_prd_items fpi, fms_spe_supplier fss
+		where fpif.FILE_ID = sf.FILE_ID
+		and fpif.ITEM_ID = fpi.ITEM_ID
+        and fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+		<if test="itemId != null and itemId != ''">
+			and fpif.ITEM_ID = #{itemId}
+		</if> 
+		<if test="type != null and type != ''">
+			and fpif.type = #{type}
+		</if>
+		<if test="name != null and name != ''">
+			and fss.`NAME` = #{name}
+		</if>
+		<if test="bigClass != null and bigClass != ''">
+			and fpi.BIG_CLASS = #{bigClass}
+		</if>
+		<if test="midClass != null and midClass != ''">
+			and fpi.MID_CLASS = #{midClass}
+		</if>
+		<if test="itemName != null and itemName != ''">
+			and fpi.ITEM_NAME like CONCAT('%', #{itemName}, '%')
+		</if>
+		<if test="supplierId != null and supplierId != ''">
+			and fpi.SUPPLIER_ID = #{supplierId}
+		</if> 
+		<if test="fileName != null and fileName != ''">
+			and fpif.FILE_NAME like CONCAT('%', #{fileName}, '%')
+		</if> 
+		ORDER BY fpif.TYPE DESC,fpif.FILE_NAME ASC 
+	</select>
+
+    
+</mapper>    

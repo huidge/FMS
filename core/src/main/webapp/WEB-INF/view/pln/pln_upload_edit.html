@@ -1,0 +1,253 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+	//获取"文章列表页面"传过来的 参数
+	var planId = '${RequestParameters.planId}';
+	var supplierName = '${RequestParameters.supplierName}';
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+ 
+	viewModel.model.set("planId", planId);
+	viewModel.model.set("supplierName", supplierName);
+	
+   //保存计划书库
+   function saveUploadEdit(){
+	   //年龄
+// 	   var age = $("#age").data("kendoNumericTextBox").value();
+// 	   //保额
+// 	   var libraryAmount = $("#libraryAmount").data("kendoNumericTextBox").value();
+// 	   //保费
+// 	   var premium = $("#premium").data("kendoNumericTextBox").value();
+// 	   //查看文件
+	   var importExcelFile = $("#importExcelFile").data("kendoUpload").getFiles();
+	   
+	   //判断文件必输校验
+	   if(importExcelFile.length==0){
+		   document.getElementById("uploadInfo").style.display='block';
+		   return;
+	   }
+	   
+	   //判断年龄必输校验
+// 	   if(age == null || age == ""){
+// 		   document.getElementById("ageInfo").style.display='block';
+// 		   return;
+// 	   }
+	   
+// 	   //判断保额必输校验
+// 	   if(libraryAmount == null || libraryAmount == ""){
+// 		   document.getElementById("libraryAmountInfo").style.display='block';
+// 		   return;
+// 	   }
+	   
+// 	   //判断保费必输校验
+// 	   if(premium == null || premium == ""){
+// 		   document.getElementById("premiumInfo").style.display='block';
+// 		   return;
+// 	   }
+	   
+	   Hap.submitForm({
+			url : '${base.contextPath}/fms/pln/plan/request/editUpload',
+			formModel : viewModel.model,
+			success : function(data) {
+				if (data.success) {
+					kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: $l('hap.tip.success')
+                    });
+					window.parent.$("#dialogUpload").data("kendoWindow").close();
+				} else {
+					kendo.ui.showErrorDialog({
+						message : "失败"
+					});
+				}
+
+			}
+		})
+   } 
+   
+   //取消
+   function cancel(){
+	   window.parent.$("#dialogUpload").data("kendoWindow").close();
+   }
+   
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<div style="width: 100%; margin-top: 5px;">
+			    <form id="uploadForm" class="form-horizontal">
+			         <div class="form-group">
+			            <label class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">计划书上传:</label>
+			            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+			            	<input type="file" class="form-control" id="importExcelFile" name="files"  required="required"/>
+			            	<span id="uploadInfo" style="display:none;color:red;font-size:15px;">文件必输！</span>
+			            	<iframe id="ifile" style="display:none"></iframe>
+			            </div>
+			       </div>
+			    </form>  
+				<form id="uploadFormInfo" class="form-horizontal">
+			       <div class="form-group">
+						<div class="col-sm-12" style="padding-top: 10px">
+							<label class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">年龄:</label>
+							<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+								<input class="form-control" id="age" data-bind="value:model.age" />
+								<span id="ageInfo" style="display:none;color:red;font-size:15px;">年龄必输！</span>
+	                            <script>
+	                               $("#age").kendoNumericTextBox({
+	                            	   decimals: 0,
+	                            	   format: "n0",
+	                                   min: 0,
+	                                   max:100,
+// 	                                   change: function() {
+//                                            if (this.value()) {
+//                                     		   document.getElementById("ageInfo").style.display='none';
+//                                            } else {
+//                                         	   document.getElementById("ageInfo").style.display='block';
+//                                            }
+//                                        }
+	                               });
+	                            </script>
+                            </div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12" style="padding-top: 10px">
+							<label class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">保额:</label>
+							<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+								<input class="form-control" id="libraryAmount" data-bind="value:model.libraryAmount" />
+                                <span id="libraryAmountInfo" style="display:none;color:red;font-size:15px;">保额必输！</span>
+                                <script>
+                                   $("#libraryAmount").kendoNumericTextBox({
+                                	   //decimals: 2,
+                                	   //format: "n0",
+                                	   step: 0.01,
+                                       min: 0,
+//                                        change: function() {
+//                                            if (this.value()) {
+//                                     		   document.getElementById("libraryAmountInfo").style.display='none';
+//                                            } else {
+//                                         	   document.getElementById("libraryAmountInfo").style.display='block';
+//                                            }
+//                                        }
+                                   });
+                                </script>       
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12" style="padding-top: 10px">
+							<label class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">保费:</label>
+							<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+								<input class="form-control"  id="premium" data-bind="value:model.premium"  />
+								<script>
+                                   $("#premium").kendoNumericTextBox({
+                                	   //decimals: 2,
+                                	  // format: "n0",
+                                	  step:0.01,
+                                      // min: 0,
+                                   });
+                                </script>  
+								<!-- <span id="premiumInfo" style="display:none;color:red;font-size:15px;">保费必输！</span>
+                                <script>
+                                   $("#premium").kendoNumericTextBox({
+                                	   decimals: 2,
+                                	   format: "n0",
+                                       min: 0,
+                                       change: function() {
+                                           if (this.value()) {
+                                     		   document.getElementById("premiumInfo").style.display='none';
+                                           } else {
+                                         	   document.getElementById("premiumInfo").style.display='block';
+                                            }
+                                        }
+                                   });
+                                </script> -->
+                            </div>       
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-12" style="padding-top: 10px">
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                <span class="btn btn-default" onclick="cancel()">
+						           <i class="fa fa-eraser" style="margin-right: 3px;"></i>取消
+						        </span> 	
+						    </div>    						
+							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+						       <span class="btn btn-success" onclick="saveUploadEdit()" type="submit" style="margin-left: 70%"><i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message"hap.save"/>
+						       </span> 
+                            </div>       
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+       
+		$("#importExcelFile").kendoUpload({
+		    async        : {
+		        saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		    },
+		    showFileList : false,
+		    upload       : onUpload,
+		    success      : onSuccess
+		});
+		
+		function onUpload(e){
+			e.data = {
+	                modularName:'PRD',
+	                allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+	                maxSize:20480
+	            }
+		};
+
+		function onSuccess(e){
+			document.getElementById("uploadInfo").style.display='none';
+		    if(e.response.success){
+		    	viewModel.model.fileId = e.response.file.fileId
+		    	console.log(viewModel.model);
+		    }else{
+		        kendo.ui.showErrorDialog({
+		            message  : e.response.message
+		        })
+		    }
+		}
+		
+			$.ajax({
+					type : "POST",
+					async : true,
+					url : "${base.contextPath}/fms/pln/plan/request/query",
+					data : {
+						planId : planId,
+						supplierName:supplierName
+					},
+					success : function(json) {
+						var row = json.rows[0] || {};
+						for ( var k in row) {
+							viewModel.model.set(k, row[k]);
+						}
+						
+						//判断金额类型
+						if(viewModel.model.amountType != null){
+							//保费
+							if(row.amountType == "IP"){
+								viewModel.model.set("premium", viewModel.model.amount);
+							}
+							//保额
+							if(row.amountType == "IC"){
+								viewModel.model.set("libraryAmount", viewModel.model.amount);
+							}
+						}
+						//判断出生日期
+						/* if(viewModel.model.age != null){
+							viewModel.model.set("age", viewModel.model.age);
+						} */
+					}
+			});
+			
+</script>
+</body>
+</html>

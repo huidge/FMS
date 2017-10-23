@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clb.core.wecorp.mapper.WecorpArticleMapper">
+
+        <resultMap id="articleMap" type="clb.core.wecorp.dto.WecorpArticle">
+            <id column="id" property="id" jdbcType="VARCHAR"/>
+            <result column="title" property="title" jdbcType="DECIMAL"/>
+            <result column="author" property="author" jdbcType="VARCHAR"/>
+            <result column="content" property="content" jdbcType="VARCHAR"/>
+            <result column="content_source_url" property="contentSourceUrl" jdbcType="VARCHAR"/>
+            <result column="cover" property="cover" jdbcType="VARCHAR"/>
+            <result column="digest" property="digest" jdbcType="VARCHAR"/>
+            <result column="status" property="status" jdbcType="VARCHAR"/>
+            <result column="group_number" property="groupNumber" jdbcType="VARCHAR"/>
+            <result column="group_sort_num" property="groupSortNum" jdbcType="VARCHAR"/>
+            <result column="last_update_date" property="lastUpdateDate" jdbcType="VARCHAR"/>
+        </resultMap>
+
+
+        <select id="getArticle" resultMap="articleMap" >
+          SELECT * FROM (
+               SELECT * FROM woa_article a2 WHERE a2.group_number IS NOT NULL GROUP BY a2.group_number
+                union all
+               SELECT * FROM woa_article a1 WHERE a1.group_number IS NULL
+              ) a ORDER BY a.LAST_UPDATE_DATE DESC
+        </select>
+
+        <select id="getArticleByGroupNumber" resultMap="articleMap" >
+            SELECT * FROM woa_article  WHERE group_number=#{groupNumber} ORDER BY group_sort_num ASC
+        </select>
+
+</mapper>

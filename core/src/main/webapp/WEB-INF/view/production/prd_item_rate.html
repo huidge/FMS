@@ -1,0 +1,126 @@
+<#include "../include/header.html">
+<body>
+ <div id="page-content" >
+        <form id="mainform"  class="form-horizontal" method="post" enctype="application/json;charset=UTF-8">
+			<div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">年缴保费系数</label>
+                    <div class="col-xs-5">
+                        <input id="oneyearRate"  required   data-bind="value:model.oneyearRate" style="width: 100%;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">月缴保费系数</label>
+                    <div class="col-xs-5">
+                        <input id="onemonthRate"  required  data-bind="value:model.onemonthRate" style="width: 100%;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">季缴保费系数</label>
+                    <div class="col-xs-5">
+                        <input id="quarterRate" required    data-bind="value:model.quarterRate" style="width: 100%;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right">半年缴保费系数</label>
+                    <div class="col-xs-5">
+                        <input id="halfyearRate" required  data-bind="value:model.halfyearRate" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+       </form>
+	<div class="panel-body" >
+		<button class="btn btn-default k-grid-cancel-changes" type="button"
+			id="cancel"
+			style="width: 100px; margin-right: 50px; margin-left: 150px;"
+			onclick="closeWindow();">
+			<i class="fa "></i>取消
+		</button>
+		<button class="btn btn-info" type="button" id="update"
+			style="width: 100px;" onclick="savaData();">
+			<i class="fa "></i>保存
+		</button>
+	</div>
+
+</div>
+	<script>
+		function GetQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);
+			if (r != null)
+				return unescape(r[2]);
+			return null;
+		}
+		var itemId = '${RequestParameters.itemId!0}';
+		var oneyearRate = '${RequestParameters.oneyearRate!''}';
+		var halfyearRate = '${RequestParameters.halfyearRate!''}';
+		var quarterRate = '${RequestParameters.quarterRate!''}';
+		var onemonthRate = '${RequestParameters.onemonthRate!''}';
+		$("#oneyearRate").val(oneyearRate=='null'?'':oneyearRate);
+		$("#halfyearRate").val(halfyearRate=='null'?'':halfyearRate);
+		$("#quarterRate").val(quarterRate=='null'?'':quarterRate);
+		$("#onemonthRate").val(onemonthRate=='null'?'':onemonthRate);
+		
+		$("#oneyearRate").kendoNumericTextBox({
+			format: "n4",
+			min: 0,
+            decimals: 4,
+            step: 0.01
+        });
+		$("#halfyearRate").kendoNumericTextBox({
+			format: "n4",
+			min: 0,
+            decimals: 4,
+            step: 0.01
+        });
+		$("#quarterRate").kendoNumericTextBox({
+			format: "n4",
+			min: 0,
+            decimals: 4,
+            step: 0.01
+        });
+		$("#onemonthRate").kendoNumericTextBox({
+			format: "n4",
+			min: 0,
+            decimals: 4,
+            step: 0.01
+        });
+		function closeWindow() {
+			window.parent.$("#premiumRateWindow").data("kendoWindow").close();
+		}
+
+		function savaData() {
+			var oneyearRate = $("#oneyearRate").val();
+			var halfyearRate = $("#halfyearRate").val();
+			var quarterRate = $("#quarterRate").val();
+			var onemonthRate = $("#onemonthRate").val();
+			$.post("${base.contextPath}/production/items/update", {itemId:itemId,oneyearRate:oneyearRate,halfyearRate:halfyearRate,quarterRate:quarterRate,onemonthRate:onemonthRate}, function (e) {
+                if(e.success){
+                	window.parent.viewModel.model.oneyearRate=oneyearRate;
+                	window.parent.viewModel.model.halfyearRate=halfyearRate;
+                	window.parent.viewModel.model.quarterRate=quarterRate;
+                	window.parent.viewModel.model.onemonthRate=onemonthRate;
+                	kendo.ui.showInfoDialog({
+                        title: '提示信息',
+                        message: '保存成功'
+                    }).done(function (event) {
+                        if (event.button == 'OK') {
+                        	closeWindow();
+                        }
+                    })
+                }else{
+                	kendo.ui.showErrorDialog({
+                        title: '提示信息',
+                        message: '保存失败!<br/>'
+                    }).done(function (event) {
+                        
+                    });
+                }
+            });
+		}
+	</script>
+</body>

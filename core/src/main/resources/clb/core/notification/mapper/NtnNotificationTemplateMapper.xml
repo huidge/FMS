@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.notification.mapper.NtnNotificationTemplateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.notification.dto.NtnNotificationTemplate">
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="OBJECT" property="object" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PLATFORM_FLAG" property="platformFlag" jdbcType="VARCHAR" />
+        <result column="PLATFORM_CONTENT" property="platformContent" jdbcType="VARCHAR" />
+        <result column="REDIRECT_PAGE" property="redirectPage" jdbcType="VARCHAR" />
+        <result column="MESSAGE_FLAG" property="messageFlag" jdbcType="VARCHAR" />
+        <result column="MESSAGE_CONTENT" property="messageContent" jdbcType="VARCHAR" />
+        <result column="WEBCHAT_FLAG" property="webchatFlag" jdbcType="VARCHAR" />
+        <result column="ORIGINAL_ID" property="originalId" jdbcType="VARCHAR" />
+        <result column="WEBCHAT_API" property="webchatApi" jdbcType="VARCHAR" />
+        <result column="WEBCHAT_CONTENT" property="webchatContent" jdbcType="VARCHAR" />
+        <result column="WHT_CONTENT" property="whtContent" jdbcType="VARCHAR" />
+        <result column="EMAIL_FLAG" property="emailFlag" jdbcType="VARCHAR" />
+        <result column="EMAIL_SUBJECT" property="emailSubject" jdbcType="VARCHAR" />
+        <result column="EMAIL_CONTENT" property="emailContent" jdbcType="VARCHAR" />
+        <result column="WHT_JUMP_URL" property="whtJumpUrl" jdbcType="VARCHAR" />
+        <result column="IMPORTANT_FLAG" property="importantFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<select id="selectAllField" parameterType="clb.core.notification.dto.NtnNotificationTemplate"
+		resultMap="BaseResultMap">
+		SELECT
+		fnnt.*
+		FROM fms_ntn_notification_template fnnt
+		WHERE 1=1
+		<if test="templateId!=null and templateId!=''">
+			and fnnt.TEMPLATE_ID =#{templateId}
+		</if>
+		<if test="templateCode!=null and templateCode!=''">
+			and fnnt.TEMPLATE_CODE =#{templateCode}
+		</if>
+		<if test="webchatApi!=null and webchatApi!=''">
+			and fnnt.WEBCHAT_API =#{webchatApi}
+		</if>
+		<if test="originalId !=null and originalId !=''">
+			and fnnt.ORIGINAL_ID =#{originalId}
+		</if>
+		<if test="object!=null and object!=''">
+			and fnnt.OBJECT =#{object}
+		</if>
+		<if test="name!=null and name!=''">
+			and fnnt.NAME like CONCAT('%', #{name}, '%')
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlPerformanceMapper">
+
+    <resultMap id="ResultMap" type="clb.core.channel.dto.CnlPerformanceStatistics">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="ORDER_QTY" property="orderQty" jdbcType="DECIMAL" />
+        <result column="ANTICIPATED_INCOME" property="anticipatedIncome" jdbcType="DECIMAL" />
+        <result column="ANTICIPATED_PAY_AMOUNT" property="anticipatedPayAmount" jdbcType="DECIMAL" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="MIDDLE_CLASS" property="middleClass" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="PerformanceResultMap" type="clb.core.channel.dto.CnlPerformanceDetail">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUM" property="orderNum" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS_NAME" property="bigClassName" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+        <result column="ANTICIPATED_PAY_AMOUNT" property="anticipatedPayAmount" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="ANTICIPATED_PAY_HKD_AMOUNT" property="anticipatedPayHKDAmount" jdbcType="DECIMAL" />
+        <result column="ANTICIPATED_INCOME_HKD_AMOUNT" property="anticipatedIncomeHKDAmount" jdbcType="DECIMAL" />
+        <result column="INCOME_TYPE" property="incomeType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="OrderResultMap" type="clb.core.order.dto.OrdOrder">
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="FIRST_YEAR_AMOUNT" property="firstYearAmount" jdbcType="DECIMAL" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
+        <result column="PAY_AMOUNT" property="payAmount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryFetReceivableByCondition" parameterType="clb.core.forecast.dto.FetReceivable" resultType="java.math.BigDecimal" >
+        SELECT IFNULL(SUM(result.HKD_AMOUNT), 0) FROM
+        (SELECT
+        ffre.HKD_AMOUNT,
+        ffre.RECEIVE_COMPANY_ID,
+        date_format(foo.EFFECTIVE_DATE, '%Y-%m') RECEIPT_PERIOD,
+        CASE foo.ORDER_TYPE
+        WHEN 'INSURANCE' THEN foo.EXPECT_COOL_DATE
+        WHEN 'BOND' THEN foo.ISSUE_DATE
+        WHEN 'IMMIGRANT' THEN foo.ISSUE_DATE
+        ELSE NULL
+        END 'BASE_DATE'
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo
+        WHERE 1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        ) result
+        WHERE 1 = 1
+        AND result.RECEIVE_COMPANY_ID = #{receiveCompanyId}
+        <if test="receiptPeriod != null and receiptPeriod != ''">
+            AND result.RECEIPT_PERIOD = #{receiptPeriod}
+        </if>
+        <if test="baseDate != null">
+            AND result.BASE_DATE <![CDATA[ >= ]]> #{baseDate}
+        </if>
+    </select>
+
+    <!--新增客户-->
+    <select id="queryNewCustomerQty" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.lang.Long" >
+        SELECT
+            count(1)
+        FROM
+            FMS_CTM_CUSTOMER cus
+        WHERE
+            1 = 1
+        AND (EXISTS (
+            SELECT
+                1
+            FROM
+                fms_ord_order foo
+            WHERE
+                (
+                    cus.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+                )
+            AND foo.CHANNEL_ID = #{channelId}
+        ) OR EXISTS (
+            SELECT
+            1
+            FROM
+            fms_ord_order foo
+            WHERE
+            (
+                cus.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+            )
+            AND foo.CHANNEL_ID = #{channelId}
+        ))
+        <if test="startDate != null">
+            AND cus.CREATION_DATE <![CDATA[ > ]]> #{startDate}
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND cus.CREATION_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+        </if>
+    </select>
+
+    <!--新增订单-->
+    <select id="queryNewOrderQty" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.lang.Long" >
+        SELECT
+            COUNT(DISTINCT foo.ORDER_NUMBER)
+        FROM
+            fms_fet_time_receivable ffre,
+            fms_ord_order foo
+        WHERE 1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        AND ffre.RECEIPT_TYPE = '1ZJF'
+    </select>
+
+    <!--生效订单-->
+    <select id="queryEffectiveOrderQty" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.lang.Long" >
+        SELECT COUNT(1)
+        FROM fms_ord_order foo
+        WHERE 1 = 1
+        AND (
+        (foo.ORDER_TYPE = 'INSURANCE'
+              AND foo.STATUS = 'POLICY_EFFECTIVE')
+        OR (foo.ORDER_TYPE = 'BOND'
+              AND foo.STATUS = 'ISSUE_SUCCESS')
+        OR (foo.ORDER_TYPE = 'IMMIGRANT'
+              AND foo.STATUS = 'BUY_SUCCESS')
+        )
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+              OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+              OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        AND foo.CHANNEL_ID = #{channelId}
+    </select>
+
+    <!--缴费总额-->
+    <select id="queryPayTotalAmount" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.math.BigDecimal" >
+        SELECT
+        IFNULL(SUM(ffre.AMOUNT * ffre.exchange_rate), 0)
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo
+        WHERE 1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate}
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        AND ffre.RECEIPT_TYPE LIKE '%ZJF'
+    </select>
+
+    <!--首页 “已确认收入”-->
+    <select id="queryConfirmedIncome" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.math.BigDecimal" >
+        SELECT
+            sum(ffcc.HKD_AMOUNT) HKD_AMOUNT
+        FROM
+            fms_fet_channel_check ffcc
+        WHERE
+            ffcc.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffcc.RECEIVE_COMPANY_ID = #{channelId}
+        AND ffcc.STATUS = 'YQR'
+        AND ffcc.VERSION = (
+            SELECT
+                MAX(tmp.VERSION)
+            FROM
+                fms_fet_channel_check tmp
+            WHERE
+                tmp.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+            AND tmp.RECEIVE_COMPANY_ID = #{channelId}
+            AND tmp.ORDER_ID = ffcc.ORDER_ID
+        )
+    </select>
+
+    <!--直客收益金额-->
+    <select id="queryDirectTotalAmount" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.math.BigDecimal" >
+        SELECT
+        IFNULL(SUM(ffre.HKD_AMOUNT), 0)
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo
+        WHERE 1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate}
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        AND ffre.RECEIPT_TYPE LIKE '%ZJF'
+    </select>
+
+    <!--不同状态订单数量-->
+    <select id="queryOrderStatusQty" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.lang.Long" >
+        select count(1)
+          from fms_ord_order foo
+         where 1 = 1
+           and foo.channel_id = #{channelId}
+           and (
+           (foo.ORDER_TYPE = 'INSURANCE'
+           and foo.`STATUS` in ${insuranceStatusArea})
+        <if test="bondStatusArea !=null and bondStatusArea!=''">
+           or (foo.ORDER_TYPE = 'BOND'
+           and foo.`STATUS` in ${bondStatusArea})
+        </if>
+        <if test="immigrantStatusArea !=null and immigrantStatusArea!=''">
+           or (foo.ORDER_TYPE = 'IMMIGRANT'
+           and foo.`STATUS` in ${immigrantStatusArea})
+        </if>
+        )
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+    </select>
+
+    <!--按照月份查询对应订单量、预计直客收益、预计缴费总额-->
+    <select id="queryBarData" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="ResultMap" >
+        SELECT
+          #{channelId} CHANNEL_ID,
+          COUNT(DISTINCT foo.ORDER_NUMBER) ORDER_QTY,
+          IFNULL(SUM(ffre.HKD_AMOUNT), 0) ANTICIPATED_INCOME,
+          IFNULL(SUM(ffre.AMOUNT * ffre.exchange_rate), 0) ANTICIPATED_PAY_AMOUNT
+        FROM
+            fms_fet_time_receivable ffre,
+            fms_ord_order foo
+        WHERE
+            1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        AND ffre.RECEIPT_TYPE = '1ZJF'
+    </select>
+
+    <!--按照产品分类数据饼图（大类）-->
+    <select id="queryPiePrdBig" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="ResultMap" >
+        SELECT
+        scv.MEANING BIG_CLASS,
+        COUNT(DISTINCT foo.ORDER_NUMBER) ORDER_QTY,
+        IFNULL(SUM(ffre.HKD_AMOUNT), 0) ANTICIPATED_INCOME,
+        IFNULL(SUM(ffre.AMOUNT * ffre.exchange_rate), 0) ANTICIPATED_PAY_AMOUNT
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo,
+        fms_prd_items fpi
+        JOIN sys_code_b scb ON (scb.`CODE` = 'PRD.PRODUCT_DIVISION')
+        JOIN sys_code_value_b scv ON (scv.CODE_ID = scb.CODE_ID AND fpi.BIG_CLASS = scv.`VALUE`)
+        WHERE
+        1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND foo.ITEM_ID = fpi.ITEM_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND ffre.RECEIPT_TYPE = '1ZJF'
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        GROUP BY scv.MEANING
+    </select>
+
+    <!--按照产品分类数据饼图（大类、中类）-->
+    <select id="queryPiePrdData" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="ResultMap" >
+        SELECT
+        scv.MEANING BIG_CLASS,
+        IFNULL(scvm.MEANING, scv.MEANING) MIDDLE_CLASS,
+        COUNT(DISTINCT foo.ORDER_NUMBER) ORDER_QTY,
+        IFNULL(SUM(ffre.HKD_AMOUNT), 0) ANTICIPATED_INCOME,
+        IFNULL(
+        SUM(
+        ffre.AMOUNT * ffre.exchange_rate
+        ),
+        0
+        ) ANTICIPATED_PAY_AMOUNT
+        FROM
+        fms_fet_time_receivable ffre
+        JOIN fms_ord_order foo ON ffre.ORDER_ID = foo.ORDER_ID
+        JOIN fms_prd_items fpi ON ffre.ITEM_ID = fpi.ITEM_ID
+        JOIN sys_code_b scb ON (
+        scb.CODE = 'PRD.PRODUCT_DIVISION'
+        )
+        JOIN sys_code_value_b scv ON (
+        scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = fpi.BIG_CLASS
+        )
+        LEFT JOIN sys_code_b scbm ON (
+        scbm.CODE = 'PRD.PRODUCT_CLASS'
+        )
+        LEFT JOIN sys_code_value_b scvm ON (
+        scvm.CODE_ID = scbm.CODE_ID
+        AND scvm.VALUE = fpi.MID_CLASS
+        )
+        WHERE
+        1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND ffre.RECEIPT_TYPE = '1ZJF'
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        GROUP BY scv.MEANING, scvm.MEANING
+        ORDER BY scv.MEANING, scvm.MEANING
+    </select>
+
+    <!--按照产品分类数据饼图-->
+    <select id="queryPieSpeData" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="ResultMap" >
+        SELECT
+        scv.MEANING BIG_CLASS,
+        fss.SUPPLIER_ID,
+        fss.`NAME` SUPPLIER_NAME,
+        COUNT(DISTINCT foo.ORDER_NUMBER) ORDER_QTY,
+        IFNULL(SUM(ffre.HKD_AMOUNT), 0) ANTICIPATED_INCOME,
+        IFNULL(SUM(ffre.AMOUNT * ffre.exchange_rate), 0) ANTICIPATED_PAY_AMOUNT
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo,
+        fms_spe_supplier fss,
+        fms_prd_items fpi
+        JOIN sys_code_b scb ON (scb.`CODE` = 'PRD.PRODUCT_DIVISION')
+        JOIN sys_code_value_b scv ON (scv.CODE_ID = scb.CODE_ID AND fpi.BIG_CLASS = scv.`VALUE`)
+        WHERE
+        1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND foo.ITEM_ID = fpi.ITEM_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND ffre.RECEIPT_TYPE = '1ZJF'
+        AND fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        GROUP BY fss.SUPPLIER_ID, fss.`NAME`, scv.MEANING
+        ORDER BY scv.MEANING, fss.`NAME`
+    </select>
+
+    <!--业绩明细表-->
+    <select id="queryPerformanceDetail" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="PerformanceResultMap" >
+        SELECT
+        #{channelId} CHANNEL_ID,
+        fpi.BIG_CLASS,
+        scv.MEANING BIG_CLASS_NAME,
+        ffre.ITEM_ID,
+        fpi.ITEM_NAME,
+        foo.ORDER_NUMBER ORDER_NUM,
+        scvt.MEANING INCOME_TYPE,
+        scvo.MEANING ORDER_STATUS,
+        scvc.MEANING CURRENCY,
+        ffre.AMOUNT ANTICIPATED_PAY_AMOUNT,
+        ffre.HKD_AMOUNT ANTICIPATED_INCOME_HKD_AMOUNT,
+        ffre.exchange_rate RATE,
+        IFNULL(ffre.AMOUNT * ffre.exchange_rate, 0) ANTICIPATED_PAY_HKD_AMOUNT
+        FROM
+        fms_fet_time_receivable ffre
+        LEFT JOIN fms_ord_order foo ON (ffre.ORDER_ID = foo.ORDER_ID)
+        LEFT JOIN fms_prd_items fpi ON (ffre.ITEM_ID = fpi.ITEM_ID)
+        LEFT JOIN sys_code_b scb ON (scb.`CODE` = 'PRD.PRODUCT_DIVISION')
+        LEFT JOIN sys_code_value_b scv ON (scv.CODE_ID = scb.CODE_ID AND fpi.BIG_CLASS = scv.`VALUE`)
+        LEFT JOIN sys_code_b scbc ON (scbc.`CODE` = 'PUB.CURRENCY')
+        LEFT JOIN sys_code_value_b scvc ON (scbc.CODE_ID = scvc.CODE_ID AND ffre.order_currency = scvc.`VALUE`)
+        LEFT JOIN sys_code_b scbo ON (scbo.`CODE` = 'ORD.ORDER_STATUS')
+        LEFT JOIN sys_code_value_b scvo ON (scbo.CODE_ID = scvo.CODE_ID AND foo.status = scvo.`VALUE`)
+        LEFT JOIN sys_code_b scbt ON (scbt.`CODE` = 'FET.PAYMENT_TYPE')
+        LEFT JOIN sys_code_value_b scvt ON (scbt.CODE_ID = scvt.CODE_ID AND ffre.RECEIPT_TYPE = scvt.`VALUE`)
+        WHERE
+        1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        <if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+    </select>
+
+    <!--按照条件查询收益结构-->
+    <select id="queryProfitByCondition" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultType="java.math.BigDecimal" >
+        SELECT
+        IFNULL(SUM(ffre.HKD_AMOUNT), 0)
+        FROM
+        fms_fet_time_receivable ffre,
+        fms_ord_order foo
+        WHERE 1 = 1
+        AND ffre.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+        AND ffre.ORDER_ID = foo.ORDER_ID
+        AND ffre.RECEIVE_COMPANY_ID = #{channelId}
+        AND ffre.RECEIPT_TYPE = #{receiptType}
+        <if test="datePeriod !=null and datePeriod!=''">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND date_format(foo.EFFECTIVE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'BOND' AND date_format(foo.ISSUE_DATE, '%Y-%m') = #{datePeriod})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND date_format(foo.SIGN_DATE, '%Y-%m') = #{datePeriod}))
+        </if>
+        <if test="scopeStartDate !=null and scopeEndDate !=null">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}))
+        </if>
+        <if test="startDate !=null ">
+            AND ((foo.ORDER_TYPE = 'INSURANCE' AND foo.EFFECTIVE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'BOND' AND foo.ISSUE_DATE <![CDATA[ >= ]]> #{startDate})
+            OR (foo.ORDER_TYPE = 'IMMIGRANT' AND foo.SIGN_DATE <![CDATA[ >= ]]> #{startDate}))
+        </if>
+        AND ffre.RECEIPT_TYPE LIKE concat('%', #{receiptType} , '%')
+    </select>
+
+    <!--查询个人订单-->
+    <select id="queryPersonalOrder" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="OrderResultMap" >
+        SELECT
+        foo.ORDER_ID,
+        foo.ORDER_NUMBER,
+        IFNULL(foc.FIRST_YEAR_AMOUNT, 0) FIRST_YEAR_AMOUNT,
+        foo.creation_date,
+        foo.CURRENCY,
+        IFNULL(foo.YEAR_PAY_AMOUNT, 0) YEAR_PAY_AMOUNT,
+        IFNULL(foo.POLICY_AMOUNT, 0) POLICY_AMOUNT,
+        IFNULL(foo.PAY_AMOUNT, 0) PAY_AMOUNT,
+        foo.ORDER_TYPE
+        FROM
+        fms_ord_order foo,
+        fms_ord_commission foc
+        WHERE
+        foo.ORDER_ID = foc.ORDER_ID
+        AND foo.CHANNEL_ID = foc.COMPANY_ID
+        AND foc.COMPANY_TYPE = 'CHANNEL'
+        AND foo.CHANNEL_ID = #{channelId}
+        AND ( (1  <![CDATA[ <> ]]>  1)
+        <if test="insuranceStatusArea !=null and insuranceStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'INSURANCE'
+            AND foo.`STATUS` in ${insuranceStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        <if test="bondStatusArea !=null and bondStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'BOND'
+            AND foo.STATUS in ${bondStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        <if test="immigrantStatusArea !=null and immigrantStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'IMMIGRANT'
+            AND foo.`STATUS` in ${immigrantStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        )
+    </select>
+
+    <!--查询团队订单-->
+    <select id="queryTeamOrder" parameterType="clb.core.channel.dto.CnlPerformanceParas" resultMap="OrderResultMap" >
+        SELECT
+        foo.ORDER_ID,
+        foo.CREATION_DATE,
+        foo.CURRENCY,
+        foo.CHANNEL_ID,
+        foo.ORDER_TYPE,
+        IFNULL(foo.PAY_AMOUNT, 0) PAY_AMOUNT
+        FROM
+        fms_ord_order AS foo
+        JOIN fms_ord_trade_route fotr
+        ON fotr.order_id = foo.order_id AND fotr.COMPANY_TYPE = 'CHANNEL'
+        JOIN fms_ord_trade_route fotr1
+        ON fotr1.order_id = foo.order_id AND fotr1.COMPANY_TYPE = 'CHANNEL'
+        WHERE 1 = 1
+        AND fotr.SEQ_NUM - 1 = fotr1.SEQ_NUM
+        AND fotr.COMPANY_ID = #{channelId}
+        AND ( (1  <![CDATA[ <> ]]>  1)
+        <if test="insuranceStatusArea !=null and insuranceStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'INSURANCE'
+            AND foo.`STATUS` in ${insuranceStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.EFFECTIVE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        <if test="bondStatusArea !=null and bondStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'BOND'
+            AND foo.`STATUS` in ${bondStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.ISSUE_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        <if test="immigrantStatusArea !=null and immigrantStatusArea!=''">
+            OR (foo.ORDER_TYPE = 'IMMIGRANT'
+            AND foo.`STATUS` in ${immigrantStatusArea}
+            <if test="scopeStartDate !=null and scopeEndDate !=null">
+                AND foo.SIGN_DATE BETWEEN #{scopeStartDate} AND #{scopeEndDate}
+            </if>
+            )
+        </if>
+        )
+    </select>
+
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdChooseItemMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdChooseItem">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_COMMISSION_LINE_ID" property="channelCommissionLineId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+
+        <result column="STOCK_CODE" property="stockCode" jdbcType="VARCHAR" />
+        <result column="ANNUAL_INTEREST" property="annualInterest" jdbcType="VARCHAR" />
+        <result column="MARKET_VALUE" property="marketValue" jdbcType="VARCHAR" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="CURRENCY_CODE" property="currencyCode" jdbcType="VARCHAR" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdItem" parameterType="clb.core.order.dto.OrdChooseItem" resultMap="BaseResultMap" >
+        SELECT
+        cmn.channel_id,
+        cmn.LINE_ID CHANNEL_COMMISSION_LINE_ID,
+        fss.supplier_id,
+        CONCAT('供应商', @rownum:=@rownum+1) supplier_name,
+        fpi.item_id,
+        fpi.SUPPLIER_ID product_SUPPLIER_ID,
+        fpi.item_code,
+        fpi.item_name,
+        fpi.ATTRIBUTE50 stock_code,
+        fpi.ATTRIBUTE52 annual_interest,
+        fpi.ATTRIBUTE54 market_value,
+        cmn.CONTRIBUTION_PERIOD,
+        (select MAX(pis.SUBLINE_ID)
+        from fms_prd_item_subline pis
+        where pis.ITEM_ID = fpi.item_id
+        and pis.SUBLINE_ITEM_NAME = cmn.CONTRIBUTION_PERIOD) SUBLINE_ID,
+        scv.MEANING CURRENCY,
+        cmn.CURRENCY CURRENCY_CODE,
+        CONCAT(ROUND(cmn.THE_FIRST_YEAR*100,2), '%') THE_FIRST_YEAR
+        FROM
+        fms_prd_items fpi LEFT JOIN fms_cmn_channel_commission cmn
+        ON (fpi.ITEM_ID = cmn.ITEM_ID
+        <if test = "channelId != null and channelId != ''" >
+            AND cmn.CHANNEL_ID = #{channelId}
+        </if >
+        AND sysdate() BETWEEN cmn.EFFECTIVE_START_DATE AND cmn.EFFECTIVE_END_DATE )
+        LEFT JOIN fms_spe_supplier fss
+        ON (cmn.supplier_id = fss.supplier_id)
+        LEFT JOIN sys_code_b scb
+        ON (scb.CODE = 'PUB.CURRENCY')
+        LEFT JOIN sys_code_value_b scv
+        ON (scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = cmn.CURRENCY),
+        (SELECT @rownum:=0) r
+        WHERE
+        1 = 1
+        <if test = "bigClass != null and bigClass != ''" >
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if >
+        <if test = "existFlag != null and existFlag != ''" >
+        AND (EXISTS (
+            SELECT
+            1
+            FROM
+            fms_cnl_pro_sup_relation psr
+            WHERE
+            1 = 1
+            AND psr.CHANNEL_CLASS_CODE = cmn.CHANNEL_TYPE_CODE
+            AND fss.supplier_id = psr.supplier_id
+            AND psr.big_class = fpi.BIG_CLASS
+            AND IFNULL( IFNULL(psr.channel_id, cmn.channel_id ), 1) = IFNULL(cmn.channel_id, 1)
+            AND ((psr.mid_class = fpi.MID_CLASS) OR LENGTH(psr.mid_class) = 0)
+            AND ((psr.min_class = fpi.MIN_CLASS) OR LENGTH(psr.min_class) = 0)
+            AND IFNULL( psr.prd_supplier_id, fpi.SUPPLIER_ID ) = fpi.SUPPLIER_ID
+            AND IFNULL( psr.product_id, fpi.ITEM_ID ) = fpi.ITEM_ID
+            AND ((psr.contribution_period = cmn.CONTRIBUTION_PERIOD) OR LENGTH(psr.contribution_period) = 0)
+        ) OR cmn.ITEM_ID is null)
+        </if >
+        <if test = "stockCode != null and stockCode != ''" >
+            AND fpi.ATTRIBUTE50 = #{stockCode}
+        </if >
+        <if test = "marketValue != null and marketValue != ''" >
+            AND fpi.ATTRIBUTE54 = #{marketValue}
+        </if >
+        <if test = "contributionPeriod != null and contributionPeriod != ''" >
+            AND cmn.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if >
+        <if test = "currency != null and currency != ''" >
+            AND cmn.CURRENCY = #{currency}
+        </if >
+        <if test = "itemName != null and itemName != ''" >
+            AND fpi.item_name LIKE CONCAT('%', #{itemName}, '%')
+        </if >
+    </select>
+
+    <!--在渠道供应商商品关系上有限制-->
+    <select id="queryOrdItemLimit" parameterType="clb.core.order.dto.OrdChooseItem" resultMap="BaseResultMap" >
+        SELECT
+        cmn.channel_id,
+        cmn.LINE_ID CHANNEL_COMMISSION_LINE_ID,
+        fss.supplier_id,
+        CONCAT('供应商', @rownum:=@rownum+1) supplier_name,
+        fpi.item_id,
+        fpi.SUPPLIER_ID product_SUPPLIER_ID,
+        fpi.item_code,
+        fpi.item_name,
+        fpi.ATTRIBUTE50 stock_code,
+        fpi.ATTRIBUTE52 annual_interest,
+        fpi.ATTRIBUTE54 market_value,
+        cmn.CONTRIBUTION_PERIOD,
+        (select MAX(pis.SUBLINE_ID)
+        from fms_prd_item_subline pis
+        where pis.ITEM_ID = fpi.item_id
+        and pis.SUBLINE_ITEM_NAME = cmn.CONTRIBUTION_PERIOD) SUBLINE_ID,
+        scv.MEANING CURRENCY,
+        cmn.CURRENCY CURRENCY_CODE,
+        CONCAT(ROUND(cmn.THE_FIRST_YEAR*100,2), '%') THE_FIRST_YEAR
+        FROM
+        fms_prd_items fpi LEFT JOIN fms_cmn_channel_commission cmn
+        ON (fpi.ITEM_ID = cmn.ITEM_ID
+        <if test = "channelId != null and channelId != ''" >
+            AND cmn.CHANNEL_ID = #{channelId}
+        </if >
+        AND sysdate() BETWEEN cmn.EFFECTIVE_START_DATE AND cmn.EFFECTIVE_END_DATE )
+        LEFT JOIN fms_spe_supplier fss
+        ON (cmn.supplier_id = fss.supplier_id)
+        LEFT JOIN sys_code_b scb
+        ON (scb.CODE = 'PUB.CURRENCY')
+        LEFT JOIN sys_code_value_b scv
+        ON (scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = cmn.CURRENCY),
+        (SELECT @rownum:=0) r
+        WHERE
+        1 = 1
+        <if test = "bigClass != null and bigClass != ''" >
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if >
+        <if test = "existFlag != null and existFlag != ''" >
+            AND EXISTS (
+            SELECT
+            1
+            FROM
+            fms_cnl_pro_sup_relation psr
+            WHERE
+            1 = 1
+            AND psr.CHANNEL_CLASS_CODE = cmn.CHANNEL_TYPE_CODE
+            AND fss.supplier_id = psr.supplier_id
+            AND psr.big_class = fpi.BIG_CLASS
+            AND IFNULL( IFNULL(psr.channel_id, cmn.channel_id ), 1) = IFNULL(cmn.channel_id, 1)
+            AND ((psr.mid_class = fpi.MID_CLASS) OR LENGTH(psr.mid_class) = 0)
+            AND ((psr.min_class = fpi.MIN_CLASS) OR LENGTH(psr.min_class) = 0)
+            AND IFNULL( psr.prd_supplier_id, fpi.SUPPLIER_ID ) = fpi.SUPPLIER_ID
+            AND IFNULL( psr.product_id, fpi.ITEM_ID ) = fpi.ITEM_ID
+            AND ((psr.contribution_period = cmn.CONTRIBUTION_PERIOD) OR LENGTH(psr.contribution_period) = 0)
+            )
+        </if >
+        <if test = "stockCode != null and stockCode != ''" >
+            AND fpi.ATTRIBUTE50 = #{stockCode}
+        </if >
+        <if test = "marketValue != null and marketValue != ''" >
+            AND fpi.ATTRIBUTE54 = #{marketValue}
+        </if >
+        <if test = "contributionPeriod != null and contributionPeriod != ''" >
+            AND cmn.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if >
+        <if test = "currency != null and currency != ''" >
+            AND cmn.CURRENCY = #{currency}
+        </if >
+        <if test = "itemName != null and itemName != ''" >
+            AND fpi.item_name LIKE CONCAT('%', #{itemName}, '%')
+        </if >
+    </select>
+
+</mapper>

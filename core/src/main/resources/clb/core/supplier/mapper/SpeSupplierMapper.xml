@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeSupplierMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeSupplier">
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="SHORT_NAME" property="shortName" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="CONTACT_NUM" property="contactNum" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="CALENDAR_ID" property="calendarId" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_DATE_FROM" property="effectiveDateFrom" jdbcType="DATE" />
+        <result column="EFFECTIVE_DATE_TO" property="effectiveDateTo" jdbcType="DATE" />
+        <result column="VOCATION_BILL" property="vocationBill" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION1" property="qualification1" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION2" property="qualification2" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION3" property="qualification3" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION4" property="qualification4" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION5" property="qualification5" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION6" property="qualification6" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION7" property="qualification7" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION8" property="qualification8" jdbcType="VARCHAR" />
+        <result column="QUALIFICATION9" property="qualification9" jdbcType="VARCHAR" />
+        <result column="OTHER_QUALIFICATION" property="otherQualification" jdbcType="VARCHAR" />
+        <result column="OTHER_QUALIFICATION" property="otherQualification" jdbcType="VARCHAR" />
+        <result column="SIGN_TR" property="signTr" jdbcType="VARCHAR"/>
+        <result column="COMPANY_PROFILE" property="companyProfile"/>
+        <result column="FILE_ID" property="fileId"/>
+        <result column="GRACE_PERIOD" property="gracePeriod"/>
+        <result column="AGE_CALCULATE_STANDARD" property="ageCalculateStandard"/>
+        <result column="ADMINISTRATIVE_PERIOD" property="administrativePeriod"/>
+        <result column="SERIAL_NUMBER" property="serialNumber" jdbcType="DECIMAL" />
+         <result column="BUSINESS_SCOPE" property="businessScope"/>
+    </resultMap>
+
+
+	<select id="selectMaxSupplierCode" resultType="java.lang.String">
+				select max(SUPPLIER_CODE) from fms_spe_supplier
+	 </select>
+	 
+	 <select id="selectData" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeSupplier">
+    	select fss.*	
+		from fms_spe_supplier fss
+		<where>
+			<if test="supplierId!=null">
+	            AND fss.SUPPLIER_ID = #{supplierId}
+			</if>
+			<if test="supplierCode!=null">
+	            AND fss.SUPPLIER_CODE = #{supplierCode}
+			</if>
+			<if test="statusCode!=null">
+	            AND fss.STATUS_CODE = #{statusCode}
+			</if>
+			<if test="name!=null">
+	            AND fss.NAME  like CONCAT(CONCAT('%',#{name}),'%') 
+			</if>
+			<if test="contactPerson!=null">
+	            AND fss.CONTACT_PERSON like CONCAT(CONCAT('%',#{contactPerson}),'%')
+			</if>
+			<if test="contactNum!=null">
+	            AND fss.CONTACT_NUM like CONCAT(CONCAT('%',#{contactNum}),'%')
+			</if>
+            <if test="type!=null">
+                AND fss.type = #{type}
+            </if>
+            <if test="businessScope!=null">
+                AND fss.business_scope like CONCAT(CONCAT('%',#{businessScope}),'%') 
+            </if>
+		</where>
+         order by fss.SERIAL_NUMBER ASC
+    </select>
+    
+    <select id="selectDataWithItems" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeSupplier">
+    	select fss.*	
+		from fms_spe_supplier fss
+		<where>
+			EXISTS(SELECT 1 FROM fms_prd_items fpi
+			  WHERE fpi.supplier_id = fss.supplier_id
+			    AND fpi.enabled_flag != 'N'
+			    AND (fpi.attribute1 != 'Y' OR fpi.attribute1 != '是' OR fpi.attribute1 IS NULL))
+            <if test="type!=null">
+                AND fss.type = #{type}
+            </if>
+            <if test="businessScope!=null">
+                AND fss.business_scope like CONCAT(CONCAT('%',#{businessScope}),'%') 
+            </if>
+		</where>
+         order by fss.SERIAL_NUMBER ASC
+    </select>
+
+    <select id="selectDataByChannel" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeSupplier">
+        SELECT
+        fss.*
+        FROM
+        fms_prd_items fpi
+        JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+        JOIN fms_cnl_pro_sup_relation fcpsr
+        ON (fpi.ITEM_ID = fcpsr.PRODUCT_ID AND fcpsr.CHANNEL_ID = #{channelId})
+        <where>
+            <if test="supplierCode!=null and supplierCode!=''">
+                and supplier_code regexp #{supplierCode}
+            </if>
+            <if test="name!=null and name!=''">
+                and name regexp #{name}
+            </if>
+            <if test="businessScope!=null">
+                AND fss.business_scope like CONCAT(CONCAT('%',#{businessScope}),'%')
+            </if>
+        </where>
+        GROUP BY fss.supplier_id
+    </select>
+
+	<select id="selectByName" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeSupplier">
+    	select fss.*	
+		from fms_spe_supplier fss
+		<where>
+			<if test="name!=null">
+	            AND fss.NAME=#{name}
+			</if>
+		</where>
+    </select>
+    
+    <select id="selectByNameAndSort" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeSupplier">
+    select fss.*	
+		from fms_spe_supplier fss
+		<where>
+			<if test="name!=null">
+	            AND fss.NAME like CONCAT(CONCAT('%',#{name}),'%')
+			</if>
+			<if test="supplierId != null">
+			   and fss.SUPPLIER_ID =#{supplierId}
+			</if>
+			<if test="type != null">
+			   and fss.type =#{type}
+			</if>
+			<if test="businessScope != null">
+			   AND fss.business_scope like CONCAT(CONCAT('%',#{businessScope}),'%')
+			</if>
+		</where>
+		order by fss.SERIAL_NUMBER ASC
+    </select>
+</mapper>

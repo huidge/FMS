@@ -1,0 +1,33 @@
+<#include "../include/header.html">
+
+
+<script type="text/javascript">
+	webpageUrl = '${RequestParameters.webpageUrl!}';
+	console.log(webpageUrl);
+	if(webpageUrl){
+		debugger;
+		window.location.href=webpageUrl; 
+	}
+</script>
+<body >
+<div style="">
+	<!-- <div style="display: inline-block;width: 300px;height: 500px;position:relative">
+		<div style="margin: 25px;margin-bottom: 0px;">
+			<img width="250px" height="180px" id="img" src="" />
+			<span id="span" style="position:absolute;top:170px;height:30px;width: 250px;border: red;background:#000;color:#fff;text-align: center;filter:alpha(opacity=80);-moz-opacity:0.5;opacity:0.5;">
+				
+			</span>
+		</div>
+		<div id="Tags"></div>
+	</div> -->
+	<a id="webpagePreview"></a>
+</div>
+<script type="text/javascript">
+	function more(){
+		debugger;
+		document.getElementById('webpagePreview').href = 'http://www.baidu.com';
+	}
+
+</script>
+</body>
+</html>

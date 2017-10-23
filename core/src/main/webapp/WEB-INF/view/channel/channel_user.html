@@ -1,0 +1,335 @@
+<#--
+ * description: 渠道账号管理页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?userStatusData=SYS.USER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?userTypeData=SYS.USER_TYPE" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var channelId = <#if RequestParameters.channelId?exists> ${RequestParameters.channelId} <#else>-1</#if>;
+    var uid = <#if RequestParameters.uid?exists> '${RequestParameters.uid}' <#else>"xxx"</#if>;
+
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    //密码 viewModel
+    var viewModelPd = kendo.observable({
+        model:{},
+        userTypeData: userTypeData,
+        save:function(e){
+            console.log(viewModelPd.model);
+            var validator = $("#passwordWin").data("kendoValidator");
+            if (validator.validate()) {
+                $.ajax({
+                    type   : 'POST',
+                    url    : "${base.contextPath}/sys/um/resetPasswordAdmin",
+                    data   : viewModelPd.model.toJSON(),
+                    success: function (data) {
+                        kendo.ui.showInfoDialog({
+                            title: $l('hap.tip.info'),
+                            message: $l('hap.tip.success')
+                        });
+                        $("#passwordWin").data("kendoWindow").close();
+                    }
+                });
+
+            }
+        }
+    });
+
+    if(channelId !=-1) {
+        viewModel.model.set("channelId",channelId);
+        viewModel.model.set("userType","CHANNEL");
+        viewModel.model.set("relatedPartyId",channelId);
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/clb/sys/user/query?userType=CHANNEL&relatedPartyId=" + channelId,
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                   viewModel.model.set(k, row[k]);
+                }
+                if (typeof(viewModel.model.userId) == "undefined") {
+                    viewModel.model.set("userId",null);
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "${base.contextPath}/fms/cnl/channel/getProfileValue?profileName=PLAN_INITIAL_QUOTA",
+                        success: function (json) {
+                            viewModel.model.set("planQuota",json.code);
+                        }
+                    });
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "${base.contextPath}/sys/config/query?configCode=DEFAULT_PASSWORD",
+                        success: function (json) {
+                            var row = json.rows[0] || {};
+                            for (var k in row) {
+                                if (k == "configValue") {
+                                    viewModel.model.set("defaultPassWord", row[k]);
+                                }
+                            }
+                        }
+                    });
+                    viewModel.model.set("status","INACTIVE");
+                }
+            }
+        });
+    }
+
+</script>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.cnlchannel.usermanage"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "user.username"/></label>
+                        <div class="col-xs-8">
+                            <input id="userName" name="userName" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.userName" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" style="display: none;" id="defaultPassWordDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.cnlchannel.defaultpassword"/></label>
+                        <div class="col-xs-8">
+                            <input id="defaultPassWord" name="defaultPassWord" type="text" data-bind="value:model.defaultPassWord" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.cnlchannel.planQuota"/></label>
+                        <div class="col-xs-8">
+                            <input id="planQuota" name="planQuota" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.planQuota" class="k-textbox" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "user.status"/></label>
+                        <div class="col-xs-8">
+                            <input id="status" name="status" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" style="display: none;" id="editPassWordDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "user.updatepassword"/></label>
+                        <div class="col-xs-8">
+                            <span onclick="editPassWord()" class="btn btn-primary" id="btn_pass" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "user.updatepassword"/></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+    <div class="panel" id="passwordWin" style="border: 0px"></div>
+    <!-- 密码框 template -->
+    <script id="passWdTemplate" type="text/x-kendo-template">
+        <form  id="passwdForm"  class="form-horizontal"  role="form" autocomplete="off">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label "><@spring.message"user.new_password"/></label>
+                            <div class="col-sm-9">
+                                <input   name="password" id="password" style="width:70%" autocomplete="off"
+                                         class="k-textbox" required data-bind="value:model.password" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><@spring.message"user.again_new_password"/></label>
+                            <div class="col-sm-9">
+                                <input  id = "password2"  required  style="width:70%"
+                                        name= "password2" autocomplete="off" class="k-textbox " data-bind="value:model.password2" >
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center  ">
+                <span class="btn btn-success submit" id="submit" type="submit" data-bind="click:save"><@spring.message "hap.save"/></span>
+            </div>
+        </form>
+
+    </script>
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    window.container = $("#passwordWin");
+    container.kendoValidator({
+        messages: {
+            required: '<@spring.message "spe.notempty"/>',
+            greaterdate:'<@spring.message "error.user.two_password_not_match"/>'
+        },
+        rules: {
+            //验证密码是否一致
+            greaterdate: function (input) {
+                if (input.is("[name=password2]") && input.val() != "") {
+                    var pawd1 =  $("#password");
+                    return pawd1.val()==input.val();
+                }
+                return true;
+            }
+        },
+        /*
+         errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+         */
+
+    });
+
+    //$("#planQuota").attr("readonly", true).css("background", "#DDDDDD");
+    $("#defaultPassWord").attr("readonly", true).css("background", "#DDDDDD");
+
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: userStatusData
+    });
+
+//    $("#status").data("kendoComboBox").enable(false);
+
+    if (viewModel.model.userId != null) {
+        $("#userName").attr("readonly", true).css("background", "#DDDDDD");
+        $("#editPassWordDiv").show();
+    } else {
+        viewModel.model.set("channelSource","BACKSTAGE");
+        $("#defaultPassWordDiv").show();
+    }
+
+//    if (viewModel.model.status == "INACTIVE") {
+//        $("#status").data("kendoComboBox").readonly(true);
+//        $("input[name='status_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+//        $("input[name='status_input']").css("background", "#DDDDDD");
+//        $("input[name='status_input']").next().next().unbind();
+//    }
+
+    window.passWdTemplete = kendo.template($("#passWdTemplate").html());
+    //初始化密码修改框
+    $("#passwordWin").kendoWindow({
+        width: 450,
+        height:150,
+        title: '<@spring.message "user.updatepassword"/>',
+        resizable: false,
+        visible:false,
+        modal: true,
+        close:onClose
+    });
+
+    function onClose(){
+        //viewModelPd 清空
+        var formData = viewModelPd.model.toJSON();
+        for (var k in formData) {
+            viewModelPd.model.set(k, null);
+        }
+    }
+
+    function editPassWord(){
+        viewModelPd.model.userId = viewModel.model.userId;
+        var passwordWin =  $("#passwordWin").data("kendoWindow");
+        passwordWin.refresh({  template:passWdTemplete });
+        kendo.bind($('#passwordWin'),viewModelPd);
+        $('#password').on('focus',function(){
+            $(this).attr('type','password');
+        })
+        $('\#password2').on('focus',function(){
+            $(this).attr('type','password');
+        })
+        passwordWin.center().open();
+    }
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+            if (viewModel.model.userId == null) {
+                viewModel.model.__status = 'add';
+            }else {
+                viewModel.model.__status = 'update';
+            }
+
+            Hap.submitForm({
+                url: '${base.contextPath}/fms/cnl/channel/user/submit',
+                formModel: viewModel.model,
+                success: function (data) {
+                    data = window.parent.dataSource.getByUid(uid);
+                    if (viewModel.model.channelSource) {
+                        data.channelSource = viewModel.model.channelSource;
+                    }
+                    data.dirty = true;
+                    window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                    window.parent.$("#userWin").data("kendoWindow").close();
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: $l('hap.tip.success')
+                    });
+
+                }
+            });
+
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#userWin").data("kendoWindow").close();
+    }
+
+    $.ajax({async:false,
+        type:"post",
+        url:'${base.contextPath}/commons/profile/queryProfileValue',
+        data:{profileCode: 'PLAN_QUOTA_AMEND'},
+        success:function(data){
+            if(null != data && "" != data
+                && "N" == data){
+                $("#planQuota").attr("readonly", true).css("background", "#DDDDDD");
+            }
+        }});
+
+
+</script>
+</body>
+</html>

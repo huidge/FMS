@@ -1,0 +1,28 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+var fileId = '${RequestParameters.fileId!0}';
+
+var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+
+if(fileId != 0){
+   $.ajax({
+       url:"${base.contextPath}/question/guideline/file/queryFilePathByFileId?fileId="+ fileId,
+       type: "POST",
+       dataType: "json",
+       success:function(data){
+           data = eval(data.rows);
+             for(var i=0; i<data.length; i++){
+                 var filePath=(data[i].filePath);
+                 var src = ossWebPath+"${base.contextPath}"+filePath;
+                 $("#img").show().attr('src',src);
+              }
+       }
+   }); 
+}
+</script>
+<body>
+	<div align="center">
+		<img src=""  id="img" width="300" height="300" style="display:none;text-align:center;"/>
+	</div>
+</body>
+</html>

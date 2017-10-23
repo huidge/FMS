@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnEPlanTemplateDetailMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnEPlanTemplateDetail">
+        <result column="DETAIL_ID" property="detailId" jdbcType="DECIMAL" />
+        <result column="SMALL_ID" property="smallId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="DETAIL_ITEM" property="detailItem" jdbcType="VARCHAR" />
+        <result column="AMOUNT_FORMULA" property="amountFormula" jdbcType="VARCHAR" />
+        <result column="FIXED_VALUE" property="fixedValue" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	<select id="queryList" parameterType="clb.core.pln.dto.PlnEPlanTemplateDetail" resultMap="BaseResultMap">
+		SELECT
+			detail.DETAIL_ID,
+			detail.SMALL_ID,
+			detail.SEQ_NUM,
+			detail.DETAIL_ITEM,
+			detail.AMOUNT_FORMULA,
+			detail.FIXED_VALUE,
+			detail.PROGRAM_ID,
+			detail.REQUEST_ID
+		FROM
+			fms_pln_e_plan_template_detail AS detail
+		WHERE
+			1 = 1
+			<if test="detailId != null">
+				AND detail.DETAIL_ID = #{detailId}
+			</if>
+			<if test="seqNum != null">
+				AND detail.SEQ_NUM = #{seqNum}
+			</if>
+			<if test="smallId != null">
+				AND detail.SMALL_ID = #{smallId}
+			</if>
+			<if test="detailItem != null">
+				AND detail.DETAIL_ITEM = #{detailItem}
+			</if>
+			<if test="amountFormula != null">
+				AND detail.AMOUNT_FORMULA = #{amountFormula}
+			</if>
+			<if test="fixedValue != null">
+				AND detail.FIXED_VALUE = #{fixedValue}
+			</if>
+		ORDER BY
+			detail.SEQ_NUM ASC
+	</select>
+
+</mapper>

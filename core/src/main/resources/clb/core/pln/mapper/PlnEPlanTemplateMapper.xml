@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnEPlanTemplateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnEPlanTemplate">
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_NAME" property="templateName" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS_NAME" property="bigClassName" jdbcType="VARCHAR" />
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR" />
+        <result column="MID_CLASS_NAME" property="midClassName" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS_NAME" property="minClassName" jdbcType="VARCHAR" />
+        
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+<select id="query" parameterType="clb.core.pln.dto.PlnEPlanTemplate" resultMap="BaseResultMap">
+	SELECT
+		fpept.TEMPLATE_ID,
+		fpept.ITEM_ID,
+		fpept.TEMPLATE_NAME,
+		fpept.CURRENCY,
+		fpi.ITEM_NAME,
+		fpi.BIG_CLASS,
+		fpi.MID_CLASS,
+		fpi.MIN_CLASS,
+			(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_DIVISION'
+		AND scb.code_id = scv.code_id
+		AND scv.
+		VALUE
+			= fpi.big_class
+	) BIG_CLASS_NAME,
+	(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_CLASS'
+		AND scb.code_id = scv.code_id
+		AND scv.
+		VALUE
+			= fpi.mid_class
+	) MID_CLASS_NAME,
+	(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_CATAGORY'
+		AND scb.code_id = scv.code_id
+		AND scv.VALUE = fpi.min_class
+	) MIN_CLASS_NAME,
+		fpi.SUPPLIER_ID,
+		fss.`NAME` SUPPLIER_NAME
+	FROM
+		fms_pln_e_plan_template AS fpept
+			LEFT JOIN fms_prd_items AS fpi ON fpept.ITEM_ID = fpi.ITEM_ID
+			LEFT JOIN fms_spe_supplier AS fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+	WHERE 
+		1 = 1
+		<if test="templateId != null">
+			AND fpept.TEMPLATE_ID = #{templateId}
+		</if>
+		<if test="templateName != null">
+			AND fpept.TEMPLATE_NAME LIKE concat('%',#{templateName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="itemId != null">
+			AND fpept.ITEM_ID =#{itemId}
+		</if>
+		<if test="currency != null and currency !=''">
+			AND fpept.CURRENCY =#{currency}
+		</if>
+		<if test="itemName != null">
+			AND fpi.ITEM_NAME LIKE concat('%',#{itemName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="bigClass != null">
+			AND fpi.BIG_CLASS = #{bigClass}
+		</if>
+		<if test="midClass != null">
+			AND fpi.MID_CLASS = #{midClass}
+		</if>
+		<if test="minClass != null">
+			AND fpi.MIN_CLASS = #{minClass}
+		</if>
+		<if test="supplierId != null">
+			AND fpi.SUPPLIER_ID = #{supplierId}
+		</if>
+		<if test="supplierName != null">
+			AND fss.`NAME` LIKE concat('%',#{supplierName,jdbcType=VARCHAR},'%')
+		</if>
+		ORDER BY fpept.TEMPLATE_ID DESC
+</select>
+
+<select id="queryWsPlnEPlanTemplate" parameterType="clb.core.pln.dto.PlnEPlanTemplate" resultMap="BaseResultMap">
+	SELECT * FROM(
+		SELECT
+		fpept.TEMPLATE_ID,
+		fpept.ITEM_ID,
+		fpept.TEMPLATE_NAME,
+		fpept.CURRENCY,
+		fpi.ITEM_NAME,
+		fpi.BIG_CLASS,
+		fpi.MID_CLASS,
+		fpi.MIN_CLASS,
+			(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_DIVISION'
+		AND scb.code_id = scv.code_id
+		AND scv.VALUE = fpi.big_class
+	) BIG_CLASS_NAME,
+	(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_CLASS'
+		AND scb.code_id = scv.code_id
+		AND scv.
+		VALUE
+			= fpi.mid_class
+	) MID_CLASS_NAME,
+	(
+		SELECT
+			scv.meaning
+		FROM
+			sys_code_b scb,
+			sys_code_value_b scv
+		WHERE
+			scb. CODE = 'PRD.PRODUCT_CATAGORY'
+		AND scb.code_id = scv.code_id
+		AND scv.
+		VALUE
+			= fpi.min_class
+	) MIN_CLASS_NAME,
+		fpi.SUPPLIER_ID,
+		fss.`NAME` SUPPLIER_NAME
+	FROM
+		fms_pln_e_plan_template AS fpept
+			LEFT JOIN fms_prd_items AS fpi ON fpept.ITEM_ID = fpi.ITEM_ID
+			LEFT JOIN fms_spe_supplier AS fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+	) ccc
+	WHERE 
+		1 = 1
+		<if test="templateId != null">
+			AND ccc.TEMPLATE_ID = #{templateId}
+		</if>
+		<if test="templateName != null">
+			AND ccc.TEMPLATE_NAME = #{templateName}
+		</if>
+		<if test="itemName != null and itemName != ''">
+			AND ccc.ITEM_NAME LIKE concat('%',#{itemName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="itemId != null">
+			AND ccc.ITEM_ID =#{itemId}
+		</if>
+		<if test="bigClassName != null and bigClassName != ''">
+			AND ccc.BIG_CLASS_NAME = #{bigClassName}
+		</if>
+		<if test="midClassName != null and midClassName != ''">
+			AND ccc.MID_CLASS_NAME = #{midClassName}
+		</if>
+		<if test="minClassName != null and minClassName != ''">
+			AND ccc.MIN_CLASS_NAME = #{minClassName}
+		</if>
+		<if test="supplierId != null">
+			AND ccc.SUPPLIER_ID = #{supplierId}
+		</if>
+		<if test="currency != null and currency != ''">
+			AND ccc.CURRENCY = #{currency}
+		</if>
+		<if test="supplierName != null and supplierName != ''">
+			AND ccc.SUPPLIER_NAME LIKE concat('%',#{supplierName,jdbcType=VARCHAR},'%')
+		</if>
+		ORDER BY ccc.TEMPLATE_ID DESC
+</select>
+</mapper>

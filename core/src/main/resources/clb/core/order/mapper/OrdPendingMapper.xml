@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdPendingMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdPending">
+        <result column="PENDING_ID" property="pendingId" jdbcType="DECIMAL" />
+        <result column="PENDING_NUMBER" property="pendingNumber" jdbcType="VARCHAR" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_ID" property="templateId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="DEAL_PERSON" property="dealPerson" jdbcType="VARCHAR" />
+        <result column="DEAL_PERSON_NAME" property="dealPersonName" jdbcType="VARCHAR" />
+        <result column="DEAL_END_DATE" property="dealEndDate" jdbcType="DATE" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="CB" property="cb" jdbcType="DECIMAL" />
+        <result column="CB_NAME" property="cbName" jdbcType="DECIMAL" />
+        <result column="LUD" property="lud" jdbcType="TIMESTAMP" />
+        <result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+        <result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="APPLY_CLASS_CODE" property="applyClassCode" jdbcType="VARCHAR" />
+        <result column="APPLY_ITEM" property="applyItem" jdbcType="VARCHAR" />
+        <result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+        <result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName" jdbcType="VARCHAR" />
+        <result column="APPLY_CLASS_DESC" property="applyClassDesc" jdbcType="VARCHAR" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="RESERVE_DATE" property="reserveDate" jdbcType="DATE" />
+        <result column="PARENT_CHANNEL_ID" property="parentChannelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+        <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
+        <result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="SIGN_SUPPLIER_NAME" property="signSupplierName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryOrdPending" parameterType="clb.core.order.dto.OrdPending" resultMap="BaseResultMap" >
+        SELECT
+        fop.PENDING_ID,
+        fop.PENDING_NUMBER,
+        fop.ORDER_ID,
+        fop.TEMPLATE_ID,
+        fop.STATUS,
+        fop.DEAL_PERSON,
+        su.USER_NAME DEAL_PERSON_NAME,
+        fop.DEAL_END_DATE,
+        fop.PROGRAM_ID,
+        fop.REQUEST_ID,
+        fop.CREATED_BY CB,
+        fop.LAST_UPDATE_DATE LUD,
+        foo.POLICY_NUMBER,
+        foo.order_type,
+        CASE foo.order_type
+        WHEN 'BOND' THEN
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME)
+        ELSE
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME)
+        END ORDER_INFO,
+        fcc.CHANNEL_NAME,
+        fot.APPLY_CLASS_CODE,
+        fot.APPLY_ITEM,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        fss.name  reserve_Supplier_Name,
+        scvt.meaning APPLY_CLASS_DESC,
+        scvt1.meaning STATUS_DESC,
+        foo.ORDER_NUMBER,
+        foo.RESERVE_DATE,
+        foo.CHANNEL_CONTRACT_ID,
+        ppfss.NAME SIGN_SUPPLIER_NAME
+        FROM
+        fms_ord_pending fop
+        JOIN fms_ord_order foo
+        ON fop.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ord_template fot
+        ON fop.TEMPLATE_ID = fot.TEMPLATE_ID
+        LEFT JOIN sys_user su
+        ON fop.DEAL_PERSON = su.user_id
+        LEFT JOIN fms_spe_supplier fss
+        ON foo.reserve_supplier_id = fss.supplier_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = 'zh_CN'
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = CASE foo.order_type
+                      WHEN 'BOND' THEN
+                      'ORD.BOND_PENDING_STATUS'
+                      ELSE
+                      'ORD.PENDING_STATUS'
+                      END
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fop.STATUS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = 'zh_CN'
+        LEFT JOIN fms_spe_supplier ppfss
+        ON ppfss.SUPPLIER_ID = foo.SIGN_SUPPLIER_ID
+        WHERE 1=1
+        <if test = "pendingId != null"> AND fop.PENDING_ID = #{pendingId , jdbcType=DECIMAL} </if>
+        <if test = "orderId != null"> AND fop.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "policyNumber != null"> AND foo.POLICY_NUMBER LIKE concat ('%',#{policyNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "pendingNumber != null"> AND fop.PENDING_NUMBER LIKE concat ('%',#{pendingNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "applicant != null"> AND actm.CHINESE_NAME LIKE concat ('%',#{applicant , jdbcType=VARCHAR},'%') </if>
+        <if test = "insurant != null"> AND ictm.CHINESE_NAME LIKE concat ('%',#{insurant , jdbcType=VARCHAR},'%') </if>
+        <if test = "channelName != null"> AND fcc.CHANNEL_NAME LIKE concat ('%',#{channelName , jdbcType=VARCHAR},'%') </if>
+        <if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR ictm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%'))
+        </if>
+        <if test = "orderType != null"> AND foo.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+        ORDER BY (CASE fop.STATUS
+                  WHEN 'PENDING_APPROVING' THEN 1
+                  WHEN 'PENDING_NEW' THEN 1
+                  WHEN 'PENDING_MATERIAL' THEN 1
+                  WHEN 'PENDING_HANDLING' THEN 1
+                  WHEN 'PENDING_SUBMITTED' THEN 3
+                  WHEN 'PENDING_CLOSED' THEN 3
+                  ELSE 2 END),
+        <if test = "currentUserId != null">
+            (CASE fop.DEAL_PERSON
+            WHEN #{currentUserId} THEN 1
+            ELSE 2 END),
+        </if>
+        fop.LAST_UPDATE_DATE DESC
+    </select>
+
+    <select id="queryWsOrdPending" parameterType="clb.core.order.dto.OrdPending" resultMap="BaseResultMap" >
+        SELECT
+        fop.PENDING_ID,
+        fop.PENDING_NUMBER,
+        fop.ORDER_ID,
+        fop.TEMPLATE_ID,
+        fop.STATUS,
+        fop.DEAL_PERSON,
+        su.USER_NAME DEAL_PERSON_NAME,
+        fop.DEAL_END_DATE,
+        fop.PROGRAM_ID,
+        fop.REQUEST_ID,
+        fop.CREATED_BY CB,
+        suc.USER_NAME CB_NAME,
+        fop.LAST_UPDATE_DATE LUD,
+        foo.POLICY_NUMBER,
+        foo.order_type,
+        CASE foo.order_type
+        WHEN 'bond' THEN
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME)
+        ELSE
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME)
+        END ORDER_INFO,
+        fcc.CHANNEL_NAME,
+        fot.APPLY_CLASS_CODE,
+        fot.APPLY_ITEM,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        fss.name  reserve_Supplier_Name,
+        scvt.meaning APPLY_CLASS_DESC,
+        scvt1.meaning STATUS_DESC,
+        foo.ORDER_NUMBER,
+        foo.RESERVE_DATE,
+        foo.status ORDER_STATUS,
+        foo.CONTRACT_ROLE_ID,
+        rfhe.NAME ROLE_NAME
+        FROM
+        fms_ord_pending fop
+        JOIN fms_ord_order foo
+        ON fop.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ord_template fot
+        ON fop.TEMPLATE_ID = fot.TEMPLATE_ID
+        LEFT JOIN sys_user su
+        ON fop.DEAL_PERSON = su.user_id
+        LEFT JOIN fms_spe_supplier fss
+        ON foo.reserve_supplier_id = fss.supplier_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = 'zh_CN'
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = CASE foo.order_type
+                      WHEN 'BOND' THEN
+                      'ORD.BOND_PENDING_STATUS'
+                      ELSE
+                      'ORD.PENDING_STATUS'
+                      END
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fop.STATUS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = 'zh_CN'
+        LEFT JOIN sys_user suc
+        ON fop.CREATED_BY = suc.user_id
+        LEFT JOIN fms_ord_customer foca
+        ON (foca.ORDER_ID = fop.ORDER_ID and foca.CUSTOMER_TYPE = 'APPLICANT')
+        LEFT JOIN fms_ord_customer foci
+        ON (foci.ORDER_ID = fop.ORDER_ID and foci.CUSTOMER_TYPE = 'INSURANT')
+
+        LEFT JOIN sys_user rfcc
+        ON (foo.CONTRACT_ROLE_ID = rfcc.USER_ID AND rfcc.USER_TYPE = 'OPERATOR')
+        LEFT JOIN hr_employee rfhe
+        ON rfcc.RELATED_PARTY_ID = rfhe.EMPLOYEE_ID
+
+        WHERE 1=1
+        <if test = "pendingId != null"> AND fop.PENDING_ID = #{pendingId , jdbcType=DECIMAL} </if>
+        <if test = "orderId != null"> AND fop.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "channelId != null"> AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "policyNumber != null"> AND foo.POLICY_NUMBER LIKE concat ('%',#{policyNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "pendingNumber != null"> AND fop.PENDING_NUMBER LIKE concat ('%',#{pendingNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "applicant != null"> AND actm.CHINESE_NAME LIKE concat ('%',#{applicant , jdbcType=VARCHAR},'%') </if>
+        <if test = "insurant != null"> AND ictm.CHINESE_NAME LIKE concat ('%',#{insurant , jdbcType=VARCHAR},'%') </if>
+        <if test = "channelName != null"> AND fcc.CHANNEL_NAME LIKE concat ('%',#{channelName , jdbcType=VARCHAR},'%') </if>
+        <if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR ictm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foca.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foci.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%') )
+        </if>
+        <if test = "orderType != null"> AND foo.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+                order by ${_colName}
+            </when>
+            <otherwise>
+                ORDER BY (CASE fop.STATUS
+                WHEN 'PENDING_MATERIAL' THEN 1
+                WHEN 'PENDING_SUBMITTED' THEN 3
+                WHEN 'PENDING_CLOSED' THEN 3
+                ELSE 2 END),
+                fop.LAST_UPDATE_DATE DESC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="queryWsPersonalOrdPending" parameterType="clb.core.order.dto.OrdPending" resultMap="BaseResultMap" >
+        SELECT
+        fop.PENDING_ID,
+        fop.PENDING_NUMBER,
+        fop.ORDER_ID,
+        fop.TEMPLATE_ID,
+        fop.STATUS,
+        fop.DEAL_PERSON,
+        su.USER_NAME DEAL_PERSON_NAME,
+        fop.DEAL_END_DATE,
+        fop.PROGRAM_ID,
+        fop.REQUEST_ID,
+        fop.CREATED_BY CB,
+        suc.USER_NAME CB_NAME,
+        fop.LAST_UPDATE_DATE LUD,
+        foo.POLICY_NUMBER,
+        foo.order_type,
+        CASE foo.order_type
+        WHEN 'bond' THEN
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME)
+        ELSE
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME)
+        END ORDER_INFO,
+        fcc.CHANNEL_NAME,
+        fot.APPLY_CLASS_CODE,
+        fot.APPLY_ITEM,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        fss.name  reserve_Supplier_Name,
+        scvt.meaning APPLY_CLASS_DESC,
+        scvt1.meaning STATUS_DESC,
+        foo.ORDER_NUMBER,
+        foo.RESERVE_DATE,
+        foo.status ORDER_STATUS,
+        foo.CONTRACT_ROLE_ID,
+        rfhe.NAME ROLE_NAME
+        FROM
+        fms_ord_pending fop
+        JOIN fms_ord_order foo
+        ON fop.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ord_template fot
+        ON fop.TEMPLATE_ID = fot.TEMPLATE_ID
+        LEFT JOIN sys_user su
+        ON fop.DEAL_PERSON = su.user_id
+        LEFT JOIN fms_spe_supplier fss
+        ON foo.reserve_supplier_id = fss.supplier_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = 'zh_CN'
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = CASE foo.order_type
+        WHEN 'BOND' THEN
+        'ORD.BOND_PENDING_STATUS'
+        ELSE
+        'ORD.PENDING_STATUS'
+        END
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fop.STATUS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = 'zh_CN'
+        LEFT JOIN sys_user suc
+        ON fop.CREATED_BY = suc.user_id
+        LEFT JOIN fms_ord_customer foca
+        ON (foca.ORDER_ID = fop.ORDER_ID and foca.CUSTOMER_TYPE = 'APPLICANT')
+        LEFT JOIN fms_ord_customer foci
+        ON (foci.ORDER_ID = fop.ORDER_ID and foci.CUSTOMER_TYPE = 'INSURANT')
+
+        LEFT JOIN sys_user rfcc
+        ON (foo.CONTRACT_ROLE_ID = rfcc.USER_ID AND rfcc.USER_TYPE = 'OPERATOR')
+        LEFT JOIN hr_employee rfhe
+        ON rfcc.RELATED_PARTY_ID = rfhe.EMPLOYEE_ID
+
+        WHERE 1=1
+        <if test = "pendingId != null"> AND fop.PENDING_ID = #{pendingId , jdbcType=DECIMAL} </if>
+        <if test = "orderId != null"> AND fop.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "channelId != null"> AND foo.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "policyNumber != null"> AND foo.POLICY_NUMBER LIKE concat ('%',#{policyNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "pendingNumber != null"> AND fop.PENDING_NUMBER LIKE concat ('%',#{pendingNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "applicant != null"> AND actm.CHINESE_NAME LIKE concat ('%',#{applicant , jdbcType=VARCHAR},'%') </if>
+        <if test = "insurant != null"> AND ictm.CHINESE_NAME LIKE concat ('%',#{insurant , jdbcType=VARCHAR},'%') </if>
+        <if test = "channelName != null"> AND fcc.CHANNEL_NAME LIKE concat ('%',#{channelName , jdbcType=VARCHAR},'%') </if>
+        <if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR ictm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foca.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foci.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%') )
+        </if>
+        <if test = "orderType != null"> AND foo.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+                order by ${_colName}
+            </when>
+            <otherwise>
+                ORDER BY (CASE fop.STATUS
+                WHEN 'PENDING_MATERIAL' THEN 1
+                WHEN 'PENDING_SUBMITTED' THEN 3
+                WHEN 'PENDING_CLOSED' THEN 3
+                ELSE 2 END),
+                fop.LAST_UPDATE_DATE DESC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="queryOrdPendingTotle" parameterType="clb.core.order.dto.OrdPending" resultType="java.lang.Long" >
+        SELECT COUNT(*) FROM
+          fms_ord_pending fop
+        JOIN fms_ord_order fcc
+        ON fop.ORDER_ID = fcc.ORDER_ID
+        WHERE 1=1
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "orderType != null"> AND fcc.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+    </select>
+
+
+    <select id="queryWsTeamOrdPending" parameterType="clb.core.order.dto.OrdPending" resultMap="BaseResultMap" >
+        SELECT
+        fop.PENDING_ID,
+        fop.PENDING_NUMBER,
+        fop.ORDER_ID,
+        fop.TEMPLATE_ID,
+        fop.STATUS,
+        fop.DEAL_PERSON,
+        su.USER_NAME DEAL_PERSON_NAME,
+        fop.DEAL_END_DATE,
+        fop.CREATED_BY CB,
+        suc.USER_NAME CB_NAME,
+        fop.PROGRAM_ID,
+        fop.REQUEST_ID,
+        fop.LAST_UPDATE_DATE LUD,
+        foo.POLICY_NUMBER,
+        foo.order_type,
+        CASE foo.order_type
+        WHEN 'bond' THEN
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME)
+        ELSE
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME)
+        END ORDER_INFO,
+        fcc.CHANNEL_NAME,
+        fot.APPLY_CLASS_CODE,
+        fot.APPLY_ITEM,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        fss.name  reserve_Supplier_Name,
+        scvt.meaning APPLY_CLASS_DESC,
+        scvt1.meaning STATUS_DESC,
+        foo.ORDER_NUMBER,
+        foo.RESERVE_DATE,
+        fotr.COMPANY_ID PARENT_CHANNEL_ID,
+        foo.status ORDER_STATUS
+        FROM
+        fms_ord_pending fop
+        JOIN fms_ord_order foo
+        ON fop.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_ord_template fot
+        ON fop.TEMPLATE_ID = fot.TEMPLATE_ID
+        LEFT JOIN sys_user su
+        ON fop.DEAL_PERSON = su.user_id
+        LEFT JOIN fms_spe_supplier fss
+        ON foo.reserve_supplier_id = fss.supplier_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = 'zh_CN'
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = CASE foo.order_type
+                      WHEN 'BOND' THEN
+                      'ORD.BOND_PENDING_STATUS'
+                      ELSE
+                      'ORD.PENDING_STATUS'
+                      END
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fop.STATUS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = 'zh_CN'
+        LEFT JOIN sys_user suc
+        ON fop.CREATED_BY = suc.user_id
+        JOIN fms_ord_trade_route fotr
+        ON fotr.order_id = foo.order_id AND fotr.COMPANY_TYPE = 'CHANNEL'
+        JOIN fms_ord_trade_route fotr1
+        ON fotr1.order_id = foo.order_id AND fotr1.COMPANY_TYPE = 'CHANNEL'
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = fotr1.COMPANY_ID
+        LEFT JOIN fms_ord_customer foca
+        ON (foca.ORDER_ID = fop.ORDER_ID and foca.CUSTOMER_TYPE = 'APPLICANT')
+        LEFT JOIN fms_ord_customer foci
+        ON (foci.ORDER_ID = fop.ORDER_ID and foci.CUSTOMER_TYPE = 'INSURANT')
+        WHERE 1=1
+        AND fotr.SEQ_NUM -1 = fotr1.SEQ_NUM
+        <if test = "pendingId != null"> AND fop.PENDING_ID = #{pendingId , jdbcType=DECIMAL} </if>
+        <if test = "orderId != null"> AND fop.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "channelId != null"> AND fcc.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "parentChannelId != null"> AND fotr.COMPANY_ID = #{parentChannelId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "policyNumber != null"> AND foo.POLICY_NUMBER LIKE concat ('%',#{policyNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "pendingNumber != null"> AND fop.PENDING_NUMBER LIKE concat ('%',#{pendingNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "applicant != null"> AND actm.CHINESE_NAME LIKE concat ('%',#{applicant , jdbcType=VARCHAR},'%') </if>
+        <if test = "insurant != null"> AND ictm.CHINESE_NAME LIKE concat ('%',#{insurant , jdbcType=VARCHAR},'%') </if>
+        <if test = "channelName != null"> AND fcc.CHANNEL_NAME LIKE concat ('%',#{channelName , jdbcType=VARCHAR},'%') </if>
+        <if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR ictm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foca.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR foci.ENGLISH_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%') )
+        </if>
+        <if test = "orderType != null"> AND foo.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+                order by ${_colName}
+            </when>
+            <otherwise>
+                ORDER BY (CASE fop.STATUS
+                WHEN 'PENDING_MATERIAL' THEN 1
+                WHEN 'PENDING_SUBMITTED' THEN 3
+                WHEN 'PENDING_CLOSED' THEN 3
+                ELSE 2 END),
+                fop.LAST_UPDATE_DATE DESC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="countPendingByOrderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            IFNULL(COUNT(pending_id), 0) count_pending
+        FROM
+            fms_ord_pending
+        WHERE
+            order_id = #{orderId}
+    </select>
+
+    <resultMap id="userResultMap" type="clb.core.system.dto.ClbUser">
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="queryDealUser" parameterType="clb.core.order.dto.OrdOrder" resultMap="userResultMap">
+        SELECT
+            su.USER_ID,
+            su.USER_NAME
+        FROM
+            fms_ord_order foo,
+            sys_user su
+        WHERE
+            foo.ORDER_ID = #{orderId}
+        AND su.USER_TYPE = 'CHANNEL'
+        AND su.RELATED_PARTY_ID = foo.CHANNEL_ID
+        union ALL
+        SELECT
+            suu.USER_ID,
+            suu.USER_NAME
+        FROM
+            sys_user suu,
+            hr_employee heu
+        WHERE
+            1 = 1
+        AND suu.RELATED_PARTY_ID = heu.EMPLOYEE_ID
+        AND suu.USER_TYPE = 'OPERATOR'
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                sys_user su,
+                hr_employee hee
+            WHERE
+                su.USER_ID = #{userId}
+            AND su.USER_TYPE = 'OPERATOR'
+            AND su.RELATED_PARTY_ID = hee.employee_id
+            AND hee.OWNERSHIP_ID = heu.OWNERSHIP_ID
+        )
+        AND EXISTS (
+            SELECT
+                1
+            FROM
+                sys_user_role surr,
+                sys_role_b srb
+            WHERE
+                surr.user_id = suu.user_id
+            AND surr.role_id = srb.role_id
+            AND srb.ROLE_CODE = 'Pending Staff'
+        )
+    </select>
+
+    <select id="queryNotClosed" parameterType="clb.core.order.dto.OrdPending" resultMap="BaseResultMap" >
+        SELECT
+        fop.PENDING_ID,
+        fop.PENDING_NUMBER,
+        fop.ORDER_ID,
+        fop.TEMPLATE_ID,
+        fop.STATUS,
+        fop.DEAL_PERSON,
+        su.USER_NAME DEAL_PERSON_NAME,
+        fop.DEAL_END_DATE,
+        fop.PROGRAM_ID,
+        fop.REQUEST_ID,
+        fop.CREATED_BY CB,
+        fop.LAST_UPDATE_DATE LUD,
+        foo.POLICY_NUMBER,
+        foo.order_type,
+        CASE foo.order_type
+        WHEN 'bond' THEN
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME)
+        ELSE
+        CONCAT(fpi.ITEM_NAME, '-', fpis.SUBLINE_ITEM_NAME,'-', actm.CHINESE_NAME,'-',ictm.CHINESE_NAME)
+        END ORDER_INFO,
+        fcc.CHANNEL_NAME,
+        fot.APPLY_CLASS_CODE,
+        fot.APPLY_ITEM,
+        actm.CHINESE_NAME APPLICANT,
+        ictm.CHINESE_NAME INSURANT,
+        fss.name  reserve_Supplier_Name,
+        scvt.meaning APPLY_CLASS_DESC,
+        scvt1.meaning STATUS_DESC,
+        foo.ORDER_NUMBER,
+        foo.RESERVE_DATE
+        FROM
+        fms_ord_pending fop
+        JOIN fms_ord_order foo
+        ON fop.ORDER_ID = foo.ORDER_ID
+        LEFT JOIN fms_spe_supplier pfss
+        ON pfss.SUPPLIER_ID = foo.PRODUCT_SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.ITEM_ID = foo.ITEM_ID
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.SUBLINE_ID = foo.SUBLINE_ID
+        LEFT JOIN fms_ctm_customer actm
+        ON actm.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        LEFT JOIN fms_ctm_customer ictm
+        ON ictm.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        LEFT JOIN fms_cnl_channel fcc
+        ON fcc.CHANNEL_ID = foo.CHANNEL_ID
+        LEFT JOIN fms_ord_template fot
+        ON fop.TEMPLATE_ID = fot.TEMPLATE_ID
+        LEFT JOIN sys_user su
+        ON fop.DEAL_PERSON = su.user_id
+        LEFT JOIN fms_spe_supplier fss
+        ON foo.reserve_supplier_id = fss.supplier_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.APPLY_CLASS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fot.APPLY_CLASS_CODE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = 'zh_CN'
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = CASE foo.order_type
+                        WHEN 'BOND' THEN
+                        'ORD.BOND_PENDING_STATUS'
+                        ELSE
+                        'ORD.PENDING_STATUS'
+                        END
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fop.STATUS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = 'zh_CN'
+        WHERE 1=1
+        AND fop.STATUS NOT IN ('PENDING_CLOSED')
+        <if test = "pendingId != null"> AND fop.PENDING_ID = #{pendingId , jdbcType=DECIMAL} </if>
+        <if test = "orderId != null"> AND fop.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND fop.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "policyNumber != null"> AND foo.POLICY_NUMBER LIKE concat ('%',#{policyNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "pendingNumber != null"> AND fop.PENDING_NUMBER LIKE concat ('%',#{pendingNumber , jdbcType=VARCHAR},'%') </if>
+        <if test = "applicant != null"> AND actm.CHINESE_NAME LIKE concat ('%',#{applicant , jdbcType=VARCHAR},'%') </if>
+        <if test = "insurant != null"> AND ictm.CHINESE_NAME LIKE concat ('%',#{insurant , jdbcType=VARCHAR},'%') </if>
+        <if test = "channelName != null"> AND fcc.CHANNEL_NAME LIKE concat ('%',#{channelName , jdbcType=VARCHAR},'%') </if>
+        <if test = "person != null">
+            AND (actm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%')
+            OR ictm.CHINESE_NAME LIKE concat ('%',#{person , jdbcType=VARCHAR},'%'))
+        </if>
+        <if test = "orderType != null"> AND foo.order_type LIKE concat ('%',#{orderType , jdbcType=VARCHAR},'%') </if>
+        ORDER BY (CASE fop.STATUS
+        WHEN 'PENDING_APPROVING' THEN 1
+        WHEN 'PENDING_NEW' THEN 1
+        WHEN 'PENDING_MATERIAL' THEN 1
+        WHEN 'PENDING_HANDLING' THEN 1
+        WHEN 'PENDING_SUBMITTED' THEN 3
+        WHEN 'PENDING_CLOSED' THEN 3
+        ELSE 2 END),
+        <if test = "currentUserId != null">
+            (CASE fop.DEAL_PERSON
+            WHEN #{currentUserId} THEN 1
+            ELSE 2 END),
+        </if>
+        fop.LAST_UPDATE_DATE DESC
+    </select>
+
+
+</mapper>

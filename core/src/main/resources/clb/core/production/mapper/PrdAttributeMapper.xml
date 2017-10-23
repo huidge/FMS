@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/18.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdAttributeMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdAttribute">
+        <result column="ATT_ID" property="attId" jdbcType="DECIMAL" />
+        <result column="ATT_NAME" property="attName" jdbcType="VARCHAR" />
+        <result column="FIELD_CODE" property="fieldCode" jdbcType="VARCHAR" />
+        <result column="FIELD_TYPE" property="fieldType" jdbcType="VARCHAR" />
+        <result column="VALUE_SET_ID" property="valueSetId" jdbcType="VARCHAR" />
+        <result column="DEFAULT_VALUE" property="defaultValue" jdbcType="VARCHAR" />
+        <result column="FIELD_COMMENTS" property="fieldComments" jdbcType="VARCHAR" />
+        <result column="FIELD_DISPLAY_LENGTH" property="fieldDisplayLength" jdbcType="DECIMAL" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="AllFieldsMap" type="clb.core.production.dto.PrdAttribute">
+        <result column="ATT_ID" property="attId" jdbcType="DECIMAL" />
+        <result column="ATT_NAME" property="attName" jdbcType="VARCHAR" />
+        <result column="FIELD_CODE" property="fieldCode" jdbcType="VARCHAR" />
+        <result column="FIELD_TYPE" property="fieldType" jdbcType="VARCHAR" />
+        <result column="VALUE_SET_ID" property="valueSetId" jdbcType="VARCHAR" />
+        <result column="VALUE_SET_NAME" property="valueSetName" jdbcType="VARCHAR" />
+        <result column="DEFAULT_VALUE" property="defaultValue" jdbcType="VARCHAR" />
+        <result column="FIELD_COMMENTS" property="fieldComments" jdbcType="VARCHAR" />
+        <result column="FIELD_DISPLAY_LENGTH" property="fieldDisplayLength" jdbcType="DECIMAL" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectAllFields" parameterType="clb.core.production.dto.PrdAttribute" resultMap="AllFieldsMap">
+        SELECT
+        fpa.ATT_ID,
+        fpa.ATT_NAME,
+        fpa.FIELD_CODE,
+        fpa.FIELD_TYPE,
+        fpa.VALUE_SET_ID,
+        (
+        SELECT
+        sl.DESCRIPTION
+        FROM
+        sys_code_b sl
+        WHERE
+        sl.CODE_ID = fpa.VALUE_SET_ID
+        ) VALUE_SET_NAME,
+        fpa.DEFAULT_VALUE,
+        fpa.FIELD_COMMENTS,
+        fpa.FIELD_DISPLAY_LENGTH,
+        fpa.STATUS_CODE
+        FROM
+        fms_prd_attribute fpa
+        WHERE
+        1 = 1
+        <if test="attId != null and attId != ''">
+            AND fpa.ATT_ID = #{attId}
+        </if >
+        <if test="attName != null and attName != ''">
+            AND fpa.ATT_NAME LIKE CONCAT('%', #{attName}, '%')
+        </if >
+        <if test="fieldCode != null and fieldCode != ''">
+            AND fpa.FIELD_CODE LIKE CONCAT('%', #{fieldCode}, '%')
+        </if >
+        <if test="fieldType != null and fieldType != ''">
+            AND fpa.FIELD_TYPE LIKE CONCAT('%', #{fieldType}, '%')
+        </if >
+        <if test="statusCode != null and statusCode != ''">
+            AND fpa.STATUS_CODE = #{statusCode}
+        </if >
+        ORDER by substring(fpa.FIELD_CODE, 10) + 0
+   </select>
+
+    <!--验证默认值-->
+    <select id="queryDefaultValue" resultType="String">
+        SELECT
+            scv.VALUE
+        FROM
+            sys_code_value_b scv
+        WHERE 1 = 1
+        AND scv.CODE_ID = #{0}
+        AND scv.MEANING = #{1}
+    </select>
+    
+    <!-- 获取属性值 -->
+    <select id="selectAttrValue" resultMap="BaseResultMap">
+        SELECT
+            fpa.FIELD_CODE
+        FROM
+            fms_prd_attribute_set_line asl,
+            fms_prd_attribute fpa,
+            sys_code_b scb,
+            sys_code_value_b scvb
+        WHERE 1 = 1
+        AND asl.ATT_ID = fpa.ATT_ID
+        AND asl.ATT_SET_ID = #{attSetId}
+        and fpa.ATT_ID = #{attId}
+        AND scb.code_id = scvb.code_id
+        and scb.code = 'PRD.ATTRIBUTE_CALSS'
+        and scvb.value = asl.ATT_GROUP
+    </select>
+    
+</mapper>

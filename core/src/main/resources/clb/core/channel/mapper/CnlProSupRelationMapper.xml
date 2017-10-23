@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Created by wanjun.feng on 17/4/12. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlProSupRelationMapper">
+
+
+	<resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlProSupRelation">
+		<result column="ID" property="id" />
+		<result column="SUPPLIER_ID" property="supplierId" />
+		<result column="PRODUCT_ID" property="productId" />
+		<result column="CONTRIBUTION_PERIOD" property="contributionPeriod" />
+		<result column="CHANNEL_CLASS_CODE" property="channelClassCode" />
+		<result column="CHANNEL_NAME" property="channelName" />
+		<result column="CHANNEL_CODE" property="channelCode" />
+		<result column="CHANNEL_ID" property="channelId" />
+		<result column="SUPPLIER_CODE" property="supplierCode" />
+		<result column="NAME" property="name" />
+		<result column="ITEM_CODE" property="itemCode" />
+		<result column="ITEM_NAME" property="itemName" />
+		<result column="BIG_CLASS" property="bigClass" />
+		<result column="MID_CLASS" property="midClass" />
+		<result column="MIN_CLASS" property="minClass" />
+		<result column="PRD_SUPPLIER_ID" property="prdSupplierId" />
+		<result column="PRD_SUPPLIER_NAME" property="prdSupplierName" />
+	</resultMap>
+
+	<!-- 查询渠道供应商产品关系信息 -->
+	<select id="selectByCondition" parameterType="clb.core.channel.dto.CnlProSupRelation" resultMap="BaseResultMap">
+		select
+		fcpsr.ID,
+		fcpsr.SUPPLIER_ID,
+		fcpsr.PRODUCT_ID,
+		fcpsr.CONTRIBUTION_PERIOD,
+		fcpsr.CHANNEL_CLASS_CODE,
+		fcpsr.CHANNEL_ID,
+		fcc.CHANNEL_NAME,
+		fcc.CHANNEL_CODE,
+		fss.SUPPLIER_CODE,
+		fss.`NAME`,
+		fcpsr.BIG_CLASS,
+		fcpsr.MID_CLASS,
+		fcpsr.MIN_CLASS,
+		fcpsr.PRD_SUPPLIER_ID,
+		pfss.`NAME` as PRD_SUPPLIER_NAME,
+		fpi.ITEM_CODE,
+		fpi.ITEM_NAME
+		from
+		fms_cnl_pro_sup_relation fcpsr 
+	    left JOIN fms_spe_supplier fss on fcpsr.SUPPLIER_ID =fss.SUPPLIER_ID  
+	    left JOIN fms_cnl_channel fcc on fcpsr.CHANNEL_ID = fcc.CHANNEL_ID
+	    LEFT JOIN fms_prd_items fpi on fcpsr.PRODUCT_ID = fpi.ITEM_ID  
+	    LEFT JOIN fms_spe_supplier pfss on fcpsr.PRD_SUPPLIER_ID =pfss.SUPPLIER_ID  
+		where 
+			1=1 
+		<if test="supplierCode!=null and supplierCode!=''">
+			and fss.SUPPLIER_CODE like CONCAT('%', #{supplierCode},
+			'%')
+		</if>
+		<if test="name!=null and name!=''">
+			and fss.`NAME` like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="supplierId!=null and supplierId!=''">
+			and fcpsr.SUPPLIER_ID = #{supplierId}
+		</if>
+		<if test="itemCode!=null and itemCode!=''">
+			and fpi.ITEM_CODE like CONCAT('%', #{itemCode}, '%')
+		</if>
+		<if test="contributionPeriod!=null and contributionPeriod!=''">
+			and fcpsr.CONTRIBUTION_PERIOD like CONCAT('%', #{contributionPeriod}, '%')
+		</if>
+		<if test="itemName!=null and itemName!=''">
+			and fpi.ITEM_NAME like CONCAT('%', #{itemName}, '%')
+		</if>
+		<if test="channelClassCode!=null and channelClassCode!=''">
+			and fcpsr.CHANNEL_CLASS_CODE like CONCAT('%',#{channelClassCode},'%')
+		</if>
+		<if test="channelName!=null and channelName!=''">
+			and fcc.CHANNEL_NAME like CONCAT('%', #{channelName}, '%')
+		</if>
+		<if test="channelId!=null and channelId!=''">
+			and fcpsr.CHANNEL_ID = #{channelId}
+		</if>
+		<if test="bigClass != null and bigClass != ''">
+	            AND fcpsr.big_class = #{bigClass}
+        </if >
+        <if test="midClass != null and midClass != ''">
+            AND fcpsr.mid_class = #{midClass}
+        </if >
+        <if test="minClass != null and minClass != ''">
+            AND fcpsr.min_class = #{minClass}
+        </if >
+        <if test="prdSupplierId != null">
+            AND fcpsr.PRD_SUPPLIER_ID = #{prdSupplierId}
+        </if >
+	        ORDER BY fcpsr.ID DESC
+	</select>
+	
+	<!-- 带空查询渠道供应商产品关系信息 -->
+	<select id="selectByConditionNull" parameterType="clb.core.channel.dto.CnlProSupRelation" resultMap="BaseResultMap">
+		select
+		fcpsr.ID,
+		fcpsr.SUPPLIER_ID,
+		fcpsr.PRODUCT_ID,
+		fcpsr.CONTRIBUTION_PERIOD,
+		fcpsr.CHANNEL_CLASS_CODE,
+		fcpsr.CHANNEL_ID,
+		fcc.CHANNEL_NAME,
+		fcc.CHANNEL_CODE,
+		fss.SUPPLIER_CODE,
+		fss.`NAME`,
+		fcpsr.BIG_CLASS,
+		fcpsr.MID_CLASS,
+		fcpsr.MIN_CLASS,
+		fcpsr.PRD_SUPPLIER_ID,
+		pfss.`NAME` as PRD_SUPPLIER_NAME,
+		fpi.ITEM_CODE,
+		fpi.ITEM_NAME
+		from
+		fms_cnl_pro_sup_relation fcpsr 
+	    left JOIN fms_spe_supplier fss on fcpsr.SUPPLIER_ID =fss.SUPPLIER_ID  
+	    left JOIN fms_cnl_channel fcc on fcpsr.CHANNEL_ID = fcc.CHANNEL_ID
+	    LEFT JOIN fms_prd_items fpi on fcpsr.PRODUCT_ID = fpi.ITEM_ID  
+	    LEFT JOIN fms_spe_supplier pfss on fcpsr.PRD_SUPPLIER_ID =pfss.SUPPLIER_ID  
+		where 
+			1=1 
+		<if test="supplierCode!=null and supplierCode!=''">
+			and fss.SUPPLIER_CODE like CONCAT('%', #{supplierCode},
+			'%')
+		</if>
+		<if test="name!=null and name!=''">
+			and fss.`NAME` like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="supplierId!=null and supplierId!=''">
+			and fcpsr.SUPPLIER_ID = #{supplierId}
+		</if>
+		<if test="itemCode!=null and itemCode!=''">
+			and fpi.ITEM_CODE like CONCAT('%', #{itemCode}, '%')
+		</if>
+		<if test="channelClassCode!=null and channelClassCode!=''">
+			and fcpsr.CHANNEL_CLASS_CODE like CONCAT('%',#{channelClassCode},'%')
+		</if>
+		<if test="channelName!=null and channelName!=''">
+			and fcc.CHANNEL_NAME like CONCAT('%', #{channelName}, '%')
+		</if>
+		<if test="channelId!=null and channelId!=''">
+			and fcpsr.CHANNEL_ID = #{channelId}
+		</if>
+		<if test="bigClass != null and bigClass != ''">
+	            AND fcpsr.big_class = #{bigClass}
+        </if >
+		<!-- 供款期 -->
+		<choose>
+		    <when test="contributionPeriod!=null and contributionPeriod!=''">
+		        and fcpsr.CONTRIBUTION_PERIOD like CONCAT('%', #{contributionPeriod}, '%')
+		    </when>
+		    <otherwise>
+		        and fcpsr.CONTRIBUTION_PERIOD is null
+		    </otherwise>
+		</choose>
+		<!-- 产品名称 -->
+		<choose>
+		    <when test="itemName!=null and itemName!=''">
+		       and fpi.ITEM_NAME like CONCAT('%', #{itemName}, '%')
+		    </when>
+		    <otherwise>
+		        and fpi.ITEM_NAME is null
+		    </otherwise>
+		</choose>
+        	<!-- 中分类 -->
+        	<choose>
+		    <when test="midClass!=null and midClass!=''">
+		       AND fcpsr.mid_class = #{midClass}
+		    </when>
+		    <otherwise>
+		        and fcpsr.mid_class is null
+		    </otherwise>
+		</choose>
+            <!-- 小分类 -->
+            <choose>
+		    <when test="minClass!=null and minClass!=''">
+		       AND fcpsr.min_class = #{minClass}
+		    </when>
+		    <otherwise>
+		        and fcpsr.min_class is null
+		    </otherwise>
+		</choose>
+       <!--  产品公司 -->
+       <choose>
+		    <when test="prdSupplierId!=null and prdSupplierId!=''">
+		       AND fcpsr.PRD_SUPPLIER_ID = #{prdSupplierId}
+		    </when>
+		    <otherwise>
+		        and fcpsr.PRD_SUPPLIER_ID is null
+		    </otherwise>
+		</choose>
+	        ORDER BY fcpsr.ID DESC
+	</select>
+	
+	<!-- 判断是否存在记录 -->
+	<select id="selectByAllInfo" parameterType="clb.core.channel.dto.CnlProSupRelation" resultType="java.lang.Integer">
+	    select
+		count(1)
+		from
+		fms_cnl_pro_sup_relation fcpsr
+		<where>
+		  <if test="supplierId!=null and supplierId!=''">
+			 fcpsr.supplier_id = #{supplierId}
+		  </if>
+		  <if test="productId!=null and productId!=''">
+			 and fcpsr.PRODUCT_ID = #{productId}
+		  </if>
+		  <if test="contributionPeriod!=null and contributionPeriod!=''">
+			 and fcpsr.CONTRIBUTION_PERIOD = #{contributionPeriod}
+		  </if>
+		  <if test="channelClassCode!=null and channelClassCode!=''">
+			 and fcpsr.CHANNEL_CLASS_CODE = #{channelClassCode}
+		  </if>
+		  <if test="channelId!=null and channelId!=''">
+			 and fcpsr.CHANNEL_ID = #{channelId}
+		  </if>
+		  <if test="bigClass!=null and bigClass!=''">
+			 and fcpsr.big_class = #{bigClass}
+		  </if>
+		  <if test="midClass!=null and midClass!=''">
+			 and fcpsr.mid_class = #{midClass}
+		  </if>
+		  <if test="minClass!=null and minClass!=''">
+			 and fcpsr.min_class = #{minClass}
+		  </if>
+		  <if test="prdSupplierId!=null and prdSupplierId!=''">
+			 and fcpsr.PRD_SUPPLIER_ID = #{prdSupplierId}
+		  </if>
+		</where> 
+	</select>
+	
+
+	<!-- 通过渠道名称查询渠道id -->
+	<select id="selectChannelId" parameterType="java.lang.String"
+		resultType="java.lang.Long">
+		select CHANNEL_ID from fms_cnl_channel
+		where CHANNEL_NAME = #{channelName}
+	</select>
+
+	<!-- 通过供应商名称查询供应商id -->
+	<select id="selectSupplierId" parameterType="java.lang.String"
+		resultType="java.lang.Long">
+		select SUPPLIER_ID from fms_spe_supplier
+		where name = #{name}
+	</select>
+
+	<!-- 通过产品名称查询产品id -->
+	<select id="selectProductId" parameterType="java.lang.String"
+		resultType="java.lang.Long">
+		select ITEM_ID PRODUCT_ID from fms_prd_items
+		where ITEM_NAME = #{itemName}
+	</select>
+
+    <!-- 插入产品名称供应商关系信息 -->
+	<insert id="insertFmsCnlProSupRelation" parameterType="clb.core.channel.dto.CnlProSupRelation">
+		insert into fms_cnl_pro_sup_relation
+		(SUPPLIER_ID,
+		 PRODUCT_ID,
+		 CONTRIBUTION_PERIOD,
+		 CHANNEL_CLASS_CODE,
+		 CHANNEL_ID
+		)
+		values
+		(#{supplierId},
+		 #{productId},
+		 #{contributionPeriod},
+		 #{channelClassCode},
+		 #{channelId}
+		)
+	</insert>
+</mapper>

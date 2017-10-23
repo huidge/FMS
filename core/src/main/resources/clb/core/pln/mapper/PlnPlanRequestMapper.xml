@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnPlanRequestMapper">
+	<resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnPlanRequest">
+		<result column="PLAN_ID" property="planId" jdbcType="DECIMAL" />
+		<result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+		<result column="REQUEST_NUMBER" property="requestNumber" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_NAME" property="policyHolderName" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_NATIONALITY" property="policyHolderNationality" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_RESIDENCE" property="policyHolderResidence" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_GENDER" property="policyHolderGender" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_SMOKE_FLAG" property="policyHolderSmokeFlag" jdbcType="VARCHAR" />
+		<result column="POLICY_HOLDER_BIRTH" property="policyHolderBirth" jdbcType="DATE" />
+		<result column="POLICY_INSURANT_SAME_FLAG" property="policyInsurantSameFlag" jdbcType="VARCHAR" />
+		<result column="INSURANT_NAME" property="insurantName" jdbcType="VARCHAR" />
+		<result column="INSURANT_NATIONALITY" property="insurantNationality" jdbcType="VARCHAR" />
+		<result column="INSURANT_RESIDENCE" property="insurantResidence" jdbcType="VARCHAR" />
+		<result column="INSURANT_GENDER" property="insurantGender" jdbcType="VARCHAR" />
+		<result column="INSURANT_SMOKE_FLAG" property="insurantSmokeFlag" jdbcType="VARCHAR" />
+		<result column="BACKTRACK_FLAG" property="backtrackFlag" jdbcType="VARCHAR" />
+		<result column="INSURANT_BIRTH" property="insurantBirth" jdbcType="DATE" />
+		<result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+		<result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+		<result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+		<result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+		<result column="AMOUNT_TYPE" property="amountType" jdbcType="VARCHAR" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+		<result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+		<result column="CITY" property="city" jdbcType="VARCHAR" />
+		<result column="REQUEST_TYPE" property="requestType" jdbcType="VARCHAR" />
+		<result column="SECURITY_LEVEL" property="securityLevel" jdbcType="VARCHAR" />
+		<result column="SECURITY_AREA" property="securityArea" jdbcType="VARCHAR" />
+		<result column="SELFPAY_ID" property="selfpayId" jdbcType="DECIMAL" />
+		<result column="ADDITIONAL_RISK_FLAG" property="additionalRiskFlag" jdbcType="VARCHAR" />
+		<result column="EXTRACT_FLAG" property="extractFlag" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_FLAG" property="advancedMedicalFlag" jdbcType="VARCHAR" />
+		<result column="EXTRACT_TYPE" property="extractType" jdbcType="VARCHAR" />
+		<result column="EXTRACT_METHOD" property="extractMethod" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_ITEM_ID" property="advancedMedicalItemId" jdbcType="DECIMAL" />
+		<result column="ADVANCED_MEDICAL_SECURITY_LEVEL" property="advancedMedicalSecurityLevel" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_SECURITY_AREA" property="advancedMedicalSecurityArea" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_SELFPAY_ID" property="advancedMedicalSelfpayId" jdbcType="DECIMAL" />
+		<result column="REQUEST_DATE" property="requestDate" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="PROCESS_USER_ID" property="processUserId" jdbcType="DECIMAL" />
+		<result column="PROCESS_COMMENTS" property="processComments" jdbcType="VARCHAR" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+		<result column="file_path" property="filePath" jdbcType="VARCHAR" />
+		<result column="CRAWLER_STATE" property="crawlerState" jdbcType="VARCHAR" />
+		<result column="CRAWLER_RETURN_MESSAGE" property="crawlerReturnMessage" jdbcType="VARCHAR" />
+		<result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR" />
+		<result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+		<result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_ITEM_NAME" property="advancedMedicalItemName" jdbcType="VARCHAR" />
+		<result column="SELFPAY" property="selfpay" jdbcType="VARCHAR" />
+		<result column="dis_user_id" property="disUserId" />
+		<result column="DIS_USER_NAME" property="disUserName" jdbcType="VARCHAR" />
+		<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+		<result column="MID_CLASS" property="midClass" jdbcType="VARCHAR" />
+		<result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+		<result column="ADVANCED_MEDICAL_SELFPAY" property="advancedMedicalSelfpay" jdbcType="VARCHAR" />
+		<result column="DOWNLOAD_FLAG" property="downloadFlag" jdbcType="VARCHAR" />
+		<result column="CRAWLER_STATE_EXT" property="crawlerStateExt" jdbcType="VARCHAR" />
+		<result column="CRAWLER_MESSAGE_EXT" property="crawlerMessageExt" jdbcType="VARCHAR" />
+		<result column="TIME_FLAG" property="timeFlag" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 查询计划书管理 -->
+	<select id="selectPlanRequest" parameterType="clb.core.pln.dto.PlnPlanRequest" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+		(
+		SELECT
+			fpis.SUBLINE_ITEM_NAME,
+			fpi.BIG_CLASS,
+			fpi.MID_CLASS,
+			fpi.MIN_CLASS,
+			fpi2.ITEM_NAME ADVANCED_MEDICAL_ITEM_NAME,
+			fpis3.SELFPAY,
+			fcc.CHANNEL_NAME,
+			fpis2.SELFPAY ADVANCED_MEDICAL_SELFPAY,
+			fppr.*, su2.USER_NAME DIS_USER_NAME,
+			su.USER_NAME,
+			fpi.ITEM_NAME,
+			sf.file_path,
+			fss.`NAME`,
+			fsfhp.user_id dis_user_id
+		FROM
+			FMS_PLN_PLAN_REQUEST fppr
+			LEFT JOIN fms_prd_items fpi ON fppr.ITEM_ID = fpi.ITEM_ID
+			LEFT JOIN fms_prd_items fpi2 ON fppr.ADVANCED_MEDICAL_ITEM_ID = fpi2.ITEM_ID
+			LEFT JOIN fms_prd_item_selfpay fpis2 ON fppr.ADVANCED_MEDICAL_SELFPAY_ID = fpis2.SELFPAY_ID
+			LEFT JOIN fms_prd_item_subline fpis ON fppr.SUBLINE_ID = fpis.SUBLINE_ID
+			LEFT JOIN sys_file sf ON fppr.file_id = sf.file_id
+			LEFT JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+			LEFT JOIN sys_user su ON fppr.created_by = su.USER_ID
+			LEFT JOIN fms_sys_function_handle_person fsfhp ON fppr.PLAN_ID = fsfhp.SOURCE_ID
+			AND fsfhp.FUNCTION_CODE = "PLAN_JOB"
+			AND fsfhp.COLUMN_CODE = "STATUS"
+			LEFT JOIN sys_user su2 ON fsfhp.USER_ID = su2.USER_ID
+			LEFT JOIN fms_prd_item_selfpay fpis3 ON fppr.SELFPAY_ID = fpis3.SELFPAY_ID
+			LEFT JOIN fms_cnl_channel fcc ON fppr.channel_id = fcc.CHANNEL_ID
+		WHERE
+			1 = 1
+		<if test="processUserId != null">
+			AND (fsfhp.USER_ID = #{processUserId} or fsfhp.USER_Id is
+			null )
+		</if>
+
+		<if test="status != null and status != ''">
+			and fppr.status like CONCAT('%', #{status}, '%')
+		</if>
+		<if test="requestNumber != null and requestNumber != ''">
+			and fppr.request_Number like CONCAT('%',
+			#{requestNumber},'%')
+		</if>
+		<if test="insurantName != null and insurantName != ''">
+			and (fppr.insurant_Name like CONCAT('%',
+			#{insurantName},'%') OR fppr.POLICY_HOLDER_NAME like CONCAT('%',
+			#{insurantName},'%'))
+		</if>
+		<if test="startDate != null">
+			and date(fppr.request_date) <![CDATA[>=]]>
+			date(#{startDate})
+		</if>
+		<if test="endDate != null">
+			and date(fppr.request_date) <![CDATA[<=]]>
+			date(#{endDate})
+		</if>
+		<if test="planId != null and planId != ''">
+			and fppr.plan_id = #{planId}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and fppr.created_by = #{createdBy}
+		</if>
+		<if test="channelId != null">
+			AND fppr.channel_id = #{channelId}
+		</if>
+		) temp
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				<bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)" />
+				order by ${_colName}
+			</when>
+			<otherwise>
+				ORDER BY
+                CASE
+                WHEN temp.`STATUS` = 'REVIEW' THEN
+                1
+                ELSE 2
+                END,
+                temp.REQUEST_DATE DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 计划书管理后台查询 -->
+	<select id="selectPlanRequestForBack" parameterType="clb.core.pln.dto.PlnPlanRequest" resultMap="BaseResultMap">
+		select *
+		from (select
+		fpis.SUBLINE_ITEM_NAME,
+		fpi.BIG_CLASS,
+		fpi.MID_CLASS,
+		fpi.MIN_CLASS,
+		fpi2.ITEM_NAME ADVANCED_MEDICAL_ITEM_NAME,
+		fpis3.SELFPAY,
+		fpis2.SELFPAY ADVANCED_MEDICAL_SELFPAY,
+		fppr.*,
+		su2.USER_NAME DIS_USER_NAME,
+		su.USER_NAME,
+		fpi.ITEM_NAME,
+		sf.file_path,
+		fss.`NAME`,
+		fsfhp.user_id
+		dis_user_id,
+		case when (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(fppr.LAST_UPDATE_DATE))>=600 and fppr.CRAWLER_STATE ='获取中' then '失败'
+		ELSE fppr.CRAWLER_STATE END CRAWLER_STATE_EXT,
+		case when (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(fppr.LAST_UPDATE_DATE))>=600 and fppr.CRAWLER_STATE ='获取中' then '爬虫爬取超时，请手工处理'
+		ELSE fppr.CRAWLER_RETURN_MESSAGE END CRAWLER_MESSAGE_EXT,
+		fcc.CHANNEL_NAME
+		from FMS_PLN_PLAN_REQUEST fppr
+		LEFT JOIN
+		fms_prd_items fpi ON
+		fppr.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_prd_items fpi2 ON
+		fppr.ADVANCED_MEDICAL_ITEM_ID = fpi2.ITEM_ID
+		LEFT JOIN
+		fms_prd_item_selfpay fpis2 on fppr.ADVANCED_MEDICAL_SELFPAY_ID =
+		fpis2.SELFPAY_ID
+		LEFT JOIN fms_prd_item_subline fpis on fppr.SUBLINE_ID = fpis.SUBLINE_ID
+		LEFT JOIN sys_file sf ON fppr.file_id = sf.file_id
+		LEFT JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+		LEFT JOIN sys_user su on su.USER_TYPE = "CHANNEL" AND su.RELATED_PARTY_ID = fppr.channel_id
+		LEFT JOIN fms_sys_function_handle_person fsfhp ON fppr.PLAN_ID = fsfhp.SOURCE_ID
+		and fsfhp.FUNCTION_CODE = "PLAN_JOB" and fsfhp.COLUMN_CODE = "STATUS"
+		LEFT JOIN sys_user su2 on fsfhp.USER_ID = su2.USER_ID
+		LEFT JOIN fms_prd_item_selfpay fpis3 on fppr.SELFPAY_ID = fpis3.SELFPAY_ID
+		LEFT JOIN fms_cnl_channel fcc ON fppr.channel_id = fcc.CHANNEL_ID
+		where
+		1 = 1
+		<if test="status != null and status != ''">
+			and fppr.status like CONCAT('%', #{status}, '%')
+		</if>
+		<if test="processId != null and processId != ''">
+			and fsfhp.USER_ID = #{processId}
+		</if>
+		<if test="requestNumber != null and requestNumber != ''">
+			and fppr.request_Number like CONCAT('%',
+			#{requestNumber},'%')
+		</if>
+		<if test="insurantName != null and insurantName != ''">
+			and (fppr.insurant_Name like CONCAT('%',
+			#{insurantName},'%') OR fppr.POLICY_HOLDER_NAME like CONCAT('%',
+			#{insurantName},'%'))
+		</if>
+		<if test="startDate != null">
+			and date(fppr.request_date) <![CDATA[>=]]>
+			date(#{startDate})
+		</if>
+		<if test="endDate != null">
+			and date(fppr.request_date) <![CDATA[<=]]>
+			date(#{endDate})
+		</if>
+		<if test="planId != null and planId != ''">
+			and fppr.plan_id = #{planId}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and fppr.created_by = #{createdBy}
+		</if>
+		) temp
+		ORDER BY temp.REQUEST_DATE DESC
+                <!-- CASE
+                WHEN temp.`STATUS` = 'REVIEW' THEN
+                1
+                WHEN temp.`STATUS` = 'PROCESSING' THEN
+                2
+                WHEN temp.`STATUS` = 'COMPLETED' THEN
+                3
+                WHEN temp.`STATUS` = 'PLN_CANCELLED' THEN
+                4
+                ELSE 5
+                END,
+                temp.REQUEST_DATE DESC -->
+	</select>
+
+	<!-- 查询团队计划书管理 -->
+	<select id="selectTeamPlanRequest" parameterType="clb.core.pln.dto.PlnPlanRequest" resultMap="BaseResultMap">
+		select
+			fppr.*,
+			fpi.ITEM_NAME,
+			sf.file_path,
+			fcc.channel_name,
+			fss.`NAME`
+		from
+			FMS_PLN_PLAN_REQUEST fppr
+			LEFT JOIN fms_prd_items fpi ON
+			fppr.ITEM_ID =
+			fpi.ITEM_ID
+			LEFT JOIN sys_file sf ON fppr.file_id = sf.file_id
+			LEFT JOIN
+			fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+			LEFT
+			JOIN fms_cnl_channel fcc ON fppr.channel_id = fcc.CHANNEL_ID
+		where 1=1
+		<if test="status != null and status != ''">
+			and fppr.status like CONCAT('%', #{status}, '%')
+		</if>
+		<if test="requestNumber != null and requestNumber != ''">
+			and fppr.request_Number like CONCAT('%',
+			#{requestNumber},'%')
+		</if>
+		<if test="insurantName != null and insurantName != ''">
+			and (fppr.insurant_Name like CONCAT('%',
+			#{insurantName},'%') OR fppr.POLICY_HOLDER_NAME like CONCAT('%',
+			#{insurantName},'%'))
+		</if>
+		<if test="startDate != null">
+			and date(fppr.request_date) <![CDATA[>=]]>
+			date(#{startDate})
+		</if>
+		<if test="endDate != null">
+			and date(fppr.request_date) <![CDATA[<=]]>
+			date(#{endDate})
+		</if>
+		<if test="planId != null and planId != ''">
+			and fppr.plan_id = #{planId}
+		</if>
+		<if test="teamIds != null">
+			and fppr.created_by in
+			<foreach item="item" index="index" collection="teamIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+<!-- 		<if test="orderBy != null and orderBy != ''"> -->
+<!-- 			<bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)" /> -->
+<!-- 			order by ${_colName} -->
+<!-- 		</if> -->
+		order by fppr.REQUEST_DATE desc
+	</select>
+
+     
+	<!-- 通过名称查询本月计划数的数量 -->
+	<select id="selectPlanCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*)
+		from FMS_PLN_PLAN_REQUEST fppr
+		where
+		fppr.ITEM_ID = fpi.ITEM_ID
+		and
+		date_format(fppr.CREATION_DATE,'%Y-%m')=date_format(now(),'%Y-%m')
+	</select>
+	
+	<!-- 通过名称查询签单数量 -->
+	<select id="selectSignBill" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+
+	</select>
+     
+	<!-- 通过名称查询当前用户计划数的数量 -->
+	<select id="selectPlanCountByUser" parameterType="java.lang.Long" resultType="java.lang.Integer">
+	 SELECT
+			count(*)
+		FROM
+			fms_pln_plan_request temp
+		WHERE
+			temp.quant_calc_flag IS NULL
+		AND EXISTS (
+			SELECT
+				1
+			FROM
+				sys_user pmsu
+			WHERE
+				(
+					pmsu.USER_TYPE = 'CHANNEL'
+					AND temp.CHANNEL_ID = pmsu.RELATED_PARTY_ID
+					OR pmsu.USER_TYPE = 'ADMINISTRATION'
+					AND EXISTS (
+						SELECT
+							pmfccc.channel_id
+						FROM
+							fms_cnl_channel_contract pmfccc
+						JOIN fms_cnl_contract_role pmfccr ON pmfccc.channel_contract_id = pmfccr.channel_contract_id
+						AND pmfccr.role = 'AGENCY'
+						WHERE
+							pmfccr.role_user_id = pmsu.user_id
+						AND temp.CHANNEL_ID = pmfccc.channel_id
+					)
+				)
+			AND pmsu.USER_ID = #{userId}
+		)
+	</select>
+
+	<!-- 通过名称查询当前用户计划数的总额度 -->
+	<select id="selectPlanTotalByUser" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select su.PLAN_QUOTA from sys_user su where su.user_id = #{userId}
+	</select>
+
+    <!-- 通过名称查询当前用户计划数的总额度 -->
+<!-- 	<select id="selectPlanTotalByUser" parameterType="java.lang.Long" -->
+<!-- 		resultType="java.lang.Integer"> -->
+<!-- 		select count(*) from  -->
+<!--      fms_pln_plan_request temp -->
+<!-- 	</select> -->
+
+
+	<!-- 查询文件路径 -->
+	<select id="selectFilePath" parameterType="java.lang.Long"
+		resultType="java.lang.String">
+		SELECT sf.FILE_PATH from sys_file sf where
+		sf.FILE_ID=#{fileId}
+	</select>
+
+	<!-- 查询所有团队成员的id -->
+	<select id="selectTeamUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT
+			su2.USER_ID,
+			su.USER_ID,
+			fcc.CHANNEL_NAME,
+			su2.RELATED_PARTY_ID
+		FROM
+			sys_user su,
+			fms_cnl_channel_contract fccc,
+			sys_user su2,
+			fms_cnl_channel fcc
+		WHERE
+			su.RELATED_PARTY_ID = fccc.PARTY_ID
+		AND su.USER_TYPE = 'CHANNEL'
+		AND fccc.PARTY_TYPE = 'CHANNEL'
+		AND su2.RELATED_PARTY_ID = fccc.CHANNEL_ID
+		AND fccc.CHANNEL_ID = fcc.CHANNEL_ID
+		AND su2.USER_TYPE = 'CHANNEL'
+		AND su.USER_ID = #{userId}
+	</select>
+
+
+	<!-- 计划书行政查询团队数据 -->
+	<select id="selectTeamUserByAgency" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select 
+		su.USER_ID,
+		fcc.CHANNEL_NAME
+		from fms_cnl_channel fcc,
+		fms_cnl_contract_role fccr,
+		fms_cnl_channel_contract fccc,
+		sys_user su
+		where fcc.channel_id = fccc.channel_id
+		and fccr.channel_contract_id = fccc.channel_contract_id
+		and fccc.CHANNEL_ID = su.RELATED_PARTY_ID
+		and su.USER_TYPE = "CHANNEL"
+		and fccr.role = "AGENCY"
+		and fccr.role_user_id = #{userId}
+	</select>
+	
+	<!-- 查询角色类型 -->
+	<select id="selectRoleType" parameterType="java.lang.Long" resultType="java.lang.String">
+	    select su.user_type from sys_user su
+	    where su.user_id = #{userId}
+	</select>
+
+	<!-- 查询爬虫信息 -->
+	<select id="selectForCrawlersInfo" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT
+		fpi.ITEM_NAME,
+		fpis.SUBLINE_ITEM_NAME,
+		fppr.*
+		FROM
+		FMS_PLN_PLAN_REQUEST fppr
+		LEFT JOIN fms_prd_items fpi ON fppr.ITEM_ID = fpi.ITEM_ID
+		LEFT
+		JOIN fms_prd_item_subline fpis ON fppr.SUBLINE_ID = fpis.SUBLINE_ID
+		WHERE
+		request_Number = #{requestNumber}
+	</select>
+
+	<!-- 查询当前用户当月计划书的数量-->
+	<select id="selectPlanCountByChannelId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(*)
+		from FMS_PLN_PLAN_REQUEST fppr
+		where
+		date_format(fppr.CREATION_DATE,'%Y-%m')=date_format(now(),'%Y-%m')
+		and fppr.channel_id = #{channelId}
+	    and fppr.quant_calc_flag is null
+	</select>
+	
+	<!-- 查询签单数量 -->
+	<select id="selectEffectiveCountByChannelId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(*)
+		from fms_ord_order foo
+		where
+		foo.ORDER_TYPE = 'INSURANCE'
+		and foo.`STATUS` in ('SIGNED','POLICY_EFFECTIVE','APPROVING')
+		and date_format(foo.RESERVE_DATE,'%Y-%m')=date_format(now(),'%Y-%m')
+		and foo.channel_id = #{channelId}
+	</select>
+	
+    <!-- 查询code meaning -->
+    <select id="selectCodeMeaning" resultType="java.lang.String">
+       select scvb.MEANING 
+         from sys_code_value_b scvb, sys_code_b scb
+        where scvb.CODE_ID = scb.CODE_ID
+          and scb.`CODE` = #{code}
+          and scvb.`VALUE` = #{codeValue}
+    </select>
+     
+     
+    <select id="selectAmountForUser">
+       
+    </select>
+    
+    <!-- 获取渠道名称 -->
+    <select id="selectChannelName" parameterType="java.lang.Long" resultType="java.lang.String">
+        select * from sys_user su where su.USER_ID = #{userId}
+    </select>
+    
+    <!-- 微信  我的计划书查询 -->
+	<select id="selectMyPlanForWX" parameterType="clb.core.pln.dto.PlnPlanRequest" resultMap="BaseResultMap">
+		select *
+		from (select
+		fpis.SUBLINE_ITEM_NAME,
+		fpi.BIG_CLASS,
+		fpi.MID_CLASS,
+		fpi.MIN_CLASS,
+		fpi2.ITEM_NAME ADVANCED_MEDICAL_ITEM_NAME,
+		fpis3.SELFPAY,
+		fpis2.SELFPAY ADVANCED_MEDICAL_SELFPAY,
+		fppr.*,
+		su2.USER_NAME DIS_USER_NAME,
+		su.USER_NAME,
+		fpi.ITEM_NAME,
+		sf.file_path,
+		fss.`NAME`,
+		fsfhp.user_id
+		dis_user_id,
+		case when (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(fppr.LAST_UPDATE_DATE))>=600 and fppr.CRAWLER_STATE ='获取中' then '失败'
+		ELSE fppr.CRAWLER_STATE END CRAWLER_STATE_EXT,
+		case when (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(fppr.LAST_UPDATE_DATE))>=600 and fppr.CRAWLER_STATE ='获取中' then '爬虫爬取超时，请手工处理'
+		ELSE fppr.CRAWLER_RETURN_MESSAGE END CRAWLER_MESSAGE_EXT,
+		fcc.CHANNEL_NAME
+		from FMS_PLN_PLAN_REQUEST fppr
+		LEFT JOIN
+		fms_prd_items fpi ON
+		fppr.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_prd_items fpi2 ON
+		fppr.ADVANCED_MEDICAL_ITEM_ID = fpi2.ITEM_ID
+		LEFT JOIN
+		fms_prd_item_selfpay fpis2 on fppr.ADVANCED_MEDICAL_SELFPAY_ID =
+		fpis2.SELFPAY_ID
+		LEFT JOIN fms_prd_item_subline fpis on fppr.SUBLINE_ID = fpis.SUBLINE_ID
+		LEFT JOIN sys_file sf ON fppr.file_id = sf.file_id
+		LEFT JOIN fms_spe_supplier fss ON fpi.SUPPLIER_ID = fss.SUPPLIER_ID
+		LEFT JOIN sys_user su on su.USER_TYPE = "CHANNEL" AND su.RELATED_PARTY_ID = fppr.channel_id
+		LEFT JOIN fms_sys_function_handle_person fsfhp ON fppr.PLAN_ID = fsfhp.SOURCE_ID
+		and fsfhp.FUNCTION_CODE = "PLAN_JOB" and fsfhp.COLUMN_CODE = "STATUS"
+		LEFT JOIN sys_user su2 on fsfhp.USER_ID = su2.USER_ID
+		LEFT JOIN fms_prd_item_selfpay fpis3 on fppr.SELFPAY_ID = fpis3.SELFPAY_ID
+		LEFT JOIN fms_cnl_channel fcc ON fppr.channel_id = fcc.CHANNEL_ID
+		where
+		1 = 1
+		<if test="status != null and status != ''">
+			and fppr.status like CONCAT('%', #{status}, '%')
+		</if>
+		<if test="processId != null and processId != ''">
+			and fsfhp.USER_ID = #{processId}
+		</if>
+		<if test="requestNumber != null and requestNumber != ''">
+			and fppr.request_Number like CONCAT('%',
+			#{requestNumber},'%')
+		</if>
+		<if test="insurantName != null and insurantName != ''">
+			and (fppr.insurant_Name like CONCAT('%',
+			#{insurantName},'%') OR fppr.POLICY_HOLDER_NAME like CONCAT('%',
+			#{insurantName},'%'))
+		</if>
+		<if test="startDate != null">
+			and date(fppr.request_date) <![CDATA[>=]]>
+			date(#{startDate})
+		</if>
+		<if test="endDate != null">
+			and date(fppr.request_date) <![CDATA[<=]]>
+			date(#{endDate})
+		</if>
+		<if test="planId != null and planId != ''">
+			and fppr.plan_id = #{planId}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and fppr.created_by = #{createdBy}
+		</if>
+		<if test="channelId != null">
+			AND fppr.channel_id = #{channelId}
+		</if>
+		<if test="timeFlag == 0">
+			AND date_format(fppr.CREATION_DATE,'%Y')=date_format(now(),'%Y')
+		</if>
+		<if test="timeFlag == 1">
+			AND date_format(fppr.CREATION_DATE,'%Y-%m')=date_format(now(),'%Y-%m')
+		</if>
+		<if test="timeFlag == 2">
+			AND date_format(fppr.CREATION_DATE,'%Y-%u')=date_format(now(),'%Y-%u')
+		</if>
+		) temp
+		ORDER BY temp.`STATUS` DESC,temp.REQUEST_DATE DESC
+	</select>
+	<!-- 查询我的计划书数量  微信 -->
+    <select id="queryMyPlanCount" parameterType="clb.core.pln.dto.PlnPlanRequest" resultType="java.lang.Integer">
+    	select count(*)
+		from FMS_PLN_PLAN_REQUEST fppr
+		where	
+		fppr.channel_id = #{channelId}
+	    and fppr.quant_calc_flag is null
+		<if test="timeFlag == 0">
+			AND date_format(fppr.CREATION_DATE,'%Y')=date_format(now(),'%Y')
+		</if>
+		<if test="timeFlag == 1">
+			AND date_format(fppr.CREATION_DATE,'%Y-%m')=date_format(now(),'%Y-%m')
+		</if>
+		<if test="timeFlag == 2">
+			AND date_format(fppr.CREATION_DATE,'%Y-%u')=date_format(now(),'%Y-%u')
+		</if>
+    </select>
+</mapper>

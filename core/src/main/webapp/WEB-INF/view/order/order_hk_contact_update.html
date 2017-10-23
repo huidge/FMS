@@ -1,0 +1,155 @@
+<#--
+ * description: 订单修改联系人
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+<script src="${base.contextPath}/resources/js/common/validate.js" type="text/javascript"></script>
+<script type="text/javascript">
+    validateTelError='<@spring.message "spe.telerror"/>';
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    var functionCode = '${RequestParameters.functionCode!}';
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+
+    viewModel.model.set("orderId",orderId);
+    viewModel.model.set("functionCode",functionCode);
+
+    //跳转页面查询
+    if(orderId !=-1) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/query",
+            data: {
+                orderId: orderId,
+                functionCode: functionCode
+            },
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    if (k != "status") {
+                        viewModel.model.set(k, row[k]);
+                    }
+                }
+            }
+
+        });
+    }
+
+
+</script>
+
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.hkContactPerson"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.hkContactPerson"/></label>
+                        <div class="col-xs-7">
+                            <input id="hkContactPerson" name="hkContactPerson" type="text" class="k-textbox" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.hkContactPerson" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.hkContactPhone"/></label>
+                        <div class="col-xs-3">
+                            <input id="hkContactPhoneCode" name="hkContactPhoneCode" type="text" data-bind="value:model.hkContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 100%;">
+                        </div>
+                        <div class="col-xs-4">
+                            <input id="hkContactPhone" name="hkContactPhone" type="text" class="k-textbox" required validationMessage='<@spring.message "spe.telerror"/>' data-bind="value:model.hkContactPhone" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#hkContactPhoneCode").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "value",
+        dataValueField: "value",
+        dataSource: phoneCodeData,
+        change: function (e) {
+            if (viewModel.model.hkContactPhoneCode == null || viewModel.model.hkContactPhoneCode == "") {
+                $("#hkContactPhone").removeAttr("pattern");
+            } else if (viewModel.model.hkContactPhoneCode == "86") {
+                $("#hkContactPhone").attr("pattern","^\\d{11}$");
+            } else if (viewModel.model.hkContactPhoneCode == "00886") {
+                $("#hkContactPhone").attr("pattern","^\\d{9}$");
+            } else {
+                $("#hkContactPhone").attr("pattern","^\\d{8}$");
+            }
+        }
+    });
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+            var checked = window.parent.grid.selectedDataItems();
+            if (window.parent.grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: '<@spring.message "fms.ordorder.confirmupdate"/>'
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+
+                        $.each(checked, function (i, v) {
+                            v.hkContactPerson = viewModel.model.hkContactPerson;
+                            v.hkContactPhone = viewModel.model.hkContactPhone;
+                            v.hkContactPhoneCode = viewModel.model.hkContactPhoneCode;
+                            v.hkContactPhoneAll = "(" + viewModel.model.hkContactPhoneCode + ")" + viewModel.model.hkContactPhone;
+                            v.dirty = true;
+                        })
+                        window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                        window.parent.$("#hkWin").data("kendoWindow").close();
+                    }
+                })
+            }
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#hkWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

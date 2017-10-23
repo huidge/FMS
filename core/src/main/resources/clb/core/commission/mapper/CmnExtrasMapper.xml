@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnExtrasMapper">
+
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnExtras">
+        <result column="EXTRA_ID" property="extraId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="EXTRA1" property="extra1" jdbcType="DECIMAL" />
+        <result column="EXTRA2" property="extra2" jdbcType="DECIMAL" />
+        <result column="EXTRA3" property="extra3" jdbcType="DECIMAL" />
+        <result column="EXTRA4" property="extra4" jdbcType="DECIMAL" />
+        <result column="EXTRA5" property="extra5" jdbcType="DECIMAL" />
+        <result column="EXTRA6" property="extra6" jdbcType="DECIMAL" />
+        <result column="EXTRA7" property="extra7" jdbcType="DECIMAL" />
+        <result column="EXTRA8" property="extra8" jdbcType="DECIMAL" />
+        <result column="EXTRA9" property="extra9" jdbcType="DECIMAL" />
+        <result column="EXTRA10" property="extra10" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+
+        <result column="PRODUCT_COMPANY" property="productCompany" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryExtras" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtras">
+        SELECT
+        fcb.EXTRA_ID,
+        fcb.SUPPLIER_ID,
+        fss.`NAME` PRODUCT_COMPANY,
+        fcb.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fcb.CONTRIBUTION_PERIOD,
+        fcb.CURRENCY,
+        fcb.PAY_METHOD,
+        fcb.POLICYHOLDERS_MIN_AGE,
+        fcb.POLICYHOLDERS_MAX_AGE,
+        fcb.EXTRA1,
+        fcb.EXTRA2,
+        fcb.EXTRA3,
+        fcb.EXTRA4,
+        fcb.EXTRA5,
+        fcb.EXTRA6,
+        fcb.EXTRA7,
+        fcb.EXTRA8,
+        fcb.EXTRA9,
+        fcb.EXTRA10,
+        fcb.VERSION,
+        fcb.EFFECTIVE_START_DATE,
+        fcb.EFFECTIVE_END_DATE
+        FROM
+        fms_cmn_extras AS fcb
+        LEFT JOIN fms_spe_supplier fss
+        ON fcb.SUPPLIER_ID = fss.SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi
+        ON fcb.ITEM_ID = fpi.ITEM_ID
+        WHERE 1=1
+            <if test="supplierId!=null and supplierId!=''">
+                AND fcb.SUPPLIER_ID = #{supplierId}
+            </if>
+            <if test="productCompany!=null and productCompany!=''">
+                AND `NAME` = #{productCompany}
+            </if>
+            <if test="itemId!=null and itemId!=''">
+                AND fcb.ITEM_ID = #{itemId}
+            </if>
+            <if test="itemCode!=null and itemCode!=''">
+                AND ITEM_CODE = #{itemCode}
+            </if>
+            <if test="itemName!=null and itemName!=''">
+                AND ITEM_NAME = #{itemName}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND PAY_METHOD = #{payMethod}
+            </if>
+            <if test="policyHoldersAge!=null and policyHoldersAge!=''">
+                AND POLICYHOLDERS_MIN_AGE &lt;= #{policyHoldersAge}
+                AND POLICYHOLDERS_MAX_AGE &gt;= #{policyHoldersAge}
+            </if>
+            <if test="extraId!=null and extraId !=''">
+                AND fcb.EXTRA_ID = #{extraId}
+            </if>
+            <if test="version!=null and version!=''">
+                AND VERSION = #{version}
+            </if>
+    </select>
+
+    <select id="queryMaxVersion" resultType="java.lang.Long" parameterType="clb.core.commission.dto.CmnExtras">
+        select max(VERSION) from fms_cmn_extras
+        where
+        ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PAY_METHOD = #{payMethod}
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+    </select>
+
+ 	<select id="selectExtras" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtras">
+        select * from fms_cmn_extras
+        where
+        ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PAY_METHOD = #{payMethod}
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+    </select>
+</mapper>

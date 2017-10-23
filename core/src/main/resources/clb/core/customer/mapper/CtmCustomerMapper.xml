@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.customer.mapper.CtmCustomerMapper">
+    <resultMap id="BaseResultMap" type="clb.core.customer.dto.CtmCustomer">
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT" />
+        <result column="CUSTOMER_CODE" property="customerCode" jdbcType="VARCHAR" />
+        <result column="CHINESE_NAME" property="chineseName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="BIRTH_DATE" property="birthDate" jdbcType="TIMESTAMP" />
+        <result column="SEX" property="sex" jdbcType="VARCHAR" />
+        <result column="NATIONALITY" property="nationality" jdbcType="VARCHAR" />
+        <result column="HEIGHT" property="height" jdbcType="DECIMAL" />
+        <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+        <result column="INDUSTRY" property="industry" jdbcType="VARCHAR" />
+        <result column="COMPANY_ADDRESS" property="companyAddress" jdbcType="VARCHAR" />
+        <result column="CITY" property="city" jdbcType="VARCHAR" />
+        <result column="INCOME" property="income" jdbcType="DECIMAL" />
+        <result column="JOB" property="job" jdbcType="VARCHAR" />
+        <result column="POSITION" property="position" jdbcType="VARCHAR" />
+        <result column="EDUCATION" property="education" jdbcType="VARCHAR" />
+        <result column="MARRIAGE_STATUS" property="marriageStatus" jdbcType="VARCHAR" />
+        <result column="SMOKE_FLAG" property="smokeFlag" jdbcType="VARCHAR" />
+        <result column="AMERICAN_CITIZEN_FLAG" property="americanCitizenFlag" jdbcType="VARCHAR" />
+        <result column="IDENTITY_NUMBER" property="identityNumber" jdbcType="VARCHAR" />
+        <result column="IDENTITY_EFFECTIVE_DATE" property="identityEffectiveDate" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_TYPE" property="certificateType" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_NUMBER" property="certificateNumber" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_EFFECTIVE_DATE" property="certificateEffectiveDate" jdbcType="VARCHAR" />
+        <result column="IDENTITY_ADDRESS" property="identityAddress" jdbcType="VARCHAR" />
+        <result column="IDENTITY_FLAG" property="identityFlag" jdbcType="VARCHAR" />
+        <result column="POST_ADDRESS" property="postAddress" jdbcType="VARCHAR" />
+        <result column="PREMIUM_SOURCE" property="premiumSource" jdbcType="VARCHAR" />
+        <result column="AMOUNT_PER_MONTH" property="amountPerMonth" jdbcType="DOUBLE" />
+        <result column="CURRENT_ASSETS" property="currentAssets" jdbcType="DOUBLE" />
+        <result column="FIXED_ASSETS" property="fixedAssets" jdbcType="DOUBLE" />
+        <result column="PREMIUM_RATE" property="premiumRate" jdbcType="DOUBLE" />
+        <result column="LIABILITIES" property="liabilities" jdbcType="DOUBLE" />
+        <result column="BAD_FLAG" property="badFlag" jdbcType="VARCHAR" />
+        <result column="COMPENSATE_FLAG" property="compensateFlag" jdbcType="VARCHAR" />
+        <result column="BAD_INSURANCE_NAME" property="badInsuranceName" jdbcType="VARCHAR" />
+        <result column="BAD_INSURANCE_TYPE" property="badInsuranceType" jdbcType="VARCHAR" />
+        <result column="BAD_EFFACTIVE_DATE" property="badEffactiveDate" jdbcType="DATE" />
+        <result column="COMPENSATE_INSURANCE_NAME" property="compensateInsuranceName" jdbcType="VARCHAR" />
+        <result column="COMPENSATE_INSURANCE_TYPE" property="compensateInsuranceType" jdbcType="VARCHAR" />
+        <result column="COMPENSATE_EFFACTIVE_DATE" property="compensateEffactiveDate" jdbcType="DATE" />
+        <result column="SMOKE_DESC" property="smokeDesc" jdbcType="VARCHAR" />
+        <result column="DRINK_FLAG" property="drinkFlag" jdbcType="VARCHAR" />
+        <result column="DRINK_DESC" property="drinkDesc" jdbcType="VARCHAR" />
+        <result column="DRUG_FLAG" property="drugFlag" jdbcType="VARCHAR" />
+        <result column="DRUG_DESC" property="drugDesc" jdbcType="VARCHAR" />
+        <result column="DANGEROUS_FLAG" property="dangerousFlag" jdbcType="VARCHAR" />
+        <result column="DANGEROUS_DESC" property="dangerousDesc" jdbcType="VARCHAR" />
+        <result column="ABROAD_FLAG" property="abroadFlag" jdbcType="VARCHAR" />
+        <result column="ABROAD_DESC" property="abroadDesc" jdbcType="VARCHAR" />
+        <result column="DISABILITY_FLAG" property="disabilityFlag" jdbcType="VARCHAR" />
+        <result column="DISABILITY_DESC" property="disabilityDesc" jdbcType="VARCHAR" />
+        <result column="SPIRIT_FLAG" property="spiritFlag" jdbcType="VARCHAR" />
+        <result column="SPIRIT_DESC" property="spiritDesc" jdbcType="VARCHAR" />
+        <result column="ENDOCRINE_FLAG" property="endocrineFlag" jdbcType="VARCHAR" />
+        <result column="ENDOCRINE_DESC" property="endocrineDesc" jdbcType="VARCHAR" />
+        <result column="FACE_FLAG" property="faceFlag" jdbcType="VARCHAR" />
+        <result column="FACE_DESC" property="faceDesc" jdbcType="VARCHAR" />
+        <result column="RESPIRATION_FLAG" property="respirationFlag" jdbcType="VARCHAR" />
+        <result column="RESPIRATION_DESC" property="respirationDesc" jdbcType="VARCHAR" />
+        <result column="THREE_FLAG" property="threeFlag" jdbcType="VARCHAR" />
+        <result column="THREE_DESC" property="threeDesc" jdbcType="VARCHAR" />
+        <result column="CYCLE_FLAG" property="cycleFlag" jdbcType="VARCHAR" />
+        <result column="CYCLE_DESC" property="cycleDesc" jdbcType="VARCHAR" />
+        <result column="DIGESTION_FLAG" property="digestionFlag" jdbcType="VARCHAR" />
+        <result column="DIGESTION_DESC" property="digestionDesc" jdbcType="VARCHAR" />
+        <result column="LIVER_FLAG" property="liverFlag" jdbcType="VARCHAR" />
+        <result column="LIVER_DESC" property="liverDesc" jdbcType="VARCHAR" />
+        <result column="REPRODUCTION_FLAG" property="reproductionFlag" jdbcType="VARCHAR" />
+        <result column="REPRODUCTION_DESC" property="reproductionDesc" jdbcType="VARCHAR" />
+        <result column="JOINT_FLAG" property="jointFlag" jdbcType="VARCHAR" />
+        <result column="JOINT_DESC" property="jointDesc" jdbcType="VARCHAR" />
+        <result column="TUMOR_FLAG" property="tumorFlag" jdbcType="VARCHAR" />
+        <result column="TUMOR_DESC" property="tumorDesc" jdbcType="VARCHAR" />
+        <result column="BLOOD_FLAG" property="bloodFlag" jdbcType="VARCHAR" />
+        <result column="BLOOD_DESC" property="bloodDesc" jdbcType="VARCHAR" />
+        <result column="AIDS_FLAG" property="aidsFlag" jdbcType="VARCHAR" />
+        <result column="AIDS_DESC" property="aidsDesc" jdbcType="VARCHAR" />
+        <result column="AIDS_TEST_FLAG" property="aidsTestFlag" jdbcType="VARCHAR" />
+        <result column="AIDS_TEST_DESC" property="aidsTestDesc" jdbcType="VARCHAR" />
+        <result column="SKIN_FLAG" property="skinFlag" jdbcType="VARCHAR" />
+        <result column="SKIN_DESC" property="skinDesc" jdbcType="VARCHAR" />
+        <result column="OTHER_FLAG" property="otherFlag" jdbcType="VARCHAR" />
+        <result column="OTHER_DESC" property="otherDesc" jdbcType="VARCHAR" />
+        <result column="OTHER_TREAT_FLAG" property="otherTreatFlag" jdbcType="VARCHAR" />
+        <result column="OTHER_TREAT_DESC" property="otherTreatDesc" jdbcType="VARCHAR" />
+        <result column="EXAMINATION_FLAG" property="examinationFlag" jdbcType="VARCHAR" />
+        <result column="EXAMINATION_DESC" property="examinationDesc" jdbcType="VARCHAR" />
+        <result column="HEREDITARY_FLAG" property="hereditaryFlag" jdbcType="VARCHAR" />
+        <result column="HEREDITARY_DESC" property="hereditaryDesc" jdbcType="VARCHAR" />
+        <result column="PREGNANCY_FLAG" property="pregnancyFlag" jdbcType="VARCHAR" />
+        <result column="PREGNANCY_DESC" property="pregnancyDesc" jdbcType="VARCHAR" />
+        <result column="DOWN_TEST_FLAG" property="downTestFlag" jdbcType="VARCHAR" />
+        <result column="DOWN_TEST_DESC" property="downTestDesc" jdbcType="VARCHAR" />
+        <result column="GYNECOLOGY_FLAG" property="gynecologyFlag" jdbcType="VARCHAR" />
+        <result column="GYNECOLOGY_DESC" property="gynecologyDesc" jdbcType="VARCHAR" />
+        <result column="COMPLICATION_FLAG" property="complicationFlag" jdbcType="VARCHAR" />
+        <result column="COMPLICATION_DESC" property="complicationDesc" jdbcType="VARCHAR" />
+        <result column="GYNECOLOGY_OTH_FLAG" property="gynecologyOthFlag" jdbcType="VARCHAR" />
+        <result column="GYNECOLOGY_OTH_DESC" property="gynecologyOthDesc" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="BIGINT" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="BIGINT" />
+
+
+        <result column="IDENTITY_NATION" property="identityNation" jdbcType="VARCHAR" />
+        <result column="IDENTITY_PROVINCE" property="identityProvince" jdbcType="VARCHAR" />
+        <result column="IDENTITY_CITY" property="identityCity" jdbcType="VARCHAR" />
+        <result column="POST_NATION" property="postNation" jdbcType="VARCHAR" />
+        <result column="POST_PROVINCE" property="postProvince" jdbcType="VARCHAR" />
+        <result column="POST_CITY" property="postCity" jdbcType="VARCHAR" />
+        <result column="COMPANY_NATION" property="companyNation" jdbcType="VARCHAR" />
+        <result column="COMPANY_PROVINCE" property="companyProvince" jdbcType="VARCHAR" />
+        <result column="COMPANY_CITY" property="companyCity" jdbcType="VARCHAR" />
+
+        <result column="CANAL" property="canal" jdbcType="VARCHAR" />
+        <result column="ORDER_COUNT" property="orderCount" jdbcType="DECIMAL" />
+        <result column="MONEY_SUM" property="moneySum" jdbcType="DECIMAL" />
+    </resultMap>
+
+
+    <select id="query" resultMap="BaseResultMap" parameterType="clb.core.customer.dto.CtmCustomer">
+        SELECT
+         fcc.CUSTOMER_ID,
+         fcc.CUSTOMER_CODE,
+         fcc.CHINESE_NAME,
+         fcc.ENGLISH_NAME,
+         fcc.SEX,
+         fcc.NATIONALITY,
+         fcc.HEIGHT,
+         fcc.WEIGHT,
+         fcc.EDUCATION,
+         fcc.MARRIAGE_STATUS,
+         fcc.AMERICAN_CITIZEN_FLAG,
+         fcc.IDENTITY_EFFECTIVE_DATE,
+         fcc.IDENTITY_NATION,
+         fcc.IDENTITY_PROVINCE,
+         fcc.IDENTITY_CITY,
+         fcc.IDENTITY_ADDRESS,
+         fcc.IDENTITY_FLAG,
+         fcc.CERTIFICATE_TYPE,
+         fcc.CERTIFICATE_NUMBER,
+         fcc.CERTIFICATE_EFFECTIVE_DATE,
+         fcc.COMPANY_NAME,
+         fcc.INDUSTRY,
+         fcc.COMPANY_NATION,
+         fcc.COMPANY_PROVINCE,
+         fcc.COMPANY_CITY,
+         fcc.COMPANY_ADDRESS,
+         fcc.JOB,
+         fcc.PREMIUM_SOURCE,
+         fcc.AMOUNT_PER_MONTH,
+         fcc.CURRENT_ASSETS,
+         fcc.FIXED_ASSETS,
+         fcc.PREMIUM_RATE,
+         fcc.LIABILITIES,
+         fcc.BAD_FLAG,
+         fcc.COMPENSATE_FLAG,
+         fcc.BAD_INSURANCE_NAME,
+         fcc.BAD_INSURANCE_TYPE,
+         fcc.BAD_EFFACTIVE_DATE,
+         fcc.SMOKE_FLAG,
+         fcc.SMOKE_DESC,
+         fcc.DRINK_FLAG,
+         fcc.DRINK_DESC,
+         fcc.DRUG_FLAG,
+         fcc.DRUG_DESC,
+         fcc.DANGEROUS_FLAG,
+         fcc.DANGEROUS_DESC,
+         fcc.ABROAD_FLAG,
+         fcc.ABROAD_DESC,
+         fcc.DISABILITY_FLAG,
+         fcc.DISABILITY_DESC,
+         fcc.SPIRIT_FLAG,
+         fcc.SPIRIT_DESC,
+         fcc.ENDOCRINE_FLAG,
+         fcc.ENDOCRINE_DESC,
+         fcc.FACE_FLAG,
+         fcc.FACE_DESC,
+         fcc.RESPIRATION_FLAG,
+         fcc.RESPIRATION_DESC,
+         fcc.THREE_FLAG,
+         fcc.THREE_DESC,
+         fcc.CYCLE_FLAG,
+         fcc.CYCLE_DESC,
+         fcc.DIGESTION_FLAG,
+         fcc.DIGESTION_DESC,
+         fcc.LIVER_FLAG,
+         fcc.LIVER_DESC,
+         fcc.REPRODUCTION_FLAG,
+         fcc.REPRODUCTION_DESC,
+         fcc.JOINT_FLAG,
+         fcc.JOINT_DESC,
+         fcc.TUMOR_FLAG,
+         fcc.TUMOR_DESC,
+         fcc.BLOOD_FLAG,
+         fcc.BLOOD_DESC,
+         fcc.AIDS_FLAG,
+         fcc.AIDS_DESC,
+         fcc.AIDS_TEST_FLAG,
+         fcc.AIDS_TEST_DESC,
+         fcc.SKIN_FLAG,
+         fcc.SKIN_DESC,
+         fcc.OTHER_FLAG,
+         fcc.OTHER_DESC,
+         fcc.OTHER_TREAT_FLAG,
+         fcc.OTHER_TREAT_DESC,
+         fcc.EXAMINATION_FLAG,
+         fcc.EXAMINATION_DESC,
+         fcc.HEREDITARY_FLAG,
+         fcc.HEREDITARY_DESC,
+         fcc.PREGNANCY_FLAG,
+         fcc.PREGNANCY_DESC,
+         fcc.DOWN_TEST_FLAG,
+         fcc.DOWN_TEST_DESC,
+         fcc.GYNECOLOGY_FLAG,
+         fcc.GYNECOLOGY_DESC,
+         fcc.COMPLICATION_FLAG,
+         fcc.COMPLICATION_DESC,
+         fcc.GYNECOLOGY_OTH_FLAG,
+         fcc.GYNECOLOGY_OTH_DESC,
+         fcc.PHONE,
+         fcc.PHONE_CODE,
+         fcc.BIRTH_DATE,
+         fcc.POSITION,
+         fcc.CITY,
+         fcc.POST_NATION,
+         fcc.POST_PROVINCE,
+         fcc.POST_CITY,
+         fcc.POST_ADDRESS,
+         fcc.IDENTITY_NUMBER,
+         fcc.INCOME,
+         fcc.EMAIL,
+         GROUP_CONCAT(DISTINCT fcch.CHANNEL_NAME) AS CANAL,
+         count(0) ORDER_COUNT,
+         sum(foo.POLICY_AMOUNT) MONEY_SUM
+        FROM
+         FMS_CTM_CUSTOMER fcc
+        LEFT JOIN fms_ord_order foo ON (
+          fcc.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        OR fcc.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        )
+        LEFT JOIN fms_cnl_channel fcch ON foo.CHANNEL_ID = fcch.CHANNEL_ID
+      <where>
+          <if test="chineseName != null">
+              AND fcc.CHINESE_NAME LIKE CONCAT(CONCAT('%',#{chineseName}),'%')
+              OR fcch.CHANNEL_NAME LIKE CONCAT(CONCAT('%',#{chineseName}),'%')
+              OR fcc.ENGLISH_NAME LIKE CONCAT(CONCAT('%',#{chineseName}),'%')
+          </if>
+          <if test = "identityNumber != null">
+              AND fcc.IDENTITY_NUMBER = #{identityNumber , jdbcType=VARCHAR}
+          </if>
+          <if test="city != null">
+              AND fcc.CITY = #{city}
+          </if>
+          <if test="incomeLevel != null">
+              AND ${incomeLevel}
+          </if>
+          <if test="channelId != null">
+              AND foo.CHANNEL_ID = #{ channelId }
+          </if>
+      </where>
+      GROUP BY
+        fcc.CUSTOMER_ID
+      <choose>
+          <when test="orderBy != null and orderBy != ''">
+              order by ${orderBy}
+          </when>
+      </choose>
+    </select>
+
+
+    <select id="wsQuery" resultMap="BaseResultMap" parameterType="clb.core.customer.dto.CtmCustomer">
+        SELECT
+        SUM(
+        CASE foo.order_type
+        WHEN 'INSURANCE' THEN 1
+        ELSE NULL
+        END
+        ) ORDER_COUNT,
+        fcc.*
+        FROM
+        fms_ctm_customer fcc
+        LEFT JOIN fms_ord_order foo ON (
+        fcc.CUSTOMER_ID = foo.APPLICANT_CUSTOMER_ID
+        OR fcc.CUSTOMER_ID = foo.INSURANT_CUSTOMER_ID
+        )
+        LEFT JOIN sys_code_b scb
+        ON scb. CODE = 'PUB.CITY'
+        LEFT JOIN sys_code_value_b scvb
+        ON scb.CODE_ID = scvb.CODE_ID AND fcc.POST_CITY = scvb.VALUE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvb.CODE_VALUE_ID = scvt.CODE_VALUE_ID AND scvt.LANG = 'zh_CN'
+
+        <where>
+            <if test="chineseName != null">
+                AND fcc.CHINESE_NAME LIKE CONCAT(CONCAT('%',#{chineseName}),'%')
+            </if>
+
+            <if test="incomeLevel != null">
+                AND ${incomeLevel}
+            </if>
+
+            <if test="channelId != null">
+                AND foo.CHANNEL_ID = #{channelId}
+            </if>
+
+            <if test="city != null">
+                AND scvt.MEANING LIKE CONCAT(CONCAT('%',#{city}),'%')
+            </if>
+        </where>
+        GROUP BY fcc.CUSTOMER_ID
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                order by ${orderBy}
+            </when>
+        </choose>
+    </select>
+
+    <select id="selectByIdNumber" resultMap="BaseResultMap" parameterType="clb.core.customer.dto.CtmCustomer">
+      SELECT * FROM FMS_CTM_CUSTOMER WHERE IDENTITY_NUMBER = #{identityNumber}
+    </select>
+
+</mapper>

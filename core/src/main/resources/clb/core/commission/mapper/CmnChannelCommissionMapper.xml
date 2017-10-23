@@ -1,0 +1,1745 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/4/24.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnChannelCommissionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnChannelCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_CODE" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR"/>
+        <result column="LEVEL_NAME" property="levelName" jdbcType="VARCHAR"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL"/>
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR"/>
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR"/>
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL"/>
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="VERSION" property="version" jdbcType="VARCHAR"/>
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP"/>
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR"/>
+
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_COMMISSION_ID" property="supplierCommissionId" jdbcType="DECIMAL"/>
+        <result column="RELATION_LEVEL_NUMBER" property="relationLevelNumber" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_LEVEL_ID" property="channelLevelId" jdbcType="DECIMAL"/>
+        <result column="PARENT_LINE_ID" property="parentLineId" jdbcType="DECIMAL"/>
+        <result column="ADDITIONAL_RISK_FLAG" property="additionalRiskFlag" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR"/>
+        <result column="DEAL_PATH_NAME" property="dealPathName" jdbcType="VARCHAR"/>
+        <result column="TOTAL_LINE_QTY" property="totalLineQty" jdbcType="DECIMAL"/>
+        <result column="BATCH_COUNT" property="batchCount" jdbcType="DECIMAL"/>
+        <result column="MIN_LINE_ID" property="minLineId" jdbcType="DECIMAL"/>
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="AllFieldMap" type="clb.core.commission.dto.CmnChannelCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_CODE" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR"/>
+        <result column="PARENT_PARTY_NAME" property="parentPartyName" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_NAME" property="channelTypeName" jdbcType="VARCHAR"/>
+        <result column="LEVEL_NAME" property="levelName" jdbcType="VARCHAR"/>
+        <result column="ITEM_SUPPLIER_ID" property="itemSupplierId" jdbcType="DECIMAL"/>
+        <result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL"/>
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR"/>
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR"/>
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="PAY_METHOD_NAME" property="payMethodName" jdbcType="VARCHAR"/>
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL"/>
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="VERSION" property="version" jdbcType="VARCHAR"/>
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP"/>
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR"/>
+        <result column="PRICE_TYPE_NAME" property="priceTypeName" jdbcType="VARCHAR"/>
+
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_COMMISSION_ID" property="supplierCommissionId" jdbcType="DECIMAL"/>
+        <result column="RELATION_LEVEL_NUMBER" property="relationLevelNumber" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_LEVEL_ID" property="channelLevelId" jdbcType="DECIMAL"/>
+        <result column="PARENT_LINE_ID" property="parentLineId" jdbcType="DECIMAL"/>
+        <result column="ADDITIONAL_RISK_FLAG" property="additionalRiskFlag" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR"/>
+        <result column="DEAL_PATH_NAME" property="dealPathName" jdbcType="VARCHAR"/>
+        <result column="TOTAL_LINE_QTY" property="totalLineQty" jdbcType="DECIMAL"/>
+        <result column="MIN_LINE_ID" property="minLineId" jdbcType="DECIMAL"/>
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ChannelResultMap" type="clb.core.channel.dto.CnlChannel">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_CODE" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR"/>
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR"/>
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR"/>
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR"/>
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR"/>
+        <result column="CITY" property="city" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR"/>
+        <result column="INDUSTRY_BACKGROUND" property="industryBackground" jdbcType="VARCHAR"/>
+        <result column="EXPERIENCE_FLAG" property="experienceFlag" jdbcType="VARCHAR"/>
+        <result column="EXHIBITION_MODE" property="exhibitionMode" jdbcType="VARCHAR"/>
+        <result column="EXHIBITION_RANGE" property="exhibitionRange" jdbcType="VARCHAR"/>
+        <result column="HK_BANK" property="hkBank" jdbcType="VARCHAR"/>
+        <result column="HK_BANK_ACCOUNT_NAME" property="hkBankAccountName" jdbcType="VARCHAR"/>
+        <result column="HK_BANK_ACCOUNT_NUM" property="hkBankAccountNum" jdbcType="VARCHAR"/>
+        <result column="IL_BANK" property="ilBank" jdbcType="VARCHAR"/>
+        <result column="IL_BANK_ACCOUNT_NAME" property="ilBankAccountName" jdbcType="VARCHAR"/>
+        <result column="IL_BANK_ACCOUNT_NUM" property="ilBankAccountNum" jdbcType="VARCHAR"/>
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="AREA" property="area" jdbcType="VARCHAR"/>
+        <result column="PROVINCE_MEANING" property="provinceMeaning" jdbcType="VARCHAR"/>
+        <result column="CITY_MEANING" property="cityMeaning" jdbcType="VARCHAR"/>
+        <result column="PARENT_CHANNEL_NAME" property="parentChannelName" jdbcType="VARCHAR"/>
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR"/>
+        <result column="HK_BANK_NAME" property="hkBankName" jdbcType="VARCHAR"/>
+        <result column="IL_BANK_NAME" property="ilBankName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryLineQty" resultMap="AllFieldMap">
+        SELECT count(1) totalLineQty, min(LINE_ID) minLineId FROM FMS_CMN_CHANNEL_COMMISSION WHERE 1=1
+    </select>
+
+    <!--查询界面所有字段-->
+    <select id="selectShowAllFields" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        ccc.channel_id,
+        cc.channel_name,
+        IFNULL(cc1.CHANNEL_NAME, cc2.`NAME`) parent_party_name,
+        cc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CNL.CHANNEL_CLASS'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        (SELECT fcl.LEVEL_NAME FROM fms_cnl_level fcl
+        WHERE fcl.ID = ccc.CHANNEL_LEVEL_ID) LEVEL_NAME,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        ccc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fpi.big_class,
+        fpi.mid_class,
+        fpi.min_class,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CMN.PAY_METHOD'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.PRICE_TYPE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PRICE_TYPE'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PRICE_TYPE
+        ) PRICE_TYPE_NAME,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        date_format(ccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(ccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID,
+        fpi.attribute1 ADDITIONAL_RISK_FLAG,
+        ccc.OBJECT_VERSION_NUMBER,
+        ccc.DEAL_PATH,
+        ccc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION_SHOW ccc
+        LEFT JOIN fms_cnl_channel_contract con1 ON (con1.PARTY_TYPE = 'CHANNEL' and con1.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_cnl_channel cc1 ON (con1.PARTY_ID = cc1.CHANNEL_ID)
+        LEFT JOIN fms_cnl_channel_contract con2 ON (con2.PARTY_TYPE = 'SUPPLIER' and con2.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_spe_supplier cc2 ON (con2.PARTY_ID = cc2.SUPPLIER_ID),
+        fms_cnl_channel cc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        ccc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND ccc.item_id = fpi.item_id
+        AND ccc.channel_id = cc.channel_id
+        AND fpi.supplier_id = pss.supplier_id
+        <if test="lineId != null and lineId != ''">
+            AND ccc.line_id = #{lineId}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND ccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND ccc.channel_id = #{channelId}
+        </if>
+        <if test="channelName != null and channelName != ''">
+            AND cc.channel_name = #{channelName}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND ccc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if>
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if>
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND ccc.ITEM_ID = #{itemId}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        <if test="supplierName != null and supplierName != ''">
+            AND fss.NAME LIKE CONCAT('%', #{supplierName}, '%')
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND ccc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND ccc.CURRENCY = #{currency}
+        </if>
+        <if test="payMethod != null and payMethod != ''">
+            AND ccc.PAY_METHOD = #{payMethod}
+        </if>
+        <if test="version != null and version != ''">
+            AND ccc.VERSION = #{version}
+        </if>
+        <if test="policyholdersAge != null and policyholdersAge != ''">
+            AND (#{policyholdersAge} BETWEEN ccc.POLICYHOLDERS_MIN_AGE AND ccc.POLICYHOLDERS_MAX_AGE)
+        </if>
+        <if test="policyholdersMinAge != null">
+            AND ccc.POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        </if>
+        <if test="policyholdersMaxAge != null">
+            AND ccc.POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        </if>
+        <if test="effectiveDate != null">
+            AND (#{effectiveDate} BETWEEN ccc.EFFECTIVE_START_DATE AND ccc.EFFECTIVE_END_DATE)
+        </if>
+        <if test="itemRange != null and itemRange != ''">
+            AND ccc.ITEM_ID IN ${itemRange}
+        </if>
+        <if test="supplierRange != null and supplierRange != ''">
+            AND ccc.SUPPLIER_ID IN ${supplierRange}
+        </if>
+        <if test="additionalRiskFlag != null and additionalRiskFlag != ''">
+            AND fpi.attribute1 = #{additionalRiskFlag}
+        </if>
+        <if test="dealPath != null and dealPath != ''">
+            AND ccc.DEAL_PATH = #{dealPath}
+        </if>
+        <if test="calculateFlag != null and calculateFlag != '' ">
+            AND ccc.CALCULATE_FLAG = #{calculateFlag}
+        </if>
+        <if test="parentPartyType eq 'CHANNEL' and parentPartyId != null and parentPartyId !='' ">
+            AND con1.PARTY_ID = #{parentPartyId}
+        </if>
+        <if test="parentPartyType eq 'SUPPLIER' and parentPartyId != null and parentPartyId !='' ">
+            AND con2.PARTY_ID = #{parentPartyId}
+        </if>
+        <if test="startLineId != null and startLineId != ''
+                    and batchCount != null and batchCount != '' ">
+            AND ccc.line_id <![CDATA[ >= ]]> #{startLineId}
+            ORDER BY ccc.line_id ASC
+            limit #{batchCount}
+        </if>
+        <if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+    </select>
+
+    <!--查询界面所有字段-->
+    <select id="selectAllFields" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        ccc.channel_id,
+        cc.channel_name,
+        IFNULL(cc1.CHANNEL_NAME, cc2.`NAME`) parent_party_name,
+        cc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CNL.CHANNEL_CLASS'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        (SELECT fcl.LEVEL_NAME FROM fms_cnl_level fcl
+        WHERE fcl.ID = ccc.CHANNEL_LEVEL_ID) LEVEL_NAME,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        ccc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fpi.big_class,
+        fpi.mid_class,
+        fpi.min_class,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CMN.PAY_METHOD'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.PRICE_TYPE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PRICE_TYPE'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PRICE_TYPE
+        ) PRICE_TYPE_NAME,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        date_format(ccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(ccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID,
+        fpi.attribute1 ADDITIONAL_RISK_FLAG,
+        ccc.OBJECT_VERSION_NUMBER,
+        ccc.DEAL_PATH,
+        ccc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION ccc
+        LEFT JOIN fms_cnl_channel_contract con1 ON (con1.PARTY_TYPE = 'CHANNEL' and con1.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_cnl_channel cc1 ON (con1.PARTY_ID = cc1.CHANNEL_ID)
+        LEFT JOIN fms_cnl_channel_contract con2 ON (con2.PARTY_TYPE = 'SUPPLIER' and con2.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_spe_supplier cc2 ON (con2.PARTY_ID = cc2.SUPPLIER_ID),
+        fms_cnl_channel cc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        ccc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND ccc.item_id = fpi.item_id
+        AND ccc.channel_id = cc.channel_id
+        AND fpi.supplier_id = pss.supplier_id
+        <if test="lineId != null and lineId != ''">
+            AND ccc.line_id = #{lineId}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND ccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND ccc.channel_id = #{channelId}
+        </if>
+        <if test="channelName != null and channelName != ''">
+            AND cc.channel_name = #{channelName}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND ccc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if>
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if>
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND ccc.ITEM_ID = #{itemId}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND ccc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND ccc.CURRENCY = #{currency}
+        </if>
+        <if test="payMethod != null and payMethod != ''">
+            AND ccc.PAY_METHOD = #{payMethod}
+        </if>
+        <if test="version != null and version != ''">
+            AND ccc.VERSION = #{version}
+        </if>
+        <if test="policyholdersAge != null and policyholdersAge != ''">
+            AND (#{policyholdersAge} BETWEEN ccc.POLICYHOLDERS_MIN_AGE AND ccc.POLICYHOLDERS_MAX_AGE)
+        </if>
+        <if test="policyholdersMinAge != null and policyholdersMinAge != ''">
+            AND ccc.POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        </if>
+        <if test="policyholdersMaxAge != null and policyholdersMaxAge != ''">
+            AND ccc.POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        </if>
+        <if test="effectiveDate != null">
+            AND (#{effectiveDate} BETWEEN ccc.EFFECTIVE_START_DATE AND ccc.EFFECTIVE_END_DATE)
+        </if>
+        <if test="itemRange != null and itemRange != ''">
+            AND ccc.ITEM_ID IN ${itemRange}
+        </if>
+        <if test="supplierRange != null and supplierRange != ''">
+            AND ccc.SUPPLIER_ID IN ${supplierRange}
+        </if>
+        <if test="additionalRiskFlag != null and additionalRiskFlag != ''">
+            AND fpi.attribute1 = #{additionalRiskFlag}
+        </if>
+        <if test="dealPath != null and dealPath != ''">
+            AND ccc.DEAL_PATH = #{dealPath}
+        </if>
+        <if test="calculateFlag != null and calculateFlag != '' ">
+            AND ccc.CALCULATE_FLAG = #{calculateFlag}
+        </if>
+        <if test="parentPartyType eq 'CHANNEL' and parentPartyId != null and parentPartyId !='' ">
+            AND con1.PARTY_ID = #{parentPartyId}
+        </if>
+        <if test="parentPartyType eq 'SUPPLIER' and parentPartyId != null and parentPartyId !='' ">
+            AND con2.PARTY_ID = #{parentPartyId}
+        </if>
+        <if test="startLineId != null and startLineId != ''
+                    and batchCount != null and batchCount != '' ">
+            AND ccc.line_id <![CDATA[ >= ]]> #{startLineId}
+            ORDER BY ccc.line_id ASC
+            limit #{batchCount}
+        </if>
+        <if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+    </select>
+
+    <!-- 交易路线计算用 -->
+    <select id="selectBatchChannelCmn" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        ccc.channel_id,
+        cc.channel_name,
+        cc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        ccc.ITEM_ID,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.PRICE_TYPE,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        date_format(ccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(ccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID,
+        ccc.OBJECT_VERSION_NUMBER,
+        ccc.DEAL_PATH,
+        ccc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION ccc,
+        fms_cnl_channel cc
+        WHERE 1 = 1
+        AND ccc.channel_id = cc.channel_id
+        <if test="startLineId != null and startLineId != ''
+                    and batchCount != null and batchCount != '' ">
+            AND ccc.line_id <![CDATA[ >= ]]> #{startLineId}
+            ORDER BY ccc.line_id ASC
+            limit #{batchCount}
+        </if>
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="selectCommissionById" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        ccc.channel_id,
+        cc.channel_name,
+        cc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        ccc.ITEM_ID,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.PRICE_TYPE,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        ccc.EFFECTIVE_START_DATE,
+        ccc.EFFECTIVE_END_DATE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID,
+        ccc.OBJECT_VERSION_NUMBER,
+        ccc.DEAL_PATH,
+        ccc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION ccc,
+        fms_cnl_channel cc
+        WHERE 1 = 1
+        AND ccc.channel_id = cc.channel_id
+        <if test="lineId != null and lineId != ''">
+            AND ccc.line_id = #{lineId}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND ccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND ccc.channel_id = #{channelId}
+        </if>
+    </select>
+
+    <!-- 选择佣金查询 -->
+    <!--AND ccc.THE_FIRST_YEAR <![CDATA[ <> ]]> 0  后台佣金全了之后需加上-->
+    <select id="chooseCommission" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        ccc.channel_id,
+        cc.channel_name,
+        IFNULL(cc1.CHANNEL_NAME, cc2.`NAME`) parent_party_name,
+        cc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CNL.CHANNEL_CLASS'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        (SELECT fcl.LEVEL_NAME FROM fms_cnl_level fcl
+        WHERE fcl.ID = ccc.CHANNEL_LEVEL_ID) LEVEL_NAME,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        ccc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb. CODE = 'CMN.PAY_METHOD'
+        AND scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.PRICE_TYPE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PRICE_TYPE'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = ccc.PRICE_TYPE
+        ) PRICE_TYPE_NAME,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        date_format(ccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(ccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID,
+        fpi.attribute1 ADDITIONAL_RISK_FLAG,
+        ccc.OBJECT_VERSION_NUMBER,
+        ccc.DEAL_PATH,
+        ccc.DEAL_PATH_NAME
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION_SHOW ccc
+        LEFT JOIN fms_cnl_channel_contract con1 ON (con1.PARTY_TYPE = 'CHANNEL' and con1.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_cnl_channel cc1 ON (con1.PARTY_ID = cc1.CHANNEL_ID)
+        LEFT JOIN fms_cnl_channel_contract con2 ON (con2.PARTY_TYPE = 'SUPPLIER' and con2.CHANNEL_CONTRACT_ID = ccc.CHANNEL_CONTRACT_ID)
+        LEFT JOIN fms_spe_supplier cc2 ON (con2.PARTY_ID = cc2.SUPPLIER_ID),
+        fms_cnl_channel cc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        ccc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND ccc.item_id = fpi.item_id
+        AND ccc.channel_id = cc.channel_id
+        AND fpi.supplier_id = pss.supplier_id
+        <!-- <if test = "existFlag != null and existFlag != ''" >
+            AND EXISTS (
+            SELECT
+            1
+            FROM
+            fms_cnl_pro_sup_relation psr
+            WHERE
+            1 = 1
+            AND psr.CHANNEL_CLASS_CODE = ccc.CHANNEL_TYPE_CODE
+            AND fss.supplier_id = psr.supplier_id
+            AND psr.big_class = fpi.BIG_CLASS
+            AND IFNULL( IFNULL(psr.channel_id, ccc.channel_id ), 1) = IFNULL(ccc.channel_id, 1)
+            AND ((psr.mid_class = fpi.MID_CLASS) OR LENGTH(psr.mid_class) = 0)
+            AND ((psr.min_class = fpi.MIN_CLASS) OR LENGTH(psr.min_class) = 0)
+            AND IFNULL( psr.prd_supplier_id, fpi.SUPPLIER_ID ) = fpi.SUPPLIER_ID
+            AND IFNULL( psr.product_id, fpi.ITEM_ID ) = fpi.ITEM_ID
+            AND ((psr.contribution_period = ccc.CONTRIBUTION_PERIOD) OR LENGTH(psr.contribution_period) = 0)
+            )
+        </if > -->
+        <if test="lineId != null and lineId != ''">
+            AND ccc.line_id = #{lineId}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND ccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND ccc.channel_id = #{channelId}
+        </if>
+        <if test="channelName != null and channelName != ''">
+            AND cc.channel_name = #{channelName}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND ccc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if>
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if>
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND ccc.ITEM_ID = #{itemId}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND ccc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND ccc.CURRENCY = #{currency}
+        </if>
+        <if test="payMethod != null and payMethod != ''">
+            AND ccc.PAY_METHOD = #{payMethod}
+        </if>
+        <if test="version != null and version != ''">
+            AND ccc.VERSION = #{version}
+        </if>
+        <if test="policyholdersAge != -1">
+            AND (#{policyholdersAge} BETWEEN ccc.POLICYHOLDERS_MIN_AGE AND ccc.POLICYHOLDERS_MAX_AGE)
+        </if>
+        <if test="policyholdersMinAge != null and policyholdersMinAge != ''">
+            AND ccc.POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        </if>
+        <if test="policyholdersMaxAge != null and policyholdersMaxAge != ''">
+            AND ccc.POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        </if>
+        <if test="effectiveDate != null">
+            AND (#{effectiveDate} BETWEEN ccc.EFFECTIVE_START_DATE AND ccc.EFFECTIVE_END_DATE)
+        </if>
+        <if test="itemRange != null and itemRange != ''">
+            AND ccc.ITEM_ID IN ${itemRange}
+        </if>
+        <if test="supplierRange != null and supplierRange != ''">
+            AND ccc.SUPPLIER_ID IN ${supplierRange}
+        </if>
+        <if test="additionalRiskFlag != null and additionalRiskFlag != ''">
+            AND fpi.attribute1 = #{additionalRiskFlag}
+        </if>
+        <if test="dealPath != null and dealPath != ''">
+            AND ccc.DEAL_PATH = #{dealPath}
+        </if>
+        <if test="dealPathChannel != null and dealPathChannel != '' and dealPathSupplier != null and dealPathSupplier != ''">
+            AND ccc.DEAL_PATH LIKE concat('%',#{dealPathChannel},'%') AND ccc.DEAL_PATH LIKE concat('%',#{dealPathSupplier},'%')
+        </if>
+        <if test="calculateFlag != null and calculateFlag != '' ">
+            AND ccc.CALCULATE_FLAG = #{calculateFlag}
+        </if>
+        Order by ccc.THE_FIRST_YEAR DESC
+    </select>
+
+    <select id="queryChannelCmnList" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="BaseResultMap">
+        SELECT
+        ccc.line_id,
+        ccc.SUPPLIER_ID,
+        ccc.channel_id,
+        fcc.CHANNEL_NAME,
+        fcc.channel_code,
+        ccc.CHANNEL_TYPE_CODE,
+        ccc.ITEM_ID,
+        ccc.CONTRIBUTION_PERIOD,
+        ccc.CURRENCY,
+        ccc.PAY_METHOD,
+        ccc.POLICYHOLDERS_MIN_AGE,
+        ccc.POLICYHOLDERS_MAX_AGE,
+        ccc.THE_FIRST_YEAR,
+        ccc.THE_SECOND_YEAR,
+        ccc.THE_THIRD_YEAR,
+        ccc.THE_FOURTH_YEAR,
+        ccc.THE_FIFTH_YEAR,
+        ccc.THE_SIXTH_YEAR,
+        ccc.THE_SEVENTH_YEAR,
+        ccc.THE_EIGHT_YEAR,
+        ccc.THE_NINTH_YEAR,
+        ccc.THE_TENTH_YEAR,
+        ccc.VERSION,
+        date_format(ccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(ccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        ccc.PROGRAM_ID,
+        ccc.REQUEST_ID,
+        ccc.PRICE_TYPE,
+        ccc.SUPPLIER_COMMISSION_ID,
+        ccc.RELATION_LEVEL_NUMBER,
+        ccc.CHANNEL_CONTRACT_ID,
+        ccc.CHANNEL_LEVEL_ID,
+        ccc.PARENT_LINE_ID
+        FROM
+        FMS_CMN_CHANNEL_COMMISSION_SHOW ccc,
+        fms_cnl_channel            fcc,
+        fms_prd_items              fpi
+        WHERE
+        1 = 1
+        AND ccc.ITEM_ID = fpi.ITEM_ID
+        AND ccc.channel_id = fcc.channel_id
+        <if test = "lineId != null and lineId != ''" >
+            AND ccc.line_id = #{lineId}
+        </if>
+        <if test = "supplierId != null and supplierId != ''" >
+            AND ccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test = "channelId != null and channelId != ''" >
+            AND ccc.channel_id = #{channelId}
+        </if>
+        <if test = "bigClass != null and bigClass != ''" >
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if>
+    </select>
+
+    <!--清除供应商佣金表数据-->
+    <delete id="deleteCmnData" parameterType="clb.core.commission.dto.CmnChannelCommission">
+        delete from
+        fms_cmn_channel_commission
+        WHERE 1 = 1
+        <if test="payMethod != null and payMethod != ''">
+            AND PAY_METHOD = #{payMethod}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND ITEM_ID = #{itemId}
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND CURRENCY = #{currency}
+        </if>
+    </delete>
+
+    <resultMap id="contractResultMap" type="clb.core.channel.dto.CnlChannelContract">
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL"/>
+        <result column="CONTRACT_CODE" property="contractCode" jdbcType="VARCHAR"/>
+        <result column="CONTRACT_TYPE_CODE" property="contractTypeCode" jdbcType="VARCHAR"/>
+        <result column="PRODUCT_DIVISION" property="productDivision" jdbcType="VARCHAR"/>
+        <result column="PARTY_ID" property="partyId" jdbcType="DECIMAL"/>
+        <result column="PARTY_TYPE" property="partyType" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR"/>
+        <result column="START_DATE" property="startDate" jdbcType="TIMESTAMP"/>
+        <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP"/>
+        <result column="CONTRACT_APPROACH" property="contractApproach" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="MERCHANT_PERSON" property="merchantPerson" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_PERSON" property="channelPerson" jdbcType="VARCHAR"/>
+        <result column="INTRODUCE_PERSON" property="introducePerson" jdbcType="VARCHAR"/>
+        <result column="MAKE_PERSON" property="makePerson" jdbcType="VARCHAR"/>
+        <result column="PRODUCT_PERSON" property="productPerson" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_PERSON" property="businessPerson" jdbcType="VARCHAR"/>
+        <result column="MERCHANT_BENEFIT" property="merchantBenefit" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_BENEFIT" property="channelBenefit" jdbcType="VARCHAR"/>
+        <result column="INTRODUCE_BENEFIT" property="introduceBenefit" jdbcType="VARCHAR"/>
+        <result column="MAKE_BENEFIT" property="makeBenefit" jdbcType="VARCHAR"/>
+        <result column="PRODUCT_BENEFIT" property="productBenefit" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_BENEFIT" property="businessBenefit" jdbcType="VARCHAR"/>
+        <result column="SETTLE_FLAG" property="settleFlag" jdbcType="VARCHAR"/>
+        <result column="SETTLE_TYPE_CODE" property="settleTypeCode" jdbcType="VARCHAR"/>
+        <result column="SPECIAL_TREATMENT" property="specialTreatment" jdbcType="VARCHAR"/>
+        <result column="SETTLE_ACCOUNT" property="settleAccount" jdbcType="VARCHAR"/>
+        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="PARTY_NAME" property="partyName" jdbcType="VARCHAR"/>
+        <result column="RATE_LEVEL_ID" property="rateLevelId" jdbcType="DECIMAL" />
+        <result column="RATE_LEVEL_NAME" property="rateLevelName" jdbcType="VARCHAR" />
+        <result column="DEFINE_RATE_FLAG" property="defineRateFlag" jdbcType="VARCHAR" />
+    </resultMap>
+    <!--查询渠道合约信息-->
+    <select id="queryContractList" parameterType="clb.core.channel.dto.CnlChannelContract"
+            resultMap="contractResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_CODE,
+        FCCC.CONTRACT_TYPE_CODE,
+        FCCC.PRODUCT_DIVISION,
+        FCCC.PARTY_ID,
+        FCCC.PARTY_TYPE,
+        FCCC.CHANNEL_TYPE_CODE,
+        FCCC.CONTRACT_APPROACH,
+        FCCC.DESCRIPTION,
+        date_format(FCCC.START_DATE, '%Y-%m-%d 00:00:00') START_DATE,
+        date_format(FCCC.END_DATE, '%Y-%m-%d 23:59:59') END_DATE,
+        FCCC.MERCHANT_PERSON,
+        FCCC.CHANNEL_PERSON,
+        FCCC.INTRODUCE_PERSON,
+        FCCC.MAKE_PERSON,
+        FCCC.PRODUCT_PERSON,
+        FCCC.BUSINESS_PERSON,
+        FCCC.MERCHANT_BENEFIT,
+        FCCC.CHANNEL_BENEFIT,
+        FCCC.INTRODUCE_BENEFIT,
+        FCCC.MAKE_BENEFIT,
+        FCCC.PRODUCT_BENEFIT,
+        FCCC.BUSINESS_BENEFIT,
+        FCCC.SETTLE_FLAG,
+        FCCC.SETTLE_TYPE_CODE,
+        FCCC.SPECIAL_TREATMENT,
+        FCCC.SETTLE_ACCOUNT,
+        FCCC.PAYMENT_TERM_ID,
+        FCCC.PROGRAM_ID,
+        FCCC.REQUEST_ID,
+        CASE FCCC.PARTY_TYPE
+        WHEN 'SUPPLIER' THEN
+        FSS.NAME
+        WHEN 'CHANNEL' THEN
+        FCC.CHANNEL_NAME
+        END PARTY_NAME,
+        FCCC.rate_level_name,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.DEFINE_RATE_FLAG
+        FROM fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_spe_supplier FSS
+        ON (FCCC.PARTY_ID = FSS.SUPPLIER_ID AND FCCC.PARTY_TYPE = 'SUPPLIER')
+        LEFT JOIN fms_cnl_channel fcc
+        ON (FCCC.PARTY_ID = fcc.CHANNEL_ID AND FCCC.PARTY_TYPE = 'CHANNEL')
+        WHERE 1=1
+        <if test="channelId != null and channelId != ''">
+            AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        </if>
+        <if test="channelContractId != null and channelContractId != ''">
+            AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        </if>
+        <if test="partyType != null and partyType != ''">
+            AND FCCC.PARTY_TYPE = #{partyType , jdbcType=VARCHAR}
+        </if>
+        <if test="partyId != null and partyId != ''">
+            AND FCCC.PARTY_ID = #{partyId , jdbcType=DECIMAL}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND FCCC.CHANNEL_TYPE_CODE = #{channelTypeCode, jdbcType=VARCHAR}
+        </if>
+        <if test="contractTypeCode != null and contractTypeCode != ''">
+            AND FCCC.CONTRACT_TYPE_CODE = #{contractTypeCode , jdbcType=VARCHAR}
+        </if>
+        <if test="productDivision != null and productDivision != ''">
+            AND FCCC.PRODUCT_DIVISION = #{productDivision , jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!--查询渠道合约信息中合约主体为供应商的行-->
+    <select id="queryContractSpeList" parameterType="clb.core.channel.dto.CnlChannelContract"
+            resultMap="contractResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_CODE,
+        FCCC.CONTRACT_TYPE_CODE,
+        FCCC.PRODUCT_DIVISION,
+        FCCC.PARTY_ID,
+        FCCC.PARTY_TYPE,
+        FCCC.CHANNEL_TYPE_CODE,
+        date_format(FCCC.START_DATE, '%Y-%m-%d 00:00:00') START_DATE,
+        date_format(FCCC.END_DATE, '%Y-%m-%d 23:59:59') END_DATE,
+        FCCC.CONTRACT_APPROACH,
+        FCCC.DESCRIPTION,
+        FCCC.MERCHANT_PERSON,
+        FCCC.CHANNEL_PERSON,
+        FCCC.INTRODUCE_PERSON,
+        FCCC.MAKE_PERSON,
+        FCCC.PRODUCT_PERSON,
+        FCCC.BUSINESS_PERSON,
+        FCCC.MERCHANT_BENEFIT,
+        FCCC.CHANNEL_BENEFIT,
+        FCCC.INTRODUCE_BENEFIT,
+        FCCC.MAKE_BENEFIT,
+        FCCC.PRODUCT_BENEFIT,
+        FCCC.BUSINESS_BENEFIT,
+        FCCC.SETTLE_FLAG,
+        FCCC.SETTLE_TYPE_CODE,
+        FCCC.SPECIAL_TREATMENT,
+        FCCC.SETTLE_ACCOUNT,
+        FCCC.PAYMENT_TERM_ID,
+        FCCC.PROGRAM_ID,
+        FCCC.REQUEST_ID,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.DEFINE_RATE_FLAG,
+        FSS.NAME PARTY_NAME
+        FROM fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_spe_supplier FSS
+        ON (FCCC.PARTY_ID = FSS.SUPPLIER_ID AND FCCC.PARTY_TYPE = 'SUPPLIER')
+        WHERE 1=1
+        AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        -- 限定取合约信息中的供应商主体信息
+        AND FCCC.PARTY_TYPE = "SUPPLIER"
+        <if test="channelContractId != null and channelContractId != ''">
+            AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        </if>
+        <if test="contractTypeCode != null and channelContractId != ''">
+            AND FCCC.CONTRACT_TYPE_CODE = #{contractTypeCode , jdbcType=VARCHAR}
+        </if>
+        <if test="productDivision != null and channelContractId != ''">
+            AND FCCC.PRODUCT_DIVISION = #{productDivision , jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!--查询渠道合约信息中合约主体为渠道的行-->
+    <select id="queryContractCnlList" parameterType="clb.core.channel.dto.CnlChannelContract"
+            resultMap="contractResultMap">
+        SELECT FCCC.CHANNEL_CONTRACT_ID,
+        FCCC.CHANNEL_ID,
+        FCCC.CONTRACT_CODE,
+        FCCC.CONTRACT_TYPE_CODE,
+        FCCC.PRODUCT_DIVISION,
+        FCCC.PARTY_ID,
+        FCCC.PARTY_TYPE,
+        FCCC.CHANNEL_TYPE_CODE,
+        date_format(FCCC.START_DATE, '%Y-%m-%d 00:00:00') START_DATE,
+        date_format(FCCC.END_DATE, '%Y-%m-%d 23:59:59') END_DATE,
+        FCCC.CONTRACT_APPROACH,
+        FCCC.DESCRIPTION,
+        FCCC.MERCHANT_PERSON,
+        FCCC.CHANNEL_PERSON,
+        FCCC.INTRODUCE_PERSON,
+        FCCC.MAKE_PERSON,
+        FCCC.PRODUCT_PERSON,
+        FCCC.BUSINESS_PERSON,
+        FCCC.MERCHANT_BENEFIT,
+        FCCC.CHANNEL_BENEFIT,
+        FCCC.INTRODUCE_BENEFIT,
+        FCCC.MAKE_BENEFIT,
+        FCCC.PRODUCT_BENEFIT,
+        FCCC.BUSINESS_BENEFIT,
+        FCCC.SETTLE_FLAG,
+        FCCC.SETTLE_TYPE_CODE,
+        FCCC.SPECIAL_TREATMENT,
+        FCCC.SETTLE_ACCOUNT,
+        FCCC.PAYMENT_TERM_ID,
+        FCCC.PROGRAM_ID,
+        FCCC.REQUEST_ID,
+        FCC.CHANNEL_NAME PARTY_NAME,
+        FCCC.RATE_LEVEL_ID,
+        FCCC.DEFINE_RATE_FLAG
+        FROM fms_cnl_channel_contract FCCC
+        LEFT JOIN fms_cnl_channel fcc
+        ON (FCCC.PARTY_ID = fcc.CHANNEL_ID AND FCCC.PARTY_TYPE = 'CHANNEL')
+        WHERE 1 = 1
+        AND FCCC.PARTY_TYPE = "CHANNEL"
+        <if test="channelContractId != null">
+            AND FCCC.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        </if>
+        <if test="partyId != null">
+            AND FCCC.PARTY_ID = #{partyId , jdbcType=DECIMAL}
+        </if>
+        <if test="channelId != null">
+            AND FCCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+        </if>
+        <if test="contractTypeCode != null">
+            AND FCCC.CONTRACT_TYPE_CODE = #{contractTypeCode , jdbcType=VARCHAR}
+        </if>
+        <if test="productDivision != null">
+            AND FCCC.PRODUCT_DIVISION = #{productDivision , jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <resultMap id="levelResultMap" type="clb.core.channel.dto.CnlLevel">
+        <result column="ID" property="id" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_CLASS_Code" property="channelClassCode"
+                jdbcType="VARCHAR"/>
+        <result column="LEVEL_NAME" property="levelName" jdbcType="VARCHAR"/>
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_TEAR" property="theThirdTear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_FORTH_YEAR" property="theForthYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear"
+                jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear"
+                jdbcType="DECIMAL"/>
+        <result column="VERSION" property="version" jdbcType="DECIMAL"/>
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate"
+                jdbcType="TIMESTAMP"/>
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate"
+                jdbcType="TIMESTAMP"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="max_version" property="maxVersion" jdbcType="DECIMAL"/>
+        <result column="count" property="count" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--查询渠道等级信息-->
+    <select id="queryLevelList" parameterType="clb.core.channel.dto.CnlLevel" resultMap="levelResultMap">
+        select
+        fcl.ID,
+        fcl.CHANNEL_CLASS_CODE,
+        fcl.LEVEL_NAME,
+        fcl.THE_FIRST_YEAR,
+        fcl.THE_SECOND_YEAR,
+        fcl.THE_THIRD_TEAR,
+        fcl.THE_FORTH_YEAR,
+        fcl.THE_FIFTH_YEAR,
+        fcl.THE_SIXTH_YEAR,
+        fcl.THE_SEVENTH_YEAR,
+        fcl.THE_EIGHT_YEAR,
+        fcl.THE_NINTH_YEAR,
+        fcl.THE_TENTH_YEAR,
+        date_format(fcl.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(fcl.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE,
+        fcl.VERSION,
+        fcl.SUPPLIER_ID,
+        fss.SUPPLIER_CODE,
+        fss.`NAME`
+        from fms_cnl_level fcl, fms_spe_supplier fss
+        where fcl.SUPPLIER_ID = fss.SUPPLIER_ID
+        <if test="channelClassCode!=null and channelClassCode!=''">
+            and fcl.CHANNEL_CLASS_CODE = #{channelClassCode}
+        </if>
+        <if test="levelName!=null and levelName!=''">
+            and fcl.LEVEL_NAME = #{levelName}
+        </if>
+        <if test="id!=null and id!=''">
+            and fcl.ID = #{id}
+        </if>
+        <if test="version!=null and version!=''">
+            and fcl.VERSION like CONCAT('%', #{version}, '%')
+        </if>
+        <if test="supplierCode!=null and supplierCode!=''">
+            and fss.SUPPLIER_CODE = #{supplierCode}
+        </if>
+        <if test="supplierId!=null and supplierId!=''">
+            and fcl.SUPPLIER_ID = #{supplierId}
+        </if>
+        ORDER BY fcl.CREATION_DATE desc
+    </select>
+
+    <resultMap id="supplierCommissionMap" type="clb.core.commission.dto.CmnSupplierCommission">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL"/>
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR"/>
+        <result column="CHANNEL_TYPE_NAME" property="channelTypeName" jdbcType="VARCHAR"/>
+        <result column="ITEM_SUPPLIER_ID" property="itemSupplierId" jdbcType="DECIMAL"/>
+        <result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL"/>
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR"/>
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR"/>
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="PAY_METHOD_NAME" property="payMethodName" jdbcType="VARCHAR"/>
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL"/>
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL"/>
+        <result column="PRICE_TYPE" property="priceType" jdbcType="VARCHAR"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="VERSION" property="version" jdbcType="VARCHAR"/>
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP"/>
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+    </resultMap>
+    <!--查询供应商佣金表数据-->
+    <select id="querySupplierCmnList" parameterType="clb.core.commission.dto.CmnSupplierCommission"
+            resultMap="supplierCommissionMap">
+        SELECT
+        csc.line_id,
+        csc.SUPPLIER_ID,
+        fss.NAME supplier_name,
+        csc.CHANNEL_TYPE_CODE,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CNL.CHANNEL_CLASS'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.CHANNEL_TYPE_CODE
+        ) channel_type_name,
+        fpi.supplier_id item_supplier_id,
+        pss.NAME item_supplier_name,
+        csc.ITEM_ID,
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        csc.CONTRIBUTION_PERIOD,
+        csc.CURRENCY,
+        csc.PAY_METHOD,
+        (
+        SELECT
+        scv.MEANING
+        FROM
+        sys_code_b scb,
+        sys_code_value_b scv
+        WHERE
+        scb.CODE = 'CMN.PAY_METHOD'
+        and scv.CODE_ID = scb.CODE_ID
+        AND scv.VALUE = csc.PAY_METHOD
+        ) PAY_METHOD_NAME,
+        csc.POLICYHOLDERS_MIN_AGE,
+        csc.POLICYHOLDERS_MAX_AGE,
+        csc.PRICE_TYPE,
+        csc.THE_FIRST_YEAR,
+        csc.THE_SECOND_YEAR,
+        csc.THE_THIRD_YEAR,
+        csc.THE_FOURTH_YEAR,
+        csc.THE_FIFTH_YEAR,
+        csc.THE_SIXTH_YEAR,
+        csc.THE_SEVENTH_YEAR,
+        csc.THE_EIGHT_YEAR,
+        csc.THE_NINTH_YEAR,
+        csc.THE_TENTH_YEAR,
+        csc.VERSION,
+        date_format(csc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+        date_format(csc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE
+        FROM
+        FMS_CMN_SUPPLIER_COMMISSION csc,
+        FMS_SPE_SUPPLIER fss,
+        fms_prd_items fpi,
+        FMS_SPE_SUPPLIER pss
+        WHERE
+        csc.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND csc.item_id = fpi.item_id
+        AND fpi.supplier_id = pss.supplier_id
+        AND csc.CHANNEL_TYPE_CODE <![CDATA[  <>  ]]> "GYS"
+        <if test="lineId != null and lineId != ''">
+            AND csc.line_id = #{lineId}
+        </if>
+        <if test="supplierId != null and supplierId != ''">
+            AND csc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelTypeCode != null and channelTypeCode != ''">
+            AND csc.CHANNEL_TYPE_CODE = #{channelTypeCode}
+        </if>
+        <if test="itemSupplierName != null and itemSupplierName != ''">
+            AND pss.NAME LIKE CONCAT('%', #{itemSupplierName}, '%')
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND csc.ITEM_ID = #{itemId}
+        </if>
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.supplier_id = #{itemSupplierId}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND csc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND csc.CURRENCY = #{currency}
+        </if>
+        <if test="payMethod != null and payMethod != ''">
+            AND csc.PAY_METHOD = #{payMethod}
+        </if>
+        <if test="version != null and version != ''">
+            AND csc.VERSION = #{version}
+        </if>
+        <if test="bigClass != null and bigClass != ''">
+            AND fpi.BIG_CLASS = #{bigClass}
+        </if>
+    </select>
+
+    <resultMap id="RateResultMap" type="clb.core.channel.dto.CnlContractRate">
+        <result column="CHANNEL_RATE_ID" property="channelRateId" jdbcType="DECIMAL"/>
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL"/>
+        <result column="SPECIAL_DESC" property="specialDesc" jdbcType="VARCHAR"/>
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL"/>
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL"/>
+        <result column="RATE1" property="rate1" jdbcType="DECIMAL" />
+        <result column="RATE2" property="rate2" jdbcType="DECIMAL" />
+        <result column="RATE3" property="rate3" jdbcType="DECIMAL" />
+        <result column="RATE4" property="rate4" jdbcType="DECIMAL" />
+        <result column="RATE5" property="rate5" jdbcType="DECIMAL" />
+        <result column="RATE6" property="rate6" jdbcType="DECIMAL" />
+        <result column="RATE7" property="rate7" jdbcType="DECIMAL" />
+        <result column="RATE8" property="rate8" jdbcType="DECIMAL" />
+        <result column="RATE9" property="rate9" jdbcType="DECIMAL" />
+        <result column="RATE10" property="rate10" jdbcType="DECIMAL" />
+        <result column="PERFORMANCE_REQUIRE" property="performanceRequire" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--查询渠道所属供应商费率级别  或者  所属渠道佣金分成-->
+    <select id="queryContractRateList" parameterType="clb.core.channel.dto.CnlContractRate"
+            resultMap="RateResultMap">
+        SELECT
+        fccr.CHANNEL_RATE_ID,
+        fccr.CHANNEL_CONTRACT_ID,
+        fccr.SPECIAL_DESC,
+        fccr.PROGRAM_ID,
+        fccr.REQUEST_ID,
+        fccr.RATE1,
+        fccr.RATE2,
+        fccr.RATE3,
+        fccr.RATE4,
+        fccr.RATE5,
+        fccr.RATE6,
+        fccr.RATE7,
+        fccr.RATE8,
+        fccr.RATE9,
+        fccr.RATE10,
+        fccr.PERFORMANCE_REQUIRE,
+        fccr.BIG_CLASS,
+        fccr.MID_CLASS,
+        fccr.MIN_CLASS,
+        fccr.ITEM_ID,
+        fccr.SUBLINE_ID,
+        fpi.ITEM_NAME,
+        fpis.SUBLINE_ITEM_NAME
+        FROM
+        fms_cnl_contract_rate AS fccr
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.item_id = fccr.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.subline_id = fccr.subline_id
+        WHERE 1=1
+        <if test="channelContractId != null and channelContractId !=''">
+            AND fccr.CHANNEL_CONTRACT_ID = #{channelContractId}
+        </if>
+        <if test="bigClass != null and bigClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.BIG_CLASS, '')) = 0, #{bigClass}, fccr.BIG_CLASS) = #{bigClass}
+        </if>
+        <if test="midClass != null and midClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.MID_CLASS, '')) = 0, #{midClass}, fccr.MID_CLASS) = #{midClass}
+        </if>
+        <if test="minClass != null and minClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.MIN_CLASS, '')) = 0, #{minClass}, fccr.MIN_CLASS) = #{minClass}
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND IFNULL(fccr.ITEM_ID, #{itemId}) = #{itemId}
+        </if>
+        <if test="sublineItemName != null and sublineItemName != ''">
+            AND IFNULL(fpis.SUBLINE_ITEM_NAME, #{sublineItemName}) = #{sublineItemName}
+        </if>
+    </select>
+
+    <!--查询渠道所属供应商费率级别  或者  所属渠道佣金分成-->
+    <select id="queryTopRateList" parameterType="clb.core.channel.dto.CnlContractRate"
+            resultMap="RateResultMap">
+        SELECT
+        fccr.CHANNEL_RATE_ID,
+        fccr.CHANNEL_CONTRACT_ID,
+        fccr.SPECIAL_DESC,
+        fccr.PROGRAM_ID,
+        fccr.REQUEST_ID,
+        fccr.RATE1,
+        fccr.RATE2,
+        fccr.RATE3,
+        fccr.RATE4,
+        fccr.RATE5,
+        fccr.RATE6,
+        fccr.RATE7,
+        fccr.RATE8,
+        fccr.RATE9,
+        fccr.RATE10,
+        fccr.PERFORMANCE_REQUIRE,
+        fccr.LEVEL_NAME,
+        fccr.BIG_CLASS,
+        fccr.MID_CLASS,
+        fccr.MIN_CLASS,
+        fccr.ITEM_ID,
+        fccr.SUBLINE_ID,
+        fpi.ITEM_NAME,
+        fpis.SUBLINE_ITEM_NAME
+        FROM
+        fms_cnl_contract_rate AS fccr
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.item_id = fccr.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.subline_id = fccr.subline_id
+        WHERE 1=1
+        <if test="channelContractId != null and channelContractId !=''">
+            AND fccr.CHANNEL_CONTRACT_ID = #{channelContractId}
+        </if>
+        <if test="bigClass != null and bigClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.BIG_CLASS, '')) = 0, #{bigClass}, fccr.BIG_CLASS) = #{bigClass}
+        </if>
+        <if test="midClass != null and midClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.MID_CLASS, '')) = 0, #{midClass}, fccr.MID_CLASS) = #{midClass}
+        </if>
+        <if test="minClass != null and minClass != ''">
+            AND IF(LENGTH(IFNULL(fccr.MIN_CLASS, '')) = 0, #{minClass}, fccr.MIN_CLASS) = #{minClass}
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND IFNULL(fccr.ITEM_ID, #{itemId}) = #{itemId}
+        </if>
+        <if test="sublineItemName != null and sublineItemName != ''">
+            AND IFNULL(fpis.SUBLINE_ITEM_NAME, #{sublineItemName}) = #{sublineItemName}
+        </if>
+        ORDER BY IF(LENGTH(IFNULL(fccr.BIG_CLASS, '')) = 0, 1, 0)
+                + IF(LENGTH(IFNULL(fccr.MID_CLASS, '')) = 0, 2, 0)
+                + IF(LENGTH(IFNULL(fccr.MIN_CLASS, '')) = 0, 3, 0)
+                + IF(LENGTH(IFNULL(fccr.ITEM_ID, '')) = 0, 4, 0)
+                + IF(LENGTH(IFNULL(fccr.SUBLINE_ID, '')) = 0, 5, 0)
+        LIMIT 1
+    </select>
+
+    <resultMap id="RatioDetailResultMap" type="clb.core.commission.dto.CmnChannelRatioDetail">
+        <result column="RATIO_LINE_ID" property="ratioLineId" jdbcType="DECIMAL"/>
+        <result column="RATIO_ID" property="ratioId" jdbcType="DECIMAL"/>
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR"/>
+        <result column="BIG_CLASS_NAME" property="bigClassName" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR"/>
+        <result column="MID_CLASS_NAME" property="midClassName" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR"/>
+        <result column="MIN_CLASS_NAME" property="minClassName" jdbcType="VARCHAR"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL"/>
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR"/>
+        <result column="SUBLINE_ITEM_ID" property="sublineItemId" jdbcType="DECIMAL"/>
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR"/>
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL"/>
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL"/>
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL"/>
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL"/>
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL"/>
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL"/>
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL"/>
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL"/>
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL"/>
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!-- 渠道佣金分成级别 -->
+    <select id="queryTopRatioDetailList" parameterType="clb.core.commission.dto.CmnChannelRatioDetail"
+            resultMap="RatioDetailResultMap">
+        SELECT
+        ccrd.`RATIO_LINE_ID`,
+        ccrd.`RATIO_ID`,
+        ccrd.BIG_CLASS,
+        ccrd.MID_CLASS,
+        ccrd.MIN_CLASS,
+        ccrd.`ITEM_ID`,
+        ccrd.`SUBLINE_ITEM_ID`,
+        fpis.`SUBLINE_ITEM_NAME`,
+        ccrd.`THE_FIRST_YEAR`,
+        ccrd.`THE_SECOND_YEAR`,
+        ccrd.`THE_THIRD_YEAR`,
+        ccrd.`THE_FOURTH_YEAR`,
+        ccrd.`THE_FIFTH_YEAR`,
+        ccrd.`THE_SIXTH_YEAR`,
+        ccrd.`THE_SEVENTH_YEAR`,
+        ccrd.`THE_EIGHT_YEAR`,
+        ccrd.`THE_NINTH_YEAR`,
+        ccrd.`THE_TENTH_YEAR`,
+        ccrd.`COMMENTS`,
+        ccrd.`OBJECT_VERSION_NUMBER`
+        FROM
+        FMS_CMN_CHANNEL_RATIO_DETAIL ccrd
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.`ITEM_ID` = ccrd.`ITEM_ID`
+        AND fpis.`SUBLINE_ID` = ccrd.`SUBLINE_ITEM_ID`
+        WHERE 1=1
+        <if test = "ratioId != null and ratioId != ''" >
+            AND ccrd.RATIO_ID = #{ratioId}
+        </if>
+        <if test="bigClass != null and bigClass != ''">
+            AND IF(LENGTH(IFNULL(ccrd.BIG_CLASS, '')) = 0, #{bigClass}, ccrd.BIG_CLASS) = #{bigClass}
+        </if>
+        <if test="midClass != null and midClass != ''">
+            AND IF(LENGTH(IFNULL(ccrd.MID_CLASS, '')) = 0, #{midClass}, ccrd.MID_CLASS) = #{midClass}
+        </if>
+        <if test="minClass != null and minClass != ''">
+            AND IF(LENGTH(IFNULL(ccrd.MIN_CLASS, '')) = 0, #{minClass}, ccrd.MIN_CLASS) = #{minClass}
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND IFNULL(ccrd.ITEM_ID, #{itemId}) = #{itemId}
+        </if>
+        <if test="sublineItemName != null and sublineItemName != ''">
+            AND IFNULL(fpis.SUBLINE_ITEM_NAME, #{sublineItemName}) = #{sublineItemName}
+        </if>
+        ORDER BY IF(LENGTH(IFNULL(ccrd.BIG_CLASS, '')) = 0, 1, 0)
+        + IF(LENGTH(IFNULL(ccrd.MID_CLASS, '')) = 0, 2, 0)
+        + IF(LENGTH(IFNULL(ccrd.MIN_CLASS, '')) = 0, 3, 0)
+        + IF(LENGTH(IFNULL(ccrd.ITEM_ID, '')) = 0, 4, 0)
+        + IF(LENGTH(IFNULL(ccrd.SUBLINE_ITEM_ID, '')) = 0, 5, 0)
+        LIMIT 1
+    </select>
+
+    <!--查询渠道合约信息中合同主体为a的渠道数据 即下级渠道-->
+    <select id="queryChildChannelList" parameterType="clb.core.channel.dto.CnlChannel" resultMap="ChannelResultMap">
+        SELECT
+            FCC.CHANNEL_ID,
+            FCC.CHANNEL_CODE,
+            FCC.CHANNEL_NAME,
+            FCC.CONTACT_PERSON,
+            FCC.PHONE_CODE,
+            FCC.CONTACT_PHONE,
+            FCC.PROVINCE,
+            FCC.CITY,
+            FCC.ADDRESS,
+            FCC.CHANNEL_TYPE_CODE,
+            FCC.INDUSTRY_BACKGROUND,
+            FCC.EXPERIENCE_FLAG,
+            FCC.EXHIBITION_MODE,
+            FCC.EXHIBITION_RANGE,
+            '' PARENT_CHANNEL_ID,
+            FCC.HK_BANK,
+            '' HK_BANK_NAME,
+            FCC.HK_BANK_ACCOUNT_NAME,
+            FCC.HK_BANK_ACCOUNT_NUM,
+            FCC.IL_BANK,
+            '' IL_BANK_NAME,
+            FCC.IL_BANK_ACCOUNT_NAME,
+            FCC.IL_BANK_ACCOUNT_NUM,
+            FCC.STATUS_CODE,
+            FCC.PROGRAM_ID,
+            FCC.REQUEST_ID,
+            '' PROVINCE_MEANING,
+            '' CITY_MEANING,
+            '' AREA,
+            '' PARENT_CHANNEL_NAME,
+            '' CONTACT_PHONE_COMB
+        FROM
+            fms_cnl_channel_contract ccc,
+            fms_cnl_channel fcc
+        WHERE
+            1 = 1
+        AND ccc.PARTY_TYPE = 'CHANNEL'
+        AND fcc.CHANNEL_ID = ccc.CHANNEL_ID
+        AND ccc.PARTY_ID = #{channelId}
+    </select>
+
+
+    <!--查询渠道合约信息中合同主体为a的渠道数据-->
+    <select id="queryChannelList" parameterType="clb.core.channel.dto.CnlChannel" resultMap="ChannelResultMap">
+        SELECT
+        FCC.CHANNEL_ID,
+        FCC.CHANNEL_CODE,
+        FCC.CHANNEL_NAME,
+        FCC.CONTACT_PERSON,
+        FCC.PHONE_CODE,
+        FCC.CONTACT_PHONE,
+        FCC.PROVINCE,
+        FCC.CITY,
+        FCC.ADDRESS,
+        FCC.CHANNEL_TYPE_CODE,
+        FCC.INDUSTRY_BACKGROUND,
+        FCC.EXPERIENCE_FLAG,
+        FCC.EXHIBITION_MODE,
+        FCC.EXHIBITION_RANGE,
+        '' PARENT_CHANNEL_ID,
+        FCC.HK_BANK,
+        '' HK_BANK_NAME,
+        FCC.HK_BANK_ACCOUNT_NAME,
+        FCC.HK_BANK_ACCOUNT_NUM,
+        FCC.IL_BANK,
+        '' IL_BANK_NAME,
+        FCC.IL_BANK_ACCOUNT_NAME,
+        FCC.IL_BANK_ACCOUNT_NUM,
+        FCC.STATUS_CODE,
+        FCC.PROGRAM_ID,
+        FCC.REQUEST_ID,
+        '' PROVINCE_MEANING,
+        '' CITY_MEANING,
+        '' AREA,
+        '' PARENT_CHANNEL_NAME,
+        '' CONTACT_PHONE_COMB
+        FROM
+        fms_cnl_channel_contract ccc,
+        fms_cnl_channel fcc
+        WHERE
+        1 = 1
+        AND ccc.PARTY_TYPE = 'CHANNEL'
+        AND fcc.CHANNEL_ID = ccc.PARTY_ID
+        AND ccc.PARTY_ID = #{channelId}
+    </select>
+    
+        <select id="queryReferralFee" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+	    	SELECT
+				fccc.SUPPLIER_ID,
+				fccc.CHANNEL_ID,
+				fcc.CHANNEL_NAME,
+				fsss.`NAME` ITEM_SUPPLIER_NAME,
+				fpi.SUPPLIER_ID ITEM_SUPPLIER_ID,
+				fccc.ITEM_ID,
+				fpi.ITEM_NAME,
+				fccc.CONTRIBUTION_PERIOD,
+				group_concat(distinct fccc.CURRENCY separator '/') CURRENCY,
+				group_concat(distinct fccc.PAY_METHOD separator '/') PAY_METHOD,
+				fccc.POLICYHOLDERS_MIN_AGE,
+				fccc.POLICYHOLDERS_MAX_AGE,
+				fccc.THE_FIRST_YEAR,
+				fccc.THE_SECOND_YEAR,
+				fccc.THE_THIRD_YEAR,
+				fccc.THE_FOURTH_YEAR,
+				fccc.THE_FIFTH_YEAR,
+				fccc.THE_SIXTH_YEAR,
+				fccc.THE_SEVENTH_YEAR,
+				fccc.THE_EIGHT_YEAR,
+				fccc.THE_NINTH_YEAR,
+				fccc.THE_TENTH_YEAR,
+				date_format(fccc.EFFECTIVE_START_DATE, '%Y-%m-%d 00:00:00') EFFECTIVE_START_DATE,
+				date_format(fccc.EFFECTIVE_END_DATE, '%Y-%m-%d 23:59:59') EFFECTIVE_END_DATE
+			FROM
+				fms_cmn_channel_commission fccc
+				LEFT JOIN fms_spe_supplier fss ON fccc.SUPPLIER_ID = fss.SUPPLIER_ID
+				LEFT JOIN fms_cnl_channel fcc ON fccc.CHANNEL_ID = fcc.CHANNEL_ID
+				LEFT JOIN fms_prd_items fpi ON fccc.ITEM_ID = fpi.ITEM_ID
+				LEFT JOIN fms_spe_supplier fsss ON fpi.SUPPLIER_ID = fsss.SUPPLIER_ID
+			WHERE 1 = 1
+		<if test="supplierId != null and supplierId != ''">
+            AND fccc.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND fccc.CHANNEL_ID = #{channelId}
+        </if>
+        <if test="channelName != null and channelName != ''">
+            AND fcc.CHANNEL_NAME like concat("%",#{channelName},"%")
+        </if>
+        <if test="itemSupplierId != null and itemSupplierId != ''">
+            AND fpi.SUPPLIER_ID = #{itemSupplierId}
+        </if>
+        <if test="itemId != null and itemId != ''">
+            AND  fccc.ITEM_ID = #{itemId}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND fpi.ITEM_NAME LIKE CONCAT('%',#{itemName},'%')
+        </if>
+        <if test="contributionPeriod != null and contributionPeriod != ''">
+            AND fccc.CONTRIBUTION_PERIOD = #{contributionPeriod}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND fccc.CURRENCY LIKE CONCAT('%',#{currency},'%')
+        </if>
+        <if test="payMethod != null and payMethod != ''">
+            AND fccc.PAY_METHOD = #{payMethod}
+        </if>
+        <!-- <if test="startLineId != null and startLineId != ''
+                    and batchCount != null and batchCount != '' ">
+            AND ccc.line_id <![CDATA[ >= ]]> #{startLineId}
+        </if>
+        <if test="startLineId != null and startLineId != ''
+                    and batchCount != null and batchCount != '' ">
+            ORDER BY ccc.line_id ASC
+            limit #{batchCount}
+        </if> -->
+			GROUP BY
+				fccc.SUPPLIER_ID,
+				fccc.CHANNEL_ID,
+				fcc.CHANNEL_NAME,
+				fpi.SUPPLIER_ID,
+				fsss.`NAME`,
+				fccc.ITEM_ID,
+				fpi.ITEM_NAME,
+				fccc.CONTRIBUTION_PERIOD,
+				fccc.POLICYHOLDERS_MIN_AGE,
+				fccc.POLICYHOLDERS_MAX_AGE,
+				fccc.THE_FIRST_YEAR,
+				fccc.THE_SECOND_YEAR,
+				fccc.THE_THIRD_YEAR,
+				fccc.THE_FOURTH_YEAR,
+				fccc.THE_FIFTH_YEAR,
+				fccc.THE_SIXTH_YEAR,
+				fccc.THE_SEVENTH_YEAR,
+				fccc.THE_EIGHT_YEAR,
+				fccc.THE_NINTH_YEAR,
+				fccc.THE_TENTH_YEAR,
+				EFFECTIVE_END_DATE,
+				EFFECTIVE_START_DATE
+		<if test="orderBy != null and orderBy != ''">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(orderBy)"/>
+            order by ${_colName}
+        </if>
+    </select>
+
+    <!-- 查询渠道交易路线 -->
+    <select id="selectChannelRouter" parameterType="clb.core.commission.dto.CmnChannelCommission" resultMap="AllFieldMap">
+        SELECT DISTINCT
+          ccc.channel_id,
+          ccc.DEAL_PATH
+        FROM
+          FMS_CMN_CHANNEL_COMMISSION_SHOW ccc
+        WHERE 1=1
+        <if test="channelId != null and channelId != ''">
+            AND ccc.channel_id = #{channelId}
+        </if>
+        <if test="effectiveDate != null">
+            AND (#{effectiveDate} BETWEEN ccc.EFFECTIVE_START_DATE AND ccc.EFFECTIVE_END_DATE)
+        </if>
+    </select>
+</mapper>

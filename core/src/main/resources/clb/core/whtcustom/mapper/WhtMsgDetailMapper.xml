@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.whtcustom.mapper.WhtMsgDetailMapper">
+    <resultMap id="BaseResultMap" type="clb.core.whtcustom.dto.WhtMsgDetail">
+        <result column="MSG_DETAIL_ID" property="msgDetailId" jdbcType="DECIMAL" />
+        <result column="TEMPLATE_CODE" property="templateCode" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_NAME" property="templateName" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_DESCRIBE" property="templateDescribe" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_SERIAL_NUM" property="templateSerialNum" jdbcType="DECIMAL" />
+        <result column="RELATION_TEMPLATE_CODE" property="relationTemplateCode" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_ENABLED" property="templateEnabled" jdbcType="VARCHAR" />
+        <result column="TEMPLATE_DATE_FROM" property="templateDateFrom" jdbcType="TIMESTAMP" />
+        <result column="TEMPLATE_DATE_TO" property="templateDateTo" jdbcType="TIMESTAMP" />
+        <result column="ADDITIONAL_PARAMETER" property="additionalParameter" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	<select id="selectAllField"  resultMap="BaseResultMap">
+		select
+		fwmd.*
+		from fms_wht_msg_detail fwmd
+		where 1=1
+        <if test="msgDetailId != null and msgDetailId != ''">
+            AND fwmd.MSG_DETAIL_ID = #{msgDetailId}
+        </if >
+        
+        <if test="templateCode != null and templateCode != ''">
+            AND fwmd.TEMPLATE_CODE LIKE CONCAT('%', #{templateCode}, '%')
+        </if >
+        
+        <if test="templateName != null and templateName != ''">
+            AND fwmd.TEMPLATE_NAME LIKE CONCAT('%', #{templateName}, '%')
+        </if >
+        
+        <if test="templateEnabled != null and templateEnabled != ''">
+            AND fwmd.TEMPLATE_ENABLED = #{templateEnabled}
+        </if >
+        ORDER BY fwmd.TEMPLATE_SERIAL_NUM
+	</select>
+	
+	<select id="selectTemplateName"  resultMap="BaseResultMap">
+		select
+		fwmd.*
+		from fms_wht_msg_detail fwmd
+		where 1=1
+        <if test="msgDetailId != null and msgDetailId != ''">
+            AND fwmd.MSG_DETAIL_ID = #{msgDetailId}
+        </if >
+        
+        <if test="templateCode != null and templateCode != ''">
+            AND fwmd.TEMPLATE_CODE = #{templateCode}
+        </if >
+        
+        <if test="templateName != null and templateName != ''">
+            AND fwmd.TEMPLATE_NAME LIKE CONCAT('%', #{templateName}, '%')
+        </if >
+        
+        <if test="templateEnabled != null and templateEnabled != ''">
+            AND fwmd.TEMPLATE_ENABLED = #{templateEnabled}
+        </if >
+        ORDER BY fwmd.TEMPLATE_SERIAL_NUM
+	</select>
+
+</mapper>

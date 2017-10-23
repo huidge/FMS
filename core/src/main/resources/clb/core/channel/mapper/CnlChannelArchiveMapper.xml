@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlChannelArchiveMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlChannelArchive">
+        <result column="CHANNEL_ARCHIVE_ID" property="channelArchiveId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="FILE_ID" property="fileId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FILE_SIZE" property="fileSize" jdbcType="DECIMAL" />
+        <result column="UPLOAD_DATE" property="uploadDate" jdbcType="TIMESTAMP" />
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+        <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="FILE_TYPE" property="fileType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryArchive" parameterType="clb.core.channel.dto.CnlChannelArchive" resultMap="BaseResultMap" >
+        SELECT FCCA.CHANNEL_ARCHIVE_ID,
+            FCCA.CHANNEL_ID,
+            FCCA.FILE_ID,
+            FCCA.NAME,
+            FCCA.COMMENTS,
+            FCCA.PROGRAM_ID,
+            FCCA.REQUEST_ID,
+            ceil(SF.FILE_SIZE/1024) FILE_SIZE,
+            SF.UPLOAD_DATE,
+            SF.FILE_PATH,
+            SF.FILE_NAME,
+            SF.FILE_TYPE
+            FROM fms_cnl_channel_archive FCCA
+            LEFT JOIN sys_file SF
+            ON fcca.FILE_ID = sf.FILE_ID
+        WHERE 1=1
+        AND FCCA.CHANNEL_ID = #{channelId , jdbcType=DECIMAL}
+    </select>
+</mapper>

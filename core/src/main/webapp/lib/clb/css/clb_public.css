@@ -1,0 +1,13 @@
+/*! 
+	create by fengwanjun
+*/
+
+/* input[disabled]样式
+----------------------------------*/
+input[gray],
+input[gray]:link,
+input[gray]:visited,
+input[gray]:hover,
+input[gray]:active {
+	background: rgb(222, 222, 222);
+}

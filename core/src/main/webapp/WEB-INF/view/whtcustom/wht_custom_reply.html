@@ -1,0 +1,3155 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/lib/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<link rel="shortcut icon" href="http://fontawesome.io/assets/ico/favicon.ico">
+<link rel="stylesheet" href="http://fontawesome.io/assets/css/site.css">
+<link rel="stylesheet" href="http://fontawesome.io/assets/css/pygments.css">
+<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+<script src="../lib/kendoui/js/kendo.editor.js"></script>
+
+<style type="text/css">
+li{list-style:none;}
+a{text-decoration:none;}
+a:hover{text-decoration:underline;}
+.zzjs_net{position:relative;width:820px;top:15px;margin:0 auto;}
+.list{width:820px;}
+.entry{float:left;width:252px;position:relative;margin:10px;_display:inline;}
+.entry a{display:block;text-decoration:none;border:1px #525252 solid;}
+.entry a:hover{border:1px #999 solid;}
+.entry .url{position:absolute;left:1px;bottom:1px;height:28px;width:250px;background:#000;text-align:center;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8;}
+.entry .url span{display:block;border:0;color:#fff;margin-top:6px;padding:2px;font-weight:bold;}
+._zzjsnet{position:absolute;right:-220px;top:0px;width:216px;padding:10px;background:#393939;border:1px #555 solid;color:#fff;}
+._zzjsnet li{margin-bottom:4px;}
+._zzjsnet li.mt10{margin-bottom:10px;}
+#url, #company , #description{color:#999;}
+._zzjsnet a{color:#999;}
+._zzjsnet a:hover{color:#fff;}
+#contentList h1{color:#ccc;font-size:20px;text-align:center;padding:70px 0;}
+#zzjsnet{clear:both;color:#808080;}
+#zzjsnet a{color:#808080;}
+#total{float:left;}
+#_zzjs_net{float:right;}
+.f90{color:#f90;}
+</style>
+
+<script type="text/javascript">
+	var siteList = {"sites":[ 
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0","Name":"站长特效一号"},
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0","Name":"站长特效0号"},
+	    {"Url":"http://zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0","Name":"站长特效二号"},
+	    {"Url":"http://www.zzjs.net","Pic":"http://mmbiz.qpic.cn/mmbiz_jpg/FA1eRZe8afDH9k38zChHo8wicCn0oU17u5PQbB5QJXCC8kHHoIqwPkeUw1KVTZVN90bgLB1OkbX8M18Jft42qwg/0","Name":"站长特效三号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效四号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效五号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效六号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效七号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效八号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效九号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十一号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十二号"},
+	    {"Url":"http://www.zzjs.net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效十三号"},
+	    {"Url":"http://_zzjs_net","Pic":"${base.contextPath}/resources/images/forecast/1.jpg","Name":"站长特效四十六号"}
+	    ]
+	  }
+
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            console.log(viewModel.model);
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+	 /* onload = function() {
+	     var lis = document.getElementsByTagName("li");
+	     var funny = function(i){
+	         lis[i].onclick = function(){
+	        	 var replyType = lis[i].innerText;
+	        	 console.log(typeof replyType);
+	        	 console.log(replyType);
+	        	 if(replyType.trim() == "被添加自动回复"||replyType.trim() == "消息自动回复"||replyType.trim() == "关键词自动回复"){
+		        	 viewModel.model.replyType = replyType;
+	        	 }else{
+	        		 viewModel.model.msgType = replyType;
+	        	 }
+	        	 
+	             //alert("第" + (i+1) + "个");
+	         }
+	     }
+	     for(var i=0;i<lis.length;i++){
+	         funny(i); 
+	     }
+	 } */ 
+	 function addSummary(i,ruleName,keywordValueSum,content,rulePictureId,ruleVoiceId,ruleVideoId,rulePictureText,sum,ruleId){
+		var html ="";
+		html += "<div class='panel panel-default' id='ruleSummaryDivHide' name='ruleSummaryDivHide' style='margin-top: 50px;'>"+
+                	"<div id='mymenu2' style=''>"+
+			            "<div class='panel-body'>"+
+                    		"<ul style='padding-left:0;'>"+
+                    			"<li class='ui-state-default' onclick='ruleDetail(this)' style='list-style-type:none;'>"+
+                    				"<span id='ruleIdSpan' style='display:none'>"+ruleId+"</span>"+
+                    				"<div class='panel-heading'>"+
+						                "<span>规则</span><span class='editRuleNumClass'>"+(i+1)+"</span><span>:<span><span>"+ruleName+"</span>"+
+						            "</div>"+
+                    			"</li>"+
+								  	"<li class='ui-state-default' style='list-style-type:none;'>"+
+								  		"<div class='col-xs-12' style='padding-right:0;padding-left:0;'>"+
+			                               	"<div class='form-group'>"+
+												"<label class='col-xs-3 control-label' id='pictureTextLable2' style='text-align: left'>关键词</label>"+
+												"<label class='col-xs-9 control-label' id='pictureTextLable2' style='text-align: left'>"+keywordValueSum+"</label>"+
+			                                "</div>"+
+				                        "</div>"+
+								  	"</li>"+
+								  	"<li class='ui-state-default' style='list-style-type:none;'>"+
+								  		"<div class='col-xs-12' style='padding-right:0;padding-left:0;'>"+
+			                               	"<div class='form-group'>"+
+												"<label class='col-xs-3 control-label' id='pictureTextLable2' style='text-align: left'>回复</label>"+
+												"<label class='col-xs-9 control-label' id='pictureTextLable2' style='text-align: left'>"+
+													"<span id='span6'>"+sum+"</span><span>条(</span>"+
+													"<span id='span1'>"+content+"</span><span>条文字,</span><span id='span2'>"+rulePictureId+"</span><span>条图片,</span>"+
+									                "<span id='span3'>"+ruleVoiceId+"</span><span>条语音,</span><span id='span4'>"+ruleVideoId+"</span><span>条视频,</span>"+
+									                "<span id='span5'>"+rulePictureText+"</span><span>条图文)</span>"+
+												"</label>"+
+			                                "</div>"+
+				                        "</div>"+
+						        "</ul>"+
+                			"</ul>"+
+            			"</div>"+
+        			"</div>"+
+    			"</div>";
+        return html;
+    }
+	 var menuLength;	
+	 
+</script>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+<div id ="userWin"></div>
+<div id="page-content" class="pageContent">
+	<form class="form-horizontal" >
+		<div class="panel" id="replyHideDiv1">
+            <form class="form-horizontal" id="itemTags">
+                <div class="panel-body" style="margin-left: 20px">
+                    <div class="text-left" >
+                    	<i class="fa fa-th-list fa-2x"  aria-hidden="true" ></i>
+                        <span style="margin-left: 10px;"  onclick="addTags()">
+                   			<font size="4" style="margin-right: 10px"><b>公众账号切换</b></font>
+                        </span>
+                        <div style="display: inline-block;" ><input type="text" id="tags" data-bind="value:model.originalId"></div>
+                    </div>
+                </div><!-- panel-body end -->
+            </form><!-- form end -->
+            <script>kendo.bind($('#itemTags'), viewModel);</script>
+        </div><!-- panel end -->
+		<script type="text/javascript">
+				/* function onmouseoverFun(){
+					if(menuConTentList.length>0 && menuLength != menuConTentList.length){
+						kendo.ui.showErrorDialog({
+		 	                title: $l('hap.tip.info'),
+		 	                message: $l('切换账号前请记得保存哦！')
+		 	            })
+					}
+				} */		
+		
+			 	//账号
+		</script>
+		
+		
+		<div class="panel-heading" id="replyHideDiv2">
+            <span class="panel-title"> <@spring.message "自定义回复"/></span>
+        </div>
+        <div class="panel-body" id="replyHideDiv3">
+        	<div class="col-xs-12" style="margin-top: 10px;padding-top:10px;background-color: #F5F5F5;">
+                <div class="col-xs-1" style="text-align: center">
+                    <a style="margin-right:5px;margin-top: 20px" href="javascript:void(0)" ><i class="fa fa-unlock fa-4x"  aria-hidden="true" ></i></a>
+                </div>
+				<div class="col-xs-10" >
+                    <div class="form-group" >
+                        <label style="text-align: left;margin-top: 8px"><b>已开启自动回复设置</b></label><br>
+                        <p style="text-align: left">通过编辑内容或关键词规则，快速进行自动回复设置。如具备开发能力，可更灵活地使用该功能。<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1445241432" target="_Blank">查看详情</a></p>
+                    </div>
+                </div>
+				<div class="col-xs-1" >
+                    <div class="form-group" >
+                    </div>
+                </div>
+        	</div>
+        	<div class="col-xs-12" >
+                <div class="col-xs-12" id="statusHisDiv">
+                    <div class="col-xs-12" >
+                       	<div class="col-sm-12" style="margin-top: 20px;">
+                           	<ul class="nav nav-tabs" id="myTab">
+					            <li class="active"><a href="#information" data-toggle="tab">被添加自动回复</a></li>
+					            <li><a href="#webpage" data-toggle="tab">消息自动回复</a></li>
+					            <li><a href="#applet" data-toggle="tab">关键词自动回复</a></li>
+					        </ul>
+					        <div class="tab-content">
+						          <!-- 1 被添加自动回复-->
+						          <div class="tab-pane active" id="information">
+						              <div class="tabbable" style="margin: 10px;">
+						                  <ul class="nav nav-tabs" id="divstyletab">
+						                      <li class="active"><a href="#ImageText" data-toggle="tab"><i class="fa fa-pencil"  aria-hidden="true" style="margin-right: 10px"></i>文字</a></li>
+						                      <li><a href="#picture" data-toggle="tab"><i class="fa fa-picture-o"  aria-hidden="true" style="margin-right: 10px"></i>图片</a></li>
+						                      <li><a href="#voice" data-toggle="tab"><i class="fa fa-microphone"  aria-hidden="true" style="margin-right: 10px"></i>语音</a></li>
+						                      <li><a href="#video" data-toggle="tab"><i class="fa fa-video-camera"  aria-hidden="true" style="margin-right: 10px"></i>视频</a></li>
+						                  </ul>
+						                  <div class="tab-content">
+						                      <!-- 第一个tab -->
+						                      <div class="tab-pane fade active in" style="margin-top: 30px;text-align: center" id="ImageText">
+										            <textarea id="content" style="width: 100%;height: 150px" data-bind="value:model.addContent"></textarea>
+						                      </div>
+						                      <!-- 第二个tab -->
+						                      <div class="tab-pane fade" id="picture">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(1)">进入素材库</a></div></label>
+							                                            <div class="col-sm-4">
+							                                            	<input style="display: none" id="addPictureId" data-bind="value:model.addPictureId" >
+							                                            	<input style="display: none" id="addPictureIdUrl">
+							                                            </div>
+							                                        </div>
+								                               		<div class="form-group" id="addPictureDiv" style="display: none">
+									                                    <div class="col-xs-11">
+																			<img id="addPictureImg" width="100%" src="" />
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddPicture() {
+																				$("#addPictureDiv").hide();
+																				document.getElementById("addPictureId").value  = "";
+																				document.getElementById("addPictureIdUrl").value  = "";
+																				viewModel.model.addPictureId = "";
+																				$("#addPictureImg").hide().attr('src',"");
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第三个tab -->
+						                      <div class="tab-pane fade" id="voice">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(5)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+							                                            	<input style="display: none" id="addVoiceId" data-bind="value:model.addVoiceId" >
+							                                            	<input style="display: none" id="addVoiceIdUrl" >
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="addVoiceDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="addVoiceSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddVoice()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                            /* if(viewModel.model.addVoiceId){
+												                            	if(viewModel.model.whtAttachContent){
+												                					var whtAttachContentList = JSON.parse(viewModel.model.whtAttachContent);
+												                					if(whtAttachContentList[2].addVoiceIdUrl){
+														                            	$("#addVoiceDiv").show();
+												                						document.getElementById("addVoiceIdUrl").value = whtAttachContentList[2].addVoiceIdUrl;
+																						document.getElementById("addVoiceSpan").innerText  = whtAttachContentList[2].addVoiceIdUrl;
+												                					}
+												                            	}
+												                            } */
+												                        	function deleteAddVoice() {
+																				$("#addVoiceDiv").hide();
+																				document.getElementById("addVoiceId").value  = "";
+																				document.getElementById("addVoiceIdUrl").value  = "";
+																				viewModel.model.addVoiceId = "";
+																				document.getElementById("addVoiceSpan").innerText  = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第四个tab -->
+						                      <div class="tab-pane fade" id="video">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(9)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+								                                            <input style="display: none" id="addVideoId" data-bind="value:model.addVideoId" >
+								                                            <input style="display: none" id="addVideoIdUrl" >
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="addVideoDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="addVideoSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddVideo()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                           /*  if(viewModel.model.addVideoId){
+												                            	if(viewModel.model.whtAttachContent){
+													                            	var whtAttachContentList = JSON.parse(viewModel.model.whtAttachContent);
+												                					if(whtAttachContentList[4].addVideoIdUrl){
+														                            	$("#addVideoDiv").show();
+												                						document.getElementById("addVideoIdUrl").value = whtAttachContentList[4].addVideoIdUrl;
+																						document.getElementById("addVideoSpan").innerText  = whtAttachContentList[4].addVideoIdUrl;
+												                					}
+												                            	}
+												                            } */
+												                        	function deleteAddVideo() {
+																				$("#addVideoDiv").hide();
+																				document.getElementById("addVideoId").value  = "";
+																				document.getElementById("addVideoIdUrl").value  = "";
+																				viewModel.model.addVideoId = "";
+																				document.getElementById("addVideoSpan").innerText = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <div id="toolbar-btn" style="margin-top:20px;text-align:left;padding-bottom:10px;">
+						                      	<span class="btn btn-success" onclick="saveReplay()" style="margin-right:10px;width: 80px">
+													<i class="fa fa-plus-square" style="margin-right:5px;"></i><@spring.message "hap.save"/>
+												</span>
+								                <span onclick="deleteDataReply()" class="btn btn-danger">
+								                	<i class="fa fa-trash-o" style="margin-right:5px;"></i><@spring.message "删除回复"/>
+								               	</span>
+											    </div>
+						                      <!-- 中间图表结束 -->
+						                  </div>
+						              </div>
+						          </div>
+						          <!-- 2  消息自动回复 -->
+						          <div class="tab-pane" id="webpage">
+						              <div class="tabbable" style="margin: 10px;">
+						                  <ul class="nav nav-tabs" id="divstyletab">
+						                      <li class="active"><a href="#ImageText1" data-toggle="tab"><i class="fa fa-pencil"  aria-hidden="true" style="margin-right: 10px"></i>文字</a></li>
+						                      <li><a href="#picture1" data-toggle="tab"><i class="fa fa-picture-o"  aria-hidden="true" style="margin-right: 10px"></i>图片</a></li>
+						                      <li><a href="#voice1" data-toggle="tab"><i class="fa fa-microphone"  aria-hidden="true" style="margin-right: 10px"></i>语音</a></li>
+						                      <li><a href="#video1" data-toggle="tab"><i class="fa fa-video-camera"  aria-hidden="true" style="margin-right: 10px"></i>视频</a></li>
+						                  </ul>
+						                  <div class="tab-content">
+						                      <!-- 第一个tab -->
+						                      <div class="tab-pane fade active in" style="margin-top: 30px;text-align: center" id="ImageText1">
+						                          <textarea id="content1" style="width: 100%;height: 150px" data-bind="value:model.autoContent"></textarea>
+						                      </div>
+						                      <!-- 第二个tab -->
+						                      <div class="tab-pane fade" id="picture1">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(2)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+							                                            	<input style="display: none" id="autoPictureId" data-bind="value:model.autoPictureId" >
+							                                            	<input style="display: none" id="autoPictureIdUrl" >
+							                                            </div>
+							                                        </div>
+								                               		<div class="form-group" id="autoPictureDiv" style="display: none">
+									                                    <div class="col-xs-11">
+																			<img id="autoPictureImg" width="100%" src="" />
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAutoPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAutoPicture() {
+																				$("#autoPictureDiv").hide();
+																				document.getElementById("autoPictureId").value  = "";
+																				document.getElementById("autoPictureIdUrl").value  = "";
+																				viewModel.model.autoPictureId = "";
+																				$("#autoPictureImg").hide().attr('src',"");
+																			}
+												                        </script>
+									                                </div>
+									                                <div class="form-group" id="addPictureDiv" style="display: none">
+									                                    <div class="col-xs-11">
+																			<img id="addPictureImg" width="100%" src="" />
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAddPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAddPicture() {
+																				$("#addPictureDiv").hide();
+																				document.getElementById("addPictureId").value  = "";
+																				document.getElementById("addPictureIdUrl").value  = "";
+																				viewModel.model.addPictureId = "";
+																				$("#addPictureImg").hide().attr('src',"");
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第三个tab -->
+						                      <div class="tab-pane fade" id="voice1">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(6)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">
+								                                            <input style="display: none" id="autoVoiceId" data-bind="value:model.autoVoiceId" >
+								                                            <input style="display: none" id="autoVoiceIdUrl" >
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="autoVoiceDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="autoVoiceSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAutoVoice()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                            /* if(viewModel.model.autoVoiceId){
+												                            	if(viewModel.model.whtAttachContent){
+													                            	var whtAttachContentList = JSON.parse(viewModel.model.whtAttachContent);
+												                					if(whtAttachContentList[3].autoVoiceIdUrl){
+														                            	$("#autoVoiceDiv").show();
+												                						document.getElementById("autoVoiceIdUrl").value = whtAttachContentList[3].autoVoiceIdUrl;
+												                						document.getElementById("autoVoiceSpan").innerText = whtAttachContentList[3].autoVoiceIdUrl;
+												                					}
+												                            	}
+												                            } */
+												                        	function deleteAutoVoice() {
+																				$("#autoVoiceDiv").hide();
+																				document.getElementById("autoVoiceId").value = "";
+																				document.getElementById("autoVoiceIdUrl").value = "";
+																				viewModel.model.autoVoiceId = "";
+																				document.getElementById("autoVoiceSpan").innerText = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <!-- 第四个tab -->
+						                      <div class="tab-pane fade" id="video1">
+						                          <div style="padding:15px 15px 0">
+									                <div class="row">
+									                    <div class="col-sm-12">
+									                        <div class="panel">
+									                            <form class="form-horizontal" style="width:100%">
+							                                        <div class="form-group">
+							                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(10)">进入素材库</a></div>
+							                                            </label>
+							                                            <div class="col-sm-4">	
+							                                            	<input style="display: none" id="autoVideoId" data-bind="value:model.autoVideoId" >
+							                                            	<input style="display: none" id="autoVideoIdUrl">
+							                                            </div>
+							                                        </div>
+							                                        <div class="form-group" id="autoVideoDiv" style="display: none">
+									                                    <div class="col-xs-11">
+									                                    	<span id="autoVideoSpan"></span>
+																		</div>
+																		<div class="col-xs-1">
+											                            	<i class="fa fa-trash-o" onclick="deleteAutoVideo()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+											                            </div>
+											                            <script type="text/javascript">
+												                        	function deleteAutoVideo() {
+																				$("#autoVideoDiv").hide();
+																				document.getElementById("autoVideoId").value  = "";
+																				document.getElementById("autoVideoIdUrl").value  = "";
+																				viewModel.model.autoVideoId = "";
+																				document.getElementById("autoVideoSpan").innerText = "";
+																			}
+												                        </script>
+									                                </div>
+									                            </form>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+						                      </div>
+						                      <div id="toolbar-btn" style="margin-top:20px;text-align:left;padding-bottom:10px;">
+											        <span class="btn btn-success k-grid-save-changes" onclick="saveReplay()" style="margin-right:10px;width: 80px">
+											        	<i class="fa fa-plus-square" style="margin-right:5px;"></i><@spring.message "hap.save"/>
+											        </span>
+											        <span onclick="deleteDataReply()" class="btn btn-danger" >
+											        	<i class="fa fa-trash-o" style="margin-right:5px;"></i><@spring.message "删除回复"/>
+											        </span>
+											    </div>
+						                      <!-- 中间图表结束 -->
+						                  </div>
+						              </div>
+						          </div>
+						          <!-- 3 关键词自动回复 -->
+						          <div class="tab-pane" id="applet">
+					          			<div style="padding:15px 0">
+							                <div class="row">
+							                    <div class="col-sm-12">
+							                        <div class="panel">
+				                                            <div class="col-sm-12">
+					                                        	<div class="form-group">
+					                                            	<span class="btn btn-primary k-grid-add" style="margin-left:5px" onclick="addRule()" type="button"><@spring.message "添加规则"/></span>
+					                                            	<script type="text/javascript">
+					                                            		function addRule() {
+					                                            			$("#keywordHideDiv").show();
+					                                            			/*var ruleIdList = [];
+					                                            			 var ruleId;
+					                                            		    $.ajax({
+					                                            		        type: "POST",
+					                                            		        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+					                                            		        url: "${base.contextPath}/fms/wht/cr/keyword/rule/query",
+					                                            		        success: function (json) {
+					                                            		        	console.log(json);
+					                                            		        	  for(var i=0;i<json.rows.length;i++){
+					                                            		        		  ruleIdList.push(json.rows[i].ruleId);
+					                                            					  }
+					                                            		        	  if(json.rows.length==0){
+					                                            		        		  viewModel.model.set("ruleId", 1);
+					                                            		        	  }else{
+						                                            		       		  var max = ruleIdList[0];
+						                                            		       		  for(var x=1; x<ruleIdList.length; x++) {
+						                                            			       		  if(ruleIdList[x] > max) {
+						                                            			       		  max = ruleIdList[x];
+						                                            			       		  }
+						                                            		       		  }
+						                                            		       		ruleId = max+1;
+						                                            		       		viewModel.model.set("ruleId", max+1);
+					                                            		        	  }
+				                                            		        	  }
+					                                            		    }); */
+					                                            		    console.log(viewModel.model);
+																		}
+					                                            	</script>
+					                                        	</div>
+				                                            </div>
+					                                        
+					                                        <div class="panel panel-default" style="margin-top: 50px;display: none" id="keywordHideDiv">
+					                                        	<div id="mymenu" style="">
+													            <div class="panel-body">
+					                                        		<ul style="padding-left:0;">
+					                                        			<li class="ui-state-default" style="list-style-type:none;">
+					                                        				<div class="panel-heading">
+																                <span><b>新规则</b></span><!-- <i class="fa fa-chevron-down"  aria-hidden="true" style="margin-right: 10px;float: right"></i> -->
+																            </div>
+					                                        			</li>
+					                                        			</ul>
+					                                        			<ul style="padding-left:10px;padding-right:10px;">
+																		  	<li class="ui-state-default">
+																		  		<p class="bord-btm pad-ver text-main text-bold">
+																                	<@spring.message "规则名"/><input name="ruleName" id="ruleName" style="width: 30%;display: inline;margin-left: 10px" placeholder="规则名最多60个字"  class="k-textbox" >
+																            	</p>
+																		  	</li>
+																		  	<li class="ui-state-default">
+																		  		<p class="bord-btm pad-ver text-main text-bold">
+																                	<@spring.message "关键字"/><span style="float: right;color: blue" onclick="addKeyword()">添加关键字</span>
+																		  		<!-- <p id ="addKeyword" class="bord-btm pad-ver text-main text-bold" >
+																                	<input type="text" id="keywordInput" style="width: 30%;display:inline" >
+																                	<i class="fa fa-trash-o" onclick="deleteKeyword()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																                	<span id="replyAllFlag" onclick="replyAllFlag()" style="float: right;margin-right: 20px;">未全匹配</span>
+																            	</p> -->
+																		  		<div id="addTags"></div>
+																            	
+															                	<script type="text/javascript">
+																					function cancleNewRule() {
+																						document.getElementById("ruleName").value = "";
+																						if(document.getElementsByName("addKeyword").length>0){
+																			    			for(var i=0;i< document.getElementsByName("addKeyword").length;i++){
+																					    		$("#addKeyword").remove();
+																					    		i--;//html删除数组元素位置少一个
+																			                }
+																		    			};
+																		    			document.getElementById("check").checked = false;
+																		    			document.getElementById("content2").value = "";
+																		    			document.getElementById("text2").innerText = "";
+																		    			if($("#newPictureDiv")[0].style.display != "none" || document.getElementById("newPictureId").value){
+																							$("#newPictureDiv").hide();
+																							document.getElementById("newPictureId").value  = "";
+																							document.getElementById("newPictureIdUrl").value  = "";
+																							$("#newPictureImg").hide().attr('src',"");
+																						}
+																						if($("#newVoiceDiv")[0].style.display != "none" || document.getElementById("newVoiceId").value){
+																							$("#newVoiceDiv").hide();
+																							document.getElementById("newVoiceId").value  = "";
+																							document.getElementById("newVoiceIdUrl").value  = "";
+																							document.getElementById("newVoiceSpan").innerText  = "";
+																						}
+																						if($("#newVideoDiv")[0].style.display != "none" || document.getElementById("newVideoId").value){
+																							$("#newVideoDiv").hide();
+																							document.getElementById("newVideoId").value  = "";
+																							document.getElementById("newVideoIdUrl").value  = "";
+																							document.getElementById("newVideoSpan").innerText = "";
+																						}
+																						if($("#newPictureTextDiv")[0].style.display != "none" || document.getElementById("newPictureTextId").value){
+																							$("#newPictureTextDiv").hide();
+																							document.getElementById("newPictureTextId").value  = "";
+																							document.getElementById("newPictureTextIdUrl").value  = "";
+																							$("#newPictureTextImg").hide().attr('src',"");
+																						}
+																		    			
+																		    			document.getElementById("span1").innerText = "0";
+																		    			document.getElementById("span2").innerText = "0";
+																		    			document.getElementById("span3").innerText = "0";
+																		    			document.getElementById("span4").innerText = "0";
+																		    			document.getElementById("span5").innerText = "0";
+																		    			$("#ruleDiv1").hide();
+																						$("#keywordHideDiv").hide();
+																					}
+																					
+																					
+															                		function addKeyword() {
+															                			var but = addTagValue();
+															                            $("#addTags").append(but);
+																					}
+															                		//添加标签
+															                        function addTagValue(){
+															                			var html ="";
+															                			html += "<p id='addKeyword' name ='addKeyword' class='bord-btm pad-ver text-main text-bold'>"+
+															                					"<input type='text' id='keywordInput' style='width: 30%;display:inline'><i class='fa fa-trash-o' onclick='deleteKeyword(this)' aria-hidden='true' style='float: right;margin-right: 20px;'></i><span id='replyAllFlag' onclick='replyAllFlag(this)' style='float: right;margin-right: 20px;'>未全匹配</span></p>";
+																				  		return html;
+															                        };
+															                		function deleteKeyword(e) {
+															                            kendo.ui.showConfirmDialog({
+															                                title:$l('hap.tip.info'),
+															                                message: "是否删除该关键字？"
+															                            }).done(function (event) {
+															                                if (event.button == 'OK') {
+															                                   $(e.parentNode).remove();
+															                                }
+															                            })
+																					};
+															                		function replyAllFlag(e) {
+															                			var replyAllFlag = e.innerText;
+															                			console.log(replyAllFlag);
+															                			if(replyAllFlag == "未全匹配"){
+															                				e.innerText = "全匹配";
+															                			}else{
+															                				e.innerText = "未全匹配";
+															                			} 
+																					};
+																					
+															                	</script>
+																		  	</li>
+																		    <li class="ui-state-default">
+																		    	<p class="bord-btm pad-ver text-main text-bold">
+																	                	<@spring.message "回复"/><span style="float: right"><input TYPE="checkbox" id="check" NAME="check" style="display: inline;" value=1> 回复全部</span>
+																	            </p>
+																		    </li>
+																		    <li class="ui-state-default" style="list-style-type:none;">
+																		    	<!-- <div class="tab-pane fade in active" > -->
+																		            <ul class="nav nav-tabs" id="myTab">  
+																				        <li class="active"><a href="#ImageText2"  data-toggle="tab">&nbsp<i class="fa fa-pencil"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																				        <li><a href="#picture2"  data-toggle="tab">&nbsp<i class="fa fa-picture-o"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																				        <li><a href="#voice2"  data-toggle="tab">&nbsp<i class="fa fa-microphone"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																				        <li><a href="#video2"  data-toggle="tab">&nbsp<i class="fa fa-video-camera"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																				        <li><a href="#pictureText2"  data-toggle="tab">&nbsp<i class="fa fa-file-text"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																				    </ul>
+																				    <div id="tabContent" class="tab-content">
+																				        <div class="tab-pane active" style="margin-top: 30px;text-align: center" id="ImageText2">
+																				            <textarea id="content2" style="width: 100%;height: 150px" ></textarea>
+																				        </div>
+																				        <div id="picture2" class="tab-pane">
+																				        	<div style="padding:15px 15px 0">
+																				                <div class="row">
+																				                    <div class="col-sm-12">
+																				                        <div class="panel">
+																				                            <form class="form-horizontal" style="width:100%">
+																		                                        <div class="form-group">
+																		                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(3)">进入素材库</a></div>
+																		                                            </label>
+																		                                            <div class="col-sm-4">
+																		                                            	<input style="display: none" id="newPictureId" >
+																		                                            	<input style="display: none" id="newPictureIdUrl" >
+																		                                            </div>
+																		                                        </div>
+																	                                            <div class="form-group" id="newPictureDiv" style="display: none">
+																				                                    <div class="col-xs-11">
+																														<img id="newPictureImg" width="100%" src="" />
+																													</div>
+																													<div class="col-xs-1">
+																						                            	<i class="fa fa-trash-o" onclick="deleteNewPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																						                            </div>
+																						                            <script type="text/javascript">
+																							                        	function deleteNewPicture() {
+																															$("#newPictureDiv").hide();
+																															document.getElementById("newPictureId").value  = "";
+																															document.getElementById("newPictureIdUrl").value  = "";
+																															$("#newPictureImg").hide().attr('src',"");
+																															document.getElementById("span2").innerText  = "0";
+																														}
+																							                        </script>
+																				                                </div>
+																				                            </form>
+																				                        </div>
+																				                    </div>
+																				                </div>
+																				            </div>
+																				        </div>
+												                                        <script type="text/javascript">
+												                                       		$("#content2").blur(function(){  // 失去焦点  
+													                                       		var content2 = document.getElementById("content2").value;
+												                                       			console.log(content2);
+																	                			if(content2){
+																	                				document.getElementById("span1").innerText = "1";
+																	                				document.getElementById("text2").innerText = content2;
+																	                				$("#ruleDiv1").show();
+																	                			}else{
+																	                				document.getElementById("span1").innerText = "0";
+																	                			}
+																       						});
+												                                        </script>
+																				        <div id="voice2" class="tab-pane">
+																				        	<div style="padding:15px 15px 0">
+																				                <div class="row">
+																				                    <div class="col-sm-12">
+																				                        <div class="panel">
+																				                            <form class="form-horizontal" style="width:100%">
+																		                                        <div class="form-group">
+																		                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(7)">进入素材库</a></div>
+																		                                            </label>
+																		                                            <div class="col-sm-4">
+																		                                            	<input style="display: none" id="newVoiceId" >
+																		                                            	<input style="display: none" id="newVoiceIdUrl" >
+																		                                            </div>
+																		                                        </div>
+																		                                        <div class="form-group" id="newVoiceDiv" style="display: none">
+																				                                    <div class="col-xs-11">
+																				                                    	<span id="newVoiceSpan"></span>
+																													</div>
+																													<div class="col-xs-1">
+																						                            	<i class="fa fa-trash-o" onclick="deleteNewVoice()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																						                            </div>
+																						                            <script type="text/javascript">
+																							                        	function deleteNewVoice() {
+																															$("#newVoiceDiv").hide();
+																															document.getElementById("newVoiceId").value = "";
+																															document.getElementById("newVoiceIdUrl").value = "";
+																															document.getElementById("newVoiceSpan").innerText = "";
+																															document.getElementById("span3").innerText  = "0";
+																														}
+																							                        </script>
+																				                                </div>
+																				                            </form>
+																				                        </div>
+																				                    </div>
+																				                </div>
+																				            </div>
+																				        </div>
+																				        <div id="video2" class="tab-pane">
+																				            <div style="padding:15px 15px 0">
+																				                <div class="row">
+																				                    <div class="col-sm-12">
+																				                        <div class="panel">
+																				                            <form class="form-horizontal" style="width:100%">
+																		                                        <div class="form-group">
+																		                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(11)">进入素材库</a></div>
+																		                                            </label>
+																		                                            <div class="col-sm-4">
+																		                                            	<input style="display: none" id="newVideoId" >
+																		                                            	<input style="display: none" id="newVideoIdUrl" >
+																		                                            </div>
+																		                                        </div>
+																		                                        <div class="form-group" id="newVideoDiv" style="display: none">
+																				                                    <div class="col-xs-11">
+																				                                    	<span id="newVideoSpan"></span>
+																													</div>
+																													<div class="col-xs-1">
+																						                            	<i class="fa fa-trash-o" onclick="deleteNewVideo()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																						                            </div>
+																						                            <script type="text/javascript">
+																							                        	function deleteNewVideo() {
+																															$("#newVideoDiv").hide();
+																															document.getElementById("newVideoId").value  = "";
+																															document.getElementById("newVideoIdUrl").value  = "";
+																															document.getElementById("newVideoSpan").innerText = "";
+																															document.getElementById("span4").innerText  = "0";
+																														}
+																							                        </script>
+																				                                </div>
+																				                            </form>
+																				                        </div>
+																				                    </div>
+																				                </div>
+																				            </div>
+																				        </div>
+																				        <div id="pictureText2" class="tab-pane">
+																				            <div style="padding:15px 15px 0">
+																				                <div class="row">
+																				                    <div class="col-sm-12">
+																				                        <div class="panel">
+																				                            <form class="form-horizontal" style="width:100%">
+																		                                        <div class="form-group">
+																		                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(13)">进入素材库</a></div>
+																		                                            </label>
+																		                                            <div class="col-sm-4">
+																		                                            	<input style="display: none" id="newPictureTextId" >
+																		                                            	<input style="display: none" id="newPictureTextIdUrl" >
+																		                                            </div>
+																		                                        </div>
+																		                                        
+																		                                        <div class="form-group" id="newPictureTextDiv" style="display: none">
+																				                                    <div class="col-xs-11">
+																														<img id="newPictureTextImg" width="100%" src="" />
+																													</div>
+																													<div class="col-xs-1">
+																						                            	<i class="fa fa-trash-o" onclick="deleteNewPictureText()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																						                            </div>
+																						                            <script type="text/javascript">
+																							                        	function deleteNewPictureText() {
+																															$("#newPictureTextDiv").hide();
+																															document.getElementById("newPictureTextId").value  = "";
+																															document.getElementById("newPictureTextIdUrl").value  = "";
+																															$("#newPictureTextImg").hide().attr('src',"");
+																															document.getElementById("span5").innerText  = "0";
+																														}
+																							                        </script>
+																		                                        </div>
+																				                            </form>
+																				                        </div>
+																				                    </div>
+																				                </div>
+																				            </div>
+																				        </div>
+																				    </div>
+																		        <!-- </div> -->
+																		    </li>
+																        </ul>
+																        
+																        <div class="panel-body">
+												                                    <!-- 文字窗口 -->
+										                                    <div id = "ruleDiv1" style="display:none">
+																		        <div class="col-xs-12" style="margin-top:10px;">
+													                               	<div class="form-group" >
+													                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+													                                </div>
+														                        </div>
+																		        <div class="col-xs-12" >
+													                               	<div class="form-group" >
+																						<label class="col-xs-11 control-label" id="text2" style="text-align: left"></label>
+																						<div class="col-xs-1">
+															                            	<i class="fa fa-trash-o" onclick="deleteText2()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+															                            </div>
+													                                </div>
+														                        </div>
+										                                    </div>
+												                                   <!--   图片预览的窗口 
+										                                    <div id = "ruleDiv2" style="display:none">
+																		        <div class="col-xs-12" style="margin-top:10px;">
+													                               	<div class="form-group" >
+													                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+													                                </div>
+														                        </div>
+																		        <div class="col-xs-12" >
+													                               	<div class="form-group" >
+													                                    <div class="col-xs-2">
+																							<img src="" width="100%" id="keywordPictureImg2" />
+																						</div>
+																						<label class="col-xs-2 control-label" id="keywordPictureLable2" style="text-align: left"></label>
+																						<div class="col-xs-8">
+															                            	<i class="fa fa-trash-o" onclick="deletePicture2()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+															                            </div>
+															                            <script type="text/javascript">
+																                        	function deleteText2() {
+																								$("#ruleDiv1").hide();
+																								document.getElementById("span1").innerText = "0";
+																							}
+																                        	function deletePicture2() {
+																								$("#ruleDiv2").hide();
+																								document.getElementById("span2").innerText = "0";
+																							}
+																                        </script>
+													                                </div>
+														                        </div>
+													                        </div>
+												                                   	 图文预览的窗口
+										                                    <div id = "ruleDiv5" style="display:none">
+														                        <div class="col-xs-12" style="margin-top:10px;">
+													                               	<div class="form-group" >
+													                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+													                                </div>
+														                        </div>
+																		        <div class="col-xs-12" >
+													                               	<div class="form-group" >
+																						<label class="col-xs-11 control-label" id="pictureTextLable2" style="text-align: left"></label>
+																						<div class="col-xs-1">
+															                            	<i class="fa fa-trash-o" onclick="deletePictureText2()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+															                            </div>
+													                                </div>
+														                        </div>
+																		        <div class="col-xs-12" >
+													                               	<div class="form-group" >
+													                                    <div class="col-xs-2">
+																							<img src="" width="100%" id="uploadPictureTextImg2" />
+																						</div>
+																						<label class="col-xs-2 control-label" id="uploadPictureLable2" style="text-align: left"></label>
+													                                </div>
+														                        </div>
+														                        <script type="text/javascript">
+														                        	function deletePictureText2() {
+																						$("#ruleDiv5").hide();
+																						document.getElementById("span5").innerText = "0";
+																					}
+														                        </script>
+										                                    </div> -->
+												                        </div>
+																        
+														               <div class="panel-heading" style="margin-top:15px;height:60px;padding-left:5px;padding-right:5px;">
+															                <span>文字(</span><span id="span1">0</span><span>)、图片(</span><span id="span2">0</span>
+															                <span>)、语音(</span><span id="span3">0</span><span>)、视频(</span><span id="span4">0</span>
+															                <span>)、图文(</span><span id="span5">0</span><span>)</span>
+		    	      														<span class="btn btn-default" onclick="cancleNewRule()">
+		    	      															<i class="fa fa-trash-o" style="margin-right:5px;"></i><@spring.message "删除"/>
+		    	      														</span>
+															                <span class="btn btn-success" style="float:right;margin-right:15px;" onclick="saveRule()">
+															                	<i class="fa fa-plus-square" style="margin-right:5px;"></i>保存
+															               	</span>
+																	   </div>
+													               </div><!-- panel-body -->
+												            	</div><!-- "mymenu" -->
+				                                        	</div><!-- panel panel-default -->
+				                                        	
+												            <div class="panel" id = "noRuleDiv" style="padding: 0px;border:none;box-shadow: none;margin-top: 50px;">
+												            	<div class="col-xs-12" >
+									                               	<div class="form-group" >
+																		<label class="col-xs-12 control-label" id="pictureTextLable2" style="text-align: center">暂无创建规则</label>
+									                                </div>
+										                        </div>
+		                                        			</div>
+		                                        			
+		                                        			<div class="col-xs-12" style="padding-left:0;padding-right:0;">
+		                                        				<!-- 展示区域 -->	
+									                            <div class="col-xs-5" >
+									                                <div class="form-group" >
+					                                        			<div id="summaryDiv"></div>
+									                                </div>
+									                            </div>
+									                            <!-- 关键字编辑区域 -->
+																<div class="col-xs-7" id="editRuleHideDiv" style="display: none">
+									                                <div class="form-group" >
+									                                    <div class="panel panel-default" style="margin-top: 50px;" id="editKeywordHideDiv">
+								                                        	<div id="mymenu" style="">
+																            <div class="panel-body">
+								                                        		<ul style="padding-left:0;">
+								                                        			<li class="ui-state-default" style="list-style-type:none;">
+								                                        				<div class="panel-heading">
+																			                <span><b>规则</b></span><span id="editRuleNum"><b></b></span><span id="editRuleId" style='display:none'><b></b></span><!-- <i class="fa fa-chevron-down"  aria-hidden="true" style="margin-right: 10px;float: right"></i> -->
+																			            </div>
+								                                        			</li>
+								                                        			<ul style="padding-left:10px;padding-right:10px;">
+																					  	<li class="ui-state-default">
+																					  		<p class="bord-btm pad-ver text-main text-bold">
+																			                	<@spring.message "规则名"/><input name="eidtRuleName" id="eidtRuleName" style="width: 30%;display: inline;margin-left: 10px" placeholder="规则名最多60个字"  class="k-textbox" >
+																			            	</p>
+																					  	</li>
+																					  	<li class="ui-state-default">
+																					  		<p class="bord-btm pad-ver text-main text-bold">
+																			                	<@spring.message "关键字"/><span style="float: right;color: blue" onclick="editAddKeyword()">添加关键字</span>
+																					  		<div id="editAddTags"></div>
+																			            	
+																		                	<script type="text/javascript">
+																		                		//关键词回复详细
+																			                	function ruleDetail(e){
+																		                			var editRuleNum = $(e.childNodes)[1].getElementsByTagName("span")[1].innerText;
+																			                    	var ruleId = $(e.childNodes)[0].innerText;
+																			                    	var editRuleId = document.getElementById("editRuleId").innerText;
+																			                 	    if(ruleId && editRuleNum){
+																			                 	    	if(ruleId != editRuleId){
+																			                 	    		$("#editRuleHideDiv").show();
+																			                 	    		if(editRuleId){
+																				                 	    		//清空编辑规则
+																												editDeleteRule();
+																		                 	    			};
+																				                 	    	$.ajax({
+																				                                type: "POST",
+																				                                url: "${base.contextPath}/fms/wht/cr/keyword/rule/selectRuleId",
+																				                                data: {"ruleId":ruleId},
+																				                                dataType: "json",
+																				                                success: function(json){
+																				                               		for(var i=0;i<json.rows.length;i++){
+																				                               			document.getElementById("editRuleId").innerText = json.rows[i].ruleId;
+																				                               			document.getElementById("editRuleNum").innerText = editRuleNum;
+																				                               			document.getElementById("eidtRuleName").value = json.rows[i].ruleName;
+																				                               			var replyAllFlag = json.rows[i].replyAllFlag;
+																				                		        		if(replyAllFlag == "Y"){
+																					                		        		document.getElementById("editCheck").checked = true;
+																				                		        		}
+																				                		        		var content = json.rows[i].content;
+																				                		        		if(content){
+																					                               			document.getElementById("content3").value = content;
+																					                               			document.getElementById("editSpan1").innerText = "1";
+																				                		        		}
+																				                		        		var rulePictureId = json.rows[i].rulePictureId;
+																				                		        		if(rulePictureId){
+																					                               			document.getElementById("editPictureId").value = rulePictureId;
+																					                               			document.getElementById("editSpan2").innerText = "1";
+																				                		        		}
+																				                		        		var ruleVoiceId = json.rows[i].ruleVoiceId;
+																				                		        		if(ruleVoiceId){
+																					                               			document.getElementById("editVoiceId").value = ruleVoiceId;
+																					                               			document.getElementById("editSpan3").innerText = "1";
+																				                		        		}
+																				                		        		var ruleVideoId = json.rows[i].ruleVideoId;
+																				                		        		if(ruleVideoId){
+																					                               			document.getElementById("editVideoId").value = ruleVideoId;
+																					                               			document.getElementById("editSpan4").innerText = "1";
+																				                		        		}
+																				                		        		var rulePictureText = json.rows[i].rulePictureText;
+																				                		        		if(rulePictureText){
+																					                               			document.getElementById("editPictureTextId").value = rulePictureText;
+																					                               			document.getElementById("editSpan5").innerText = "1";
+																				                		        		}
+																				                		        		//debugger;
+																				                		        		if(json.rows[i].whtRuleAttachContent){
+																				                	                    	var whtRuleAttachContentList = JSON.parse(json.rows[i].whtRuleAttachContent);
+																				                	    					if(whtRuleAttachContentList[0].newPictureIdUrl){
+																				                	                        	$("#editPictureDiv").show();
+																				                	    						document.getElementById("editPictureIdUrl").value = whtRuleAttachContentList[0].newPictureIdUrl;
+																				                	    						$("#editPictureImg").show().attr('src',whtRuleAttachContentList[0].newPictureIdUrl);
+																				                	    					};
+																			                	                            if(whtRuleAttachContentList[1].newVoiceId){
+																				                	                           	$("#editVoiceDiv").show();
+																				                	       						document.getElementById("editVoiceIdUrl").value = whtRuleAttachContentList[1].newVoiceIdUrl;
+																			                	          						document.getElementById("editVoiceSpan").innerText = whtRuleAttachContentList[1].newVoiceIdUrl;
+																				                	       					};
+																				                	    					if(whtRuleAttachContentList[2].newVideoId){
+																				                	                           	$("#editVideoDiv").show();
+																				                	       						document.getElementById("editVideoIdUrl").value = whtRuleAttachContentList[2].newVideoIdUrl;
+																				                								document.getElementById("editVideoSpan").innerText  = whtRuleAttachContentList[2].newVideoIdUrl;
+																				                	       					};
+																			                	          					if(whtRuleAttachContentList[3].newPictureTextId){
+																				                	                           	$("#editPictureTextDiv").show();
+																			                	          						document.getElementById("editPictureTextIdUrl").value = whtRuleAttachContentList[3].newPictureTextIdUrl;
+																				                								$("#editPictureTextImg").show().attr('src',whtRuleAttachContentList[3].newPictureTextIdUrl);
+																				                	                       	};
+																				                			            }
+																				                                	}
+																				                                }
+																				                            });
+																				                 	    	$.ajax({
+																				                                type: "POST",
+																				                                url: "${base.contextPath}/fms/wht/cr/keyword/selectRuleId",
+																				                                data: {"ruleId":ruleId},
+																				                                dataType: "json",
+																				                                success: function(data){
+																				                               		for(var i=0;i<data.rows.length;i++){
+																				                		        		var keywordId = data.rows[i].keywordId;
+																				                		        		var keywordValue = data.rows[i].keywordValue;
+																				                		        		var matchingFlag = data.rows[i].matchingFlag;
+																							                			var edithtml ="";
+																							                			edithtml += "<p id='editAddKeyword' name ='editAddKeyword' class='bord-btm pad-ver text-main text-bold' >"+
+																							                					"<input type='text' id='editKeywordInput' style='width: 30%;display:inline' value='"+keywordValue+"'><span id='editKeywordId' style='display:none'>"+keywordId+"</span>"+
+																							                					"<i class='fa fa-trash-o' onclick='editDeleteKeyword(this)' aria-hidden='true' style='float: right;margin-right: 20px;'></i>";
+																							                			if(matchingFlag =="Y"){
+																								                			edithtml += "<span id='editreplyAllFlag' onclick='editreplyAllFlag(this)' style='float: right;margin-right: 20px;'>全匹配</span></p>";
+																							                			}else{
+																								                			edithtml += "<span id='editreplyAllFlag' onclick='editreplyAllFlag(this)' style='float: right;margin-right: 20px;'>未全匹配</span></p>";
+																							                			}		
+																							                            $("#editAddTags").append(edithtml);
+																				                               		}
+																				                                }
+																				                            })
+																			                 	    	}
+																			                 	    }
+																			                    }
+																		                		
+																		                		//清空编辑规则
+																								function editDeleteRule(e) {
+																		                			if(e==1){
+																		                				var editRuleId = document.getElementById("editRuleId").innerText;
+																		                				var editRuleNum = document.getElementById("editRuleNum").innerText;
+																		                				if(editRuleId && editRuleNum){
+																			                				kendo.ui.showConfirmDialog({
+																							 	                title: $l('hap.tip.info'),
+																							 	                message: $l('确定要删除此规则吗')
+																							 	            }).done(function (event) {
+																							 	                if (event.button == 'OK') {
+																							 	                	$("#editRuleHideDiv").hide();
+																							 	                	index = parseInt(editRuleNum)-1;
+																							 	                	document.getElementsByName("ruleSummaryDivHide")[index].remove();
+																							 	                	cancleEditContent();
+																				                					 $.ajax({
+																						                                type: "POST",
+																						                                url: "${base.contextPath}/fms/wht/cr/keyword/rule/deleteRule",
+																						                                data: {"ruleId":editRuleId},
+																						                                dataType: "json",
+																						                                success: function(json){
+																						                               		console.log(json);
+																								                            if($(".editRuleNumClass").length>0){
+																										   						for(var j =0;j<$(".editRuleNumClass").length;j++){
+																										   							$(".editRuleNumClass")[j].innerText = j+1;
+																										   						}
+																											   			    };
+																						                                }
+																						                           })  
+																							 	                }
+																							 	            })
+																		                				}else{
+																		                					kendo.ui.showErrorDialog({
+																		                						message : "请在左侧选择要删除的规则"
+																		                					});
+																		                				}
+																		                			}else{
+																						    			cancleEditContent();
+																		                			}
+																								}
+																								function cancleEditContent(){
+																									document.getElementById("editRuleId").innerText = "";
+																									document.getElementById("editRuleNum").innerText = "";
+																									document.getElementById("eidtRuleName").value = "";
+																					    			if(document.getElementsByName("editAddKeyword").length>0){
+																				   						for(var j =0;j<document.getElementsByName("editAddKeyword").length;j++){
+																				   							document.getElementsByName("editAddKeyword")[0].remove();
+																				   							j--;//html删除数组元素位置少一个
+																				   						}
+																					   				};
+																					    			document.getElementById("editCheck").checked = false;
+																									document.getElementById("content3").value = "";
+																									if($("#editPictureDiv")[0].style.display != "none" || document.getElementById("editPictureId").value){
+																										$("#editPictureDiv").hide();
+																										document.getElementById("editPictureId").value  = "";
+																										document.getElementById("editPictureIdUrl").value  = "";
+																										$("#editPictureImg").hide().attr('src',"");
+																									}
+																									if($("#editVoiceDiv")[0].style.display != "none" || document.getElementById("editVoiceId").value){
+																										$("#editVoiceDiv").hide();
+																										document.getElementById("editVoiceId").value  = "";
+																										document.getElementById("editVoiceIdUrl").value  = "";
+																										document.getElementById("editVoiceSpan").innerText  = "";
+																									}
+																									if($("#editVideoDiv")[0].style.display != "none" || document.getElementById("editVideoId").value){
+																										$("#editVideoDiv").hide();
+																										document.getElementById("editVideoId").value  = "";
+																										document.getElementById("editVideoIdUrl").value  = "";
+																										document.getElementById("editVideoSpan").innerText = "";
+																									}
+																									if($("#editPictureTextDiv")[0].style.display != "none" || document.getElementById("editPictureTextId").value){
+																										$("#editPictureTextDiv").hide();
+																										document.getElementById("editPictureTextId").value  = "";
+																										document.getElementById("editPictureTextIdUrl").value  = "";
+																										$("#editPictureTextImg").hide().attr('src',"");
+																									}
+																					    			//document.getElementById("edittext3").innerText = "";
+																					    			document.getElementById("editSpan1").innerText = "0";
+																					    			document.getElementById("editSpan2").innerText = "0";
+																					    			document.getElementById("editSpan3").innerText = "0";
+																					    			document.getElementById("editSpan4").innerText = "0";
+																					    			document.getElementById("editSpan5").innerText = "0";
+																					    			//$("#editruleDiv3").hide();
+																								}
+																		                		
+																								//添加编辑区域关键字
+																		                		function editAddKeyword() {
+																		                			var but = editAddTagValue();
+																		                            $("#editAddTags").append(but);
+																								}
+																		                        function editAddTagValue(){
+																		                			var html ="";
+																		                			html += "<p id='editAddKeyword' name ='editAddKeyword' class='bord-btm pad-ver text-main text-bold'>"+
+																		                					"<input type='text' id='editKeywordInput' style='width: 30%;display:inline'><span id='editKeywordId'></span><i class='fa fa-trash-o' onclick='editDeleteKeyword(this)' aria-hidden='true' style='float: right;margin-right: 20px;'></i><span id='editreplyAllFlag' onclick='editreplyAllFlag(this)' style='float: right;margin-right: 20px;'>未全匹配</span></p>";
+																							  		return html;
+																		                        };
+																		                        
+																		                        //删除编辑区域关键字
+																		                		function editDeleteKeyword(e) {
+																		                            kendo.ui.showConfirmDialog({
+																		                                title:$l('hap.tip.info'),
+																		                                message: "是否删除该关键字？"
+																		                            }).done(function (event) {
+																		                                if (event.button == 'OK') {
+																		                                   var editKeywordId = $(e.parentNode.childNodes)[1].innerText;
+																		                                   $(e.parentNode).remove();
+																		                                   if(editKeywordId){
+																		                                	   $.ajax({
+																					                                type: "POST",
+																					                                url: "${base.contextPath}/fms/wht/cr/keyword/deleteKeyword",
+																					                                data: {"keywordId":editKeywordId},
+																					                                dataType: "json",
+																					                                success: function(json){
+																					                               		console.log(json);
+																					                                }
+																					                           })
+																		                                    }
+																		                                 }
+																		                            })
+																								}
+																		                        
+																		                		function editreplyAllFlag(e) {
+																		                			var replyAllFlag = e.innerText;
+																		                			console.log(replyAllFlag);
+																		                			if(replyAllFlag == "未全匹配"){
+																		                				e.innerText = "全匹配";
+																		                			}else{
+																		                				e.innerText = "未全匹配";
+																		                			} 
+																								}; 
+																		                	</script>
+																					  	</li>
+																					    <li class="ui-state-default">
+																					    	<p class="bord-btm pad-ver text-main text-bold"><@spring.message "回复"/>
+																					    		<span style="float: right"><input TYPE="checkbox" id="editCheck" NAME="editCheck" style="display: inline;" value=1> 回复全部</span>
+																				            </p>
+																					    </li>
+																					    <li class="ui-state-default" style="list-style-type:none;">
+																					    	<!-- <div class="tab-pane fade in active" > -->
+																					            <ul class="nav nav-tabs" id="myTab">  
+																							        <li class="active"><a href="#ImageText3"  data-toggle="tab">&nbsp<i class="fa fa-pencil"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																							        <li><a href="#picture3"  data-toggle="tab">&nbsp<i class="fa fa-picture-o"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																							        <li><a href="#voice3"  data-toggle="tab">&nbsp<i class="fa fa-microphone"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																							        <li><a href="#video3"  data-toggle="tab">&nbsp<i class="fa fa-video-camera"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																							        <li><a href="#pictureText3"  data-toggle="tab">&nbsp<i class="fa fa-file-text"  aria-hidden="true" style="margin-right: 10px"></i>&nbsp</a></li>
+																							    </ul>
+																							    <div id="tabContent" class="tab-content">
+																							        <div class="tab-pane active" style="margin-top: 30px;text-align: center" id="ImageText3">
+																							            <textarea id="content3" style="width: 100%;height: 150px" ></textarea>
+																							        </div>
+																							        <div id="picture3" class="tab-pane">
+																							        	<div style="padding:15px 15px 0">
+																							                <div class="row">
+																							                    <div class="col-sm-12">
+																							                        <div class="panel">
+																							                            <form class="form-horizontal" style="width:100%">
+																					                                        <div class="form-group" >
+																					                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(4)">进入素材库</a></div>
+																					                                            </label>
+																					                                            <div class="col-sm-4">
+																					                                            	<input style="display: none" id="editPictureId" >
+																					                                            	<input style="display: none" id="editPictureIdUrl" >
+																					                                            </div>
+																							                                </div>
+																				                                            <div class="form-group" id="editPictureDiv" style="display: none">
+																							                                    <div class="col-xs-11">
+																																	<img id="editPictureImg" width="100%" src="" />
+																																</div>
+																																<div class="col-xs-1">
+																									                            	<i class="fa fa-trash-o" onclick="deleteEditPicture()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																									                            </div>
+																									                            <script type="text/javascript">
+																										                        	function deleteEditPicture() {
+																																		$("#editPictureDiv").hide();
+																																		document.getElementById("editPictureId").value  = "";
+																																		document.getElementById("editPictureIdUrl").value  = "";
+																																		$("#editPictureImg").hide().attr('src',"");
+																																		document.getElementById("editSpan2").innerText  = "0";
+																																	}
+																										                        </script>
+																					                                        </div>
+																							                            </form>
+																							                        </div>
+																							                    </div>
+																							                </div>
+																							            </div>
+																							        </div>
+																							        <div id="voice3" class="tab-pane">
+																							        	<div style="padding:15px 15px 0">
+																							                <div class="row">
+																							                    <div class="col-sm-12">
+																							                        <div class="panel">
+																							                            <form class="form-horizontal" style="width:100%">
+																					                                        <div class="form-group">
+																					                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(8)">进入素材库</a></div>
+																					                                            </label>
+																					                                            <div class="col-sm-4">
+																					                                            	<input style="display: none" id="editVoiceId" >
+																					                                            	<input style="display: none" id="editVoiceIdUrl" >
+																					                                            </div>
+																					                                        </div>
+																					                                        <div class="form-group" id="editVoiceDiv" style="display: none">
+																							                                    <div class="col-xs-11">
+																							                                    	<span id="editVoiceSpan"></span>
+																																</div>
+																																<div class="col-xs-1">
+																									                            	<i class="fa fa-trash-o" onclick="deleteEditVoice()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																									                            </div>
+																									                            <script type="text/javascript">
+																										                        	function deleteEditVoice() {
+																																		$("#editVoiceDiv").hide();
+																																		document.getElementById("editVoiceId").value  = "";
+																																		document.getElementById("editVoiceIdUrl").value  = "";
+																																		document.getElementById("editVoiceSpan").innerText = "";
+																																		document.getElementById("editSpan3").innerText  = "0";
+																																	}
+																										                        </script>
+																					                                        </div>
+																							                            </form>
+																							                        </div>
+																							                    </div>
+																							                </div>
+																							            </div>
+																							        </div>
+																							        <div id="video3" class="tab-pane">
+																							            <div style="padding:15px 15px 0">
+																							                <div class="row">
+																							                    <div class="col-sm-12">
+																							                        <div class="panel">
+																							                            <form class="form-horizontal" style="width:100%">
+																					                                        <div class="form-group">
+																					                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(12)">进入素材库</a></div>
+																					                                            </label>
+																					                                            <div class="col-sm-4">
+																					                                            	<input style="display: none" id="editVideoId" >
+																					                                            	<input style="display: none" id="editVideoIdUrl" >
+																					                                            </div>
+																					                                        </div>
+																					                                        <div class="form-group" id="editVideoDiv" style="display: none">
+																							                                    <div class="col-xs-11">
+																							                                    	<span id="editVideoSpan"></span>
+																																</div>
+																																<div class="col-xs-1">
+																									                            	<i class="fa fa-trash-o" onclick="deleteEditVideo()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																									                            </div>
+																									                            <script type="text/javascript">
+																										                        	function deleteEditVideo() {
+																																		$("#editVideoDiv").hide();
+																																		document.getElementById("editVideoId").value  = "";
+																																		document.getElementById("editVideoIdUrl").value  = "";
+																																		document.getElementById("editVideoSpan").innerText = "";
+																																		document.getElementById("editSpan4").innerText  = "0";
+																																	}
+																										                        </script>
+																					                                        </div>
+																							                            </form>
+																							                        </div>
+																							                    </div>
+																							                </div>
+																							            </div>
+																							        </div>
+																							        <div id="pictureText3" class="tab-pane">
+																							            <div style="padding:15px 15px 0">
+																							                <div class="row">
+																							                    <div class="col-sm-12">
+																							                        <div class="panel">
+																							                            <form class="form-horizontal" style="width:100%">
+																					                                        <div class="form-group" >
+																					                                            <label class="col-sm-5 control-label"><div><a style="text-decoration:underline" href="javascript:void(0)" onclick="joinLibrary(14)">进入素材库</a></div>
+																					                                            </label>
+																					                                            <div class="col-sm-4">
+																					                                            	<input style="display: none" id="editPictureTextId" >
+																					                                            	<input style="display: none" id="editPictureTextIdUrl" >
+																					                                            </div>
+																					                                        </div>
+																					                                        
+																					                                        <div class="form-group" id="editPictureTextDiv" style="display: none">
+																							                                    <div class="col-xs-11">
+																																	<img id="editPictureTextImg" width="100%" src="" />
+																																</div>
+																																<div class="col-xs-1">
+																									                            	<i class="fa fa-trash-o" onclick="deleteEditPictureText()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																									                            </div>
+																									                            <script type="text/javascript">
+																										                        	function deleteEditPictureText() {
+																																		$("#editPictureTextDiv").hide();
+																																		document.getElementById("editPictureTextId").value  = "";
+																																		document.getElementById("editPictureTextIdUrl").value  = "";
+																																		$("#editPictureTextImg").hide().attr('src',"");
+																																		document.getElementById("editSpan5").innerText  = "0";
+																																	}
+																										                        </script>
+																					                                        </div>
+																							                            </form>
+																							                        </div>
+																							                    </div>
+																							                </div>
+																							            </div>
+																							        </div>
+																							    </div>
+																					        <!-- </div> -->
+																					    </li>
+																			        </ul>
+																			        
+																			        <!-- <div class="panel-body">
+															                                  	  文字窗口
+													                                    <div id = "editruleDiv3" style="display:none">
+																					        <div class="col-xs-12" style="margin-top:10px;">
+																                               	<div class="form-group" >
+																                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+																                                </div>
+																	                        </div>
+																					        <div class="col-xs-12" >
+																                               	<div class="form-group" >
+																									<label class="col-xs-11 control-label" style="text-align: left"><span id="edittext3"></span></label>
+																									<div class="col-xs-1">
+																		                            	<i class="fa fa-trash-o" onclick="editdeleteText3()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																		                            </div>
+																                                </div>
+																	                        </div>
+													                                    </div>
+														                                   		 图片预览的窗口
+													                                    <div id = "ruleDiv2" style="display:none">
+																					        <div class="col-xs-12" style="margin-top:10px;">
+																                               	<div class="form-group" >
+																                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+																                                </div>
+																	                        </div>
+																					        <div class="col-xs-12" >
+																                               	<div class="form-group" >
+																                                    <div class="col-xs-2">
+																										<img src="" width="100%" id="keywordPictureImg2" />
+																									</div>
+																									<label class="col-xs-2 control-label" id="keywordPictureLable3" style="text-align: left"></label>
+																									<div class="col-xs-8">
+																		                            	<i class="fa fa-trash-o" onclick="editDeletePicture2()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																		                            </div>
+																		                            <script type="text/javascript">
+																			                        	function editdeleteText3() {
+																											$("#editruleDiv3").hide();
+																											document.getElementById("edittext3").innerText = "";
+																											document.getElementById("editSpan1").innerText = "0";
+																										}
+																			                        	function editDeletePicture2() {
+																											$("#ruleDiv2").hide();
+																											document.getElementById("editSpan2").innerText = "0";
+																										}
+																			                        </script>
+																                                </div>
+																	                        </div>
+																                        </div>
+													                                    		图文预览的窗口
+													                                    <div id = "ruleDiv5" style="display:none">
+																	                        <div class="col-xs-12" style="margin-top:10px;">
+																                               	<div class="form-group" >
+																                                    <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#987cb9 SIZE=3>
+																                                </div>
+																	                        </div>
+																					        <div class="col-xs-12" >
+																                               	<div class="form-group" >
+																									<label class="col-xs-11 control-label" id="pictureTextLable2" style="text-align: left"></label>
+																									<div class="col-xs-1">
+																		                            	<i class="fa fa-trash-o" onclick="deletePictureText2()" aria-hidden="true" style="float: right;margin-right: 20px;"></i>
+																		                            </div>
+																                                </div>
+																	                        </div>
+																					        <div class="col-xs-12" >
+																                               	<div class="form-group" >
+																                                    <div class="col-xs-2">
+																										<img src="" width="100%" id="uploadPictureTextImg2" />
+																									</div>
+																									<label class="col-xs-2 control-label" id="uploadPictureLable2" style="text-align: left"></label>
+																                                </div>
+																	                        </div>
+																	                        <script type="text/javascript">
+																	                        	function deletePictureText2() {
+																									$("#ruleDiv5").hide();
+																									document.getElementById("span5").innerText = "0";
+																								}
+																	                        </script>
+													                                    </div>
+															                        </div> -->
+																			        
+																	               <div class="panel-heading" style="margin-top: 15px;height:60px;">
+																		                <span>文字(</span><span id="editSpan1">0</span><span>)、图片(</span><span id="editSpan2">0</span>
+																		                <span>)、语音(</span><span id="editSpan3">0</span><span>)、视频(</span><span id="editSpan4">0</span>
+																		                <span>)、图文(</span><span id="editSpan5">0</span><span>)</span>
+					    	      														<span class="btn btn-default" style="float:right;padding:5px 10px;" onclick="editDeleteRule(1)">
+					    	      															删除
+					    	      														</span>
+																		                <span class="btn btn-success" style="float:right;margin-right:5px;padding:5px 10px;" onclick="editSaveRule()">
+																		                	保存
+																		               	</span>
+																				   </div>
+																               </div><!-- panel-body -->
+															            	</div><!-- "mymenu" -->
+							                                        	</div><!-- panel panel-default -->
+				                                        	
+				                                        	
+									                                </div>
+									                            </div>
+									                        </div>
+		                                        			
+		                                        			
+							                        </div><!-- panel -->
+							                    </div>
+							                </div>
+							            </div>
+						          </div>
+							</div>
+                       	</div>
+                   	</div>
+	           	</div>
+	        </div>
+        </div>
+    </form>
+    
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+    <!-- <div style="clear:both">
+        <div id="Grid"></div>
+    </div> -->
+</div>
+
+<!-- 素材库界面 -->
+<div id="libraryDiv" style="display:none;height: 700px;background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;">
+<!-- <input onclick="www_zzjs_net()" type="button"  value="dsds" style=""/> -->
+	<div style="text-align: center">
+		<div style="display:inline-block;border:1px solid #FFDAB9;background-color:#FFDAB9;width: 820px;margin-top: 25px">
+			<div style="display: inline-block;float: left;">
+				<span class="panel-title" id="libraryTitle"></span>
+				<input id="replayInputId" tyle="text" style="width: 50px;display: none" readonly>
+				<input id="replayMediaId" tyle="text" style="width: 50px;display: none" readonly>
+			</div>
+			<div style="display: inline-block;float: right;margin: 8px;">
+            	<span>选中的素材是：</span>
+	            <input id="pictureName" tyle="text" style="width: 200px;" readonly>
+	            <input id="mediaId" tyle="text" style="width: 50px;display: none" readonly>
+			</div>
+		</div>
+	</div>
+	<div>
+		<div class="zzjs_net" style="font-size:9px;font-family:Verdana,Geneva,sans-serif;height: 500px">
+		 	<div id="contentListDiv" class="list" style="border:1px solid #6495ED">
+		     	<div id="contentList"></div>
+		  		<div id="zzjsnet">
+		            <div id="total"></div>
+		            <div id="_zzjs_net"></div>
+		    	</div>
+		    </div> 
+		    <div class="_zzjsnet" style="display: none">
+		     	<ul>
+		         	<li>mediaId:</li>
+		         	<li id="siteurl" class="mt10"><a href="http://zzjs.net"></a></li>
+		            <li>name:</li>
+		            <li id="sitename" class="mt10"></li>
+		            <li>src:</li>
+		            <li id="description"></li>
+		        </ul>
+		    </div>
+		</div>
+	</div>
+	<div style="text-align: center;margin-top: 0px;">
+		<div style="display:inline-block;width: 820px;text-align: right">
+			<span class="btn btn-default" onclick="libraryCancel()" style="width:80px;margin-right: 10px">
+				<i class="fa fa-trash-o" style="margin-right:5px;"></i>取消
+			</span>
+			<span class="btn btn-success" onclick="librarySave()" style="width:80px;">
+				<i class="fa fa-plus-square" style="margin-right:5px;"></i>添加
+			</span>
+		</div>
+		<!-- <div style="display:inline-block;border:1px solid #FFDAB9;width: 820px;margin-top: 20px;">
+		</div> -->
+	</div>
+</div>
+
+<!-- 图文预览界面 -->
+<div style="display: none;margin: 10px;" id= "pictrueTextPreviewDiv"><!-- style="background:#f7f7f7 url(${base.contextPath}/resources/images/forecast/paper_2.png) repeat top left;" -->
+	<div>
+		<span class="btn btn-default" onclick="quxiaoPreview()">
+			<i class="fa fa-reply" style="margin-right:5px;"></i>返回
+		</span>
+		<span class="btn btn-success" onclick="librarySave()">
+			<i class="fa fa-plus-square" style="margin-right:5px;"></i>确认添加
+		</span>
+	</div>
+	<div style="display: inline-block;top: 10px;position:relative;border: 1px solid #7FFF00"><!-- height: 500px; -->
+		<div style="margin: 25px;margin-bottom: 0px;">
+			<img width="250px" id="previewImg" src="" />
+			<span id="previewSpan" style="position:absolute;top:170px;height:30px;width: 250px;border: red;background:#000;color:#fff;text-align: center;filter:alpha(opacity=80);-moz-opacity:0.5;opacity:0.5;">
+			</span>
+		</div>
+		<div id="previewTags"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function quxiaoPreview(){
+		if($(".previewMoveDiv")){
+			for(var j =0;j<$(".previewMoveDiv").length;j++){
+				$(".previewMoveDiv")[0].remove();
+				j--;
+			}
+		};
+		$("#libraryDiv").show();
+		$("#pictrueTextPreviewDiv").hide();
+	}
+	
+	$("#tags").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "accountName",
+	    dataValueField: "originalId",
+	    dataSource: {
+	        transport: {
+	            read:function(options) {
+	                $.ajax({
+	                    type   : "POST",
+	                    url: "${base.contextPath}/fms/wht/official/account/cfg/selectAccountName",
+	                    data: {},
+	                    success: function(json) {
+	                        options.success(json.rows);
+	                        if(json.total>0){
+	                            var row = json.rows[0] || {};
+	                            viewModel.model.originalId = row.originalId;
+	                            blur();
+	                        } 
+	                    }
+	                });
+	            }
+	        }
+	    },
+	    dataBound: function(e){
+		   if (this.select() === -1) {
+		       this.select(0);
+		       this.trigger("change");//真实有效的获取到这个值（而非仅仅显示出来）
+		   }
+	  	} 
+	});
+		/* //更新动态标签
+	$('#tags').change(function(e){
+		debugger;
+		console.log(document.getElementsByName("ruleSummaryDivHide").length);
+		for(var i=0;i< (document.getElementsByName("ruleSummaryDivHide").length+1);i++){
+			$("#ruleSummaryDivHide").remove();
+	    }
+	}); */
+		
+	$("#tags").blur(function(){  // 失去焦点 
+		console.log(viewModel.model);
+		blur();
+	}); 
+		
+	window.blur = function(){  // 失去焦点  
+		if(viewModel.model.originalId){
+			if($("#editRuleHideDiv")[0].style.display != "none"){
+               	cancleEditContent();
+               	$("#editRuleHideDiv").hide();
+			}
+			if($("#ruleSummaryDivHide").length>0){
+				for(var i=0;i< (document.getElementsByName("ruleSummaryDivHide").length);i++){
+		    		$("#ruleSummaryDivHide").remove();
+		    		i--;//html删除数组元素位置少一个
+	            };
+	            $("noRuleDiv").show();
+			}
+			cancleAddAndAutoContent();
+			cancleNewRule();
+			$.ajax({
+		        type: "POST",
+		        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+		        url: "${base.contextPath}/fms/wht/custom/reply/query",
+		        data: {"originalId":viewModel.model.originalId},
+		        success: function (json) {
+		        	console.log(json);
+		            var row = json.rows[0] || {};
+		            for (var k in row) {
+		            	viewModel.model.set(k, row[k]);
+		            }
+		            if(viewModel.model.addContent){
+		            	document.getElementById("content").value = viewModel.model.addContent;
+		            }
+		            if(viewModel.model.autoContent){
+		            	document.getElementById("content1").value = viewModel.model.autoContent;
+		            }
+		            if(viewModel.model.whtAttachContent){
+                    	var whtAttachContentList = JSON.parse(viewModel.model.whtAttachContent);
+    					if(whtAttachContentList[0].addPictureIdUrl){
+                        	$("#addPictureDiv").show();
+    						document.getElementById("addPictureIdUrl").value = whtAttachContentList[0].addPictureIdUrl;
+    						$("#addPictureImg").show().attr('src',whtAttachContentList[0].addPictureIdUrl);
+    					};
+                           if(whtAttachContentList[1].autoPictureIdUrl){
+                           	$("#autoPictureDiv").show();
+       						document.getElementById("autoPictureIdUrl").value = whtAttachContentList[1].autoPictureIdUrl;
+							$("#autoPictureImg").show().attr('src',whtAttachContentList[1].autoPictureIdUrl);
+       					};
+    					if(whtAttachContentList[2].addVoiceIdUrl){
+                           	$("#addVoiceDiv").show();
+       						document.getElementById("addVoiceIdUrl").value = whtAttachContentList[2].addVoiceIdUrl;
+							document.getElementById("addVoiceSpan").innerText  = whtAttachContentList[2].addVoiceIdUrl;
+       					};
+          					if(whtAttachContentList[3].autoVoiceIdUrl){
+                           	$("#autoVoiceDiv").show();
+          						document.getElementById("autoVoiceIdUrl").value = whtAttachContentList[3].autoVoiceIdUrl;
+          						document.getElementById("autoVoiceSpan").innerText = whtAttachContentList[3].autoVoiceIdUrl;
+                       	};
+                           if(whtAttachContentList[4].addVideoIdUrl){
+                           	$("#addVideoDiv").show();
+       						document.getElementById("addVideoIdUrl").value = whtAttachContentList[4].addVideoIdUrl;
+							document.getElementById("addVideoSpan").innerText  = whtAttachContentList[4].addVideoIdUrl;
+       					};
+                           if(whtAttachContentList[5].autoVideoIdUrl){
+                           	$("#autoVideoDiv").show();
+       						document.getElementById("autoVideoIdUrl").value = whtAttachContentList[5].autoVideoIdUrl;
+       						document.getElementById("autoVideoSpan").innerText = whtAttachContentList[5].autoVideoIdUrl;
+       					};
+		            }
+		        }
+		    });
+			$.ajax({
+		        type: "POST",
+		        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+		        url: "${base.contextPath}/fms/wht/cr/keyword/rule/selectAll",
+		        data: {"originalId":viewModel.model.originalId},
+		        success: function (json) {
+		        	for(var i=0;i<json.rows.length;i++){
+		        		var ruleId = json.rows[i].ruleId;
+	        			if(ruleId){
+	        				$("#noRuleDiv").hide();
+	        				var ruleName = json.rows[i].ruleName;
+	        				var keywordValueSum = "";
+	        				$.ajax({
+			    		        type: "POST",
+			    		        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+			    		        url: "${base.contextPath}/fms/wht/cr/keyword/selectAll",
+			    		        data: {"ruleId":json.rows[i].ruleId},
+			    		        success: function (data) {
+		        					for(var j=0;j<data.rows.length;j++){
+		        						keywordValueSum += data.rows[j].keywordValue;
+		        						keywordValueSum += "；";
+		        					}
+			    		        }
+			    		    });
+	        				//关键字数据统计
+	        				var content;
+	        				var rulePictureId;
+	        				var ruleVoiceId;
+	        				var ruleVideoId;
+	        				var rulePictureText;
+	        				if(json.rows[i].content){
+	        					content = 1
+	        				}else{
+	        					content = 0
+	        				}
+	        				if(json.rows[i].rulePictureId){
+	        					rulePictureId = 1
+	        				}else{
+	        					rulePictureId = 0
+	        				}
+	        				if(json.rows[i].ruleVoiceId){
+	        					ruleVoiceId = 1
+	        				}else{
+	        					ruleVoiceId = 0
+	        				}
+	        				if(json.rows[i].ruleVideoId){
+	        					ruleVideoId = 1
+	        				}else{
+	        					ruleVideoId = 0
+	        				}
+	        				if(json.rows[i].rulePictureText){
+	        					rulePictureText = 1
+	        				}else{
+	        					rulePictureText = 0
+	        				}
+	        				console.log(keywordValueSum);
+	        				if(!keywordValueSum){
+	        					keywordValueSum = "无";
+	        				}
+	        				var sum = parseInt(content)+parseInt(rulePictureId)+parseInt(ruleVoiceId)+parseInt(ruleVideoId)+parseInt(rulePictureText);
+	        				var html = addSummary(i,ruleName,keywordValueSum,content,rulePictureId,ruleVoiceId,ruleVideoId,rulePictureText,sum,ruleId);
+	        				$("#summaryDiv").append(html);
+	        				
+	        			}
+					}
+		        }
+		    });
+		}
+	};
+	
+	//切换账号时清空添加和自动回复的内容
+	function cancleAddAndAutoContent(){
+		viewModel.model.addContent = "";
+		viewModel.model.autoContent = "";
+		viewModel.model.whtAttachContent = "";
+		document.getElementById("content").value = "";
+		document.getElementById("content1").value = "";
+		if($("#addPictureDiv")[0].style.display != "none" || document.getElementById("addPictureId").value){
+			$("#addPictureDiv").hide();
+			document.getElementById("addPictureId").value  = "";
+			document.getElementById("addPictureIdUrl").value  = "";
+			viewModel.model.addPictureId = "";
+			$("#addPictureImg").hide().attr('src',"");
+		}
+		if($("#addVoiceDiv")[0].style.display != "none" || document.getElementById("addVoiceId").value){
+			$("#addVoiceDiv").hide();
+			document.getElementById("addVoiceId").value  = "";
+			document.getElementById("addVoiceIdUrl").value  = "";
+			viewModel.model.addVoiceId = "";
+			document.getElementById("addVoiceSpan").innerText  = "";
+		}
+		if($("#addVideoDiv")[0].style.display != "none" || document.getElementById("addVideoId").value){
+			$("#addVideoDiv").hide();
+			document.getElementById("addVideoId").value  = "";
+			document.getElementById("addVideoIdUrl").value  = "";
+			viewModel.model.addVideoId = "";
+			document.getElementById("addVideoSpan").innerText = "";
+		}
+		//消息自定回复
+		if($("#autoPictureDiv")[0].style.display != "none" || document.getElementById("autoPictureId").value){
+			$("#autoPictureDiv").hide();
+			document.getElementById("autoPictureId").value  = "";
+			document.getElementById("autoPictureIdUrl").value  = "";
+			viewModel.model.autoPictureId = "";
+			$("#autoPictureImg").hide().attr('src',"");
+		}
+		if($("#autoVoiceDiv")[0].style.display != "none" || document.getElementById("autoVoiceId").value){
+			$("#autoVoiceDiv").hide();
+			document.getElementById("autoVoiceId").value = "";
+			document.getElementById("autoVoiceIdUrl").value = "";
+			viewModel.model.autoVoiceId = "";
+			document.getElementById("autoVoiceSpan").innerText = "";
+		}
+		if($("#autoVideoDiv")[0].style.display != "none" || document.getElementById("autoVideoId").value){
+			$("#autoVideoDiv").hide();
+			document.getElementById("autoVideoId").value  = "";
+			document.getElementById("autoVideoIdUrl").value  = "";
+			viewModel.model.autoVideoId = "";
+			document.getElementById("autoVideoSpan").innerText = "";
+		}
+	}
+	
+	function deleteDataReply() {
+		kendo.ui.showConfirmDialog({
+             title: $l('hap.tip.info'),
+             message: $l('确定要删除该公众号回复吗')
+         }).done(function (event) {
+             if (event.button == 'OK') {
+            	 //debugger;
+				//被添加自动回复
+				document.getElementById("content").value = "";
+				if($("#addPictureDiv")[0].style.display != "none" || document.getElementById("addPictureId").value){
+					$("#addPictureDiv").hide();
+					document.getElementById("addPictureId").value  = "";
+					document.getElementById("addPictureIdUrl").value  = "";
+					viewModel.model.addPictureId = "";
+					$("#addPictureImg").hide().attr('src',"");
+				}
+				if($("#addVoiceDiv")[0].style.display != "none" || document.getElementById("addVoiceId").value){
+					$("#addVoiceDiv").hide();
+					document.getElementById("addVoiceId").value  = "";
+					document.getElementById("addVoiceIdUrl").value  = "";
+					viewModel.model.addVoiceId = "";
+					document.getElementById("addVoiceSpan").innerText  = "";
+				}
+				if($("#addVideoDiv")[0].style.display != "none" || document.getElementById("addVideoId").value){
+					$("#addVideoDiv").hide();
+					document.getElementById("addVideoId").value  = "";
+					document.getElementById("addVideoIdUrl").value  = "";
+					viewModel.model.addVideoId = "";
+					document.getElementById("addVideoSpan").innerText = "";
+				}
+				//消息自定回复
+			    document.getElementById("content1").value = "";
+				if($("#autoPictureDiv")[0].style.display != "none" || document.getElementById("autoPictureId").value){
+					$("#autoPictureDiv").hide();
+					document.getElementById("autoPictureId").value  = "";
+					document.getElementById("autoPictureIdUrl").value  = "";
+					viewModel.model.autoPictureId = "";
+					$("#autoPictureImg").hide().attr('src',"");
+				}
+				if($("#autoVoiceDiv")[0].style.display != "none" || document.getElementById("autoVoiceId").value){
+					$("#autoVoiceDiv").hide();
+					document.getElementById("autoVoiceId").value = "";
+					document.getElementById("autoVoiceIdUrl").value = "";
+					viewModel.model.autoVoiceId = "";
+					document.getElementById("autoVoiceSpan").innerText = "";
+				}
+				if($("#autoVideoDiv")[0].style.display != "none" || document.getElementById("autoVideoId").value){
+					$("#autoVideoDiv").hide();
+					document.getElementById("autoVideoId").value  = "";
+					document.getElementById("autoVideoIdUrl").value  = "";
+					viewModel.model.autoVideoId = "";
+					document.getElementById("autoVideoSpan").innerText = "";
+				}
+				$.ajax({
+                    type: "POST",
+                    url: "${base.contextPath}/fms/wht/custom/reply/deleteReply",
+                    data: {"originalId":viewModel.model.originalId},
+                    dataType: "json",
+                    success: function(json){
+                   		console.log(json);
+                    }
+                })  
+            }
+        })
+	}
+	
+	function saveReplay() {
+		if(!viewModel.model.originalId){
+			kendo.ui.showErrorDialog({
+				message : "请选择账户"
+			});
+    		return;
+		}
+		var whtAttachContentList = [];
+		var addPicture = {};
+		addPicture.addPictureId = viewModel.model.addPictureId;
+		addPicture.addPictureIdUrl = document.getElementById("addPictureIdUrl").value;
+		whtAttachContentList.push(addPicture);
+		var autoPicture = {};
+		autoPicture.autoPictureId = viewModel.model.autoPictureId;
+		autoPicture.autoPictureIdUrl = document.getElementById("autoPictureIdUrl").value;
+		whtAttachContentList.push(autoPicture);
+		var addVoice = {};
+		addVoice.addVoiceId = viewModel.model.addVoiceId;
+		addVoice.addVoiceIdUrl = document.getElementById("addVoiceIdUrl").value;
+		whtAttachContentList.push(addVoice);
+		var autoVoice = {};
+		autoVoice.autoVoiceId = viewModel.model.autoVoiceId;
+		autoVoice.autoVoiceIdUrl = document.getElementById("autoVoiceIdUrl").value;
+		whtAttachContentList.push(autoVoice);
+		var addVideo = {};
+		addVideo.addVideoId = viewModel.model.addVideoId;
+		addVideo.addVideoIdUrl = document.getElementById("addVideoIdUrl").value;
+		whtAttachContentList.push(addVideo);
+		var autoVideo = {};
+		autoVideo.autoVideoId = viewModel.model.autoVideoId;
+		autoVideo.autoVideoIdUrl = document.getElementById("autoVideoIdUrl").value;
+		whtAttachContentList.push(autoVideo);
+		viewModel.model.whtAttachContent = JSON.stringify( whtAttachContentList );
+		console.log(viewModel.model.whtAttachContent);
+        console.log(viewModel.model);
+        Hap.submitForm({
+			url : '${base.contextPath}/fms/wht/custom/reply/addReplay',
+			formModel : viewModel.model,
+			//asArray : false,
+			success : function(data) {
+				if (data.success) {
+					kendo.ui.showInfoDialog({
+                         title: $l('hap.tip.info'),
+                         message: $l('保存成功')
+                     }).done(function (event) {
+                         if (event.button == 'OK') {
+                        	 //window.location.reload();
+                        }
+                     });
+					
+				} else {
+					kendo.ui.showErrorDialog({
+						message : "失败"
+					});
+				}
+			}
+   		});  
+	}
+	
+	
+	//绑定素材到回复内容
+	var sites = [];
+	var morePictrueTextBigList = [];
+	function librarySave(){
+		var replayInputId = document.getElementById("replayInputId").value;
+		var replayMediaId = document.getElementById("replayMediaId").value;
+		var pictureName = document.getElementById("pictureName").value;
+		var url = document.getElementById("description").innerText;
+		var mediaId = document.getElementById("mediaId").value;
+		if(!replayInputId){
+			kendo.ui.showInfoDialog({
+				message : "请点击'取消'重新进入素材"
+			});
+			return;
+		}
+		if(!mediaId){
+			kendo.ui.showInfoDialog({
+				message : "请选择要添加的素材"
+			});
+			return;
+		}else{
+			if(replayMediaId){
+				if(replayMediaId != mediaId){
+					kendo.ui.showConfirmDialog({
+						message : "是否要覆盖已有素材"
+					}).done(function (event) {
+			            if (event.button == 'OK') {
+			            	mediaIdTOReply();
+			            }
+					})
+				}else{
+					kendo.ui.showErrorDialog({
+						message : "该素材已存在"
+					});
+					return;
+				}
+			}else{
+				mediaIdTOReply();
+			}
+		};
+		//把选到的素材显示到reply界面
+		function mediaIdTOReply(){
+			document.getElementById(replayInputId).value = mediaId;
+			if(replayInputId == "addPictureId"){
+				$("#addPictureDiv").show();
+				$("#addPictureImg").show().attr('src',url);
+				viewModel.model.addPictureId = mediaId;
+				document.getElementById("addPictureIdUrl").value = url;
+			}else if(replayInputId == "autoPictureId"){
+				$("#autoPictureDiv").show();
+				$("#autoPictureImg").show().attr('src',url);
+				viewModel.model.autoPictureId = mediaId;
+				document.getElementById("autoPictureIdUrl").value = url;
+			}else if(replayInputId == "newPictureId"){
+				$("#newPictureDiv").show();
+				$("#newPictureImg").show().attr('src',url);
+				document.getElementById("span2").innerText = "1";
+				document.getElementById("newPictureIdUrl").value = url;
+			}else if(replayInputId == "editPictureId"){
+				$("#editPictureDiv").show();
+				$("#editPictureImg").show().attr('src',url);
+				document.getElementById("editSpan2").innerText = "1";
+				document.getElementById("editPictureIdUrl").value = url;
+			}else if(replayInputId == "addVoiceId"){
+				$("#addVoiceDiv").show();
+				document.getElementById("addVoiceSpan").innerText = pictureName;
+				viewModel.model.addVoiceId = mediaId;
+				document.getElementById("addVoiceIdUrl").value = pictureName;
+			}else if(replayInputId == "autoVoiceId"){
+				$("#autoVoiceDiv").show();
+				document.getElementById("autoVoiceSpan").innerText = pictureName;
+				viewModel.model.autoVoiceId = mediaId;
+				document.getElementById("autoVoiceIdUrl").value = pictureName;
+			}else if(replayInputId == "newVoiceId"){
+				$("#newVoiceDiv").show();
+				document.getElementById("newVoiceSpan").innerText = pictureName;
+				document.getElementById("span3").innerText = "1";
+				document.getElementById("newVoiceIdUrl").value = pictureName;
+			}else if(replayInputId == "editVoiceId"){
+				$("#editVoiceDiv").show();
+				document.getElementById("editVoiceSpan").innerText = pictureName;
+				document.getElementById("editSpan3").innerText = "1";
+				document.getElementById("editVoiceIdUrl").value = pictureName;
+			}else if(replayInputId == "addVideoId"){
+				$("#addVideoDiv").show();
+				document.getElementById("addVideoSpan").innerText = pictureName;
+				viewModel.model.addVideoId = mediaId;
+				document.getElementById("addVideoIdUrl").value = pictureName;
+			}else if(replayInputId == "autoVideoId"){
+				$("#autoVideoDiv").show();
+				document.getElementById("autoVideoSpan").innerText = pictureName;
+				viewModel.model.autoVideoId = mediaId;
+				document.getElementById("autoVideoIdUrl").value = pictureName;
+			}else if(replayInputId == "newVideoId"){
+				$("#newVideoDiv").show();
+				document.getElementById("newVideoSpan").innerText = pictureName;
+				document.getElementById("span4").innerText = "1";
+				document.getElementById("newVideoIdUrl").value = pictureName;
+			}else if(replayInputId == "editVideoId"){
+				$("#editVideoDiv").show();
+				document.getElementById("editVideoSpan").innerText = pictureName;
+				document.getElementById("editSpan4").innerText = "1";
+				document.getElementById("editVideoIdUrl").value = pictureName;
+			}else if(replayInputId == "newPictureTextId"){
+				$("#newPictureTextDiv").show();
+				$("#newPictureTextImg").show().attr('src',url);
+				document.getElementById("span5").innerText = "1";
+				document.getElementById("newPictureTextIdUrl").value = url;
+			}else if(replayInputId == "editPictureTextId"){
+				$("#editPictureTextDiv").show();
+				$("#editPictureTextImg").show().attr('src',url);
+				document.getElementById("editSpan5").innerText = "1";
+				document.getElementById("editPictureTextIdUrl").value = url;
+			};
+			kendo.ui.showInfoDialog({
+				message : "添加素材成功，记得点保存哦"
+			}).done(function (event) {
+	            if (event.button == 'OK') {
+	            	quxiaoPreview();
+	            	libraryCancel();
+	            }
+			})
+		}
+	}
+	
+	//进入素材库
+	function joinLibrary(e){
+		$("#replyHideDiv1").hide();
+		$("#replyHideDiv2").hide();
+		$("#replyHideDiv3").hide();
+		$("#libraryDiv").show();
+		if(e==1){
+			document.getElementById("replayInputId").value = "addPictureId";
+			document.getElementById("replayMediaId").value = document.getElementById("addPictureId").value;
+			pictureTemp();
+		}else if(e==2){
+			document.getElementById("replayInputId").value = "autoPictureId";
+			document.getElementById("replayMediaId").value = document.getElementById("autoPictureId").value;
+			pictureTemp();
+		}else if(e==3){
+			document.getElementById("replayInputId").value = "newPictureId";
+			document.getElementById("replayMediaId").value = document.getElementById("newPictureId").value;
+			pictureTemp();
+		}else if(e==4){//前4为图片
+			document.getElementById("replayInputId").value = "editPictureId";
+			document.getElementById("replayMediaId").value = document.getElementById("editPictureId").value;
+			pictureTemp();
+		}else if(e==5){
+			document.getElementById("replayInputId").value = "addVoiceId";
+			document.getElementById("replayMediaId").value = document.getElementById("addVoiceId").value;
+			voiceTemp();
+		}else if(e==6){
+			document.getElementById("replayInputId").value = "autoVoiceId";
+			document.getElementById("replayMediaId").value = document.getElementById("autoVoiceId").value;
+			voiceTemp();
+		}else if(e==7){
+			document.getElementById("replayInputId").value = "newVoiceId";
+			document.getElementById("replayMediaId").value = document.getElementById("newVoiceId").value;
+			voiceTemp();
+		}else if(e==8){//5-8语音
+			document.getElementById("replayInputId").value = "editVoiceId";
+			document.getElementById("replayMediaId").value = document.getElementById("editVoiceId").value;
+			voiceTemp();
+		}else if(e==9){
+			document.getElementById("replayInputId").value = "addVideoId";
+			document.getElementById("replayMediaId").value = document.getElementById("addVideoId").value;
+			videoTemp();
+		}else if(e==10){
+			document.getElementById("replayInputId").value = "autoVideoId";
+			document.getElementById("replayMediaId").value = document.getElementById("autoVideoId").value;
+			videoTemp();
+		}else if(e==11){
+			document.getElementById("replayInputId").value = "newVideoId";
+			document.getElementById("replayMediaId").value = document.getElementById("newVideoId").value;
+			videoTemp();
+		}else if(e==12){//9-12视频
+			document.getElementById("replayInputId").value = "editVideoId";
+			document.getElementById("replayMediaId").value = document.getElementById("editVideoId").value;
+			videoTemp();
+		}else if(e==13){
+			document.getElementById("replayInputId").value = "newPictureTextId";
+			document.getElementById("replayMediaId").value = document.getElementById("newPictureTextId").value;
+			pictrueTextTemp();
+		}else if(e==14){//13-14图文
+			document.getElementById("replayInputId").value = "editPictureTextId";
+			document.getElementById("replayMediaId").value = document.getElementById("editPictureTextId").value;
+			pictrueTextTemp();
+		};
+		
+		function pictureTemp(){
+			if(document.getElementById("libraryTitle").innerText != "图片素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				/* if($("#BigEntry")){
+					$("#BigEntry")[0].remove();
+				} */
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"image"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "图片素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    tempUrl = json.rows[i].url;
+								    tempArr = tempUrl.split("?");
+								    temp = tempArr[0];
+								    console.log(temp);
+								    imageObject.Pic = temp;
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function voiceTemp(){
+			if(document.getElementById("libraryTitle").innerText != "语音素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"voice"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "语音素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    imageObject.Pic = "${base.contextPath}/resources/images/forecast/语音.jpg";
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function videoTemp(){
+			if(document.getElementById("libraryTitle").innerText != "视频素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"video"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "视频素材";
+				        		for(var i=0;i<json.rows.length;i++){
+								    var imageObject = {};
+								    imageObject.Url = json.rows[i].media_id;
+								    imageObject.Pic = "${base.contextPath}/resources/images/forecast/视频.jpg";
+								    imageObject.Name = json.rows[i].name;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	console.log(sites);
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		}
+		function pictrueTextTemp(){
+			if(document.getElementById("libraryTitle").innerText != "图文素材"){
+				html = "";
+				sites.splice(0,sites.length)
+				if($(".entry").length>0){
+					for(var j =0;j<$(".entry").length;j++){
+						$(".entry")[0].remove();
+						j--;//html删除数组元素位置少一个
+					}
+				}; 
+				$.ajax({
+			        type: "POST",
+			        url: "${base.contextPath}/api/public/wecorp/menu/synMaterial",
+			        data: {"originalId":viewModel.model.originalId,"type":"news"},
+			        dataType: "json",
+			        success: function(json){
+			        	console.log(json);
+			        	if(json.success){
+				        	if(json.rows){
+								document.getElementById("libraryTitle").innerText = "图文素材";
+				        		for(var i=0;i<json.rows.length;i++){
+				        			var arrArr = json.rows[i].content.news_item;
+				        			var morePictrueTextList =[];
+				        			for (var j = 0;j<arrArr.length;j++) {
+				        				morePictrueText = {};
+				        				morePictrueText.media_id = json.rows[i].media_id;
+				        				morePictrueText.title = arrArr[j].title;
+				        				morePictrueText.thumbUrl = arrArr[j].thumb_url;
+				        				morePictrueTextList.push(morePictrueText);
+				            		}
+				        			morePictrueTextBigList.push(morePictrueTextList);
+				        			console.log(morePictrueTextBigList);
+								    var imageObject = {};
+								    imageObject.Url = morePictrueTextList[0].media_id;
+								    tempUrl = morePictrueTextList[0].thumbUrl;
+								    tempArr = tempUrl.split("?");
+								    temp = tempArr[0];
+								    console.log(temp); 
+								    imageObject.Pic = temp;
+								    imageObject.Name = morePictrueTextList[0].title;
+								    sites.push(imageObject);
+				        		}
+				        	};
+				        	if(sites.length>0){
+				        		www_zzjs_net();
+				        	}
+			        	}else{
+			        		kendo.ui.showErrorDialog({
+								message : json.message
+							});
+			        	}
+			        }
+			    });
+			}
+		};
+	}
+
+	//素材库取消
+	function libraryCancel(){
+		$("#replyHideDiv1").show();
+		$("#replyHideDiv2").show();
+		$("#replyHideDiv3").show();
+		$("#libraryDiv").hide(); 
+		document.getElementById("replayInputId").value = "";
+		document.getElementById("replayMediaId").value = "";
+		document.getElementById("pictureName").value = "";
+		document.getElementById("mediaId").value = "";
+	}
+	
+	function GotoPage(num){//跳转页
+		Page = num;
+		www_zzjs_net();
+	}
+	var PageSize = 6;//每页个数
+	var Page = 1;//当前页码
+	function www_zzjs_net(){
+	//var obj = eval(siteList);//获取JSON
+	//var sites = obj.sites;
+	//获取分页总数
+	var Pages = Math.floor((sites.length - 1) / PageSize) + 1;
+	if(Page < 1)Page = 1;//如果当前页码小于1
+	if(Page > Pages)Page = Pages;//如果当前页码大于总数
+	var Temp = "";
+	var BeginNO = (Page - 1) * PageSize + 1;//开始编号
+	var EndNO = Page * PageSize;//结束编号
+	if(EndNO > sites.length) EndNO = sites.length;
+	if(EndNO == 0) BeginNO = 0;
+	if(!(Page <= Pages)) Page = Pages;
+	document.getElementById("total").innerHTML = "Total:<strong class='f90'>" + sites.length + "</strong>  Show:<strong class='f90'>" + BeginNO + "-" + EndNO + "</strong>";
+	//分页
+	if(Page > 1 && Page !== 1){
+		Temp ="<a href='javascript:void(0)' onclick='GotoPage(1)'><<Index</a> <a href='javascript:void(0)' onclick='GotoPage(" + (Page - 1) + ")'>Previous</a> "
+	}else{
+		Temp = "<<Index Previous "
+	};
+	//完美的翻页列表
+	var PageFrontSum = 3;//当页前显示个数
+	var PageBackSum = 3;//当页后显示个数
+	var PageFront = PageFrontSum - (Page - 1);
+	var PageBack = PageBackSum - (Pages - Page);
+	if(PageFront > 0 && PageBack < 0)PageBackSum += PageFront;//前少后多，前剩余空位给后
+	if(PageBack > 0 && PageFront < 0)PageFrontSum += PageBack;//后少前多，后剩余空位给前
+	var PageFrontBegin = Page - PageFrontSum;
+	if(PageFrontBegin < 1)PageFrontBegin = 1;
+	var PageFrontEnd = Page + PageBackSum;
+	if(PageFrontEnd > Pages)PageFrontEnd = Pages;
+	if(PageFrontBegin != 1) Temp += '<a href="javascript:void(0)" onclick="GotoPage(' + (Page - 10) + ')" title="前10页">..</a>';
+	for(var i = PageFrontBegin;i < Page;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	Temp += " <strong class='f90'>" + Page + "</strong>";
+	for(var i = Page + 1;i <= PageFrontEnd;i ++){
+		Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + i + ")'>" + i + "</a>";
+	}
+	if(PageFrontEnd != Pages) Temp += " <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 10) + ")' title='后10页'>..</a>";
+	if(Page != Pages){Temp += "  <a href='javascript:void(0)' onclick='GotoPage(" + (Page + 1) + ");'>Next</a> <a href='javascript:void(0)' onclick='GotoPage(" + Pages + ")'>Last>></a>"}else{Temp += "  Next Last>>"}
+	document.getElementById("_zzjs_net").innerHTML = Temp;
+	//输出数据
+	if(EndNO == 0){//如果为空
+		document.getElementById("contentList").innerHTML += "<h1>No Images</h1>";
+		return;
+	}
+	var html = "";
+	html += "<div id='BigEntry'>";
+	for(var i = BeginNO - 1;i < EndNO;i ++){
+		html += "<div class='entry'>";
+		html += "<a href='" +sites[i].Url+ "' rel='bookmark' title=" +sites[i].Name+ ">";
+		html += "<img src='" +sites[i].Pic+ "' width='250' height='200' />";
+	    html += "<p class='url'><span>" +sites[i].Name+ "</span></p></a>";
+	    html += "</div>";
+	 }
+	 html += "</div>";
+	 document.getElementById("contentList").innerHTML = html;
+	 clickShow();//调用鼠标点击事件
+	 //键盘左右键翻页
+	 document.onkeydown=function(e){
+	 	var theEvent = window.event || e;
+	    var code = theEvent.keyCode || theEvent.which;
+	    if(code==37){
+	    	if(Page > 1 && Page !== 1){
+	    	GotoPage(Page - 1);
+	    }
+	 }
+	 if(code==39){
+	    if(Page != Pages){
+	    	GotoPage(Page + 1);
+	    }
+	 }
+	 }
+	 //鼠标滚轮翻页
+	 function handle(delta){
+	 	if (delta > 0){
+	    	if(Page > 1 && Page !== 1){
+	        	GotoPage(Page - 1);
+	  		}
+	 	}else{
+	  		if(Page != Pages){
+	   			GotoPage(Page + 1);
+	  		}
+	 	}
+	}
+	function wheel(event){
+		var delta = 0;
+	 	if (!event) /* For IE. */
+	  		event = window.event;
+	 	if (event.wheelDelta) { /* IE或者Opera. */
+	  		delta = event.wheelDelta / 120;
+	    /** 在Opera9中，事件处理不同于IE
+	    */
+	 	if (window.opera)
+	  		delta = -delta;
+	 	} else if (event._zzjsnet) { /** 兼容Mozilla. */
+	 	/** In Mozilla, sign of delta is different than in IE.
+	 	* Also, delta is multiple of 3.
+	 	*/
+	 		delta = -event._zzjsnet / 3;
+	 	}
+		 /** 如果 增量不等于0则触发
+		 * 主要功能为测试滚轮向上滚或者是向下
+		 */
+		if (delta)
+		handle(delta);
+	}
+		/** 初始化 */
+		if (window.addEventListener)
+		 /** Mozilla的基于DOM的滚轮事件 **/
+		 window.addEventListener("DOMMouseScroll", wheel, false);
+		 /** IE/Opera. */
+		 window.onmousewheel = document.onmousewheel = wheel;
+		}
+	//获取链接地址和网站名称
+	function showLink(source){
+	 	var siteUrl = document.getElementById("siteurl");
+		var siteName = document.getElementById("sitename");
+		var description = document.getElementById("description");
+		if(source.getAttribute("rel") == "bookmark"){
+			var url = source.getAttribute("href");
+			var title = source.getAttribute("title");
+			var src = source.getElementsByTagName("img")[0].getAttribute("src");
+			siteUrl.innerHTML = "<a href='" + url + "' target='_blank'>"+ url +"</a>";
+			siteName.innerHTML = title;
+			description.innerHTML = src;
+			console.log(src);
+			document.getElementById("pictureName").value = title;
+			document.getElementById("mediaId").value = url;
+			if(document.getElementById("libraryTitle").innerText == "图文素材"){
+				for (var i = 0; i<morePictrueTextBigList.length;i++) {
+					for (var j = 0;j<morePictrueTextBigList[i].length;j++) {
+						if(url == morePictrueTextBigList[i][j].media_id){
+			    			if(morePictrueTextBigList[i].length>1){
+			    				var morePictrueTextTemp = morePictrueTextBigList[i];
+			    				/* var json = JSON.stringify( morePictrueTextTemp )
+			    				console.log(morePictrueTextTemp);
+			    				$("#userWin").kendoWindow({
+			    		    	    actions: ["Close"],
+			    		    	    draggable: false,
+		    		    	        //title:"we", 
+		    		    	        width: "310px",
+		    		    	        height: "510px",
+		    		    	        content: "${base.contextPath}/whtcustom/wht_more_picture_text_show.html?json="+json,
+		    		    	        iframe: true,
+		    		    	        modal: true,
+		    		    	        visible: false,
+		    		    	        Resizable:false,
+			    		    	});
+		    		    	   	var win = $("#userWin").data("kendoWindow");
+		    		    	    win.center().open(); */
+		    		    	    
+		    		    	    if(morePictrueTextTemp){
+		    		    	    	$("#libraryDiv").hide();
+		    		    	    	$("#pictrueTextPreviewDiv").show();
+		    						for(var j =0;j<morePictrueTextTemp.length;j++){
+		    							var title = morePictrueTextTemp[j].title;
+		    							var thumbUrl = morePictrueTextTemp[j].thumbUrl;
+		    							tempArr = thumbUrl.split("?");
+		    						    var tempUrl = tempArr[0];
+		    							if(title.length>6){
+		    								var temp = title.substring(0,6);
+		    								temp += "...";
+		    								title = temp;
+		    							}
+		    							if(j==0){
+		    								$("#previewImg").show().attr('src',tempUrl);
+		    								document.getElementById("previewSpan").innerText = title;
+		    							}else{
+		    								var html ='';
+		    								html += '<div class="previewMoveDiv"><HR style="FILTER: alpha(opacity=100,finishopacity=0,style=2);border:1px solid #7FFF00" width="83%" color=#7FFF00 SIZE=2>'+
+		    										'<div style="position:relative;margin: 25px;margin-top: 0px;height:93px;margin-bottom: 0px;border: 1px solid #FF00FF;">'+
+		    											'<span style="position:absolute;top:25px;width: 135px;height: 20px;padding-bottom: 50px;margin: 5px;">'+title+'</span>'+
+		    											'<div style="position:absolute;top:0px;left:155px;display: inline-block;width: 80px;height: 80px;margin: 5px;">'+
+		    												'<img width="80px" height="80px" src="'+tempUrl+'"/>'+
+		    											'</div>'+
+		    										'</div></div>';
+		    								$("#previewTags").append(html);
+		    							}
+		    						}
+		    					}
+			    			};
+	    		    	    break;
+						}
+					}
+					
+		    	}
+			}
+		}
+	}
+	//鼠标点击事件
+	function clickShow(){
+		var links = document.getElementById("contentList").getElementsByTagName("a");
+	 	for(var i=0; i<links.length; i++){
+		  	var url = links[i].getAttribute("href");
+		  	var title = links[i].getAttribute("title");
+		  	var src = links[i].getElementsByTagName("img")[0].getAttribute("src");
+		  	links[i].onclick = function(){
+		    showLink(this);
+		    return false;
+	  		}
+	 	}
+	}
+    
+	
+	
+	
+	
+	
+	//新建规则保存
+	function saveRule() {
+		if(!viewModel.model.originalId){
+			kendo.ui.showErrorDialog({
+				message : "请选择账户"
+			});
+    		return;
+		}
+        var whtCrKeywordList = [];
+        var whtCrKeywordRuleList = [];
+		//获取规则
+        var whtCrKeywordRule = {};
+        var ruleName = document.getElementById("ruleName").value;
+        if(ruleName){
+            whtCrKeywordRule.ruleName = ruleName;
+        }else{
+        	kendo.ui.showErrorDialog({
+				message : "规则名不能为空"
+			});
+        	return;
+        }
+        whtCrKeywordRule.content = document.getElementById("content2").value;
+        whtCrKeywordRule.rulePictureId = document.getElementById("newPictureId").value;
+        whtCrKeywordRule.ruleVoiceId = document.getElementById("newVoiceId").value;
+        whtCrKeywordRule.ruleVideoId = document.getElementById("newVideoId").value;
+        whtCrKeywordRule.rulePictureText = document.getElementById("newPictureTextId").value;
+        //debugger;
+        var whtRuleAttachContentList = [];
+		var newPicture = {};
+		newPicture.newPictureId = document.getElementById("newPictureId").value;
+		newPicture.newPictureIdUrl = document.getElementById("newPictureIdUrl").value;
+		whtRuleAttachContentList.push(newPicture);
+		var newVoice = {};
+		newVoice.newVoiceId = document.getElementById("newVoiceId").value;
+		newVoice.newVoiceIdUrl = document.getElementById("newVoiceIdUrl").value;
+		whtRuleAttachContentList.push(newVoice);
+		var newVideo = {};
+		newVideo.newVideoId = document.getElementById("newVideoId").value;
+		newVideo.newVideoIdUrl = document.getElementById("newVideoIdUrl").value;
+		whtRuleAttachContentList.push(newVideo);
+		var newPictureText = {};
+		newPictureText.newPictureTextId = document.getElementById("newPictureTextId").value;
+		newPictureText.newPictureTextIdUrl = document.getElementById("newPictureTextIdUrl").value;
+		whtRuleAttachContentList.push(newPictureText);
+		whtCrKeywordRule.whtRuleAttachContent = JSON.stringify( whtRuleAttachContentList );
+		console.log(whtCrKeywordRule.whtRuleAttachContent);
+        
+        if(document.getElementById("check").checked){
+        	whtCrKeywordRule.replyAllFlag = "Y" ;
+    	}else{
+    		whtCrKeywordRule.replyAllFlag = "N" ;  
+    	}
+        whtCrKeywordRuleList.push(whtCrKeywordRule);
+        
+		//获取关键字
+        for(var i=0;i< document.getElementsByName("addKeyword").length;i++){
+        	var whtCrKeyword = {};
+        	var keywordValue = document.getElementsByName("addKeyword")[i].getElementsByTagName("input")[0].value;
+        	if(!keywordValue){
+        		kendo.ui.showInfoDialog({
+	                message: '关键字不能为空'
+	         	});
+        		return;
+        	}else{
+        		whtCrKeyword.keywordValue = keywordValue;
+        	}
+        	span = document.getElementsByName("addKeyword")[i].getElementsByTagName("span")[0].innerText;
+        	if(span=="未全匹配"){
+        		whtCrKeyword.matchingFlag = "N";
+        	}else{
+        		whtCrKeyword.matchingFlag = "Y";
+        	}
+        	whtCrKeywordList.push(whtCrKeyword);
+        }
+        viewModel.model.set("whtCrKeywordList", whtCrKeywordList);
+        viewModel.model.set("whtCrKeywordRuleList", whtCrKeywordRuleList);
+        console.log(viewModel.model);
+        Hap.submitForm({
+			url : '${base.contextPath}/fms/wht/custom/reply/addRule',
+			formModel : viewModel.model,
+			//asArray : false,
+			success : function(data) {
+				console.log(data);
+				if (data.success) {
+					kendo.ui.showInfoDialog({
+                         title: $l('hap.tip.info'),
+                         message: $l('保存成功')
+                     }).done(function (event) {
+                         if (event.button == 'OK') {
+                        	 cancleNewRule();
+                        	 window.location.reload();
+                         }
+                     });
+					
+				} else {
+					kendo.ui.showErrorDialog({
+						message : "失败"
+					});
+				}
+			}
+   		}); 
+	}
+	
+	//编辑规则保存
+	function editSaveRule() {
+		if(!viewModel.model.originalId){
+			kendo.ui.showErrorDialog({
+				message : "请选择账户"
+			});
+    		return;
+		}
+        var whtCrKeywordList = [];
+        var whtCrKeywordRuleList = [];
+		
+		//获取规则
+        var whtCrKeywordRule = {};
+        var editRuleId = document.getElementById("editRuleId").innerText;
+        if(!editRuleId){
+        	kendo.ui.showErrorDialog({
+				message : "请在左侧选择要修改的规则或者新建新规则"
+			});
+        	return;
+        }else{
+            whtCrKeywordRule.ruleId = editRuleId;
+            var ruleName = document.getElementById("eidtRuleName").value;
+            if(ruleName){
+                whtCrKeywordRule.ruleName = ruleName;
+            }else{
+            	kendo.ui.showErrorDialog({
+					message : "规则名不能为空"
+				});
+            	return;
+            };
+            whtCrKeywordRule.content = document.getElementById("content3").value;
+            whtCrKeywordRule.rulePictureId = document.getElementById("editPictureId").value;
+            whtCrKeywordRule.ruleVoiceId = document.getElementById("editVoiceId").value;
+            whtCrKeywordRule.ruleVideoId = document.getElementById("editVideoId").value;
+            whtCrKeywordRule.rulePictureText = document.getElementById("editPictureTextId").value;
+            //debugger;
+            var whtRuleAttachContentList = [];
+    		var newPicture = {};
+    		newPicture.newPictureId = document.getElementById("editPictureId").value;
+    		newPicture.newPictureIdUrl = document.getElementById("editPictureIdUrl").value;
+    		whtRuleAttachContentList.push(newPicture);
+    		var newVoice = {};
+    		newVoice.newVoiceId = document.getElementById("editVoiceId").value;
+    		newVoice.newVoiceIdUrl = document.getElementById("editVoiceIdUrl").value;
+    		whtRuleAttachContentList.push(newVoice);
+    		var newVideo = {};
+    		newVideo.newVideoId = document.getElementById("editVideoId").value;
+    		newVideo.newVideoIdUrl = document.getElementById("editVideoIdUrl").value;
+    		whtRuleAttachContentList.push(newVideo);
+    		var newPictureText = {};
+    		newPictureText.newPictureTextId = document.getElementById("editPictureTextId").value;
+    		newPictureText.newPictureTextIdUrl = document.getElementById("editPictureTextIdUrl").value;
+    		whtRuleAttachContentList.push(newPictureText);
+    		whtCrKeywordRule.whtRuleAttachContent = JSON.stringify( whtRuleAttachContentList );
+    		console.log(whtCrKeywordRule.whtRuleAttachContent);
+            
+            if(document.getElementById("editCheck").checked){
+            	whtCrKeywordRule.replyAllFlag = "Y" ;
+        	}else{
+        		whtCrKeywordRule.replyAllFlag = "N" ;  
+        	}
+            whtCrKeywordRuleList.push(whtCrKeywordRule);
+            
+          	//获取关键字
+            for(var i=0;i< document.getElementsByName("editAddKeyword").length;i++){
+            	var whtCrKeyword = {};
+            	var keywordValue = document.getElementsByName("editAddKeyword")[i].getElementsByTagName("input")[0].value;
+            	var keywordId = document.getElementsByName("editAddKeyword")[i].getElementsByTagName("span")[0].innerText;
+            	if(!keywordValue){
+            		kendo.ui.showInfoDialog({
+    	                message: '关键字不能为空'
+    	         	});
+            		return;
+            	}else{
+            		whtCrKeyword.keywordValue = keywordValue;
+            		whtCrKeyword.keywordId = keywordId;
+            	}
+            	span = document.getElementsByName("editAddKeyword")[i].getElementsByTagName("span")[1].innerText;
+            	if(span=="未全匹配"){
+            		whtCrKeyword.matchingFlag = "N";
+            	}else{
+            		whtCrKeyword.matchingFlag = "Y";
+            	}
+            	whtCrKeywordList.push(whtCrKeyword);
+            }
+            viewModel.model.set("whtCrKeywordList", whtCrKeywordList);
+            viewModel.model.set("whtCrKeywordRuleList", whtCrKeywordRuleList);
+            console.log(viewModel.model);
+            Hap.submitForm({
+    			url : '${base.contextPath}/fms/wht/custom/reply/editRule',
+    			formModel : viewModel.model,
+    			//asArray : false,
+    			success : function(data) {
+    				console.log(data);
+    				if (data.success) {
+    					kendo.ui.showInfoDialog({
+                             title: $l('hap.tip.info'),
+                             message: $l('保存成功')
+                         }).done(function (event) {
+                             if (event.button == 'OK') {
+                            	 window.location.reload();
+                             }
+                         });
+    				} else {
+    					kendo.ui.showErrorDialog({
+    						message : "失败"
+    					});
+    				}
+    			}
+       		}); 
+        }
+	}
+
+
+	var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+	
+	//添加上传图片
+	function addPictureUpload(){
+		  if(viewModel.model.addPictureId){
+			  kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+		          title: '<@spring.message "sysfile.upload"/>',
+		          width: 400,
+		          height: 250,
+		          modal: true
+		      }).data("kendoWindow");
+		      reqWin.center().open();
+		  };
+	  
+		$("#reqFiles").kendoUpload({
+			async : {saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+		function onUpload(e) {
+			e.data = {
+				modularName : 'WHT',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		function onSuccess(e) {
+			if (e.response.success) {
+				$("#addPictureDiv").show();
+				viewModel.model.addPictureId = e.response.file.fileId;
+				Path =ossWebPath + e.response.file.filePath;
+				$("#addPictureImg").show().attr('src',Path);
+				reqWin.close();
+		        kendo.ui.showInfoDialog({message  : '<@spring.message "spe.pleasesavedata"/>'})
+			} else {
+				kendo.ui.showErrorDialog({message : e.response.message})
+			} 
+		};
+	};
+	//自动上传图片
+	function autoPictureUpload(){
+		  if(viewModel.model.autoPictureId){
+			  kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+		          title: '<@spring.message "sysfile.upload"/>',
+		          width: 400,
+		          height: 250,
+		          modal: true
+		      }).data("kendoWindow");
+		      reqWin.center().open();
+		  };
+	  
+		$("#reqFiles").kendoUpload({
+			async : {saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+		function onUpload(e) {
+			e.data = {
+				modularName : 'WHT',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		function onSuccess(e) {
+			if (e.response.success) {
+				$("#autoPictureDiv").show();
+				viewModel.model.autoPictureId = e.response.file.fileId;
+				Path =ossWebPath + e.response.file.filePath;
+				$("#autoPictureImg").show().attr('src',Path);
+				reqWin.close();
+		        kendo.ui.showInfoDialog({message  : '<@spring.message "spe.pleasesavedata"/>'})
+			} else {
+				kendo.ui.showErrorDialog({message : e.response.message})
+			}
+		};
+	};
+	
+	
+	//关键字回复上传图片
+	var keywordPictureId2;
+	function keywordPicture(){
+		  if(keywordPictureId2){
+			  kendo.ui.showConfirmDialog({
+					message : "已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+		          title: '<@spring.message "sysfile.upload"/>',
+		          width: 400,
+		          height: 250,
+		          modal: true
+		      }).data("kendoWindow");
+		      reqWin.center().open();
+		  }
+		$("#reqFiles").kendoUpload({
+			async : {
+				saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+			},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+		function onUpload(e) {
+			e.data = {
+				modularName : 'WHT',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		function onSuccess(e) {
+			if (e.response.success) {
+				keywordPictureId2 = e.response.file.fileId;
+				viewModel.model.rulePictureId = keywordPictureId2;
+				document.getElementById("keywordPictureLable2").innerHTML = e.response.file.fileName;
+				Path2 = ossWebPath + e.response.file.filePath;
+				$("#keywordPictureImg2").show().attr('src',Path2);
+				$("#ruleDiv2").show();
+				document.getElementById("span2").innerText = "1";
+				reqWin.close();
+		        kendo.ui.showInfoDialog({
+		            message  : '<@spring.message "spe.pleasesavedata"/>'
+		        })
+			} else {
+				kendo.ui.showErrorDialog({
+					message : e.response.message
+				})
+			} 
+		};
+	};
+	
+	$(function() {
+	    $("#mymenu ul li").next("ul").show();
+	    console.log($("#mymenu ul li").next("ul")[0]);
+	    $("#mymenu ul li").click(function()
+	    {
+	     $(this).next("ul").toggle();
+	     console.log($(this).next("ul"));
+	    });
+	    if(document.getElementById("mymenu2")){
+	 	    $("#mymenu2 ul li").next("ul").show();
+		    console.log($("#mymenu2 ul li").next("ul")[0]);
+	 	    $("#mymenu2 ul li").click(function()
+	 	    {
+	 	     $(this).next("ul").toggle();
+	 	    });
+	    }
+    });
+		
+    
+	
+	//富文本编辑器 
+	$(document).ready(function() {
+              // create Editor from textarea HTML element with default set of tools
+             /*  $("#content").kendoEditor({
+	                  tools: [
+	                      "fontName",
+	                      "fontSize",
+	                      "formatting",
+	                      "bold",
+	                      "italic",
+	                      "underline",
+	                      "strikethrough",
+	                      "justifyLeft",
+	                      "justifyCenter",
+	                      "justifyRight",
+	                      "justifyFull",
+	                      "insertUnorderedList",
+	                      "insertOrderedList",
+	                      "indent",
+	                      "outdent",
+	                      "insertImage",
+	                      "subscript",
+	                      "superscript",
+	                      "foreColor",
+	                      "backColor",
+	                  ],
+	              });
+              $("#content1").kendoEditor({
+	                  tools: [
+	                      "fontName",
+	                      "fontSize",
+	                      "formatting",
+	                      "bold",
+	                      "italic",
+	                      "underline",
+	                      "strikethrough",
+	                      "justifyLeft",
+	                      "justifyCenter",
+	                      "justifyRight",
+	                      "justifyFull",
+	                      "insertUnorderedList",
+	                      "insertOrderedList",
+	                      "indent",
+	                      "outdent",
+	                      "insertImage",
+	                      "subscript",
+	                      "superscript",
+	                      "foreColor",
+	                      "backColor",
+	                  ],
+	              });
+	              $("#content2").kendoEditor({
+	                  tools: [
+	                      "fontName",
+	                      "fontSize",
+	                      "formatting",
+	                      "bold",
+	                      "italic",
+	                      "underline",
+	                      "strikethrough",
+	                      "justifyLeft",
+	                      "justifyCenter",
+	                      "justifyRight",
+	                      "justifyFull",
+	                      "insertUnorderedList",
+	                      "insertOrderedList",
+	                      "indent",
+	                      "outdent",
+	                      "insertImage",
+	                      "subscript",
+	                      "superscript",
+	                      "foreColor",
+	                      "backColor",
+	                  ],
+	              }); */
+	});
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/wht/custom/reply/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/wht/custom/reply/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/wht/custom/reply/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/wht/custom/reply/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "replyId",
+                fields: {}
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        selectable: 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field: "replyId",
+                title: '<@spring.message "WhtCustomReply.replyId"/>',
+                width: 120
+            },
+                    {
+                field: "accountNum",
+                title: '<@spring.message "WhtCustomReply.accountNum"/>',
+                width: 120
+            },
+                    {
+                field: "msgType",
+                title: '<@spring.message "WhtCustomReply.msgType"/>',
+                width: 120
+            },
+                    {
+                field: "replyType",
+                title: '<@spring.message "WhtCustomReply.replyType"/>',
+                width: 120
+            },
+                    {
+                field: "content",
+                title: '<@spring.message "WhtCustomReply.content"/>',
+                width: 120
+            },
+                    {
+                field: "programId",
+                title: '<@spring.message "WhtCustomReply.programId"/>',
+                width: 120
+            },
+                    {
+                field: "requestId",
+                title: '<@spring.message "WhtCustomReply.requestId"/>',
+                width: 120
+            },
+        ],
+        editable: true
+    });
+    
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

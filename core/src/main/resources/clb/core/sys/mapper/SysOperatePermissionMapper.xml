@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.SysOperatePermissionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.sys.dto.SysOperatePermission">
+        <result column="PERMISSION_ID" property="permissionId" jdbcType="DECIMAL" />
+        <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+        <result column="FUNC_CODE" property="funcCode" jdbcType="VARCHAR" />
+        <result column="FIELD_NAME" property="fieldName" jdbcType="VARCHAR" />
+        <result column="FIELD_VALUE" property="fieldValue" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PERMISSION_TYPE" property="permissionType" jdbcType="VARCHAR" />
+        <result column="HANDLEPERSON_SELF" property="handlepersonSelf" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

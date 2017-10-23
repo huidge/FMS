@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.common.mapper.SequenceMapper">
+    <resultMap id="BaseResultMap" type="clb.core.common.dto.Sequence" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="sequence_id" property="sequenceId" jdbcType="DECIMAL" />
+        <result column="sequence_code" property="sequenceCode" jdbcType="VARCHAR" />
+        <result column="sequence_name" property="sequenceName" jdbcType="VARCHAR" />
+        <result column="sequence_prefix" property="sequencePrefix" jdbcType="VARCHAR" />
+        <result column="date_format" property="dateFormat" jdbcType="VARCHAR" />
+        <result column="incr_code" property="incrCode" jdbcType="VARCHAR" />
+        <result column="seq_length" property="seqLength" jdbcType="TINYINT" />
+        <result column="serial_number" property="serialNumber" jdbcType="DECIMAL" />
+        <result column="program_id" property="programId" jdbcType="DECIMAL" />
+        <result column="request_id" property="requestId" jdbcType="DECIMAL" />
+        <result column="object_version_number" property="objectVersionNumber" jdbcType="DECIMAL" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="DATE" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+        <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="DATE" />
+        <result column="LAST_UPDATE_LOGIN" property="lastUpdateLogin" jdbcType="DECIMAL" />
+        <result column="ATTRIBUTE_CATEGORY" property="attributeCategory" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE1" property="attribute1" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE2" property="attribute2" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE3" property="attribute3" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE4" property="attribute4" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE5" property="attribute5" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE6" property="attribute6" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE7" property="attribute7" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE8" property="attribute8" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE9" property="attribute9" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE10" property="attribute10" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE11" property="attribute11" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE12" property="attribute12" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE13" property="attribute13" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE14" property="attribute14" jdbcType="VARCHAR" />
+        <result column="ATTRIBUTE15" property="attribute15" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

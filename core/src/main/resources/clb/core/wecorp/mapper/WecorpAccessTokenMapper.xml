@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clb.core.wecorp.mapper.WecorpAccessTokenMapper">
+
+        <resultMap id="tokenMap" type="clb.core.wecorp.dto.WecorpAccessToken">
+            <id column="id" property="id" jdbcType="VARCHAR"/>
+            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+            <result column="token_value" property="tokenValue" jdbcType="VARCHAR"/>
+            <result column="last_update_date" property="lastUpdateDate" jdbcType="TIMESTAMP"/>
+            <result column="creation_date" property="creationDate" jdbcType="TIMESTAMP"/>
+        </resultMap>
+
+
+        <select id="findByAppId" resultMap="tokenMap" >
+           SELECT * FROM woa_access_token WHERE app_id=#{appId}
+        </select>
+
+</mapper>

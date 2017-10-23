@@ -1,0 +1,120 @@
+<#--
+ * description: 售后跟进快递信息
+ * version: 1.0
+ * #copyright#
+-->
+<#include "../include/header.html">
+<script type="text/javascript">
+	
+	var generalId ='<#if RequestParameters.generalId?exists> ${RequestParameters.generalId} <#else>-1</#if>';
+    var status ='<#if RequestParameters.status?exists> ${RequestParameters.status} <#else>"null"</#if>';
+    var idType ='<#if RequestParameters.idType?exists> ${RequestParameters.idType} <#else>"null"</#if>';
+	
+	var viewModel = kendo.observable({
+		model : {
+			
+		}
+	});
+
+</script>
+<body>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 10%; display: block;">
+				<div style="width: 98%; margin-top: 10px;">
+					<form class="form-horizontal">
+						<div class="text-center" style="margin-top: 10px">
+							 <p class="bord-btm pad-ver text-main text-bold font-size:12px;">
+	                            		资料审核成功
+	                        </p>
+	                      </div>
+						<div class="row" style="margin-left: 5px;">
+							<div class="form-group">
+							
+								<div class="col-sm-12">
+								
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">快递公司:</label>
+												<div class="col-sm-9">
+													<input id="expressCompany" style="width: 240px" data-bind="value:model.expressCompany" class="k-textbox" required>
+												</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<label class="col-sm-3 control-label">快递单号:</label>
+											<div class="col-sm-9">
+													<input  id="expressNum" style="width: 240px" data-bind="value:model.expressNum" class="k-textbox" required>
+											</div>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<div class="text-center" style="margin-top: 10px">
+							<span class="btn btn-success" onclick="saveData()" type="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i><@spring.message
+								"hap.save"/>
+							</span> 
+						</div>
+					</form>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'),viewModel);
+		var validatable = $("#page-content").kendoValidator().data("kendoValidator");
+		
+		viewModel.model.set("generalId",generalId.trim());
+		viewModel.model.set("idType",idType.trim());
+		viewModel.model.set("status",status.trim());
+		viewModel.model.set("expressCompany","顺丰快递");
+		
+		//点击保存1
+		function saveData() {
+			if(!validatable.validate()){
+				kendo.ui.showErrorDialog({
+					message : "校验失败,请将信息填写完整!"
+				});
+				return;
+			}
+			if (generalId != 0) {
+				window.parent.ordAfterLogVM.model.expressCompany = viewModel.model.expressCompany;
+				window.parent.ordAfterLogVM.model.expressNum = viewModel.model.expressNum;
+				window.parent.ordAfterLogVM.model.generalId = viewModel.model.generalId;
+				window.parent.ordAfterLogVM.model.idType = viewModel.model.idType;
+				window.parent.ordAfterLogVM.model.status = viewModel.model.status;
+				window.parent.ordAfterLogVM.model.flag = true;
+				window.parent.$("#dialog").data("kendoWindow").close();
+				 /* Hap.submitForm({
+					url : '${base.contextPath}/fms/ord/after/log/add',
+					formModel : viewModel.model,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('hap.tip.success')
+	                         }).done(function(event){
+	                        	 if (event.button == 'OK') {
+	                        		 window.parent.$("#dialog").data("kendoWindow").close();
+	                        	 }
+	                         });
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "出错了,请重新填写!"
+							});
+						}
+
+					}
+				})  */
+			}
+		}
+		 // Hap.autoResizeGrid("#Grid");
+</script>
+</body>
+</html>

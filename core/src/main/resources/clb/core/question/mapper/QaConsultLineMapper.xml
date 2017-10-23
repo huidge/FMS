@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.question.mapper.QaConsultLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.question.dto.QaConsultLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CONSULT_ID" property="consultId" jdbcType="DECIMAL" />
+        <result column="QUESTION" property="question" jdbcType="VARCHAR" />
+        <result column="ANSWER" property="answer" jdbcType="VARCHAR" />
+        <result column="QUESTION_FILE_ID" property="questionFileId" jdbcType="DECIMAL" />
+        <result column="ANSWER_FILE_PATH" property="answerFileId" jdbcType="DECIMAL" />
+        <result column="QUESTION_FILE_PATH" property="questionFilePath" jdbcType="VARCHAR" />
+        <result column="ANSWER_FILE_ID" property="answerFilePath" jdbcType="VARCHAR" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <resultMap id="AllFieldsMap" type="clb.core.question.dto.QaConsultLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CONSULT_ID" property="consultId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" />
+        <result column="STATUS_DATE" property="statusDate" />
+        <result column="QUESTION" property="question" jdbcType="VARCHAR" />
+        <result column="ANSWER" property="answer" jdbcType="VARCHAR" />
+        <result column="QUESTION_FILE_ID" property="questionFileId" jdbcType="DECIMAL" />
+        <result column="ANSWER_FILE_ID" property="answerFileId" jdbcType="DECIMAL" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+	
+	<select id="selectAllFields" parameterType="clb.core.question.dto.QaConsultLine" resultMap="AllFieldsMap">
+         SELECT
+        fqcl.LINE_ID,
+        fqcl.CONSULT_ID,
+        fqqc.ORDER_ID,
+        foo.SIGN_DATE STATUS_DATE,
+        fqcl.QUESTION,
+        fqcl.ANSWER,
+        fqcl.QUESTION_FILE_ID,
+        fqcl.LAST_UPDATE_DATE,
+        fqcl.ANSWER_FILE_ID
+        FROM
+        	fms_qa_consult_line fqcl
+		  LEFT JOIN fms_qa_question_consult fqqc 
+		    ON fqqc.CONSULT_ID = fqcl.CONSULT_ID
+		  LEFT JOIN fms_ord_order foo 
+		    ON foo.ORDER_ID = fqqc.ORDER_ID
+        where 1=1
+        <if test="consultId != null and consultId != ''">
+            AND fqcl.CONSULT_ID = #{consultId}
+        </if >
+        order by fqcl.LAST_UPDATE_DATE
+   </select>
+
+    <select id="query" parameterType="clb.core.question.dto.QaConsultLine" resultMap="AllFieldsMap">
+        SELECT
+        fqcl.LINE_ID,
+        fqcl.CONSULT_ID,
+        fqqc.ORDER_ID,
+        fqcl.QUESTION,
+        fqcl.ANSWER,
+        fqcl.QUESTION_FILE_ID,
+        fqcl.ANSWER_FILE_ID,
+        sf.FILE_PATH AS QUESTION_FILE_PATH,
+        sf2.FILE_PATH AS ANSWER_FILE_PATH
+        FROM
+        fms_qa_consult_line fqcl
+        LEFT JOIN sys_file sf
+        ON fqcl.QUESTION_FILE_ID = sf.FILE_ID
+        LEFT JOIN sys_file sf2
+        ON fqcl.ANSWER_FILE_ID = sf2.FILE_ID
+        LEFT JOIN fms_qa_question_consult fqqc
+        ON fqcl.CONSULT_ID = fqqc.CONSULT_ID
+
+        where 1=1
+        <if test="consultId != null and consultId != ''">
+            AND fqcl.CONSULT_ID = #{consultId}
+        </if >
+
+    </select>
+
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnSupplierItemRelationMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnSupplierItemRelation">
+        <result column="RELATION_ID" property="relationId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+		<result column="PRD_SUPPLIER_ID" property="prdSupplierId" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        
+        <result column="NAME" property="name" />
+		<result column="ITEM_CODE" property="itemCode" />
+		<result column="ITEM_NAME" property="itemName" />
+		<result column="PRD_SUPPLIER_NAME" property="prdSupplierName" />
+		<result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId" />
+		<result column="RESERVE_NAME" property="reserveName" />
+    </resultMap>
+<!-- 查询渠道供应商产品关系信息 -->
+	<select id="selectByCondition" parameterType="clb.core.commission.dto.CmnSupplierItemRelation" resultMap="BaseResultMap">
+		SELECT
+			fcsir.RELATION_ID,
+			fcsir.SUPPLIER_ID,
+			fss.`NAME`,
+			fcsir.PRD_SUPPLIER_ID,
+			pfss.`NAME` AS PRD_SUPPLIER_NAME,
+			fpi.ITEM_CODE,
+			fpi.ITEM_NAME,
+			fcsir.ITEM_ID,
+			rfss.`NAME` AS RESERVE_NAME,
+			rfss.SUPPLIER_ID AS RESERVE_SUPPLIER_ID
+		FROM
+			fms_cmn_supplier_item_relation fcsir
+		LEFT JOIN fms_spe_supplier fss ON fcsir.SUPPLIER_ID = fss.SUPPLIER_ID
+		LEFT JOIN fms_prd_items fpi ON fcsir.ITEM_ID = fpi.ITEM_ID
+		LEFT JOIN fms_spe_supplier pfss ON fcsir.PRD_SUPPLIER_ID = pfss.SUPPLIER_ID
+		LEFT JOIN fms_spe_supplier rfss ON rfss.SUPPLIER_ID = fcsir.RESERVE_SUPPLIER_ID
+		where 
+			1=1 
+		<if test="supplierId !=null and supplierId !=''">
+			and fcsir.SUPPLIER_ID = #{supplierId}
+		</if>
+		<if test="itemId !=null and itemId !=''">
+			and fcsir.ITEM_ID = #{itemId}
+		</if>
+		<if test="itemCode != null and itemCode !=''">
+			and fpi.ITEM_CODE like CONCAT('%', #{itemCode}, '%')
+		</if>
+		<if test="itemName != null and itemName !=''">
+			and fpi.ITEM_NAME like CONCAT('%', #{itemName}, '%')
+		</if>
+		<if test="prdSupplierId != null and prdSupplierId !=''">
+			and fcsir.PRD_SUPPLIER_ID = #{prdSupplierId}
+		</if>
+		<if test="prdSupplierName != null and prdSupplierName !=''">
+			and pfss.NAME like CONCAT('%', #{prdSupplierName}, '%')
+		</if>
+		<if test="reserveSupplierId !=null and reserveSupplierId !=''">
+			and rfss.SUPPLIER_ID = #{reserveSupplierId}
+		</if>
+		<if test="reserveName !=null and reserveName !=''">
+			and rfss.NAME like CONCAT('%', #{reserveName}, '%')
+		</if>
+	        ORDER BY fcsir.RELATION_ID DESC
+	</select>
+
+</mapper>

@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by jiaolong.li on 2017/5/10.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.system.mapper.ClbUserMapper">
+    <resultMap id="BaseResultMap" type="clb.core.system.dto.ClbUser">
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PASSWORD_ENCRYPTED" property="passwordEncrypted" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="START_ACTIVE_DATE" property="startActiveDate" jdbcType="DATE" />
+        <result column="END_ACTIVE_DATE" property="endActiveDate" jdbcType="DATE" />
+        <result column="employee_id" property="employeeId" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="LECTURER_FLAG" property="lecturerFlag" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="wechat_openid" property="wechatOpenid"/>
+    </resultMap>
+
+    <resultMap id="AllFieldsMap" type="clb.core.system.dto.ClbUser">
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PASSWORD_ENCRYPTED" property="passwordEncrypted" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="START_ACTIVE_DATE" property="startActiveDate" jdbcType="DATE" />
+        <result column="END_ACTIVE_DATE" property="endActiveDate" jdbcType="DATE" />
+        <result column="RELATED_PARTY_ID" property="relatedPartyId" jdbcType="DECIMAL" />
+        <result column="RELATED_PARTY_NAME" property="relatedPartyName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="LECTURER_FLAG" property="lecturerFlag" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="PLAN_QUOTA" property="planQuota" jdbcType="DECIMAL" />
+        <result column="phone_code" property="phoneCode" jdbcType="VARCHAR"/>
+        <result column="NTC_FLAG" property="ntcFlag" jdbcType="VARCHAR"/>
+        <result column="EMAIL_FLAG" property="emailFlag" jdbcType="VARCHAR"/>
+        <result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR"/>
+        <result column="WECHAT_FLAG" property="wechatFlag" jdbcType="VARCHAR"/>
+        <result column="PLATFORM_FLAG" property="platformFlag" jdbcType="VARCHAR"/>
+        <result column="wechat_openid" property="wechatOpenid"/>
+        <result column="WECHAT_BIND_TYPE" property="wechatBindType"/>
+        <result column="WECHAT_CONCERN_TYPE" property="wechatConcernType"/>
+        
+        <!-- 员工表 -->
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="OWNERSHIP_ID" property="ownershipId" jdbcType="DECIMAL"/>
+        <result column="OWNERSHIP_TYPE" property="ownershipType" jdbcType="VARCHAR"/>
+        
+        <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectAllFields" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+        SELECT
+        syu.USER_ID,
+        syu.USER_TYPE,
+        syu.USER_NAME,
+        syu.PASSWORD_ENCRYPTED,
+        rpt.EMAIL,
+        rpt.PHONE,
+        syu.START_ACTIVE_DATE,
+        syu.END_ACTIVE_DATE,
+        syu.RELATED_PARTY_ID,
+        rpt.key_name RELATED_PARTY_NAME,
+        syu.STATUS,
+        syu.description,
+        syu.plan_quota,
+        rpt.PHONE_CODE,
+        syu.NTC_FLAG,
+        syu.EMAIL_FLAG,
+        syu.SMS_FLAG,
+        syu.WECHAT_FLAG,
+        syu.PLATFORM_FLAG,
+        fntc.wechat_openid ,
+		fntc.WECHAT_BIND_TYPE,
+		fntc.WECHAT_CONCERN_TYPE
+        FROM
+        sys_user syu
+        LEFT JOIN (
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'OPERATOR' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        UNION
+        SELECT
+        CHANNEL_ID,
+        CHANNEL_NAME,
+        'CHANNEL',PHONE_CODE,CONTACT_PHONE PHONE,EMAIL
+        FROM
+        fms_cnl_channel
+        UNION
+        SELECT
+        SUPPLIER_ID,
+        NAME,
+        'SUPPLIER', PHONE_CODE,CONTACT_NUM PHONE,EMAIL
+        FROM
+        fms_spe_supplier
+        UNION
+        SELECT
+        CUSTOMER_ID,
+        CHINESE_NAME,
+        'CUSTOMER',PHONE_CODE ,PHONE, EMAIL
+        FROM
+        fms_ctm_customer
+        UNION
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'ADMINISTRATION' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        ) rpt ON (
+        syu.RELATED_PARTY_ID = rpt.key_id
+        AND syu.USER_TYPE = rpt.key_type
+        )	LEFT JOIN fms_ntn_template_concern fntc on syu.USER_ID=fntc.USER_ID
+        WHERE
+        1 = 1
+        <if test="userId != null and userId != ''">
+            AND syu.USER_ID = #{userId}
+        </if >
+        <if test="userName != null and userName != ''">
+            AND syu.USER_NAME LIKE CONCAT('%', #{userName}, '%')
+        </if >
+        <if test="userType != null and userType != ''">
+            AND syu.USER_TYPE = #{userType}
+        </if >
+        <if test="relatedPartyId != null and relatedPartyId != ''">
+            AND syu.RELATED_PARTY_ID = #{relatedPartyId}
+        </if >
+        <if test="relatedPartyName != null and relatedPartyName != ''">
+            AND rpt.key_name LIKE CONCAT('%', #{relatedPartyName}, '%')
+        </if >
+        <if test="phone != null and phone != ''">
+            AND rpt.PHONE = #{phone}
+        </if >
+        <if test="phoneCode != null and phoneCode != ''">
+            AND rpt.PHONE_CODE = #{phoneCode}
+        </if >
+        <if test="wechatOpenid != null and wechatOpenid != ''">
+            AND fntc.wechat_openid = #{wechatOpenid}
+        </if >
+        <if test="roleId != null and roleId != ''">
+        	AND
+			 EXISTS (SELECT srb.ROLE_ID FROM sys_role_b srb
+				LEFT JOIN sys_user_role sur ON srb.ROLE_ID = sur.ROLE_ID
+				WHERE  sur.USER_ID = syu.USER_ID  AND srb.ROLE_ID = #{roleId}
+			)
+        </if>
+    </select>
+    <!-- 渠道导入程序 -->
+    <select id="queryUserIdByUserTypeAndRelatedPartyName" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+        SELECT
+        syu.USER_ID,
+        syu.USER_TYPE,
+        syu.USER_NAME,
+        syu.PASSWORD_ENCRYPTED,
+        rpt.EMAIL,
+        rpt.PHONE,
+        syu.START_ACTIVE_DATE,
+        syu.END_ACTIVE_DATE,
+        syu.RELATED_PARTY_ID,
+        rpt.key_name RELATED_PARTY_NAME,
+        syu.STATUS,
+        syu.description,
+        syu.plan_quota,
+        rpt.PHONE_CODE,
+        syu.NTC_FLAG,
+        syu.EMAIL_FLAG,
+        syu.SMS_FLAG,
+        syu.WECHAT_FLAG,
+        syu.PLATFORM_FLAG,
+        syu.wechat_openid
+        FROM
+        sys_user syu
+        LEFT JOIN (
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'OPERATOR' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        UNION
+        SELECT
+        CHANNEL_ID,
+        CHANNEL_NAME,
+        'CHANNEL',PHONE_CODE,CONTACT_PHONE PHONE,EMAIL
+        FROM
+        fms_cnl_channel
+        UNION
+        SELECT
+        SUPPLIER_ID,
+        NAME,
+        'SUPPLIER', PHONE_CODE,CONTACT_NUM PHONE,EMAIL
+        FROM
+        fms_spe_supplier
+        UNION
+        SELECT
+        CUSTOMER_ID,
+        CHINESE_NAME,
+        'CUSTOMER',PHONE_CODE ,PHONE, EMAIL
+        FROM
+        fms_ctm_customer
+        UNION
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'ADMINISTRATION' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        ) rpt ON (
+        syu.RELATED_PARTY_ID = rpt.key_id
+        AND syu.USER_TYPE = rpt.key_type
+        )
+        WHERE
+        1 = 1
+        <if test="userId != null and userId != ''">
+            AND syu.USER_ID = #{userId}
+        </if >
+        <if test="userName != null and userName != ''">
+            AND syu.USER_NAME = #{userName}
+        </if >
+        <if test="userType != null and userType != ''">
+            AND syu.USER_TYPE = #{userType}
+        </if >
+        <if test="relatedPartyId != null and relatedPartyId != ''">
+            AND syu.RELATED_PARTY_ID = #{relatedPartyId}
+        </if >
+        <if test="relatedPartyName != null and relatedPartyName != ''">
+            AND rpt.key_name = #{relatedPartyName}
+        </if >
+    </select>
+	
+	<select id="selectLecturer" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+        SELECT
+        syu.USER_ID,
+        syu.USER_TYPE,
+        syu.USER_NAME,
+        syu.PASSWORD_ENCRYPTED,
+        syu.EMAIL,
+        syu.PHONE,
+        syu.START_ACTIVE_DATE,
+        syu.END_ACTIVE_DATE,
+        syu.RELATED_PARTY_ID,
+        rpt.key_name RELATED_PARTY_NAME,
+        syu.STATUS,
+        syu.description,
+        syu.LECTURER_FLAG,
+        syu.plan_quota,rpt.PHONE_CODE
+        FROM
+        sys_user syu
+        LEFT JOIN (
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'OPERATOR' key_type ,PHONE_CODE
+        FROM
+        hr_employee
+        UNION
+        SELECT
+        CHANNEL_ID,
+        CHANNEL_NAME,
+        'CHANNEL',PHONE_CODE
+        FROM
+        fms_cnl_channel
+        UNION
+        SELECT
+        SUPPLIER_ID,
+        NAME,
+        'SUPPLIER','' PHONE_CODE
+        FROM
+        fms_spe_supplier
+        UNION
+        SELECT
+        CUSTOMER_ID,
+        CHINESE_NAME,
+        'CUSTOMER','' PHONE_CODE
+        FROM
+        fms_ctm_customer
+        ) rpt ON (
+        syu.RELATED_PARTY_ID = rpt.key_id
+        AND syu.USER_TYPE = rpt.key_type
+        )
+        WHERE
+        1 = 1
+        <if test="userId != null and userId != ''">
+            AND syu.USER_ID = #{userId}
+        </if >
+        <if test="userName != null and userName != ''">
+            AND syu.USER_NAME = #{userName}
+        </if >
+        <if test="userType != null and userType != ''">
+            AND syu.USER_TYPE = #{userType}
+        </if >
+        
+        <if test="lecturerFlag != null and lecturerFlag != ''">
+            AND syu.LECTURER_FLAG = #{lecturerFlag}
+        </if >
+        
+        <if test="relatedPartyId != null and relatedPartyId != ''">
+            AND syu.RELATED_PARTY_ID = #{relatedPartyId}
+        </if >
+    </select>
+	
+	<select id="selectFunctionUser" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+		SELECT DISTINCT su.USER_ID from sys_user su 
+		 inner join sys_user_role ur on su.USER_ID=ur.USER_ID
+		 inner JOIN hr_employee he on su.RELATED_PARTY_ID=he.EMPLOYEE_ID 
+		 where su.USER_TYPE='OPERATOR'  and he.STATUS='NORMAL' and su.STATUS='ACTV'
+		 AND he.OWNERSHIP_TYPE=#{userType}
+		<if test="relatedPartyId != null and relatedPartyId != ''">
+            AND he.OWNERSHIP_ID = #{relatedPartyId}
+        </if >
+        <if test="roleId != null">
+            AND ur.ROLE_ID = #{roleId}
+        </if >
+	</select>
+
+    <update id="updateStatus" parameterType="clb.core.system.dto.ClbUser">
+        update sys_user sue
+           set sue.status = #{status}
+         where sue.user_id = #{userId}
+    </update>
+
+    <update id="updatePassword" parameterType="clb.core.system.dto.ClbUser">
+        update sys_user sue
+           set sue.PASSWORD_ENCRYPTED = #{passwordEncrypted}
+         where sue.user_name = #{userName}
+    </update>
+<!--     更新用户计划书初始额度 -->
+    <update id="updatePlanQuota" parameterType="clb.core.system.dto.ClbUser">
+        update sys_user sue
+           set sue.PLAN_QUOTA = #{planQuota}
+         where sue.user_name = #{userName}
+    </update>
+
+    <update id="updateUserName" parameterType="clb.core.system.dto.ClbUser">
+        update sys_user sue
+          set sue.user_name = #{newUserName}
+        where sue.user_name = #{userName}
+    </update>
+    
+    <select id="queryUserByOwnership" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+    	SELECT
+			hr.`NAME` RELATED_PARTY_NAME,
+			syu.USER_ID
+		FROM
+			sys_user syu
+		LEFT JOIN hr_employee hr ON hr.EMPLOYEE_ID = syu.RELATED_PARTY_ID
+		LEFT JOIN sys_user_role sur ON sur.USER_ID = syu.USER_ID
+		LEFT JOIN sys_role_b srb ON srb.ROLE_ID = sur.ROLE_ID
+		WHERE
+			srb.ROLE_CODE = "After-sales"
+		AND syu.USER_TYPE = "OPERATOR"
+		AND hr.OWNERSHIP_TYPE = #{ownershipType}
+		<if test="ownershipId != null">
+			AND hr.OWNERSHIP_ID = #{ownershipId}
+		</if>
+    </select>
+
+    <select id="queryOneUserByAppId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+            a.USER_NAME,
+            a.USER_TYPE,
+            a.EMAIL,
+            a.PHONE,
+            a.PHONE_CODE,
+            a.START_ACTIVE_DATE,
+            a.END_ACTIVE_DATE,
+            a.employee_id,
+            a.`STATUS`,
+            a.FIRST_LOGIN,
+            a.description,
+            a.RELATED_PARTY_ID,
+            a.CUSTOMER_ID,
+            a.PLAN_QUOTA,
+            a.SUPPLIER_ID,
+            a.NTC_FLAG,
+            a.EMAIL_FLAG,
+            a.SMS_FLAG,
+            a.WECHAT_FLAG,
+            a.PLATFORM_FLAG,
+            a.LECTURER_FLAG,
+            a.WECHAT_OPENID
+        FROM
+            sys_user a
+        WHERE
+            a.user_id = #{appId}
+    </select>
+
+    <select id="queryUserByUserTypeAndRoleNameAndUserName" parameterType="clb.core.system.dto.ClbUser" resultMap="AllFieldsMap">
+    	SELECT * from sys_user syu
+		LEFT JOIN sys_user_role sur on syu.USER_ID = sur.USER_ID
+		left join sys_role_b srb on srb.ROLE_ID = sur.ROLE_ID
+		where
+			syu.USER_NAME = #{userName}
+		and srb.ROLE_NAME = #{roleName}
+		and syu.USER_TYPE = #{userType}
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.SysOrderCfgOperationMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.SysOrderCfgOperation">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CFG_ID" property="cfgId" jdbcType="DECIMAL" />
+        <result column="OPERATION_CODE" property="operationCode" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="value" property="value" jdbcType="VARCHAR" />
+        <result column="meaning" property="meaning" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 查询操作信息 -->
+    <select id="selectOperationByCfgId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from fms_sys_order_cfg_operation fsoco where fsoco.CFG_ID = #{cfgId}
+    </select>
+    
+    
+     <!-- 获取value和meaning -->
+    <select id="selectOperationInfo"  resultMap="BaseResultMap">
+         select scvb.meaning,scvb.value
+         from sys_code_value_b scvb, sys_code_b scb
+         where scvb.CODE_ID = scb.CODE_ID
+           and scb.`CODE` = 'SYS.ORDER_CFG_OPERATION'
+           and scvb.`VALUE` not in (
+                    select fsoco.OPERATION_CODE from fms_sys_order_cfg_operation fsoco
+                     where fsoco.cfg_id = #{cfgId}
+           )
+    </select>
+</mapper>

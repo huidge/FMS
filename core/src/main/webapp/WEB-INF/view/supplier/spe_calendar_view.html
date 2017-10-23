@@ -1,0 +1,97 @@
+<#include "../include/header.html">
+ <style>
+
+   #calendar {
+        width: 100%;
+   }
+
+   /* Template Days */
+
+   .exhibition,
+   .party,
+   .cocktail {
+       font-weight: 20%;
+   }
+
+   .cocktail {
+       color: red;
+   }
+   
+   td{ text-align:center;}
+
+</style> 
+
+<link href="${base.contextPath}/resources/css/supplier/examples-offline.css" rel="stylesheet" type="text/css" />
+<body>
+<div id="example"> 
+   
+   <div class="panel" style="margin:0 auto;max-width:900px;margin-top:100px">
+	<span style="text-align:center"><h1 id="title"><@spring.message "fms.ordorder.appointment_schedule"/></h1></span>
+     <div id="parent" style="margin:0 auto;max-width:900px;">
+     <div id="calendar" style="position:relative"></div> 
+   </div>
+    <div class="panel-footer text-right">
+   			<span onclick="cancel()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-left:32%;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.return"/></span>
+   </div>
+ </div>  
+   <script>
+			   var calendarId = '${RequestParameters.calendarId!0}';
+			   var calendarName = '${RequestParameters.calendarName!0}';
+			   if(calendarName !=0 && calendarName!=undefined && calendarName!=null){
+				   $("#title").html("");
+				   $("#title").html(calendarName+'(<@spring.message "spe.calendar.view.redisholiday"/>)');
+			   }
+			   var maxDate = '2099/11/31';
+			   var minDate = '1900/1/1';
+			   var sleepDate = [];
+				$(document).ready(function(){
+						if (calendarId!=0 && calendarId!=undefined) {
+				        $.ajax({
+				            url: '${base.contextPath}/supplier/calendarLine/query',
+				            type : "POST",
+				            async:false,
+				            data : {calendarId:calendarId},
+				            success: function (args) {
+				                var data = args.rows;
+				                var length = data.length;
+				                if(length != 0){
+				                	maxDate = data[length-1].dateNumber;
+				                	minDate = data[0].dateNumber;
+				                	for(var i=0;i<length;i++){
+				                		if(data[i].dayType == "XXR"){
+				                			sleepDate.push(data[i].dateNumber);
+				                		}
+				                	}
+				                }
+				             }
+				        });
+				    }
+				});
+                $(document).ready(function() {
+                	console.log(sleepDate);
+                    $("#calendar").kendoCalendar({
+                    	dates: sleepDate,
+                    	min: new Date(minDate),
+                        max: new Date(maxDate),
+                        navigate:function(){
+                        	$(document).find("th").css("text-align","center");
+                        },
+                    	month: {
+                            content: '# if ($.inArray(+data.date,data.dates) != -1) { #' +
+                                        '<div class="cocktail">#=data.value #</div>' +
+                                     '# } else { #' +
+                                     '#= data.value #' +
+                                     '# } #'
+                        },
+                        footer: false
+                    });
+                });
+                
+              //取消
+            	function cancel(){
+            		window.parent.$("#viewdialog").data('kendoWindow').close();
+       			};
+            </script>
+  
+</body>
+</html>

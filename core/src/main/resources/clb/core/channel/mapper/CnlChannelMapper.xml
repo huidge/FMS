@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlChannelMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlChannel">
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CODE" property="channelCode" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="PHONE_CODE" property="phoneCode" jdbcType="VARCHAR" />
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+        <result column="CITY" property="city" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="INDUSTRY_BACKGROUND" property="industryBackground" jdbcType="VARCHAR" />
+        <result column="EXPERIENCE_FLAG" property="experienceFlag" jdbcType="VARCHAR" />
+        <result column="EXHIBITION_MODE" property="exhibitionMode" jdbcType="VARCHAR" />
+        <result column="EXHIBITION_RANGE" property="exhibitionRange" jdbcType="VARCHAR" />
+        <result column="HK_BANK" property="hkBank" jdbcType="VARCHAR" />
+        <result column="HK_BANK_ACCOUNT_NAME" property="hkBankAccountName" jdbcType="VARCHAR" />
+        <result column="HK_BANK_ACCOUNT_NUM" property="hkBankAccountNum" jdbcType="VARCHAR" />
+        <result column="IL_BANK" property="ilBank" jdbcType="VARCHAR" />
+        <result column="IL_BANK_ACCOUNT_NAME" property="ilBankAccountName" jdbcType="VARCHAR" />
+        <result column="IL_BANK_ACCOUNT_NUM" property="ilBankAccountNum" jdbcType="VARCHAR" />
+        <result column="CHANNEL_SOURCE" property="channelSource" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="CHINESE_NAME" property="chineseName" jdbcType="VARCHAR" />
+        <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_TYPE" property="certificateType" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_NUMBER" property="certificateNumber" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="AREA" property="area" jdbcType="VARCHAR" />
+        <result column="PROVINCE_MEANING" property="provinceMeaning" jdbcType="VARCHAR" />
+        <result column="CITY_MEANING" property="cityMeaning" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE_COMB" property="contactPhoneComb" jdbcType="VARCHAR" />
+        <result column="HK_BANK_NAME" property="hkBankName" jdbcType="VARCHAR" />
+        <result column="IL_BANK_NAME" property="ilBankName" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="USER_STATUS" property="userStatus" jdbcType="VARCHAR" />
+        <result column="USER_STATUS_CODE" property="userStatusCode" jdbcType="VARCHAR" />
+
+        <result column="RATE1" property="rate1" jdbcType="DECIMAL" />
+        <result column="RATE2" property="rate2" jdbcType="DECIMAL" />
+        <result column="RATE3" property="rate3" jdbcType="DECIMAL" />
+        <result column="RATE4" property="rate4" jdbcType="DECIMAL" />
+        <result column="RATE5" property="rate5" jdbcType="DECIMAL" />
+        <result column="RATE6" property="rate6" jdbcType="DECIMAL" />
+        <result column="RATE7" property="rate7" jdbcType="DECIMAL" />
+        <result column="RATE8" property="rate8" jdbcType="DECIMAL" />
+        <result column="RATE9" property="rate9" jdbcType="DECIMAL" />
+        <result column="RATE10" property="rate10" jdbcType="DECIMAL" />
+
+        <result column="PLAN_COUNT" property="planCount" jdbcType="DECIMAL" />
+        <result column="RESERVE_COUNT" property="reserveCount" jdbcType="DECIMAL" />
+        <result column="SIGN_COUNT" property="signCount" jdbcType="DECIMAL" />
+        <result column="PENDING_COUNT" property="pendingCount" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="PARENT_CHANNEL_ID" property="parentChannelId" jdbcType="DECIMAL" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PHOTO_FILE_ID" property="photoFileId" jdbcType="DECIMAL" />
+        <result column="PHOTO_FILE_PATH" property="photoFilePath" jdbcType="VARCHAR" />
+        <result column="PLAN_QUOTA" property="planQuota" jdbcType="DECIMAL" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="queryChannelSummary" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT FCC.CHANNEL_ID,
+			FCC.CHANNEL_CODE,
+			FCC.CHANNEL_NAME,
+			FCC.CONTACT_PERSON,
+            FCC.PHONE_CODE,
+			FCC.CONTACT_PHONE,
+            FCC.EMAIL,
+			FCC.PROVINCE,
+			FCC.CITY,
+			FCC.ADDRESS,
+			FCC.CHANNEL_TYPE_CODE,
+			FCC.INDUSTRY_BACKGROUND,
+			FCC.EXPERIENCE_FLAG,
+			FCC.EXHIBITION_MODE,
+			FCC.EXHIBITION_RANGE,
+			FCC.HK_BANK,
+            scvt2.MEANING HK_BANK_NAME,
+			FCC.HK_BANK_ACCOUNT_NAME,
+			FCC.HK_BANK_ACCOUNT_NUM,
+			FCC.IL_BANK,
+            scvt3.MEANING IL_BANK_NAME,
+			FCC.IL_BANK_ACCOUNT_NAME,
+			FCC.IL_BANK_ACCOUNT_NUM,
+            FCC.CHANNEL_SOURCE,
+			FCC.STATUS_CODE,
+            FCC.CHINESE_NAME,
+            FCC.ENGLISH_NAME,
+            FCC.CERTIFICATE_TYPE,
+            FCC.CERTIFICATE_NUMBER,
+			FCC.PROGRAM_ID,
+			FCC.REQUEST_ID,
+            scvt.meaning PROVINCE_MEANING,
+            scvt1.meaning CITY_MEANING,
+			CONCAT(scvt.meaning,scvt1.meaning) AREA,
+            CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) CONTACT_PHONE_COMB,
+            FCC.PHOTO_FILE_ID
+        FROM FMS_CNL_CHANNEL FCC
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'PUB.PROVICE'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=FCC.PROVINCE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = 'PUB.CITY'
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=FCC.CITY
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc2
+        ON SC2.code = 'PUB.HK_BANK'
+        LEFT JOIN sys_code_value_b scvb2
+        ON scvb2.code_id=sc2.code_id
+        AND scvb2.value=FCC.hk_bank
+        LEFT JOIN sys_code_value_tl scvt2
+        ON scvt2.code_value_id=scvb2.code_value_id
+        AND scvt2.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc3
+        ON SC3.code = 'PUB.IL_BANK'
+        LEFT JOIN sys_code_value_b scvb3
+        ON scvb3.code_id=sc3.code_id
+        AND scvb3.value=FCC.il_bank
+        LEFT JOIN sys_code_value_tl scvt3
+        ON scvt3.code_value_id=scvb3.code_value_id
+        AND scvt3.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        <if test = "channelId != null"> AND FCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "area != null and area != ''"> AND CONCAT(scvt.meaning,scvt1.meaning) = #{area , jdbcType=VARCHAR} </if>
+        <if test = "province != null and province != ''"> AND FCC.PROVINCE = #{province , jdbcType=VARCHAR} </if>
+        <if test = "city != null and city != ''"> AND FCC.CITY = #{city , jdbcType=VARCHAR} </if>
+        <if test = "contactPerson != null and contactPerson != ''"> AND FCC.CONTACT_PERSON = #{contactPerson , jdbcType=VARCHAR} </if>
+        <if test = "contactPhone != null and contactPhone != ''"> AND CONTACT_PHONE = #{contactPhone , jdbcType=VARCHAR} </if>
+        <if test = "contactPhoneComb != null and contactPhoneComb != ''"> AND CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) = #{contactPhoneComb , jdbcType=VARCHAR} </if>
+        <!-- <if test = "channelName != null and channelName != ''"> AND CHANNEL_NAME LIKE concat('%', concat(#{channelName , jdbcType=VARCHAR}, '%')) </if> -->
+        <if test = "channelName != null and channelName != ''"> AND CHANNEL_NAME = #{channelName} </if>
+        <if test = "statusCode != null and statusCode != ''"> AND STATUS_CODE = #{statusCode , jdbcType=VARCHAR} </if>
+        <if test = "channelSource != null and channelSource != ''"> AND FCC.CHANNEL_SOURCE = #{channelSource , jdbcType=VARCHAR} </if>
+        ORDER BY FCC.CHANNEL_CODE
+    </select>
+
+    <select id="queryChannelSummaryPriv" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT FCC.CHANNEL_ID,
+        FCC.CHANNEL_CODE,
+        FCC.CHANNEL_NAME,
+        FCC.CONTACT_PERSON,
+        FCC.PHONE_CODE,
+        FCC.CONTACT_PHONE,
+        FCC.EMAIL,
+        FCC.PROVINCE,
+        FCC.CITY,
+        FCC.ADDRESS,
+        FCC.CHANNEL_TYPE_CODE,
+        FCC.INDUSTRY_BACKGROUND,
+        FCC.EXPERIENCE_FLAG,
+        FCC.EXHIBITION_MODE,
+        FCC.EXHIBITION_RANGE,
+        FCC.HK_BANK,
+        scvt2.MEANING HK_BANK_NAME,
+        FCC.HK_BANK_ACCOUNT_NAME,
+        FCC.HK_BANK_ACCOUNT_NUM,
+        FCC.IL_BANK,
+        scvt3.MEANING IL_BANK_NAME,
+        FCC.IL_BANK_ACCOUNT_NAME,
+        FCC.IL_BANK_ACCOUNT_NUM,
+        FCC.CHANNEL_SOURCE,
+        FCC.STATUS_CODE,
+        FCC.CHINESE_NAME,
+        FCC.ENGLISH_NAME,
+        FCC.CERTIFICATE_TYPE,
+        FCC.CERTIFICATE_NUMBER,
+        FCC.PROGRAM_ID,
+        FCC.REQUEST_ID,
+        scvt.meaning PROVINCE_MEANING,
+        scvt1.meaning CITY_MEANING,
+        CONCAT(scvt.meaning,scvt1.meaning) AREA,
+        CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) CONTACT_PHONE_COMB,
+        FCC.PHOTO_FILE_ID,
+        FCC.CREATION_DATE
+        FROM FMS_CNL_CHANNEL FCC
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'PUB.PROVICE'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=FCC.PROVINCE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = 'PUB.CITY'
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=FCC.CITY
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc2
+        ON SC2.code = 'PUB.HK_BANK'
+        LEFT JOIN sys_code_value_b scvb2
+        ON scvb2.code_id=sc2.code_id
+        AND scvb2.value=FCC.hk_bank
+        LEFT JOIN sys_code_value_tl scvt2
+        ON scvt2.code_value_id=scvb2.code_value_id
+        AND scvt2.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc3
+        ON SC3.code = 'PUB.IL_BANK'
+        LEFT JOIN sys_code_value_b scvb3
+        ON scvb3.code_id=sc3.code_id
+        AND scvb3.value=FCC.il_bank
+        LEFT JOIN sys_code_value_tl scvt3
+        ON scvt3.code_value_id=scvb3.code_value_id
+        AND scvt3.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        <if test = "channelId != null"> AND FCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "area != null and area != ''"> AND CONCAT(scvt.meaning,scvt1.meaning) = #{area , jdbcType=VARCHAR} </if>
+        <if test = "province != null and province != ''"> AND FCC.PROVINCE = #{province , jdbcType=VARCHAR} </if>
+        <if test = "city != null and city != ''"> AND FCC.CITY = #{city , jdbcType=VARCHAR} </if>
+        <if test = "contactPerson != null and contactPerson != ''"> AND FCC.CONTACT_PERSON = #{contactPerson , jdbcType=VARCHAR} </if>
+        <if test = "contactPhone != null and contactPhone != ''"> AND CONTACT_PHONE = #{contactPhone , jdbcType=VARCHAR} </if>
+        <if test = "contactPhoneComb != null and contactPhoneComb != ''"> AND CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) = #{contactPhoneComb , jdbcType=VARCHAR} </if>
+        <!-- <if test = "channelName != null and channelName != ''"> AND CHANNEL_NAME LIKE concat('%', concat(#{channelName , jdbcType=VARCHAR}, '%')) </if> -->
+        <if test = "channelName != null and channelName != ''"> AND CHANNEL_NAME = #{channelName} </if>
+        <if test = "statusCode != null and statusCode != ''"> AND STATUS_CODE = #{statusCode , jdbcType=VARCHAR} </if>
+        <if test = "channelSource != null and channelSource != ''"> AND FCC.CHANNEL_SOURCE = #{channelSource , jdbcType=VARCHAR} </if>
+        ORDER BY FCC.CHANNEL_ID DESC
+    </select>
+
+    <select id="queryWsChannel" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT FCC.CHANNEL_ID,
+        FCC.CHANNEL_CODE,
+        FCC.CHANNEL_NAME,
+        FCC.CONTACT_PERSON,
+        FCC.PHONE_CODE,
+        FCC.CONTACT_PHONE,
+        FCC.EMAIL,
+        FCC.PROVINCE,
+        FCC.CITY,
+        FCC.ADDRESS,
+        FCC.CHANNEL_TYPE_CODE,
+        FCC.INDUSTRY_BACKGROUND,
+        FCC.EXPERIENCE_FLAG,
+        FCC.EXHIBITION_MODE,
+        FCC.EXHIBITION_RANGE,
+        FCC.HK_BANK,
+        scvt2.MEANING HK_BANK_NAME,
+        FCC.HK_BANK_ACCOUNT_NAME,
+        FCC.HK_BANK_ACCOUNT_NUM,
+        FCC.IL_BANK,
+        scvt3.MEANING IL_BANK_NAME,
+        FCC.IL_BANK_ACCOUNT_NAME,
+        FCC.IL_BANK_ACCOUNT_NUM,
+        FCC.CHANNEL_SOURCE,
+        FCC.STATUS_CODE,
+        FCC.CHINESE_NAME,
+        FCC.ENGLISH_NAME,
+        FCC.CERTIFICATE_TYPE,
+        FCC.CERTIFICATE_NUMBER,
+        FCC.PROGRAM_ID,
+        FCC.REQUEST_ID,
+        scvt.meaning PROVINCE_MEANING,
+        scvt1.meaning CITY_MEANING,
+        CONCAT(scvt.meaning,scvt1.meaning) AREA,
+        CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) CONTACT_PHONE_COMB,
+        su.USER_ID,
+        su.USER_NAME,
+        su.status USER_STATUS_CODE,
+        su.PLAN_QUOTA,
+        scvt4.meaning USER_STATUS,
+        (SELECT count(1)
+        from fms_pln_plan_request fppr
+        where fppr.CREATED_BY = su.USER_ID) PLAN_COUNT,
+        (SELECT count(1)
+        from fms_ord_order foo
+        where foo.CHANNEL_ID = FCC.CHANNEL_ID
+        AND foo.STATUS != 'POLICY_EFFECTIVE') RESERVE_COUNT,
+        (SELECT count(1)
+        from fms_ord_order foo
+        where foo.CHANNEL_ID = FCC.CHANNEL_ID
+        AND foo.STATUS = 'POLICY_EFFECTIVE') SIGN_COUNT,
+        (SELECT count(1)
+        from fms_ord_order foo
+        JOIN fms_ord_pending fop
+        ON foo.ORDER_ID = fop.ORDER_ID
+        where foo.CHANNEL_ID = FCC.CHANNEL_ID) PENDING_COUNT,
+        (SELECT SUM(foo.POLICY_AMOUNT)
+        from fms_ord_order foo
+        where foo.CHANNEL_ID = FCC.CHANNEL_ID
+        AND foo.STATUS = 'POLICY_EFFECTIVE') HKD_AMOUNT,
+        fccc.PARTY_ID parent_channel_id,
+        FCC.PHOTO_FILE_ID,
+        sf.FILE_PATH PHOTO_FILE_PATH
+        FROM FMS_CNL_CHANNEL FCC
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'PUB.PROVICE'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=FCC.PROVINCE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = 'PUB.CITY'
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=FCC.CITY
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc2
+        ON SC2.code = 'PUB.HK_BANK'
+        LEFT JOIN sys_code_value_b scvb2
+        ON scvb2.code_id=sc2.code_id
+        AND scvb2.value=FCC.hk_bank
+        LEFT JOIN sys_code_value_tl scvt2
+        ON scvt2.code_value_id=scvb2.code_value_id
+        AND scvt2.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc3
+        ON SC3.code = 'PUB.IL_BANK'
+        LEFT JOIN sys_code_value_b scvb3
+        ON scvb3.code_id=sc3.code_id
+        AND scvb3.value=FCC.il_bank
+        LEFT JOIN sys_code_value_tl scvt3
+        ON scvt3.code_value_id=scvb3.code_value_id
+        AND scvt3.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_user su
+        ON (su.RELATED_PARTY_ID = FCC.CHANNEL_ID AND su.USER_TYPE = 'CHANNEL')
+        LEFT JOIN sys_code_b sc4
+        ON SC4.code = 'SYS.USER_STATUS'
+        LEFT JOIN sys_code_value_b scvb4
+        ON scvb4.code_id=sc4.code_id
+        AND scvb4.value=su.status
+        LEFT JOIN sys_code_value_tl scvt4
+        ON scvt4.code_value_id=scvb4.code_value_id
+        AND scvt4.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN fms_cnl_channel_contract fccc
+        ON (fccc.CHANNEL_ID = FCC.CHANNEL_ID and fccc.PARTY_TYPE = 'CHANNEL')
+        LEFT JOIN sys_file sf
+        ON sf.file_id = fcc.photo_file_id
+        WHERE 1=1
+        <if test = "channelId != null"> AND FCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "area != null and area != ''"> AND CONCAT(scvt.meaning,scvt1.meaning) = #{area , jdbcType=VARCHAR} </if>
+        <if test = "province != null and province != ''"> AND FCC.PROVINCE = #{province , jdbcType=VARCHAR} </if>
+        <if test = "city != null and city != ''"> AND FCC.CITY = #{city , jdbcType=VARCHAR} </if>
+        <if test = "contactPerson != null and contactPerson != ''"> AND FCC.CONTACT_PERSON = #{contactPerson , jdbcType=VARCHAR} </if>
+        <if test = "contactPhone != null and contactPhone != ''"> AND CONTACT_PHONE = #{contactPhone , jdbcType=VARCHAR} </if>
+        <if test = "contactPhoneComb != null and contactPhoneComb != ''"> AND CONCAT(FCC.PHONE_CODE,' ',FCC.CONTACT_PHONE) = #{contactPhoneComb , jdbcType=VARCHAR} </if>
+        <if test = "channelName != null and channelName != ''"> AND CHANNEL_NAME LIKE concat('%', concat(#{channelName , jdbcType=VARCHAR}, '%')) </if>
+        <if test = "statusCode != null and statusCode != ''"> AND STATUS_CODE = #{statusCode , jdbcType=VARCHAR} </if>
+        <if test = "parentChannelId != null"> AND fccc.PARTY_ID = #{parentChannelId , jdbcType=DECIMAL} </if>
+        <if test = "userStatusCode != null and userStatusCode != ''"> AND su.status = #{userStatusCode , jdbcType=VARCHAR} </if>
+        <if test = "userName != null and userName != ''"> AND su.USER_NAME LIKE concat('%', #{userName , jdbcType=VARCHAR}, '%') </if>
+
+        ORDER BY FCC.CHANNEL_CODE
+    </select>
+
+    <select id="queryArea" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT CONCAT(scvt.meaning,scvt1.meaning) AREA
+        FROM FMS_CNL_CHANNEL FCC
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'PUB.PROVICE'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=FCC.PROVINCE
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = 'PUB.CITY'
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=FCC.CITY
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        <if test = "channelId != null"> AND FCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+        <if test = "area != null"> AND CONCAT(FCC.PROVINCE,FCC.CITY) = #{area , jdbcType=VARCHAR} </if>
+        <if test = "contactPerson != null"> AND FCC.CONTACT_PERSON = #{contactPerson , jdbcType=VARCHAR} </if>
+        <if test = "contactPhone != null"> AND CONTACT_PHONE = #{contactPhone , jdbcType=VARCHAR} </if>
+        group by CONCAT(scvt.meaning,scvt1.meaning)
+    </select>
+
+    <select id="queryChannelSimple" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT
+          FCC.CHANNEL_ID,
+          FCC.CHANNEL_CODE,
+          FCC.CHANNEL_NAME,
+          FCC.CONTACT_PERSON,
+          FCC.PHONE_CODE,
+          FCC.CONTACT_PHONE,
+          FCC.PROVINCE,
+          FCC.CITY,
+          FCC.ADDRESS,
+          FCC.CHINESE_NAME,
+          FCC.ENGLISH_NAME,
+          FCC.CHANNEL_TYPE_CODE,
+          FCC.INDUSTRY_BACKGROUND,
+          FCC.EXPERIENCE_FLAG,
+          FCC.EXHIBITION_MODE,
+          FCC.EXHIBITION_RANGE,
+          FCC.HK_BANK,
+          FCC.HK_BANK_ACCOUNT_NAME,
+          FCC.HK_BANK_ACCOUNT_NUM,
+          FCC.IL_BANK,
+          FCC.IL_BANK_ACCOUNT_NAME,
+          FCC.IL_BANK_ACCOUNT_NUM,
+          FCC.CHANNEL_SOURCE,
+          FCC.STATUS_CODE,
+          FCC.EMAIL,
+          FCC.CERTIFICATE_NUMBER,
+          FCC.CERTIFICATE_TYPE,
+          FCC.PHOTO_FILE_ID,
+          SF.FILE_PATH PHOTO_FILE_PATH,
+          su.USER_ID,
+          su.USER_NAME,
+          su.status USER_STATUS_CODE,
+          su.PLAN_QUOTA
+        FROM fms_cnl_channel FCC
+        LEFT JOIN sys_file SF
+        ON SF.FILE_ID = FCC.PHOTO_FILE_ID
+        LEFT JOIN sys_user su
+        ON (su.RELATED_PARTY_ID = FCC.CHANNEL_ID AND su.USER_TYPE = 'CHANNEL')
+        WHERE 1=1
+          <if test = "channelId != null">AND FCC.CHANNEL_ID = #{channelId , jdbcType=DECIMAL} </if>
+          <if test = "phoneCode != null">AND FCC.PHONE_CODE = #{phoneCode , jdbcType=VARCHAR} </if>
+          <if test = "contactPhone != null">AND FCC.CONTACT_PHONE = #{contactPhone , jdbcType=VARCHAR} </if>
+    </select>
+	<!-- 查询渠道名称   by 订单上一级渠道与所属供应商合约id -->
+	<select id="queryChannelNameByContractId" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT
+			fcc.CHANNEL_NAME
+		FROM
+			fms_cnl_channel fcc,
+			fms_cnl_channel_contract fccc
+		WHERE
+			fcc.CHANNEL_ID = fccc.CHANNEL_ID
+		AND fccc.CHANNEL_CONTRACT_ID = #{contractId}
+	</select>
+
+    <select id="queryAllCnlWithFilePath" resultMap="BaseResultMap">
+        select
+          fcc.*,
+          sf.file_path PHOTO_FILE_PATH
+          from fms_cnl_channel fcc
+          left join sys_file sf on sf.file_id = fcc.photo_file_id
+    </select>
+    <!-- 根据渠道名称查找渠道ID -->
+    <select id="queryChannelByChannelName" parameterType="clb.core.channel.dto.CnlChannel" resultMap="BaseResultMap">
+        SELECT
+          FCC.CHANNEL_ID,
+          FCC.CHANNEL_CODE,
+          FCC.CHANNEL_NAME
+        FROM fms_cnl_channel FCC
+        WHERE FCC.CHANNEL_NAME = #{channelName, jdbcType=VARCHAR}
+    </select>
+</mapper>

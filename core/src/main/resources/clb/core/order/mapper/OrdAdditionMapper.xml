@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdAdditionMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdAddition">
+        <result column="ADDITION_ID" property="additionId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SAVE_STATUS" property="saveStatus" jdbcType="VARCHAR" />
+
+        <result column="SECURITY_LEVEL" property="securityLevel" jdbcType="VARCHAR" />
+        <result column="SECURITY_REGION" property="securityRegion" jdbcType="VARCHAR" />
+        <result column="SELFPAY" property="selfpay" jdbcType="VARCHAR" />
+
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="SURRENDER_FLAG" property="surrenderFlag" jdbcType="VARCHAR" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD_DESC" property="payMethodDesc" jdbcType="VARCHAR" />
+        <result column="DEPEND_MAIN_FLAG" property="dependMainFlag" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        
+        <result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+		<result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+
+        <result column="ATTRIBUTE1" property="attribute1" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+        <result column="COM_COUNT" property="comCount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryOrdAddition" parameterType="clb.core.order.dto.OrdAddition" resultMap="BaseResultMap" >
+        SELECT
+        foa.ADDITION_ID,
+        foa.ORDER_ID,
+        foa.ITEM_ID,
+        foa.PAY_METHOD,
+        foa.YEAR_PAY_AMOUNT,
+        foa.POLICY_AMOUNT,
+        foa.STATUS,
+        foa.PROGRAM_ID,
+        foa.REQUEST_ID,
+        fpi.ITEM_NAME,
+        foa.SECURITY_LEVEL,
+        foa.SECURITY_REGION,
+        foa.SELFPAY,
+        scvt.meaning STATUS_DESC,
+        <!-- (SELECT fcarr.depend_main_flag
+        FROM fms_cmn_adt_risk_relation fcarr
+        JOIN fms_ord_order foo
+        ON foo.item_id = fcarr.item_id
+        WHERE foo.order_id = foa.order_id
+        AND fcarr.sub_item_id = foa.item_id) depend_main_flag, --><!-- 主险可能为空  这样查询  查不出结果 -->
+        foa.subline_id,
+        fpis.subline_item_name,
+        fpi.MIN_CLASS
+        FROM
+        fms_ord_addition AS foa
+        LEFT JOIN fms_prd_items fpi
+        ON foa.item_id = fpi.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON foa.subline_id = fpis.subline_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foa.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        <if test = "orderId != null"> AND foa.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+    </select>
+
+    <select id="queryNotAddition" parameterType="clb.core.order.dto.OrdAddition" resultMap="BaseResultMap" >
+        SELECT
+        foa.ADDITION_ID,
+        foa.ORDER_ID,
+        foa.ITEM_ID,
+        foa.PAY_METHOD,
+        foa.YEAR_PAY_AMOUNT,
+        foa.POLICY_AMOUNT,
+        foa.SECURITY_LEVEL,
+        foa.SECURITY_REGION,
+        foa.SELFPAY,
+        foa.STATUS,
+        foa.PROGRAM_ID,
+        foa.REQUEST_ID,
+        fpi.ITEM_NAME,
+        fpis.subline_item_name,
+        scvt.meaning STATUS_DESC,
+       <!--  (SELECT fcarr.depend_main_flag
+        FROM fms_cmn_adt_risk_relation fcarr
+        JOIN fms_ord_order foo
+        ON foo.item_id = fcarr.item_id
+        WHERE foo.order_id = foa.order_id
+        AND fcarr.sub_item_id = foa.item_id) depend_main_flag, --><!-- 主险可能为空  这样查询  查不出结果 -->
+        fpi.MIN_CLASS,
+        (SELECT count(1)
+        FROM fms_ord_commission foc
+        WHERE foc.ADDITION_ID = foa.ADDITION_ID) COM_COUNT
+        FROM
+        fms_ord_addition AS foa
+        LEFT JOIN fms_prd_items fpi
+        ON foa.item_id = fpi.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON foa.subline_id = fpis.subline_id
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=foa.STATUS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1=1
+        AND (foa.status != 'SURRENDERED' OR foa.status IS NULL)
+        <if test = "orderId != null"> AND foa.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "status != null">
+            AND (foa.status != #{status , jdbcType=DECIMAL} OR foa.status IS NULL)
+        </if>
+    </select>
+
+    <select id="queryWsOrdAddition" parameterType="clb.core.order.dto.OrdAddition" resultMap="BaseResultMap" >
+        SELECT
+            foa.ADDITION_ID,
+            foa.ORDER_ID,
+            foa.ITEM_ID,
+            foa.PAY_METHOD,
+            foa.YEAR_PAY_AMOUNT,
+            foa.POLICY_AMOUNT,
+            foa.SECURITY_LEVEL,
+            foa.SECURITY_REGION,
+            foa.SELFPAY,
+            foa.STATUS,
+            foa.SURRENDER_FLAG,
+            foa.PROGRAM_ID,
+            foa.REQUEST_ID,
+            fpi.ITEM_NAME,
+            scvb1.meaning STATUS_DESC,
+            scvb2.meaning PAY_METHOD_DESC,
+            foa.subline_id,
+            fpis.subline_item_name,
+            fpi.MIN_CLASS
+        FROM
+          fms_ord_addition AS foa
+        LEFT JOIN
+          fms_prd_items fpi ON foa.item_id = fpi.item_id
+        LEFT JOIN
+          fms_prd_item_subline fpis ON foa.subline_id = fpis.subline_id
+        LEFT JOIN
+          sys_code_b sc1 ON sc1.code = 'ORD.ORDER_STATUS'
+        LEFT JOIN
+          sys_code_value_b scvb1 ON scvb1.code_id = sc1.code_id
+            AND scvb1.value = foa.STATUS
+        LEFT JOIN
+          sys_code_b sc2 ON sc2.code = 'CMN.PAY_METHOD'
+        LEFT JOIN
+          sys_code_value_b scvb2 ON scvb2.code_id = sc2.code_id
+            AND scvb2.value = foa.PAY_METHOD
+        WHERE 1=1
+        <if test = "orderId != null"> AND foa.ORDER_ID = #{orderId , jdbcType=DECIMAL} </if>
+        <if test = "additionId != null"> AND foa.ADDITION_ID = #{additionId , jdbcType=DECIMAL} </if>
+        <if test = "status != null"> AND foa.STATUS = #{status , jdbcType=VARCHAR} </if>
+        <if test = "payMethod != null"> AND foa.PAY_METHOD = #{payMethod , jdbcType=VARCHAR} </if>
+        <if test = "itemId != null"> AND foa.ITEM_ID = #{itemId , jdbcType=VARCHAR} </if>
+    </select>
+    
+    <update id="updateOrdAdditionByOrderIdAndItemId" parameterType="clb.core.order.dto.OrdAddition">
+    	update fms_ord_addition 
+    	<set>
+	    	<if test="surrenderFlag != null and surrenderFlag != ''">
+	    		SURRENDER_FLAG = #{surrenderFlag},
+	    	</if>
+	    	<if test="status != null and status != ''">
+	    		STATUS = #{status},
+	    	</if>
+	    	<if test="saveStatus != null and saveStatus != ''">
+	    		SAVE_STATUS = #{saveStatus},
+	    	</if>
+    	</set>
+    	where ORDER_ID = #{orderId} and ITEM_ID = #{itemId}
+    </update>
+    
+    <select id="querySaveStatusByOrderIdAndItemId" parameterType="clb.core.order.dto.OrdAddition" resultType="java.lang.String">
+    	select SAVE_STATUS from fms_ord_addition where ORDER_ID = #{orderId} and ITEM_ID = #{itemId}
+    </select>
+    
+    <update id="updateStatusByOrderId" parameterType="clb.core.order.dto.OrdAddition" >
+    	update fms_ord_addition set STATUS = #{status} where ORDER_ID = #{orderId}
+    </update>
+</mapper>

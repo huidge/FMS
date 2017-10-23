@@ -1,0 +1,197 @@
+<#-- 
+ * description:通用导入信息页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../include/header.html">
+<script type="text/javascript">
+    var response = window.parent.response;
+</script>
+<body>
+</script>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="template">
+  	<div id="toolbar-btn" style="padding-bottom:10px;">
+         <span onclick="cancel()" class="btn btn-default" id="btn_cancel" style="width: 100px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.return"/></span>
+	</div>
+</script>
+
+<script type="text/javascript">
+
+	$(function(){
+	    var rownumList = $('[data-index="0"]');
+	    for (var i=0;i<rownumList.length;i++)
+	    {
+	        var rownumText = $(rownumList[i]).html();
+	        if("#"==rownumText){
+	            $(rownumList[i]).html("<@spring.message "spe.rownum"/>");
+	            $(rownumList[i]).eq(0).parent().parent().prev().children().eq(0).css("width","50px");
+	            $(rownumList[i]).eq(0).parent().parent().parent().parent().parent().next().children("table").children("colgroup").children().eq(0).css("width","50px");
+	        }
+	    }
+	});
+
+    var BaseUrl = _basePath;
+    $("#Grid").kendoGrid({
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        rownumber: true,
+        navigatable: false,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: kendo.template($("#template").html()),
+        editable: false
+    }).data("kendoGrid");
+    
+    
+    var gridModel = generateGridModel();
+    $("#Grid").data("kendoGrid").setOptions({
+        columns: gridModel.columns,
+        dataSource: gridModel.dataSource
+    });
+    
+
+    
+
+    
+    function attributeCount(obj) {
+        var count = 0;
+        for(var i in obj) {
+            if(obj.hasOwnProperty(i)) {  // 建议加上判断,如果没有扩展对象属性可以不加
+                count++;
+            }
+        }
+        return count;
+    }
+    
+   function generateGridModel() {
+	   
+	   var rows = response.rows;
+	   //状态
+   	   var statusData = [];
+	   //消息
+   	   var messageData = [];
+	   //数据
+   	   var excelDatas = [];
+	   //标题
+   	   var titleData = {};
+   	   for(var i=0;i<rows.length;i++){
+	   		statusData.push(rows[i].status);
+	   		messageData.push(rows[i].errorMessage);
+	   		excelDatas.push(rows[i].excelData);
+   		}
+
+   		titleData = excelDatas[0];
+        // 动态构造 columns 
+        var columns = dynamicColumns(titleData);
+        
+        var dataSource = dynamicDataSource(excelDatas,statusData,messageData);
+        
+        return  {
+            columns: columns,
+            dataSource: dataSource
+        };
+    }
+    
+    function dynamicColumns(titleData){
+    	
+    	var length = attributeCount(titleData);
+    	var gridColumns = [];
+    	//构建Column
+    	//标题为后台返回，字段为field+index
+    	for(var i=0;i<length;i++){
+    		for (var k in titleData) {
+        		var index = titleData[k].substring(titleData[k].lastIndexOf('&')+1);
+        		var column = {
+        				field: "field"+(i+1),
+        				title:k,
+        				width: 120,
+        				attributes: {style: "text-align:center"},
+	  	                headerAttributes: {
+	  	                    "class": "table-header-cell",
+	  	                    style: "text-align: center"
+	  	                }
+        		}
+               	if(i == index-1){
+               		gridColumns.push(column);
+               	}
+            }
+    	}
+    	var statusColumn = {
+				field: "status",
+				title:'状态',
+				attributes: {style: "text-align:center"},
+				template:function(dataItem){
+					if(dataItem.status == "cover"){
+						return '<font color="#FFD306">覆盖</font>';
+					}
+					else if(dataItem.status == "false"){
+						return '<font color="red">失败</font>';
+					}else{
+						return '<font color="green">成功</font>';
+					}
+				},
+				width: 120,
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                }
+		}
+    	var messageColumn = {
+				field: "message",
+				title:'错误信息',
+				attributes: {style: "text-align:center"},
+				width: 120,
+	                headerAttributes: {
+	                    "class": "table-header-cell",
+	                    style: "text-align: center"
+	                }
+		}
+    	gridColumns.push(statusColumn);
+    	gridColumns.push(messageColumn);
+    	
+    	return gridColumns;
+    }
+    
+    function dynamicDataSource(excelDatas,statusData,messageData){
+		var gridData = [];
+    	for(var i=0;i<excelDatas.length;i++){
+    		var data = {};
+    		var excelData = excelDatas[i];
+    		console.log(excelData);
+    		for (var k in excelData) {
+        		var index = excelData[k].substring(excelData[k].lastIndexOf('&')+1);
+        		var value = excelData[k].substring(0,excelData[k].lastIndexOf('&'));
+        		if(value == null || value == 'null')value = '';
+        		data["field"+index] = value;
+        	}
+    		data["status"] = statusData[i];
+    		data["message"] = messageData[i];
+    		gridData.push(data);
+    	}
+    	 dataSource = new kendo.data.DataSource({
+    		 	data: gridData,
+    	        pageSize: 10
+    	    });
+    	 return dataSource;
+    }
+    
+    //自适应屏幕
+    Hap.autoResizeGrid("#Grid");
+    
+  	//取消
+	function cancel(){
+		window.parent.$("#resultdialog").data('kendoWindow').close();
+	};
+</script>
+</body>
+</html>

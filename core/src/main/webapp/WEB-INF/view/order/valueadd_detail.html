@@ -1,0 +1,1701 @@
+<#--
+ * description: 增值服务详情页面
+-->
+<#include "../include/header.html">
+ <script src="../lib/kendoui/js/kendo.editor.js"></script>
+ <script src="${base.contextPath}/clb/common/clbCode?valueAddStatusData=ORD.VALUEADD_STATUS" type="text/javascript"></script>
+ <script src="${base.contextPath}/clb/common/clbCode?vehicleTypeData=ORD.VALUE_ADD_VEHICLE_TYPE" type="text/javascript"></script>
+ <script src="${base.contextPath}/clb/common/clbCode?sexData=HR.EMPLOYEE_GENDER" type="text/javascript"></script>
+ <script src="${base.contextPath}/clb/common/clbCode?phoneCodeData=PUB.PHONE_CODE" type="text/javascript"></script>
+<script type="text/javascript">
+
+	var orderId = '${RequestParameters.orderId!0}';
+	var itemId = '${RequestParameters.itemId!0}';
+	var valueaddType = '${RequestParameters.valueaddType!}';
+	
+	if(itemId == 0){
+		itemId = null;
+	}
+	
+	var viewModel = kendo.observable({
+		model : {
+		}
+	});
+	
+	viewModel.model.set("orderId", orderId);
+	viewModel.model.set("itemId", itemId);
+	viewModel.model.set("valueaddType", valueaddType);
+	
+</script>
+<iframe id="ifile" style="display:none"></iframe>
+<div id="reqWin" style="display: none;">
+	<form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+	<div id="statusWin" style="display: none;"></div>
+	<div id="content-container">
+		<div id="page-content">
+			<fieldset
+				style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;">
+				<legend>
+					<div class="col-xs-7" style="text-align: left"><span class="panel-title">增值服务维护</span></div>
+            	
+            		<div class="col-xs-1" style="text-align: right">
+							<span class="btn btn-default" onclick="openUpdateStatusWin()">
+								<i class="fa fa-rotate-right" style="margin-right: 3px;"></i>更改状态
+							</span> 
+					</div>
+					
+            		<div class="col-xs-1" style="text-align: right">
+							<span class="btn btn-success" onclick="saveData()" type="submit">
+								<i class="fa fa-save" style="margin-right: 3px;"></i>保存
+							</span> 
+					</div>
+					
+	            	<div class="col-xs-1" style="text-align: right">
+	            		<span class="btn btn-default"  onclick="closeWin()">
+						    <i class="fa fa-reply" style="margin-right: 3px;"></i>返回上一页
+						</span>
+	            	</div> 
+	            	
+				</legend>
+				<div style="width: 98%; margin-top: 5px;">
+					<form class="form-horizontal" >
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">订单状态</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="status" data-bind="value:model.status">
+													<script type="text/javascript">
+														$('#status').kendoDropDownList({
+													         valuePrimitive: true,
+													         dataTextField : "meaning",
+													         dataValueField : "value",
+													         dataSource:valueAddStatusData
+													     });
+														
+														$("#status").data("kendoDropDownList").enable(false);
+													</script>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">客户(投保人)</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="applicantCustomerId" 
+													data-bind="value:model.applicantCustomerId,text:model.applicant" >
+												<script>
+			                                        $("#applicantCustomerId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_CUSTOMER")}, {
+			                                            query: function (e) {}
+			                                        }));
+                                   				 </script>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">保单订单编号</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" 
+													data-bind="value:model.relatedOrderId,text:model.relatedOrderNumber" id="relatedOrderNumber">
+													<script>
+				                                        $("#relatedOrderNumber").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_VALUE_ADD_ORDER_NUMBER")}, {
+				                                        	query: function(e) {
+				                                            },
+				                                        }));
+                                   				 </script>
+											</div>
+										</div>
+									</div>
+									
+									<div id="TTQZ">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">联系电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode1" name="customerPhoneCode" type="text" data-bind="value:model.customerPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px" id="customerPhone1" data-bind="value:model.customerPhone" class="k-textbox" required>
+													<script type="text/javascript">
+														/* $("#customerPhone1").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode1").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">深圳过境关口</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="sublineId1" 
+													data-bind="value:model.sublineId,text:model.sublineItemName" >
+													 <script type="text/javascript">
+													 $('#sublineId1').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															   select:function(e){
+																viewModel.model.set("price",e.dataItem.price);
+															},
+															  /* change:function (e){
+																  viewModel.model.set("price",'');
+								                            }  */
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">团队签证价格</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="price1" class="k-textbox" data-bind="value:model.price" >
+												<!-- <script type="text/javascript">
+													$("#price1").kendoNumericTextBox({
+															format: "0.00",
+															min:0
+													});
+												</script> -->
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约过境时间</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveDate1" data-bind="value:model.reserveDate" >
+												<script type="text/javascript">
+													$("#reserveDate1").kendoDateTimePicker({
+														format: "yyyy-MM-dd HH:mm:ss"
+														
+													});
+													var datetimepicker1 = $("#reserveDate1").data("kendoDateTimePicker");
+													datetimepicker1.min(new Date());
+												</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">签访客信息</label>
+											<div class="col-sm-9">
+												 <div style="clear:both">
+	        											<div id="Grid"></div>
+	   											 </div>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode2" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone1" class="k-textbox"
+													data-bind="value:model.reserveContactPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone1").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode2").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+									
+									<div id="HPV">
+									<!-- <div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">疫苗注射客户姓名</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.customerName"
+													class="k-textbox" required>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">客户姓名</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="vaccineCustomerName" class="k-textbox"
+													data-bind="value:model.vaccineCustomerName" >
+											</div>
+										</div>
+									</div> -->
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">年龄</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="vaccineCustomerAge" 
+													data-bind="value:model.vaccineCustomerAge" class="k-textbox">
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">性别</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="vaccineCustomerSex" 
+													data-bind="value:model.vaccineCustomerSex" >
+													<script type="text/javascript">
+														$("#vaccineCustomerSex").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "meaning",
+													        dataValueField: "value",
+													        dataSource: sexData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">联系电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode3" name="customerPhoneCode" type="text" data-bind="value:model.customerPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone2" class="k-textbox"
+													data-bind="value:model.customerPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone2").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														});  */
+														$("#phoneCode3").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">通行证号码</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="vaccineCustomerPass" 
+													data-bind="value:model.vaccineCustomerPass" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">第几次注射HPV疫苗</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="vaccineCustomerTimes" 
+													data-bind="value:model.vaccineCustomerTimes">
+													<script>
+														$("#vaccineCustomerTimes").kendoComboBox({
+														  dataSource: {
+														    data: ["1", "2","3"]
+														  },
+															change:function(e){
+																if($("#vaccineCustomerTimes").val() == 1){
+																	$("#HPVprice").show();
+																}else{
+																	$("#HPVprice").hide();
+																}
+															}
+														  
+														});
+													</script>
+											</div>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">疫苗种类</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.sublineId" id="sublineId2"required>
+													<script type="text/javascript">
+													$('#sublineId2').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															select:function(e){
+																viewModel.model.set("price",e.dataItem.price);
+															},
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group" id="HPVprice">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">价格</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" class="k-textbox" id="price2" data-bind="value:model.price" >
+													<!-- <script type="text/javascript">
+													$("#price2").kendoNumericTextBox({
+															format: "0.00",
+															min:0
+													});
+												</script> -->
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">给客户的报价</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="customerPrice" class="k-textbox"
+													data-bind="value:model.customerPrice">
+													<!-- <script type="text/javascript">
+														$("#customerPrice").kendoNumericTextBox({
+																format: "0.00",
+																min:0
+														});
+												</script> -->
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约疫苗注射时间</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveDate2" data-bind="value:model.reserveDate" >
+												<script type="text/javascript">
+													$("#reserveDate2").kendoDateTimePicker({
+														format: "yyyy-MM-dd HH:mm:ss"
+													});
+													var datetimepicker2 = $("#reserveDate1").data("kendoDateTimePicker");
+													datetimepicker2.min(new Date());
+												</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">对接人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode4" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone3" class="k-textbox" data-bind="value:model.reserveContactPhone" >
+													<script type="text/javascript">
+														/* $("#reserveContactPhone3").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														
+														$("#phoneCode4").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+									
+									<div id="JDYD">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">入住客户姓名</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.lodgerName"
+													class="k-textbox" required>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">入住客户姓名拼音</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="lodgerPinyin" class="k-textbox"
+													data-bind="value:model.lodgerPinyin" >
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">联系电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode5" name="customerPhoneCode" type="text" data-bind="value:model.customerPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone4" class="k-textbox"
+													data-bind="value:model.customerPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone4").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode5").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">酒店所在区域</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="sublineId3" data-bind="value:model.sublineId" >
+													<script type="text/javascript">
+													$('#sublineId3').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															select:function(e){
+																viewModel.model.set("priceInterval",e.dataItem.priceInterval);
+															},
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">价格区间(每晚)</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="priceInterval" 
+													data-bind="value:model.priceInterval" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">入住人数</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="peopleCount1" data-bind="value:model.peopleCount" class="k-textbox">
+													<!-- <script type="text/javascript">
+														$("#peopleCount1").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														});
+													</script> -->
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">入住日期</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="checkinDate" 
+													data-bind="value:model.checkinDate" >
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">退房日期</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="checkoutDate" 
+													data-bind="value:model.checkoutDate" >
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">房间数</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="roomCount" class="k-textbox" 
+													data-bind="value:model.roomCount" >
+													<!-- <script type="text/javascript">
+														$("#roomCount").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														});
+													</script> -->
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">房型</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="roomType" 
+													data-bind="value:model.roomType" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">指定酒店名称或地段</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="hotelName" 
+													data-bind="value:model.hotelName" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">对接人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode6" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone5" class="k-textbox"
+													data-bind="value:model.reserveContactPhone" >
+													<script type="text/javascript">
+														/* $("#reserveContactPhone5").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode6").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+									<div id="ZCFW">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约路线</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.sublineId" id="sublineId4" required>
+													<script type="text/javascript">
+													$('#sublineId4').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															select:function(e){
+																viewModel.model.set("price",e.dataItem.price);
+															},
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预计价格</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="price3" data-bind="value:model.price" class="k-textbox">
+													<!-- <script type="text/javascript">
+													$("#price3").kendoNumericTextBox({
+															format: "0.00",
+															min:0
+													});
+													</script> -->
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约时间</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveDate3" data-bind="value:model.reserveDate">
+												<script type="text/javascript">
+													$("#reserveDate3").kendoDateTimePicker({
+														format: "yyyy-MM-dd HH:mm:ss"
+													});
+													var datetimepicker3 = $("#reserveDate1").data("kendoDateTimePicker");
+													datetimepicker3.min(new Date());
+												</script>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">出发地</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="departure" 
+													data-bind="value:model.departure" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">目的地</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="destination" 
+													data-bind="value:model.destination" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">乘车总人数</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="peopleCount2" class="k-textbox"
+													data-bind="value:model.peopleCount">
+													<!-- <script type="text/javascript">
+														$("#peopleCount2").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														});
+													</script> -->
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">乘车联系人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									
+									
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">乘车联系人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode7" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone6" class="k-textbox"
+													data-bind="value:model.reserveContactPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone6").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode7").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+									<div id="HSYD">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">会所位置</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.sublineId" id="sublineId5" required>
+													<script type="text/javascript">
+													$('#sublineId5').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															select:function(e){
+																var userHour =  $("#userHour").val();
+																var price = e.dataItem.price;
+																viewModel.model.set("price",price*userHour);
+															},
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">使用时长</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="userHour" 
+													data-bind="value:model.userHour"  onchange="change()">
+													<script type="text/javascript">
+														$("#userHour").kendoNumericTextBox({
+															format: "0h",
+															step: 1,
+															min:2
+														});
+														
+														function change(){
+															var price1 = viewModel.model.price;
+															var userHour = $("#userHour").val();
+															//var price = $("#price4").val();
+															price = Math.ceil(viewModel.model.price/viewModel.model.userHour);
+															//alert(price);
+															viewModel.model.set("price",price*userHour);
+														}
+													</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">价格</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" class="k-textbox" id="price4" data-bind="value:model.price">
+												<!-- <script type="text/javascript">
+													$("#price4").kendoNumericTextBox({
+															format: "0.00",
+															min:0
+													});
+												</script> -->
+											</div>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约时间</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveDate4" data-bind="value:model.reserveDate" >
+												<script type="text/javascript">
+													$("#reserveDate4").kendoDateTimePicker({
+														format: "yyyy-MM-dd HH:mm:ss"
+													});
+													var datetimepicker4 = $("#reserveDate1").data("kendoDateTimePicker");
+													datetimepicker4.min(new Date());
+												</script>
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">人数</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="peopleCount3" class="k-textbox"
+													data-bind="value:model.peopleCount">
+													<!-- <script type="text/javascript">
+														$("#peopleCount3").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														});
+													</script> -->
+													
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode8" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone7" class="k-textbox"
+													data-bind="value:model.reserveContactPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone7").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode8").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+									<div id="YHKH">
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">开户银行</label>
+											<div class="col-sm-9">
+												<input style="width: 240px" data-bind="value:model.sublineId" id="sublineId6" required>
+													<script type="text/javascript">
+													$('#sublineId6').kendoDropDownList({
+													        valuePrimitive: true,
+													        dataTextField : "sublineItemName",
+													        dataValueField : "sublineId",
+													        dataSource  : {
+																transport: {
+														            read: {
+														            	type:"POST",
+														                dataType: "json",
+														                url: '${base.contextPath}/fms/ord/valueAdd/querySublineProductName?itemId='+itemId,
+														            }
+														        },
+														        schema: {
+														        	data:'rows'
+														        }
+															},
+															select:function(e){
+																viewModel.model.set("price",e.dataItem.price);
+															},
+													    });
+													</script> 
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">价格</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" class="k-textbox" id="price5" data-bind="value:model.price" >
+													<!-- <script type="text/javascript">
+													$("#price5").kendoNumericTextBox({
+															format: "0.00",
+															min:0
+													});
+												</script> -->
+											</div>
+										</div>
+									</div>
+						
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约时间</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveDate5" data-bind="value:model.reserveDate" >
+													<script type="text/javascript">
+													$("#reserveDate5").kendoDateTimePicker({
+														format: "yyyy-MM-dd HH:mm:ss"
+													});
+													var datetimepicker5 = $("#reserveDate1").data("kendoDateTimePicker");
+													datetimepicker5.min(new Date());
+												</script>
+											</div>
+										</div>
+									</div>
+						
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" id="reserveContactPerson" 
+													data-bind="value:model.reserveContactPerson" class="k-textbox">
+											</div>
+										</div>
+									</div>
+						
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">预约对接人电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode9" name="reserveContactPhoneCode" type="text" data-bind="value:model.reserveContactPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" id="reserveContactPhone8" class="k-textbox"
+													data-bind="value:model.reserveContactPhone">
+													<script type="text/javascript">
+														/* $("#reserveContactPhone8").kendoNumericTextBox({
+														    decimals: 1,
+														    format:"0"
+														}); */
+														$("#phoneCode9").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">备注</label>
+											<div class="col-sm-9">
+												<textarea style="width: 300px;height: 100px;" id="reserveComment" 
+													 data-bind="value:model.reserveComment"  maxlength="150"
+													class="k-textbox">
+                                                  </textarea>
+											</div>
+										</div>
+									</div>
+									
+									<div id="JDYD1">
+									<hr>
+									<fieldset style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;"/>
+										<h4>预约确认信息</h4>
+										<div class="form-group">
+											<div class="col-sm-11">
+												<label class="col-sm-3 control-label">酒店名字</label>
+												<div class="col-sm-9">
+													<input style="width: 240px;"
+														data-bind="value:model.commonName" class="k-textbox">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-11">
+												<label class="col-sm-3 control-label">酒店电话</label>
+												<div class="col-sm-1">
+	                            					<input id="phoneCode10" name="commonPhoneCode" type="text" data-bind="value:model.commonPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+	                        					</div>
+												<div class="col-sm-3">
+													<input style="width: 145px;" class="k-textbox"
+														data-bind="value:model.commonPhone">
+														<script type="text/javascript">
+															$("#phoneCode10").kendoComboBox({
+														        valuePrimitive: true,
+														        dataTextField: "value",
+														        dataValueField: "value",
+														        dataSource: phoneCodeData
+														    });
+														</script>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-11">
+												<label class="col-sm-3 control-label">酒店地址</label>
+												<div class="col-sm-9">
+													<input style="width: 240px;" 
+														data-bind="value:model.commonAddr" class="k-textbox">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-11">
+												<label class="col-sm-3 control-label">酒店备注</label>
+												<div class="col-sm-9">
+													<textarea style="width: 300px;height: 100px;" 
+														 data-bind="value:model.commonRemark"  maxlength="150"
+														class="k-textbox">
+                                                  </textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div id="HPV1">
+									<hr>
+									<fieldset style="border: 0px solid #B5B8C8; margin-left: 1%; display: block;"/>
+										<h4>预约确认信息</h4>
+										<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">诊所名字</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;"
+													data-bind="value:model.commonName" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">诊所电话</label>
+											<div class="col-sm-1">
+                            					<input id="phoneCode11" name="commonPhoneCode" type="text" data-bind="value:model.commonPhoneCode" required validationMessage='<@spring.message "hap.error.nullexception"/>'style="width: 140%;">
+                        					</div>
+											<div class="col-sm-3">
+												<input style="width: 145px;" class="k-textbox"
+													data-bind="value:model.commonPhone">
+													<script type="text/javascript">
+														$("#phoneCode11").kendoComboBox({
+													        valuePrimitive: true,
+													        dataTextField: "value",
+													        dataValueField: "value",
+													        dataSource: phoneCodeData
+													    });
+													</script>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">诊所地址</label>
+											<div class="col-sm-9">
+												<input style="width: 240px;" 
+													data-bind="value:model.commonAddr" class="k-textbox">
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-11">
+											<label class="col-sm-3 control-label">诊所备注</label>
+											<div class="col-sm-9">
+												<textarea style="width: 300px;height: 100px;" 
+													 data-bind="value:model.commonRemark"  maxlength="150"
+													class="k-textbox">
+                                                  </textarea>
+											</div>
+										</div>
+									</div>
+									</div>
+					</form>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		kendo.bind($('#page-content'), viewModel);
+		var BaseUrl = _basePath;
+		
+		
+		//判断上一个页面传递过来的值
+		if (orderId!= 0) {
+			$.ajax({
+				type : "POST",
+				async : false,
+				url : "${base.contextPath}/fms/ord/valueAdd/query",
+				data : {
+					orderId : orderId
+				},
+				success : function(json) {
+					var row = json.rows[0] || {};
+					 for ( var k in row) {
+						viewModel.model.set(k, row[k]);
+					} 
+				}
+			});
+		}
+		
+		dataSource = new kendo.data.DataSource({
+	        transport: {
+	            read: {
+	                url: BaseUrl + "/fms/ord/valueAdd/queryOrdTeamVisitor?orderId="+orderId,
+	                type: "POST",
+	                dataType: "json"
+	            },
+	            update: {
+	                url: BaseUrl + "/fms/ord/valueAdd/updateOrdTeamVisitor",
+	                type: "POST",
+	                contentType: "application/json"
+	            },
+	            destroy: {
+	                url: BaseUrl + "/fms/ord/valueAdd/remove",
+	                type: "POST",
+	                contentType: "application/json"
+	            },
+	            create: {
+	                url: BaseUrl + "/fms/ord/valueAdd/submit",
+	                type: "POST",
+	                contentType: "application/json"
+	            },
+	            parameterMap: function (options, type) {
+	                if (type !== "read" && options.models) {
+	                    var datas = Hap.prepareSubmitParameter(options, type)
+	                    return kendo.stringify(datas);
+	                } else if (type === "read") {
+	                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+	                }
+	            }
+	        },
+	        batch: true,
+	        serverPaging: true,
+	        pageSize: 10,
+	        schema: {
+	            data: 'rows',
+	            total: 'total',
+	            model: {
+	                id: "teamVisitorId",
+	                fields: {
+	                	birthDate: {type: "date"}
+	                }
+	            }
+	        }
+	    });
+
+	    var grid = $("#Grid").kendoGrid({
+	        dataSource: dataSource,
+	        height: '300px',
+	        resizable: true,
+	        scrollable: true,
+	        navigatable: false,
+	        // selectable: 'multiple, rowbox',
+	        pageable: {
+	            pageSizes: [5, 10, 20, 50],
+	            refresh: true,
+	            buttonCount: 5
+	        },
+	        columns: [
+	            {
+	                field: "teamVisitorId",
+	                title: 'teamVisitorId',
+	                hidden:true
+	            },
+	            {
+	                field: "orderId",
+	                title: 'orderId',
+	                hidden:true
+	            },
+	            {
+	                field: "name",
+	                title: '姓名',
+	                width: 80,
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	            },
+	            {
+	                field: "sex",
+	                title: '性别',
+	                width: 40,
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template: function(dataItem){
+	                    var v = dataItem.sex;
+	                    $.each(sexData,function(i,n){
+	                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+	                            v = n.meaning;
+	                            return v;
+	                        }
+	                    })
+	                    if (typeof(v) == "undefined" || v == null) {
+	                        return "";
+	                    }
+	                    return v;
+	                },
+	                editor: function(container, options){
+	                    $('<input name="' + options.field + '">')
+	                        .appendTo(container)
+	                        .kendoDropDownList({
+	                            dataTextField: "meaning",
+	                            dataValueField: "value",
+	                            dataSource: sexData
+	                        });
+	                },
+	            },
+	            {
+	                field: "birthDate",
+	                title: '出生年月',
+	                width: 120,
+	                format: "{0:yyyy-MM-dd}",
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                editor: function(container, options) {
+	           		  	$('<input name="' + options.field + '"/>')
+	                      .appendTo(container)
+	                      .kendoDatePicker();
+	                }
+	            },
+	            {
+	                field: "signAddress",
+	                title: '签发地点',
+	                width: 100,
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	            },
+	            {
+	                field: "passNumber",
+	                title: '港澳通行证号',
+	                width: 120,
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	            },
+	            {
+	                /* field: "fileId", */
+	                title: '签注页',
+	                width: 80,
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                template : function (dataItem) {
+	                    var buttons = '';
+	                    if(dataItem.fileId){
+	                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+	                    }
+	                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+	                    return buttons;
+	                }
+	            },
+	             {
+	                field: "操作",
+	                title: '操作',
+	                width: 100,
+	                headerAttributes: {
+	                    'class':'table-header-cell',
+	                    style:'text-align: center;vertical-align:middle;'
+	                },
+	                attributes: {
+	                    "class": "table-cell",
+	                    style: "text-align:center;"
+	                },
+	                template : function (dataItem) {
+	                    if (dataItem.orderId) {
+	                        return '<a href="#"  onclick="save()">保存</a>&nbsp;&nbsp;<a href="#"  onclick="cannel()">取消</a>';
+	                    } else {
+	                        return '<a href="#"  onclick="save()">保存</a>&nbsp;&nbsp;<a href="#"  onclick="cannel()">取消</a>';
+	                    }
+	                }
+	            }, 
+	        ],
+	        editable: true,
+	    }).data("kendoGrid");
+		
+		$(function() {
+			if(valueaddType == "TTQZ"){
+				$("#TTQZ").show();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#ZCFW").hide();
+				$("#HSYD").hide();
+				$("#YHKH").hide();
+			}else if(valueaddType == "HPV"){
+				//第一次之后  价格不会显示
+				if($("#vaccineCustomerTimes").val() != 1){
+					$("#HPVprice").hide();
+				}
+				$("#HPV").show();
+				$("#HPV1").show();
+				$("#TTQZ").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#ZCFW").hide();
+				$("#HSYD").hide();
+				$("#YHKH").hide();
+			}else if(valueaddType == "JDYD"){
+				$("#JDYD").show();
+				$("#JDYD1").show();
+				$("#TTQZ").hide();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#ZCFW").hide();
+				$("#HSYD").hide();
+				$("#YHKH").hide();
+			}else if(valueaddType == "ZCFW"){
+				$("#ZCFW").show();
+				$("#TTQZ").hide();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#HSYD").hide();
+				$("#YHKH").hide();
+			}else if(valueaddType == "HSYD"){
+				$("#HSYD").show();
+				$("#TTQZ").hide();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#ZCFW").hide();
+				$("#YHKH").hide();
+			}else if(valueaddType == "YHKH"){
+				$("#YHKH").show();
+				$("#TTQZ").hide();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#ZCFW").hide();
+				$("#HSYD").hide();
+			}else{
+				$("#TTQZ").hide();
+				$("#HPV").hide();
+				$("#HPV1").hide();
+				$("#JDYD").hide();
+				$("#JDYD1").hide();
+				$("#ZCFW").hide();
+				$("#HSYD").hide();
+				$("#YHKH").hide();
+			}
+		})
+		
+		 $("#checkinDate").kendoDatePicker();
+		 $("#checkoutDate").kendoDatePicker();
+		
+		function save() {
+			$('#Grid').data('kendoGrid').saveChanges();
+		}
+		
+		function cannel() {
+			$('#Grid').data('kendoGrid').cancelChanges();
+		}
+		
+		//更改状态
+   		function openUpdateStatusWin(){
+   			//点击改变状态的同时  保存修改信息
+   			if(orderId != 0){
+   				//数据校验  投保人不能为空
+   				if($("#applicantCustomerId").val() == null || $("#applicantCustomerId").val() == ''){
+   					kendo.ui.showErrorDialog({
+   						message : "投保人不能为空!"
+   					});
+   					return;
+   				}
+   				Hap.submitForm({
+   					async: false, 
+   					url : '${base.contextPath}/fms/ord/valueAdd/updateOrderByOrderId',
+   					formModel : viewModel.model,
+   					success : function(data) {
+   						if (!data.success) {
+   							kendo.ui.showErrorDialog({
+   								message : "信息保存失败"
+   							});
+   							return;
+   						} 
+   					}
+   				})
+   			}
+   			
+			//更改信息   			
+   			var status = $("#status").val();
+   			if(status == "RESERVE_CANCELLED" || status == "RESERVE_SUCCESS"){
+	 			kendo.ui.showInfoDialog({
+                    title: $l('hap.tip.info'),
+                    message: "此状态不能修改了!"
+                });
+	 		}else{
+	 			var price;
+	 			if(valueaddType == "TTQZ"){
+	 				price = $("#price1").val();
+				}else if(valueaddType == "HPV"){
+					price = $("#price2").val();
+				}else if(valueaddType == "JDYD"){
+					price = $("#priceInterval").val();
+				}else if(valueaddType == "ZCFW"){
+					price = $("#price3").val();
+				}else if(valueaddType == "HSYD"){
+					price = $("#price4").val();
+				}else if(valueaddType == "YHKH"){
+					price = $("#price5").val();
+				}
+	   			var url = 'valueadd_status_update.html?orderId='+orderId+"&status="+status+"&valueaddType="+valueaddType+"&price="+price;
+	   	        var statusWin =  $("#statusWin").kendoWindow({
+	   	            width: 400,
+	   	            height: 300,
+	   	            title: '修改状态',
+	   	            content: url,
+	   	            iframe:  true,
+	   	            visible: false,
+	   	            close:function(){
+	   	            	//刷新页面
+	   	            	window.location.reload();
+	   	            },
+	   	            modal:true
+	   	        }).data("kendoWindow");
+	   	    	 statusWin.center().open();
+	 		}
+   	    }
+		
+		//点击取消的时候  关闭页面
+		function closeWin() {
+			//点击取消的时候  先刷新页面
+			//parent.closeTab('order_valueAdd' + orderId);
+			window.parent.$("#detailWin").data("kendoWindow").close();
+		};
+		
+		
+		//上传附件
+		function upload (){
+		  if(viewModel.model.fileId){
+			  kendo.ui.showConfirmDialog({
+					message : "资料已存在，是否要覆盖"
+				}).done(function (event) {
+		            if (event.button == 'OK') {
+		            	window.reqWin = $("#reqWin").kendoWindow({
+		                    title: '<@spring.message "sysfile.upload"/>',
+		                    width: 400,
+		                    height: 250,
+		                    modal: true
+		                }).data("kendoWindow");
+		                reqWin.center().open();
+		            }
+		         });
+		  }else{
+			  window.reqWin = $("#reqWin").kendoWindow({
+	              title: '<@spring.message "sysfile.upload"/>',
+	              width: 400,
+	              height: 250,
+	              modal: true
+	          }).data("kendoWindow");
+	          reqWin.center().open();
+		  }
+		};
+		
+		$("#reqFiles").kendoUpload({
+			async : {
+				saveUrl : "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+			},
+			showFileList : false,
+			upload : onUpload,
+			success : onSuccess
+		});
+		function onUpload(e) {
+			e.data = {
+				modularName : 'SPE',
+				allowType : 'jpg;png;pdf;doc;xls;xlsx;docx',
+				maxSize : 20480
+			}
+		};
+		var fileName;
+		function onSuccess(e) {
+			if (e.response.success) {
+				viewModel.model.fileId = e.response.file.fileId;
+				fileName = e.response.file.fileName;
+				//document.getElementById("label").innerHTML=fileName;
+		
+				reqWin.close();
+		        kendo.ui.showInfoDialog({
+		            message  : '上传成功!'
+		        })
+			} else {
+				kendo.ui.showErrorDialog({
+					message : e.response.message
+				})
+			}
+		};
+	    
+		var ossWebPath ='<@spring.message "fms.pub.oss_web_path"/>';
+		//下载
+		  function downloadFile(uid){
+			  data = dataSource.getByUid(uid);
+	       $.ajax({
+	           url : '${base.contextPath}/commons/attach/validateFile',
+	           type : "POST",
+	           dataType : "json",
+	           data : {
+	               fileId:data.fileId,
+	               token:data._token
+	           },
+	           success : function(json) {
+	               if(json.success == true){
+	            	   url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+	                   var iframe = document.getElementById("ifile");
+	                   iframe.src=url;
+	               }else{
+	                   kendo.ui.showErrorDialog({
+	                       message  : '<@spring.message "fms.file_not_exists"/>'
+	                   })
+	               }
+	           },
+	       })
+	   };
+		
+
+		//点击保存
+	function saveData() {
+		if(orderId != 0){
+			//数据校验  投保人不能为空
+			if($("#applicantCustomerId").val() == null || $("#applicantCustomerId").val() == ''){
+				kendo.ui.showErrorDialog({
+					message : "投保人不能为空!"
+				});
+				return;
+			}
+			Hap.submitForm({
+				async: false, 
+				url : '${base.contextPath}/fms/ord/valueAdd/updateOrderByOrderId',
+				formModel : viewModel.model,
+				success : function(data) {
+					if (data.success) {
+						 kendo.ui.showInfoDialog({
+                             title: $l('hap.tip.info'),
+                             message: $l('hap.tip.success')
+                         }); 
+					} else {
+						kendo.ui.showErrorDialog({
+							message : "信息保存失败"
+						});
+					}
+
+				}
+			})
+		}
+	}
+	</script>
+</body>
+</html>

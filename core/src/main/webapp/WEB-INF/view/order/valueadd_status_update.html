@@ -1,0 +1,268 @@
+<#--
+* description: 增值服务状态修改
+* version: 1.0
+-->
+<#include "../include/header.html">
+<body>
+<script src="${base.contextPath}/clb/common/clbCode?valueAddStatusData=ORD.VALUEADD_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?vehicleTypeData=ORD.VALUE_ADD_VEHICLE_TYPE" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var orderId =  '${RequestParameters.orderId!0}';
+    var status = '${RequestParameters.status!}';
+    var valueaddType = '${RequestParameters.valueaddType!}';
+    /* var price = '${RequestParameters.price!0}';
+    if(price == "null"){
+    	price = 0;
+    }  */
+    var viewModel = kendo.observable({
+        model: {
+            status:status,
+            orderId:orderId
+        }
+    });
+    
+    
+    viewModel.model.set("orderId",orderId);
+    viewModel.model.set("status",status);
+    viewModel.model.set("valueaddType",valueaddType);
+    //viewModel.model.set("price",price);
+    viewModel.model.set("price",null);
+    
+</script>
+    <div id="page-content">
+        <div class="container">
+            <div class="form-group" style="margin-top:20px">
+       		 <div class="col-sm-3">
+                <label class="col-sm-2 control-label"
+                       style="text-align: right"><@spring.message "fms.OrdOrder.status"/></label>
+                <div class="col-sm-10">
+                    <input id="status" name="status" type="text" onchange="change()" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                    <script>
+                        kendo.bind($('#status'), viewModel);
+                        $("#status").kendoDropDownList({
+                            /* optionLabel: "", */
+                            dataTextField:"meaning",
+                            dataValueField :"value",
+                            valuePrimitive: true,
+                            dataSource: valueAddStatusData
+                        })
+                        
+                        function change() {
+							var status = $("#status").val();
+							if(status == "WAIT_PAY"){
+					    		$("#sublineItemNameDiv").hide();
+					    		$("#priceDiv").show();
+					    		$("#vehicleTypeDiv").hide();
+					    		if(valueaddType == "ZCFW"){
+					    			$("#vehicleTypeDiv").show();
+					    		}
+					    		//预约成功
+					    	}else if(status == "RESERVE_SUCCESS"){
+					    		$("#sublineItemNameDiv").hide();
+					    		$("#priceDiv").hide();
+					    		$("#vehicleTypeDiv").hide();
+					    		//需复查
+					    	}else if(status == "NEED_REVIEW"){
+					    		$("#sublineItemNameDiv").show();
+					    		$("#priceDiv").hide();
+					    		$("#vehicleTypeDiv").hide();
+					    		//预约资料审核中
+					    	}else if(status == "DATA_APPROVING"){
+					    		$("#sublineItemNameDiv").hide();
+					    		$("#priceDiv").hide();
+					    		$("#vehicleTypeDiv").hide();
+					    		//取消预约
+					    	}else if(status == "RESERVE_CANCELLED"){
+					    		$("#sublineItemNameDiv").hide();
+					    		$("#priceDiv").hide();
+					    		$("#vehicleTypeDiv").hide();
+					    	}else{
+					    		$("#sublineItemNameDiv").hide();
+					    		$("#priceDiv").hide();
+					    		$("#vehicleTypeDiv").hide();
+					    	}
+						}
+                    </script>
+                </div>
+            </div>
+            <div class="col-sm-3" id="sublineItemNameDiv">
+                <label class="col-sm-2 control-label"
+                       style="text-align: right">需复查内容</label>
+                <div class="col-sm-10">
+                    <textarea id="sublineItemName" name="sublineItemName" required  data-bind="value:model.sublineItemName" rows="4" style="width: 100%;"></textarea>
+                </div>
+            </div>
+            
+            <div class="col-sm-3" id="priceDiv">
+                <label class="col-sm-2 control-label"
+                       style="text-align: right">支付金额</label>
+                <div class="col-sm-10">
+                    <input  id="price" name="price" class="k-textbox" required placeholder="0.00" data-bind="value:model.price"  style="width: 100%;">
+                </div>
+            </div>
+                
+            <div class="col-sm-3" id="vehicleTypeDiv">
+                <label class="col-sm-2 control-label"
+                       style="text-align: right">车辆类型</label>
+                <div class="col-sm-10">
+                    <input  id="vehicleType" name="vehicleType" required  data-bind="value:model.vehicleType"  style="width: 100%;">
+                </div>
+            </div>
+                
+            </div>
+            
+        </div>
+            <div class="col-sm-12">
+                <div style="margin-top: 50px;">
+                    <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-left:40px;"><i class="fa fa-reply" style="margin-right:5px;"></i><@spring.message "hap.cancel"/></span>
+                    <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-left: 60px"><i class="fa fa-save" style="margin-right:5px;"></i><@spring.message "hap.save"/></span>
+                </div>
+            </div>
+            
+    </div>
+    <script>
+    kendo.bind($('#page-content'), viewModel);
+    
+    //页面加载完成之后
+    $(function(){
+    	//判断当前的状态  待支付
+    	if(status == "WAIT_PAY"){
+    		$("#sublineItemNameDiv").hide();
+    		$("#priceDiv").show();
+    		$("#vehicleTypeDiv").hide();
+    		if(valueaddType == "ZCFW"){
+    			$("#vehicleTypeDiv").show();
+    		}
+    		//预约成功
+    	}else if(status == "RESERVE_SUCCESS"){
+    		$("#sublineItemNameDiv").hide();
+    		$("#priceDiv").hide();
+    		$("#vehicleTypeDiv").hide();
+    		//需复查
+    	}else if(status == "NEED_REVIEW"){
+    		$("#sublineItemNameDiv").show();
+    		$("#priceDiv").hide();
+    		$("#vehicleTypeDiv").hide();
+    		//预约资料审核中
+    	}else if(status == "DATA_APPROVING"){
+    		$("#sublineItemNameDiv").hide();
+    		$("#priceDiv").hide();
+    		$("#vehicleTypeDiv").hide();
+    		//取消预约
+    	}else if(status == "RESERVE_CANCELLED"){
+    		$("#sublineItemNameDiv").hide();
+    		$("#priceDiv").hide();
+    		$("#vehicleTypeDiv").hide();
+    	}else{
+    		$("#sublineItemNameDiv").hide();
+    		$("#priceDiv").hide();
+    		$("#vehicleTypeDiv").hide();
+    	}
+    })
+    
+    $('#vehicleType').kendoDropDownList({
+        valuePrimitive: true,
+        dataTextField : "meaning",
+        dataValueField : "value",
+        dataSource:vehicleTypeData
+    });
+    
+    /* $("#price").kendoNumericTextBox({
+		format: "0.00",
+		min:0
+	}); */
+    
+	/* $('#btn_save').click(function(){
+	    $(this).attr('disabled','disabled').die('click');
+	    // other code
+	}); */
+        function saveData() {
+        	var status1 = $("#status").val();
+        	if(status1 == "WAIT_PAY"){
+				if($("#price").val() == ''){
+					kendo.ui.showErrorDialog({
+       					message : "必须输入金额!"
+       				});
+					return;
+				}else if(!check($("#price").val())){
+					kendo.ui.showErrorDialog({
+       					message : "请填写正确的金额!"
+       				});
+					return;
+				}else if($("#price").val() == 0){
+					kendo.ui.showErrorDialog({
+       					message : "金额必须大于0!"
+       				});
+					return;
+				}
+				
+        		if(valueaddType == "ZCFW"){
+        			if($("#vehicleType").val() == ''){
+        				kendo.ui.showErrorDialog({
+        					message : "车辆类型不能为空!"
+        				});
+        				return;
+            		}
+        		}
+        	} 
+        	if(status1 == "NEED_REVIEW"){
+        		if($("#sublineItemName").val() == ''){
+        			kendo.ui.showErrorDialog({
+    					message : "需复查内容不能为空!"
+    				});
+        			return;
+        		}
+        	}
+        	
+        	if(status == "RESERVE_SUCCESS" && status1 =="RESERVE_CANCELLED"){
+        		kendo.ui.showErrorDialog({
+					message : "状态修改有误!"
+				});
+        		return;
+        	}
+
+			var unique = zeroModal.loading(6);
+            Hap.submitForm({
+				async: false, 
+				url : '${base.contextPath}/fms/ord/valueAdd/updateStatus',
+				formModel : viewModel.model,
+				success : function(data) {
+					if (data.success) {
+						zeroModal.close(unique);
+						kendo.ui.showInfoDialog({
+                             title: $l('hap.tip.info'),
+                             message: $l('hap.tip.success')
+                         }).done(function(event){
+                        	 if (event.button == 'OK') {
+                        		 window.parent.$("#statusWin").data("kendoWindow").close();
+                        	 }
+                         });
+					} else {
+						kendo.ui.showErrorDialog({
+							message : data.message
+						});
+						window.parent.$("#statusWin").data("kendoWindow").close();
+					}
+				}
+			})
+        	
+        };
+        
+        function cancelData() {
+            window.parent.$("#statusWin").data("kendoWindow").close();
+        };
+        
+        function check(v){
+			var a=/^[0-9]*(\.[0-9]{1,2})?$/;
+			if(!a.test(v)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+        
+    </script>
+</body>
+</html>

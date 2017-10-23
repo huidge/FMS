@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.forecast.mapper.FetChannelCheckMapper">
+    <resultMap id="BaseResultMap" type="clb.core.forecast.dto.FetChannelCheck">
+        <result column="CHANNEL_CHECK_ID" property="channelCheckId" jdbcType="DECIMAL" />
+        <result column="CHECK_PERIOD" property="checkPeriod" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TYPE" property="paymentType" jdbcType="VARCHAR" />
+         <result column="PAYMENT_COMPANY_TYPE" property="paymentCompanyType" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_TYPE" property="receiveCompanyType" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_ID" property="paymentCompanyId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_COMPANY_ID" property="receiveCompanyId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ORDER_CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="EXCHANGE_RATE" property="exchangeRate" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="DUE_DATE" property="dueDate" jdbcType="DATE" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="BASE_DATE" property="baseDate" jdbcType="DATE"/>
+        <result column="ORDER_TYPE" property="orderType" jdbcType="DATE"/>
+        <result column="PAYMENT_COMPANY_NAME" property="paymentCompanyName" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_NAME" property="receiveCompanyName" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="PERIOD_ID" property="periodId" jdbcType="DECIMAL" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+		<result column="STATUS_CODE" property="paramStatus" jdbcType="VARCHAR"/> <!-- 渠道状态 -->
+    </resultMap>
+    
+    <select id="getData" parameterType="clb.core.forecast.dto.FetChannelCheck" resultMap="BaseResultMap">
+     		SELECT
+					ffcc.*, 
+					foo.ORDER_NUMBER,
+					fpi.ITEM_NAME,
+					fcc.STATUS_CODE,
+					(
+					CASE
+					WHEN foo.ORDER_TYPE = 'INSURANCE' THEN
+						fpis.SUBLINE_ITEM_NAME
+					WHEN foo.ORDER_TYPE = 'BOND' or foo.ORDER_TYPE = 'IMMIGRANT' THEN
+						'1'
+					END
+					) SUBLINE_ITEM_NAME,
+					(
+					CASE
+					WHEN foo.ORDER_TYPE = 'INSURANCE' THEN
+						foo.EXPECT_COOL_DATE
+					WHEN foo.ORDER_TYPE = 'BOND' or foo.ORDER_TYPE = 'IMMIGRANT' THEN
+						foo.ISSUE_DATE
+					END
+					) BASE_DATE,
+					foo.ORDER_TYPE
+			FROM
+					fms_fet_channel_check ffcc
+					LEFT JOIN fms_ord_order foo on ffcc.ORDER_ID = foo.ORDER_ID
+					LEFT JOIN fms_prd_items fpi on ffcc.ITEM_ID = fpi.ITEM_ID
+					LEFT JOIN fms_prd_item_subline fpis on foo.SUBLINE_ID = fpis.SUBLINE_ID
+					LEFT JOIN fms_cnl_channel fcc on foo.CHANNEL_ID = fcc.CHANNEL_ID
+			<where>
+				<if test="paymentType != null">
+					AND ffcc.PAYMENT_TYPE = #{paymentType}
+				</if>
+				<if test="checkPeriod != null">
+					AND ffcc.CHECK_PERIOD = #{checkPeriod}
+				</if>
+				<if test="version != null">
+					AND ffcc.VERSION = #{version}
+				</if>
+				<if test="comments != null">
+					AND ffcc.COMMENTS like CONCAT(CONCAT('%',#{comments}),'%')
+				</if>
+				<if test="paymentCompanyType != null">
+					AND ffcc.PAYMENT_COMPANY_TYPE = #{paymentCompanyType}
+				</if>
+				<if test="receiveCompanyType != null">
+					AND ffcc.RECEIVE_COMPANY_TYPE = #{receiveCompanyType}
+				</if>
+				<if test="paymentCompanyId != null">
+					AND ffcc.PAYMENT_COMPANY_ID = #{paymentCompanyId}
+				</if>
+				<if test="receiveCompanyId != null">
+					AND ffcc.RECEIVE_COMPANY_ID = #{receiveCompanyId}
+				</if>
+				<if test="orderNumber != null">
+					AND ffcc.ORDER_ID in (
+						select foo.ORDER_ID
+						from fms_ord_order foo
+						where foo.ORDER_NUMBER like CONCAT(CONCAT('%',#{orderNumber}),'%')
+					)
+				</if>
+			</where>
+     </select>
+
+	<select id="summaryQuery"  parameterType="clb.core.forecast.dto.FetChannelCheck" resultMap="BaseResultMap">
+		SELECT
+		ffcc.CHECK_PERIOD,
+		ffpd.PERIOD_ID,
+		ffcc.VERSION,
+		ffcc.STATUS,
+		ffcc.PAYMENT_COMPANY_TYPE,
+		ffcc.RECEIVE_COMPANY_TYPE,
+		ffcc.PAYMENT_COMPANY_ID,
+		ffcc.RECEIVE_COMPANY_ID,
+		(CASE WHEN pfss.NAME != '' THEN pfss.NAME
+		WHEN pfcc.CHANNEL_NAME != '' THEN pfcc.CHANNEL_NAME
+		END)PAYMENT_COMPANY_NAME,
+		(CASE WHEN rfss.NAME != '' THEN rfss.`NAME`
+		WHEN rfcc.CHANNEL_NAME != '' THEN rfcc.CHANNEL_NAME
+		END)RECEIVE_COMPANY_NAME,
+		sum(ffcc.HKD_AMOUNT) HKD_AMOUNT
+		FROM
+		fms_fet_channel_check ffcc
+		left join fms_spe_supplier pfss on (pfss.SUPPLIER_ID = ffcc.PAYMENT_COMPANY_ID and ffcc.PAYMENT_COMPANY_TYPE =
+		'SUPPLIER')
+		left join fms_cnl_channel pfcc on (pfcc.CHANNEL_ID = ffcc.PAYMENT_COMPANY_ID and ffcc.PAYMENT_COMPANY_TYPE =
+		'CHANNEL')
+		left join fms_spe_supplier rfss on (rfss.SUPPLIER_ID = ffcc.RECEIVE_COMPANY_ID and ffcc.RECEIVE_COMPANY_TYPE =
+		'SUPPLIER')
+		left join fms_cnl_channel rfcc on (rfcc.CHANNEL_ID = ffcc.RECEIVE_COMPANY_ID and ffcc.RECEIVE_COMPANY_TYPE =
+		'CHANNEL')
+		JOIN fms_fet_period_head ffph on (
+		ffph.PARTY_TYPE = FFCC.PAYMENT_COMPANY_TYPE
+		and ffph.PARTY_ID = FFCC.PAYMENT_COMPANY_ID
+		)
+		JOIN fms_fet_period FFPD ON (
+		FFPD.PERIOD_NAME = FFCC.CHECK_PERIOD
+		and FFPD.HEAD_ID = ffph.HEAD_ID
+		)
+		<where>
+			<if test="paramStatus != null">
+				((pfss.STATUS_CODE=#{paramStatus} or pfcc.STATUS_CODE=#{paramStatus})
+				AND (rfss.STATUS_CODE=#{paramStatus} or rfcc.STATUS_CODE=#{paramStatus}))
+			</if>
+			<if test="checkPeriod != null">
+				AND ffcc.CHECK_PERIOD = #{checkPeriod}
+			</if>
+			<if test="version != null">
+				AND ffcc.VERSION = #{version}
+			</if>
+			<if test="receiveCompanyName != null">
+				AND (rfss.NAME like CONCAT(CONCAT('%',#{receiveCompanyName}),'%') or rfcc.CHANNEL_NAME like
+				CONCAT(CONCAT('%',#{receiveCompanyName}),'%'))
+			</if>
+			<if test="paymentCompanyName != null">
+				AND (pfss.NAME like CONCAT(CONCAT('%',#{paymentCompanyName}),'%') or pfcc.CHANNEL_NAME like
+				CONCAT(CONCAT('%',#{paymentCompanyName}),'%'))
+			</if>
+			<if test="status != null">
+				AND ffcc.STATUS = #{status}
+			</if>
+
+		</where>
+		group by
+		ffcc.CHECK_PERIOD,
+		ffpd.PERIOD_ID,
+		ffcc.VERSION,
+		ffcc.STATUS,
+		ffcc.PAYMENT_COMPANY_TYPE,
+		ffcc.RECEIVE_COMPANY_TYPE,
+		ffcc.PAYMENT_COMPANY_ID,
+		ffcc.RECEIVE_COMPANY_ID,
+		PAYMENT_COMPANY_NAME,
+		RECEIVE_COMPANY_NAME
+		order by FIELD(`STATUS`, 'DQR', 'YQR', 'YSX'), ffcc.VERSION desc;
+	</select>
+
+	<select id="getCheckCount" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			(
+				SELECT
+					(
+						CASE
+						WHEN pfss. NAME != '' THEN
+							pfss. NAME
+						WHEN pfcc.CHANNEL_NAME != '' THEN
+							pfcc.CHANNEL_NAME
+						END
+					) PAYMENT_COMPANY_NAME,
+					(
+						CASE
+						WHEN rfss. NAME != '' THEN
+							rfss.`NAME`
+						WHEN rfcc.CHANNEL_NAME != '' THEN
+							rfcc.CHANNEL_NAME
+						END
+					) RECEIVE_COMPANY_NAME
+				FROM
+					fms_fet_channel_check ffcc
+				LEFT JOIN fms_spe_supplier pfss ON (
+					pfss.SUPPLIER_ID = ffcc.PAYMENT_COMPANY_ID
+					AND ffcc.PAYMENT_COMPANY_TYPE = 'SUPPLIER'
+				)
+				LEFT JOIN fms_cnl_channel pfcc ON (
+					pfcc.CHANNEL_ID = ffcc.PAYMENT_COMPANY_ID
+					AND ffcc.PAYMENT_COMPANY_TYPE = 'CHANNEL'
+				)
+				LEFT JOIN fms_spe_supplier rfss ON (
+					rfss.SUPPLIER_ID = ffcc.RECEIVE_COMPANY_ID
+					AND ffcc.RECEIVE_COMPANY_TYPE = 'SUPPLIER'
+				)
+				LEFT JOIN fms_cnl_channel rfcc ON (
+					rfcc.CHANNEL_ID = ffcc.RECEIVE_COMPANY_ID
+					AND ffcc.RECEIVE_COMPANY_TYPE = 'CHANNEL'
+				)
+				JOIN fms_fet_period_head ffph ON (
+					ffph.PARTY_TYPE = FFCC.PAYMENT_COMPANY_TYPE
+					AND ffph.PARTY_ID = FFCC.PAYMENT_COMPANY_ID
+				)
+				JOIN fms_fet_period FFPD ON (
+					FFPD.PERIOD_NAME = FFCC.CHECK_PERIOD
+					AND FFPD.HEAD_ID = ffph.HEAD_ID
+				)
+				<where>
+					<if test="paramStatus != null">
+						(
+							pfss.STATUS_CODE = #{ paramStatus }
+							OR pfcc.STATUS_CODE = #{ paramStatus }
+						)
+					AND (
+							rfss.STATUS_CODE = #{ paramStatus }
+							OR rfcc.STATUS_CODE = #{ paramStatus }
+						)
+					</if>
+					<if test="status != null">
+						AND ffcc. STATUS = #{ status }
+					</if>
+					and
+					EXISTS (
+						SELECT
+							1
+						FROM
+							sys_user su
+						WHERE
+						(
+							ffcc.RECEIVE_COMPANY_ID = su.RELATED_PARTY_ID
+							AND su.USER_ID = #{ userId }
+							AND ffcc.RECEIVE_COMPANY_TYPE = su.USER_TYPE
+							AND su.USER_TYPE = 'CHANNEL'
+						)
+						OR (
+						#{ userId } IN (
+							SELECT
+							su1.USER_ID
+							FROM
+							sys_user su1,
+							sys_user_role sur,
+							sys_role_b srb
+							WHERE
+							srb.ROLE_CODE = 'ADMIN'
+							AND srb.ROLE_ID = sur.ROLE_ID
+							AND su1.USER_ID = sur.USER_ID
+						)
+							AND su.USER_ID = #{ userId }
+							)
+					)
+				</where>
+				GROUP BY
+					ffcc.CHECK_PERIOD,
+					ffpd.PERIOD_ID,
+					ffcc.VERSION,
+					ffcc. STATUS,
+					ffcc.PAYMENT_COMPANY_TYPE,
+					ffcc.RECEIVE_COMPANY_TYPE,
+					ffcc.PAYMENT_COMPANY_ID,
+					ffcc.RECEIVE_COMPANY_ID,
+					PAYMENT_COMPANY_NAME,
+					RECEIVE_COMPANY_NAME
+			) temp
+	</select>
+
+	<!-- 批量插入方法 -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into fms_fet_channel_check
+		(
+			check_period,
+			payment_company_type,
+			receive_company_type,
+			payment_company_id,
+			receive_company_id,
+			payment_type,
+			order_id,
+			item_id,
+			order_currency,
+			amount,
+			rate,
+			exchange_rate,
+			hkd_amount,
+			due_date,
+			status,
+			version,
+			comments,
+			program_id,
+			request_id
+		) values
+		<foreach collection="list" index="index" item="i" separator=",">
+			(
+				#{i.checkPeriod},
+				#{i.paymentCompanyType},
+				#{i.receiveCompanyType},
+				#{i.paymentCompanyId},
+				#{i.receiveCompanyId},
+				#{i.paymentType},
+				#{i.orderId},
+				#{i.itemId},
+				#{i.orderCurrency},
+				#{i.amount},
+				#{i.rate},
+				#{i.exchangeRate},
+				#{i.hkdAmount},
+				#{i.dueDate},
+				#{i.status},
+				#{i.version},
+				#{i.comments},
+				#{i.programId},
+				#{i.requestId}
+			)
+		</foreach>
+	</insert>
+
+</mapper>

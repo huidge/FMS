@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnCalcMapper">
+
+
+    <select id="queryAgePremium" resultType="java.lang.Double" parameterType="clb.core.commission.dto.CmnCalc">
+        select ${agePremium}
+        from fms_prd_premium fpp
+        left join fms_prd_item_subline fpis on fpp.subline_id = fpis.subline_id
+        left join fms_prd_item_security_plan fpisp on fpp.PLAN_ID = fpisp.plan_id
+        left join fms_prd_item_selfpay fpi on fpp.SELFPAY_ID = fpi.selfpay_id
+        where fpp.item_id = #{itemId}
+        <if test="productionAgeLimit!=null and productionAgeLimit!=''">
+            and	fpis.subline_item_name = #{productionAgeLimit}
+        </if>
+        <if test="securityArea!=null and securityArea!=''">
+            and	fpisp.security_region = #{securityArea}
+        </if>
+        <if test="livingCountry!=null and livingCountry!=''">
+            and	(fpp.NATIONALITY_CLASS = #{livingCountry} or fpp.NATIONALITY_CLASS is null)
+        </if>
+        <if test="securityLevel!=null and securityLevel!=''">
+            and	fpisp.security_level = #{securityLevel}
+        </if>
+        <if test="gender!=null and gender!=''">
+            and fpp.gender = #{gender}
+        </if>
+        <if test="selfpay!=null and selfpay!=''">
+            and fpi.selfpay = #{selfpay}
+        </if>
+        <if test="smokeFlag!=null and smokeFlag!=''">
+            and (fpp.smoke_flag = #{smokeFlag} or fpp.smoke_flag is null)
+        </if>
+        <if test="currency!=null and currency!=''">
+            and fpp.currency= #{currency}
+        </if>
+        limit 1
+    </select>
+
+</mapper>

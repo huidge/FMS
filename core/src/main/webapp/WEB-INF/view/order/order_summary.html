@@ -1,0 +1,2440 @@
+<#--
+ * description: 订单汇总页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?sortData=ORD.DATE.SORT" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?dateTypeData=ORD.ORDER_DATE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?ynData=SYS.YES_NO" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?appStatusData=ORD.ORDER_APPLICATION_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?clubStatusData=ORD.CLUB_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+
+    var functionCode = window.frameElement.id;
+
+    var viewModel = kendo.observable({
+        model: {
+            functionCode : functionCode,
+            gridHeight: '100px'//默认高度
+        },
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+    //根据当前功能显示对应字段和操作
+    var fieldData;
+    var operaData;
+
+    function hideButton(id) {
+        var temp = "button[id='" + id + "']";
+        $.each($(temp), function (key, value) {
+            $(value).hide();
+        });
+    }
+
+    function showButton(id) {
+        var temp = "button[id='" + id + "']";
+        $.each($(temp), function (key, value) {
+            $(value).show();
+        });
+    }
+
+    if(functionCode) {
+        viewModel.model.set("functionCode",functionCode);
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/queryField",
+            data: {functionCode: functionCode},
+            success: function (json) {
+                fieldData = json.rows;
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/queryOpera",
+            data: {functionCode: functionCode},
+            success: function (json) {
+                operaData = json.rows;
+            }
+        });
+    }
+
+    $(document).ready(function(){
+
+        for(var i = 0; i < operaData.length; i++){
+            showButton(operaData[i].operationCode);
+        }
+    });
+    
+    //打印pdf文件
+    function printApplication(uid){
+    	//获取行id
+    	uidData = uid; 
+    	//通过id获取行数据
+        data = dataSource.getByUid(uidData);
+        window.open("${base.contextPath}/fms/ord/order/templatePDFOut?orderId="+data.orderId);
+    	//window.location.href="${base.contextPath}/fms/ord/order/templatePDFOut";  
+    }
+
+    // 打印aid合同 pdf文件
+    function aiaContractPDF(uid){
+        //获取行id
+        uidData = uid;
+        //通过id获取行数据
+        data = dataSource.getByUid(uidData);
+        window.open("${base.contextPath}/fms/ord/order/aiaContractPDF?orderId="+data.orderId);
+    }
+//控制显示/隐藏搜索栏面板
+    $(function(){
+        $("#togglePanel").click(function(){
+            $(".panel").slideToggle(function() {
+            	if ($(".panel")[0].style.display == 'none') {//收缩状态,显示面板
+                    $(".k-grid-content.k-auto-scrollable")[0].style.height = ($(".k-grid-content.k-auto-scrollable").height()+$(".panel").height())+"px";
+            	} else {//展开状态，隐藏面板
+                    viewModel.model.set("gridHeight",$(".k-grid-content.k-auto-scrollable")[0].style.height);
+                    $(".k-grid-content.k-auto-scrollable")[0].style.height = ($(".k-grid-content.k-auto-scrollable").height()-$(".panel").height())+"px";
+            	}
+            	$("#Grid")[0].style.height = ($(".k-grid-content.k-auto-scrollable").height()+145)+"px";
+            });
+        });
+    })
+
+</script>
+
+<div id="statusWin" style="display: none;"></div>
+<div id="insuranceUpdateHistoryWin" style="display: none;"></div>
+<div id="updWin" style="display: none;"></div>
+<div id="clubWin" style="display: none;"></div>
+<div id="cusWin" style="display: none;"></div>
+<div id="hkWin" style="display: none;"></div>
+<div id="appWin" style="display: none;"></div>
+<div id="phoneWin" style="display: none;"></div>
+<div id="recWin" style="display: none;"></div>
+<div id="revWin" style="display: none;"></div>
+<div id="surWin" style="display: none;"></div>
+<div id="pendWin" style="display: none;"></div>
+<div id="rcWin" style="display: none;"></div>
+<div id="fileWin" style="display: none;">
+<div id="importDialog"></div>
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+<div id="page-content">
+    <div class="panel">
+        <div id="query_form">
+            <form class="form-horizontal" style="margin-top: 5px;">
+                <div class="panel-body">
+
+                    <div class="col-xs-12" >
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.dateType"/></label>
+                                <div class="col-xs-8">
+                                    <input id="dateType" name="dateType" type="text" data-bind="value:model.dateType" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.startDate"/></label>
+                                <div class="col-xs-8">
+                                    <input id="startDateActive" name="startDateActive"  data-bind="value:model.startDateActive" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.endDate"/></label>
+                                <div class="col-xs-8">
+                                    <input id="endDateActive" name="endDateActive" data-bind="value:model.endDateActive" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-12" >
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.status"/></label>
+                                <div class="col-xs-8">
+                                    <input id="status" name="status" type="text" data-bind="value:model.status" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.number"/></label>
+                                <div class="col-xs-8">
+                                    <input id="number" name="number" type="text" data-bind="value:model.number" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.ordorder.insurancesuppliername"/></label>
+                                <div class="col-xs-8">
+                                    <input id="productSupplierName" name="productSupplierName" type="text" data-bind="value:model.productSupplierName" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-xs-12" >
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.item"/></label>
+                                <div class="col-xs-8">
+                                    <input id="itemName" name="itemName" type="text" data-bind="value:model.itemName" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.insurant"/></label>
+                                <div class="col-xs-8">
+                                    <input id="insurant" name="insurant" type="text" data-bind="value:model.insurant" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.applicant"/></label>
+                                <div class="col-xs-8">
+                                    <input id="applicant" name="applicant" type="text" data-bind="value:model.applicant" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-12" >
+
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.OrdOrder.channelName"/></label>
+                                <div class="col-xs-8">
+                                    <input id="channelName" name="channelName" type="text" data-bind="value:model.channelName" class="k-textbox" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.ordorder.reservedatesort"/></label>
+                                <div class="col-xs-8">
+                                    <input id="reserveDateSort" type="text" data-bind="value:model.reserveDateSort"  style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4" >
+                            <div class="form-group" style="margin-bottom:10px">
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"><@spring.message "fms.ordorder.reservearrivaldatesort"/></label>
+                                <div class="col-xs-8">
+                                    <input id="reserveArrivalDateSort" type="text" data-bind="value:model.reserveArrivalDateSort" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <span class="btn btn-primary" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                    <span class="btn btn-default" type="button" data-bind="click:resetForm"><i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                </div>
+                <iframe id="ifile" style="display:none"></iframe>
+            </form>
+        </div>
+    </div>
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: statusData
+    });
+
+    $("#reserveDateSort").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: sortData
+    });
+
+    $("#reserveArrivalDateSort").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: sortData
+    });
+
+    $("#sublineId").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SUBLINE_ITEM_INFO")}, {}));
+
+    $("#dateType").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: dateTypeData
+    });
+
+    $("#startDateActive").kendoDatePicker({
+        format : "yyyy-MM-dd"
+    });
+
+    $("#endDateActive").kendoDatePicker({
+        format : "yyyy-MM-dd"
+    });
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/order/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/order/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/order/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/order/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        requestEnd:function(e){
+            if(e.type == "update"){
+                if(e.response.success == false){
+                    $('#Grid').data('kendoGrid').cancelChanges();
+                }
+
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "orderId",
+                fields: {
+                    approveDate: {type: "date"},
+                    effectiveDate: {type: "date"},
+                    expectCoolDate: {type: "date"},
+                    nextPolicyDueDate: {type: "date"}
+                }
+            }
+        }
+    });
+
+
+    function toThousands(num,cent,isThousand) {
+        if (num != null) {
+
+            num = num.toString().replace(/\$|\,/g, '');
+
+            // 检查传入数值为数值类型
+            if (isNaN(num))
+                num = "0";
+
+            // 获取符号(正/负数)
+            sign = (num == (num = Math.abs(num)));
+
+            num = Math.floor(num * Math.pow(10, cent) + 0.50000000001); // 把指定的小数位先转换成整数.多余的小数位四舍五入
+            cents = num % Math.pow(10, cent);       // 求出小数位数值
+            num = Math.floor(num / Math.pow(10, cent)).toString();  // 求出整数位数值
+            cents = cents.toString();        // 把小数位转换成字符串,以便求小数位长度
+
+            // 补足小数位到指定的位数
+            while (cents.length < cent)
+                cents = "0" + cents;
+
+            if (isThousand) {
+                // 对整数部分进行千分位格式化.
+                for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
+                    num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
+            }
+
+            if (cent > 0)
+                return (((sign) ? '' : '-') + num + '.' + cents);
+            else
+                return (((sign) ? '' : '-') + num);
+        }
+        else {
+            return '';
+        }
+    }
+
+
+    //动态生成列
+    function dynamicColumns() {
+
+        var orderNumberColumn = {
+            field: "orderNumber",
+            title: '<@spring.message "fms.OrdOrder.orderNumber"/>',
+            width: 130,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function (dataItem) {
+                if (!!dataItem.orderId) {
+                    return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="openDetailWin(\''+ dataItem.orderId + '\',\'' + dataItem.orderNumber  + '\')">'+dataItem.orderNumber+'</a>';
+                }
+                return '';
+            }
+        };
+
+        var policyNumberColumn = {
+            field: "policyNumber",
+                title: '<@spring.message "fms.OrdOrder.policyNumber"/>',
+                width: 100,
+                headerAttributes: {
+                'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var itemColumn = {
+            field: "item",
+            title: '<@spring.message "fms.OrdOrder.item"/>',
+            width: 180,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var applicantColumn = {
+            field: "applicant",
+            title: '<@spring.message "fms.OrdOrder.applicant"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var insurantColumn = {
+            field: "insurant",
+                title: '<@spring.message "fms.OrdOrder.insurant"/>',
+                width: 80,
+                headerAttributes: {
+                'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var currencyColumn = {
+            field: "currency",
+            title: '<@spring.message "fms.OrdOrder.currency"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.currency;
+                $.each(currencyData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined") {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: currencyData
+                    });
+            },
+        };
+
+        var yearPayAmountColumn = {
+            field: "yearPayAmount",
+            title: '<@spring.message "fms.OrdOrder.yearPayAmount"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem) {
+                var v = dataItem.yearPayAmount;
+                v = toThousands(v,2,1)
+                return v;
+            }
+        };
+
+        var policyAmountColumn = {
+            field: "policyAmount",
+            title: '<@spring.message "fms.OrdOrder.policyAmount"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem) {
+                var v = dataItem.policyAmount;
+                v = toThousands(v,2,1)
+                return v;
+            }
+        };
+
+        var channelNameColumn = {
+            field: "channelName",
+            title: '<@spring.message "fms.OrdOrder.channelName"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var companyChannelNameColumn  = {
+            field: "companyChannelName",
+                title: '<@spring.message "fms.ordorder.companychannelname"/>',
+                width: 150,
+                headerAttributes: {
+                'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+            },
+        };
+        
+        var submitDateColumn = {
+            field: "submitDate",
+            title: '<@spring.message "fms.OrdOrder.submitDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reserveDateColumn = {
+            field: "reserveDate",
+            title: '<@spring.message "fms.OrdOrder.reserveDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var hkContactPersonColumn = {
+            field: "hkContactPerson",
+            title: '<@spring.message "fms.OrdOrder.hkContactPerson"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var hkContactPhoneColumn = {
+            field: "hkContactPhoneAll",
+            title: '<@spring.message "fms.OrdOrder.hkContactPhone"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var roleNameColumn = {
+            field: "roleName",
+            title: '<@spring.message "fms.OrdOrder.roleName"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var statusColumn = {
+            field: "statusDesc",
+            title: '<@spring.message "fms.OrdOrder.status"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align:center;vertical-align:middle;'
+            },
+            template : function(dataItem){
+                var v = dataItem.statusDesc;
+                var uid = dataItem.uid;
+                if(v=="预审中"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#AAFFEE");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#AAFFEE");
+                }else if(v=="预审成功"||v=="资料审核中"){
+                    setTimeout(function () {
+                        $("td[data-uid="+uid+"]").find("td:eq(2)").css("background","#5555FF");
+                    },0);
+                    $("td[data-uid="+uid+"]").find("td:eq(2)").css("background","#5555FF");
+                }else if(v=="需复查"){
+                    setTimeout(function () {
+                        $("td[data-uid="+uid+"]").find("td:eq(2)").css("background","#AAAAAA");
+                    },0);
+                    $("td[data-uid="+uid+"]").find("td:eq(2)").css("background","#AAAAAA");
+                }else if(v=="资料审核通过"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFE4B5");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFE4B5");
+                }else if(v=="预约中"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFBB00");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFBB00");
+                }else if(v=="预约成功"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FAEBD7");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FAEBD7");
+                }else if(v=="已签单"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFA488");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#FFA488");
+                }else if(v=="批核中"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#CCEEFF");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#CCEEFF");
+                }else if(v=="Pending"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#00DDAA");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#00DDAA");
+                }else if(v=="退保处理中"){
+                    setTimeout(function () {
+                        $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#AA0000");
+                    },0);
+                    $("tr[data-uid="+uid+"]").find("td:eq(2)").css("background","#AA0000");
+                }else{
+
+                }
+                return v;
+            },
+        };
+
+        var viewReserveColumn = {
+            field: "viewReserve",
+            title: '<@spring.message "fms.ordorder.viewReserve"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#" onclick="viewReserve('+dataItem.orderId+',\''+dataItem.orderNumber+'\')"><@spring.message "fms.ordorder.viewreserve"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.ordorder.viewreserve"/></a>';
+                }
+            }
+        };
+
+        var reserveDetailColumn = {
+            field: "reserveDetail",
+            title: '<@spring.message "fms.ordorder.reserveDetail"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="reserveDetail(\''+dataItem.uid+'\')"><@spring.message "fms.ordorder.reservedetail"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.ordorder.reservedetail"/></a>';
+                }
+            }
+        };
+
+        var printApplicationColumn = {
+            field: "printApplication",
+            title: '<@spring.message "fms.ordorder.printApplication"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.productSupplierName != null
+                     && dataItem.productSupplierName != "") {
+                    if (dataItem.productSupplierName.indexOf("大都会") >= 0) {
+                        return '<a href="#"  onclick="printApplication(\''+dataItem.uid+'\')"><@spring.message "fms.ordorder.printapplication"/></a>';
+                    } else if(dataItem.productSupplierName.indexOf("友邦") >= 0) {
+                        return '<a href="#"  onclick="aiaContractPDF(\''+dataItem.uid + '\')"><@spring.message "fms.ordorder.printapplication"/></a>';
+                    } else {
+                        return '';
+                    }
+                }
+            }
+        };
+
+        var requestCopyArchiveColumn = {
+            field: "requestCopyArchive",
+            title: '<@spring.message "fms.ordorder.requestCopyArchive"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                var buttons = '';
+                if(dataItem.reqFileId != '' && dataItem.reqFileId != undefined){
+                    buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                }
+                else buttons = '&nbsp;<button type="button" style="background: #DDDDDD" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+                if(dataItem.name == ""){
+                    return '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" disabled="disabled" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+                }
+                return '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+            }
+        };
+
+        var viewPendingColumn = {
+            field: "viewPending",
+            title: '<@spring.message "fms.ordorder.viewpending"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="openPendingWin('+dataItem.orderId+',\''+dataItem.orderNumber+'\')"><@spring.message "fms.ordorder.viewpending"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.ordorder.viewpending"/></a>';
+                }
+            }
+        };
+
+        var viewStatusHisColumn = {
+            field: "viewStatusHis",
+            title: '<@spring.message "fms.ordorder.viewstatushis"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="openStatusWin('+dataItem.orderId+',\''+dataItem.orderNumber+'\')"><@spring.message "fms.ordorder.viewstatushis"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.ordorder.viewstatushis"/></a>';
+                }
+            }
+        };
+        
+        var viewInsuranceUpdateHisColumn = {
+                field: "viewInsuranceUpdateHis",
+                title: '<@spring.message "fms.ordorder.insuranceupdatehis"/>',
+                width: 100,
+                headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle;'
+                },
+                attributes: {
+                    "class": "table-cell",
+                    style: "text-align:center;"
+                },
+                template : function (dataItem) {
+                    if (dataItem.orderId) {
+                        return '<a href="#"  onclick="openInsuranceUpdateHisWin('+dataItem.orderId+',\''+dataItem.orderNumber+'\')"><@spring.message "fms.ordorder.viewinsuranceupdatehis"/></a>';
+                    } else {
+                        return '<a href="#"><@spring.message "fms.ordorder.viewinsuranceupdatehis"/></a>';
+                    }
+                }
+            };
+
+        var cancelReserveColumn = {
+            field: "cancelReserve",
+            title: '<@spring.message "hap.cancel"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="cancelReserve(\''+dataItem.uid+'\')"><@spring.message "hap.cancel"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "hap.cancel"/></a>';
+                }
+            }
+        };
+
+        var eleInsuranceFlagColumn = {
+            field: "eleInsuranceFlag",
+            title: '<@spring.message "fms.OrdOrder.eleInsuranceFlag"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align:center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.eleInsuranceFlag;
+                $.each(ynData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: ynData
+                    });
+            },
+        };
+
+        var phoneFlagColumn = {
+            field: "phoneFlag",
+            title: '<@spring.message "fms.OrdOrder.phoneFlag"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.phoneFlag;
+                $.each(ynData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: ynData
+                    });
+            },
+        };
+
+        var reserveArrivalDateColumn = {
+            field: "reserveArrivalDate",
+            title: '<@spring.message "fms.OrdOrder.reserveArrivalDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reserveCheckDateColumn = {
+            field: "reserveCheckDate",
+            title: '<@spring.message "fms.OrdOrder.reserveCheckDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reserveSupplierNameColumn = {
+            field: "reserveSupplierName",
+            title: '<@spring.message "fms.OrdOrder.reserveSupplier"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var signSupplierNameColumn = {
+            field: "signSupplierName",
+            title: '<@spring.message "fms.OrdOrder.signSupplierName"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var signPersonNameColumn = {
+            field: "signPerson",
+            title: '<@spring.message "fms.OrdOrder.signPerson"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var fillEmployeeNameColumn = {
+            field: "fillEmployeeName",
+            title: '<@spring.message "fms.OrdOrder.fillEmployeeName"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var clubConfirmStatusColumn = {
+            field: "clubConfirmStatus",
+            title: '<@spring.message "fms.OrdOrder.clubconfirm"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align:center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.clubConfirmStatus;
+                $.each(clubStatusData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: clubStatusData
+                    });
+            },
+        };
+
+        var customerConfirmStatusColumn = {
+            field: "customerConfirmStatus",
+            title: '<@spring.message "fms.OrdOrder.customerconfirm"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align:center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.customerConfirmStatus;
+                $.each(ynData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: ynData
+                    });
+            },
+        };
+
+        var customerEmployeeNameColumn = {
+            field: "customerEmployeeName",
+            title: '<@spring.message "fms.OrdOrder.customerEmployeeName"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var customerOperateDateColumn = {
+            field: "customerOperateDate",
+            title: '<@spring.message "fms.OrdOrder.customerOperateDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle'
+            },
+        };
+
+        var smsFlagColumn = {
+            field: "smsFlag",
+            title: '<@spring.message "fms.OrdOrder.smsFlag"/>',
+            width: 120,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.smsFlag;
+                $.each(ynData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: ynData
+                    });
+            },
+        };
+
+        var sendSmsColumn = {
+            field: "sendSms",
+            title: '<@spring.message "fms.ordorder.sendsms"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="sendSms(\''+dataItem.uid+'\')"><@spring.message "fms.ordorder.sendsms"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.ordorder.sendsms"/></a>';
+                }
+            }
+        };
+
+        var applicationStatusColumn = {
+            field: "applicationStatus",
+            title: '<@spring.message "fms.OrdOrder.applicationStatus"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.applicationStatus;
+                $.each(appStatusData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: appStatusData
+                    });
+            },
+        };
+
+        var expressDeliveryInfoColumn = {
+            field: "expressDeliveryInfo",
+            title: '<@spring.message "fms.OrdOrder.expressDeliveryInfo"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var receiptDateColumn = {
+            field: "receiptDate",
+            title: '<@spring.message "fms.OrdOrder.receiptDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var signAssistantNameColumn = {
+            field: "signAssistantName",
+            title: '<@spring.message "fms.OrdOrder.signAssistant"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var arrivalDateColumn = {
+            field: "arrivalDate",
+            title: '<@spring.message "fms.OrdOrder.arrivalDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var leaveDateColumn = {
+            field: "leaveDate",
+            title: '<@spring.message "fms.OrdOrder.leaveDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        }
+
+        var reviewer1Column = {
+            field: "reviewer1Name",
+            title: '<@spring.message "fms.OrdOrder.reviewer1"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reviewer1DateColumn = {
+            field: "reviewer1Date",
+            title: '<@spring.message "fms.OrdOrder.reviewer1Date"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reviewer2Column = {
+            field: "reviewer2Name",
+            title: '<@spring.message "fms.OrdOrder.reviewer2"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reviewer2DateColumn = {
+            field: "reviewer2Date",
+            title: '<@spring.message "fms.OrdOrder.reviewer2Date"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reviewerCommentColumn = {
+            field: "reviewerComment",
+            title: '<@spring.message "fms.OrdOrder.reviewerComment"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var updateColumn = {
+            field: "update",
+            title: '<@spring.message "hap.action"/>',
+            width: 80,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            attributes: {
+                "class": "table-cell",
+                style: "text-align:center;"
+            },
+            template : function (dataItem) {
+                if (dataItem.orderId) {
+                    return '<a href="#"  onclick="openDetailWin('+dataItem.orderId+',\''+dataItem.orderNumber+'\')"><@spring.message "fms.view_detail"/></a>';
+                } else {
+                    return '<a href="#"><@spring.message "fms.view_detail"/></a>';
+                }
+            }
+        };
+
+        var sendStatusColumn = {
+            field: "sendStatus",
+            title: '<@spring.message "fms.OrdOrder.sendStatus"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+            template: function(dataItem){
+                var v = dataItem.sendStatus;
+                $.each(ynData,function(i,n){
+                    if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                        v = n.meaning;
+                        return v;
+                    }
+                })
+                if (typeof(v) == "undefined" || v == null) {
+                    return "";
+                }
+                return v;
+            },
+            editor: function(container, options){
+                $('<input name="' + options.field + '">')
+                    .appendTo(container)
+                    .kendoComboBox({
+                        valuePrimitive: true,
+                        dataTextField: "meaning",
+                        dataValueField: "value",
+                        dataSource: ynData
+                    });
+            },
+        };
+
+        var sendDateColumn = {
+            field: "sendDate",
+            title: '<@spring.message "fms.OrdOrder.sendDate"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var sendEmployeeNameColumn = {
+            field: "sendEmployeeName",
+            title: '<@spring.message "fms.OrdOrder.sendEmployeeName"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var approveDateColumn = {
+            field: "approveDate",
+            title: '<@spring.message "fms.OrdOrder.approveDate"/>',
+            width: 150,
+            format: "{0:yyyy-MM-dd}",
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var effectiveDateColumn = {
+            field: "effectiveDate",
+            title: '<@spring.message "fms.OrdOrder.effectiveDate"/>',
+            width: 150,
+            format: "{0:yyyy-MM-dd}",
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var expectCoolDateColumn = {
+            field: "expectCoolDate",
+            title: '<@spring.message "fms.OrdOrder.expectCoolDate"/>',
+            width: 150,
+            format: "{0:yyyy-MM-dd}",
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var nextPolicyAmountColumn = {
+            field: "nextPolicyAmount",
+            title: '<@spring.message "fms.OrdOrder.nextPolicyAmount"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var nextPolicyDueDateColumn = {
+            field: "nextPolicyDueDate",
+            title: '<@spring.message "fms.OrdOrder.nextPolicyDueDate"/>',
+            width: 150,
+            format: "{0:yyyy-MM-dd}",
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var meetAddressColumn = {
+            field: "meetAddress",
+            title: '<@spring.message "fms.OrdOrder.meetAddress"/>',
+            width: 300,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var signAddressColumn = {
+            field: "signAddress",
+            title: '<@spring.message "fms.OrdOrder.signAddress"/>',
+            width: 300,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var reserveCommentColumn = {
+            field: "reserveComment",
+            title: '<@spring.message "fms.OrdOrder.reserveComment"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var ownSupplierNameColumn = {
+            field: "ownSupplierName",
+            title: '<@spring.message "fms.OrdOrder.ownSupplierName"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var orderDealNameColumn = {
+            field: "orderDealName",
+            title: '<@spring.message "fms.OrdOrder.orderDealName"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var customerDealNameColumn = {
+            field: "customerDealName",
+            title: '<@spring.message "fms.OrdOrder.customerDealName"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var applicationDealNameColumn = {
+            field: "applicationDealName",
+            title: '<@spring.message "fms.OrdOrder.applicationDealName"/>',
+            width: 150,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var contactPersonColumn = {
+            field: "contactPerson",
+            title: '<@spring.message "fms.OrdOrder.contactPerson"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var contactPhoneColumn = {
+            field: "contactPhone",
+            title: '<@spring.message "fms.OrdOrder.contactPhone"/>',
+            width: 130,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+
+        var preNameColumn = {
+            field: "preName",
+            title: '<@spring.message "fms.OrdOrder.preName"/>',
+            width: 100,
+            headerAttributes: {
+                'class':'table-header-cell',
+                style:'text-align: center;vertical-align:middle;'
+            },
+        };
+        
+        var stairSellColumn  = {
+                field: "stairSell",
+                    title: '<@spring.message "fms.OrdOrder.stairSell"/>',
+                    width: 80,
+                    headerAttributes: {
+                    'class':'table-header-cell',
+                        style:'text-align: center;vertical-align:middle;'
+                },
+            };
+        
+        var expressNumberColumn  = {
+                field: "expressNumber",
+                    title: '<@spring.message "fms.OrdOrder.expressNumber"/>',
+                    width: 120,
+                    headerAttributes: {
+                    'class':'table-header-cell',
+                        style:'text-align: center;vertical-align:middle;'
+                },
+            };
+
+        var gridColumns = [];
+
+        for(var i = 0; i < fieldData.length; i++) {
+            if (fieldData[i].fieldCode == "orderNumber") {
+                gridColumns.push(orderNumberColumn);
+            }
+            if (fieldData[i].fieldCode == "policyNumber") {
+                gridColumns.push(policyNumberColumn);
+            }
+            if (fieldData[i].fieldCode == "item") {
+                gridColumns.push(itemColumn);
+            }
+            if (fieldData[i].fieldCode == "applicant") {
+                gridColumns.push(applicantColumn);
+            }
+            if (fieldData[i].fieldCode == "insurant") {
+                gridColumns.push(insurantColumn);
+            }
+            if (fieldData[i].fieldCode == "currency") {
+                gridColumns.push(currencyColumn);
+            }
+            if (fieldData[i].fieldCode == "yearPayAmount") {
+                gridColumns.push(yearPayAmountColumn);
+            }
+            if (fieldData[i].fieldCode == "policyAmount") {
+                gridColumns.push(policyAmountColumn);
+            }
+            if (fieldData[i].fieldCode == "channelName") {
+                gridColumns.push(channelNameColumn);
+            }
+            if (fieldData[i].fieldCode == "companyChannelName") {
+                gridColumns.push(companyChannelNameColumn);
+            }
+            if (fieldData[i].fieldCode == "submitDate") {
+                gridColumns.push(submitDateColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveDate") {
+                gridColumns.push(reserveDateColumn);
+            }
+            if (fieldData[i].fieldCode == "hkContactPerson") {
+                gridColumns.push(hkContactPersonColumn);
+            }
+            if (fieldData[i].fieldCode == "hkContactPhone") {
+                gridColumns.push(hkContactPhoneColumn);
+            }
+            if (fieldData[i].fieldCode == "roleName") {
+                gridColumns.push(roleNameColumn);
+            }
+            if (fieldData[i].fieldCode == "status") {
+                gridColumns.push(statusColumn);
+            }
+            if (fieldData[i].fieldCode == "viewReserve") {
+                gridColumns.push(viewReserveColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveDetail") {
+                gridColumns.push(reserveDetailColumn);
+            }
+            if (fieldData[i].fieldCode == "printApplication") {
+                gridColumns.push(printApplicationColumn);
+            }
+            if (fieldData[i].fieldCode == "requestCopyArchive") {
+                gridColumns.push(requestCopyArchiveColumn);
+            }
+            if (fieldData[i].fieldCode == "viewPending") {
+                gridColumns.push(viewPendingColumn);
+            }
+            if (fieldData[i].fieldCode == "viewStatusHis") {
+                gridColumns.push(viewStatusHisColumn);
+            }
+            if (fieldData[i].fieldCode == "viewInsuranceUpdateHis") {
+                gridColumns.push(viewInsuranceUpdateHisColumn);
+            }
+            if (fieldData[i].fieldCode == "cancelReserve") {
+                gridColumns.push(cancelReserveColumn);
+            }
+            if (fieldData[i].fieldCode == "eleInsuranceFlag") {
+                gridColumns.push(eleInsuranceFlagColumn);
+            }
+            if (fieldData[i].fieldCode == "phoneFlag") {
+                gridColumns.push(phoneFlagColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveArrivalDate") {
+                gridColumns.push(reserveArrivalDateColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveCheckDate") {
+                gridColumns.push(reserveCheckDateColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveSupplierName") {
+                gridColumns.push(reserveSupplierNameColumn);
+            }
+            if (fieldData[i].fieldCode == "signSupplierName") {
+                gridColumns.push(signSupplierNameColumn);
+            }
+            if (fieldData[i].fieldCode == "signPersonName") {
+                gridColumns.push(signPersonNameColumn);
+            }
+            if (fieldData[i].fieldCode == "fillEmployeeName") {
+                gridColumns.push(fillEmployeeNameColumn);
+            }
+            if (fieldData[i].fieldCode == "clubConfirmStatus") {
+                gridColumns.push(clubConfirmStatusColumn);
+            }
+            if (fieldData[i].fieldCode == "customerConfirmStatus") {
+                gridColumns.push(customerConfirmStatusColumn);
+            }
+            if (fieldData[i].fieldCode == "customerEmployeeName") {
+                gridColumns.push(customerEmployeeNameColumn);
+            }
+            if (fieldData[i].fieldCode == "customerOperateDate") {
+                gridColumns.push(customerOperateDateColumn);
+            }
+            if (fieldData[i].fieldCode == "smsFlag") {
+                gridColumns.push(smsFlagColumn);
+            }
+            if (fieldData[i].fieldCode == "sendSms") {
+                gridColumns.push(sendSmsColumn);
+            }
+            if (fieldData[i].fieldCode == "applicationStatus") {
+                gridColumns.push(applicationStatusColumn);
+            }
+            if (fieldData[i].fieldCode == "expressDeliveryInfo") {
+                gridColumns.push(expressDeliveryInfoColumn);
+            }
+            if (fieldData[i].fieldCode == "receiptDate") {
+                gridColumns.push(receiptDateColumn);
+            }
+            if (fieldData[i].fieldCode == "signAssistantName") {
+                gridColumns.push(signAssistantNameColumn);
+            }
+            if (fieldData[i].fieldCode == "arrivalDate") {
+                gridColumns.push(arrivalDateColumn);
+            }
+            if (fieldData[i].fieldCode == "leaveDate") {
+                gridColumns.push(leaveDateColumn);
+            }
+            if (fieldData[i].fieldCode == "reviewer1") {
+                gridColumns.push(reviewer1Column);
+            }
+            if (fieldData[i].fieldCode == "reviewer1Date") {
+                gridColumns.push(reviewer1DateColumn);
+            }
+            if (fieldData[i].fieldCode == "reviewer2") {
+                gridColumns.push(reviewer2Column);
+            }
+            if (fieldData[i].fieldCode == "reviewer2Date") {
+                gridColumns.push(reviewer2DateColumn);
+            }
+            if (fieldData[i].fieldCode == "reviewerComment") {
+                gridColumns.push(reviewerCommentColumn);
+            }
+            if (fieldData[i].fieldCode == "update") {
+                gridColumns.push(updateColumn);
+            }
+            if (fieldData[i].fieldCode == "sendStatus") {
+                gridColumns.push(sendStatusColumn);
+            }
+            if (fieldData[i].fieldCode == "sendDate") {
+                gridColumns.push(sendDateColumn);
+            }
+            if (fieldData[i].fieldCode == "sendEmployeeName") {
+                gridColumns.push(sendEmployeeNameColumn);
+            }
+            if (fieldData[i].fieldCode == "approveDate") {
+                gridColumns.push(approveDateColumn);
+            }
+            if (fieldData[i].fieldCode == "effectiveDate") {
+                gridColumns.push(effectiveDateColumn);
+            }
+            if (fieldData[i].fieldCode == "expectCoolDate") {
+                gridColumns.push(expectCoolDateColumn);
+            }
+            if (fieldData[i].fieldCode == "nextPolicyAmount") {
+                gridColumns.push(nextPolicyAmountColumn);
+            }
+            if (fieldData[i].fieldCode == "nextPolicyDueDate") {
+                gridColumns.push(nextPolicyDueDateColumn);
+            }
+
+            if (fieldData[i].fieldCode == "meetAddress") {
+                gridColumns.push(meetAddressColumn);
+            }
+            if (fieldData[i].fieldCode == "signAddress") {
+                gridColumns.push(signAddressColumn);
+            }
+            if (fieldData[i].fieldCode == "reserveComment") {
+                gridColumns.push(reserveCommentColumn);
+            }
+            if (fieldData[i].fieldCode == "ownSupplierName") {
+                gridColumns.push(ownSupplierNameColumn);
+            }
+
+            if (fieldData[i].fieldCode == "orderDealName") {
+                gridColumns.push(orderDealNameColumn);
+            }
+            if (fieldData[i].fieldCode == "customerDealName") {
+                gridColumns.push(customerDealNameColumn);
+            }
+            if (fieldData[i].fieldCode == "applicationDealName") {
+                gridColumns.push(applicationDealNameColumn);
+            }
+            if (fieldData[i].fieldCode == "contactPerson") {
+                gridColumns.push(contactPersonColumn);
+            }
+            if (fieldData[i].fieldCode == "contactPhone") {
+                gridColumns.push(contactPhoneColumn);
+            }
+            if (fieldData[i].fieldCode == "preName") {
+                gridColumns.push(preNameColumn);
+            }
+            if (fieldData[i].fieldCode == "stairSell") {
+                gridColumns.push(stairSellColumn);
+            }
+            if (fieldData[i].fieldCode == "expressNumber") {
+                gridColumns.push(expressNumberColumn);
+            }
+        }
+        return gridColumns;
+    }
+
+    var columns = dynamicColumns();
+    var grid = $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        sortable: true,
+        navigatable: false,
+        selectable: 'single, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        toolbar: [
+
+            {
+                template: '<button id="importExcelBtn"  type="button" onclick="importExcel()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-file-excel-o" style="margin-right:3px;"></i><@spring.message "hap.importexcel"/></button>'
+
+            },
+
+            {
+                template: '<button id="newData" style="display: none;" type="button" onclick="newData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+            },
+            {
+                template: '<button id="updateStatus" style="display: none;" type="button" onclick="updateStatus()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "fms.ordorder.updatestatus"/></button>'
+
+            },
+            {
+                template: '<button id="updateClubStatus" style="display: none;" type="button" onclick="updateClubStatus()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-check-square" style="margin-right:3px;"></i><@spring.message "fms.ordorder.clubconfirm"/></button>'
+
+            },
+            {
+                template: '<button id="reserveConfirmInfo" style="display: none;" type="button" onclick="reserveConfirmInfo()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-check-square" style="margin-right:3px;"></i><@spring.message "fms.ordorder.reserveconfirminfo"/></button>'
+
+            },
+            {
+                template: '<button id="updateCusStatus" style="display: none;" type="button" onclick="updateCusStatus()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-check-square" style="margin-right:3px;"></i><@spring.message "fms.ordorder.customerconfirm"/></button>'
+
+            },
+            {
+                template: '<button id="updateHkContact" style="display: none;" type="button" onclick="updateHkContact()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "fms.ordorder.updatecontact"/></button>'
+
+            },
+            {
+                template: '<button id="updateAppStatus" style="display: none;" type="button" onclick="updateAppStatus()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "fms.ordorder.updateappstatus"/></button>'
+
+            },
+            {
+                template: '<button id="updateAppStatus2" style="display: none;" type="button" onclick="updateAppStatus()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "fms.ordorder.updateappstatus2"/></button>'
+
+            },
+            {
+                template: '<button id="setPhoneFlag" style="display: none;" type="button" onclick="setPhoneFlag()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-check-square" style="margin-right:3px;"></i><@spring.message "fms.ordorder.phoneflag"/></button>'
+
+            },
+            {
+                template: '<button id="review1" style="display: none;" type="button" onclick="review1()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "fms.ordorder.review1"/></button>'
+
+            },
+            {
+                template: '<button id="review2" style="display: none;" type="button" onclick="review2()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "fms.ordorder.review2"/></button>'
+
+            },
+            {
+                template: '<button id="sendConfirm" style="display: none;" type="button" onclick="sendConfirm()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-send" style="margin-right:3px;"></i><@spring.message "fms.ordorder.sendconfirm"/></button>'
+
+            },
+            {
+                template: '<button id="expectCoolDate2" style="display: none;" type="button" onclick="expectCoolDateQuery()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-send" style="margin-right:3px;"></i><@spring.message "fms.ordorder.expectCoolDate2"/></button>'
+
+            },
+            {
+                template: '<button id="surrender" style="display: none;" type="button" onclick="surrender()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "fms.ordorder.surrender"/></button>'
+
+            },
+            {
+                template: '<button id="saveData" style="display: none;" type="button" onclick="saveData()" class="btn btn-success" style="float:left;margin-right:5px;">' +
+                '<i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></button>'
+
+            },
+            {
+                template: '<button id="togglePanel" type="button" class="btn" style="float:right;margin-right:5px;">' +
+                '<i class="glyphicon glyphicon-sort" style="margin-right:3px;"></i><@spring.message "fms.toggle"/></button>'
+
+            }
+        ],
+        columns: columns,
+        editable: false
+    }).data("kendoGrid");
+
+    function openPendingWin(orderId,orderNumber){
+
+        if (orderId != null) {
+            parent.openTab("order_pending_view" + orderId,'<@spring.message "fms.ordorder.viewpending"/>' + " (" + '<@spring.message "fms.ordorder.ordernumber"/>' + ":" + orderNumber + ")",'order/order_pending_view.html?orderId='+ orderId)
+        }
+    }
+
+    function openStatusWin(orderId,orderNumber){
+        var url = 'order_status.html?orderId='+ orderId;
+        var statusWin =  $("#statusWin").kendoWindow({
+            width: 700,
+            height: 500,
+            title: '<@spring.message "fms.ordorder.viewstatushis"/>',
+            content: url,
+            iframe:  true,
+            visible: false,
+            modal:true
+        }).data("kendoWindow");
+        statusWin.center().open();
+        statusWin.setOptions({title: '<@spring.message "fms.ordorder.viewstatushis"/>' + " (" + '<@spring.message "fms.ordorder.ordernumber"/>' + ":" + orderNumber + ")"})
+    }
+    
+    function openInsuranceUpdateHisWin(orderId,orderNumber){
+        var insuranceUpdateHisWin =  $("#insuranceUpdateHistoryWin").kendoWindow({
+        	actions: ["Close"],
+            width: '95%',
+            height: '95%',
+            title: '<@spring.message "fms.ordorder.insuranceupdatehis"/>',
+            content: "${base.contextPath}/order/order_insurance_update_his.html?orderId="+orderId,
+            iframe:  true,
+            draggable: true,
+            modal:true
+        }).data("kendoWindow");
+        insuranceUpdateHisWin.center().open();
+        insuranceUpdateHisWin.setOptions({title: '<@spring.message "fms.ordorder.viewinsuranceupdatehis"/>' + " (" + '<@spring.message "fms.ordorder.ordernumber"/>' + ":" + orderNumber + ")"})
+    }
+
+    function viewReserve(orderId,orderNumber){
+        var url = 'order_reserve_confirm.html?orderId='+ orderId +'&type=READ';
+        var rcWin =  $("#rcWin").kendoWindow({
+            width: 900,
+            height: 600,
+            title: '<@spring.message "fms.ordorder.reserveConfirmInfo"/>',
+            content: url,
+            iframe:  true,
+            visible: false,
+            modal:true
+        }).data("kendoWindow");
+        rcWin.center().open();
+    }
+
+    function sendSms(uid){
+        kendo.ui.showConfirmDialog({
+            message:'<@spring.message "fms.ordorder.confirmsendsms"/>',
+        }).done(function (e) {
+            if (e.button == 'OK') {
+                data = dataSource.getByUid(uid);
+                data.smsFlag = "Y";
+                data.hisSmsFlag = "Y";
+                data.dirty = true;
+                $('#Grid').data('kendoGrid').saveChanges();
+            }
+        });
+    }
+
+    function cancelReserve(uid){
+        kendo.ui.showConfirmDialog({
+            message:'<@spring.message "fms.ordorder.confimcancelreserve"/>',
+        }).done(function (e) {
+            if (e.button == 'OK') {
+                data = dataSource.getByUid(uid);
+                data.status = "CANCELLED";
+                data.hisStatus = data.status;
+                data.dirty = true;
+                $('#Grid').data('kendoGrid').saveChanges();
+            }
+        });
+    }
+
+    function newData() {
+
+        parent.openTab("order_create",'<@spring.message "fms.ordorder.detail"/>' + " (" + '<@spring.message "hap.new"/>' + ")","order/order_create.html?functionCode=" + functionCode)
+    }
+
+    function openDetailWin(orderId,orderNumber) {
+        if (orderId != null) {
+            parent.openTab("order_detail" + orderId,'<@spring.message "fms.ordorder.detail"/>' + " (" + '<@spring.message "fms.ordorder.ordernumber"/>' + ":" + orderNumber + ")","order/order_detail.html?orderId="+orderId + "&functionCode=" + functionCode)
+        }
+
+    }
+
+
+    function updateStatus() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var productSupplierId;
+        var signSupplierId;
+        var ownSupplierId;
+        var channelContractId;
+        var orderId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                productSupplierId = v.productSupplierId;
+                signSupplierId = v.signSupplierId;
+                ownSupplierId = v.ownSupplierId;
+                channelContractId = v.channelContractId;
+                orderId = v.orderId;
+            })
+
+            var url = 'order_status_update.html?functionCode=' + functionCode + '&signSupplierId=' + signSupplierId + '&ownSupplierId=' + ownSupplierId + '&channelContractId=' + channelContractId + '&productSupplierId=' + productSupplierId + '&orderId=' + orderId + '&type=GRID';
+            var updWin =  $("#updWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.updatestatus"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            updWin.center().open();
+        }
+    }
+
+    function updateClubStatus() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var orderId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                orderId = v.orderId;
+            })
+
+            var url = 'order_club_status_update.html?functionCode=' + functionCode + '&orderId=' + orderId;
+            var clubWin =  $("#clubWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.clubconfirm"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            clubWin.center().open();
+        }
+    }
+
+    //获取受保人年龄
+    function getAge(insurantBirthDate,ageCalculateStandard) {
+        var age;
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/calculateAge?birthDate=" + insurantBirthDate + "&type=" + ageCalculateStandard,
+            data: {},
+            success: function (json) {
+                age = json;
+            }
+        });
+        return age;
+    }
+
+    function reserveConfirmInfo() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var channelId;
+        var itemId;
+        var insurantAge;
+        var productSupplierId;
+        var orderId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                channelId = v.channelId;
+                itemId = v.itemId;
+                insurantAge = getAge(v.insurantBirthDate,v.ageCalculateStandard);
+                productSupplierId = v.productSupplierId;
+                orderId = v.orderId;
+            })
+            var url = 'order_reserve_confirm.html?channelId=' + channelId + '&itemId=' + itemId + '&insurantAge='
+                + insurantAge + '&productSupplierId=' + productSupplierId + '&orderId=' + orderId + '&functionCode=' + functionCode;
+            var rcWin =  $("#rcWin").kendoWindow({
+                width: 900,
+                height: 600,
+                title: '<@spring.message "fms.ordorder.reserveConfirmInfo"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            rcWin.center().open();
+        }
+    }
+
+    function updateCusStatus() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        $.each(checked, function (i, v) {
+            orderId = v.orderId;
+        })
+        if (checkedCount) {
+            var url = 'order_cus_status_update.html?functionCode=' + functionCode + '&orderId=' + orderId;
+            var cusWin =  $("#cusWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.customerconfirm"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            cusWin.center().open();
+        }
+    }
+
+    function updateHkContact() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                orderId = v.orderId;
+            })
+
+            var url = 'order_hk_contact_update.html?functionCode=' + functionCode + '&orderId=' + orderId;
+
+            var hkWin =  $("#hkWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.updatecontact"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            hkWin.center().open();
+        }
+    }
+
+    function updateAppStatus() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var channelContractId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                channelContractId = v.channelContractId;
+                orderId = v.orderId;
+            })
+
+            var url = 'order_app_status_update.html?functionCode=' + functionCode + '&channelContractId=' + channelContractId+"&orderId="+orderId;
+            var appWin =  $("#appWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.updateappstatus"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            appWin.center().open();
+        }
+    }
+
+    function updateAppStatus2() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        if (checkedCount) {
+            var url = 'order_app_receipt_update.html?functionCode=' + functionCode;
+            var recWin =  $("#recWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.updateappstatus2"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            recWin.center().open();
+        }
+    }
+
+    function review1() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var ownSupplierId;
+        var channelContractId;
+        var orderId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                ownSupplierId = v.ownSupplierId;
+                channelContractId = v.channelContractId;
+                orderId = v.orderId;
+            })
+
+            var url = 'order_review.html?reviewNum=1&ownSupplierId=' + ownSupplierId + '&channelContractId=' + channelContractId+"&orderId="+orderId;
+            var revWin =  $("#revWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.review"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            revWin.center().open();
+        }
+    }
+
+    function review2() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        var ownSupplierId;
+        var channelContractId;
+        var orderId;
+        if (checkedCount) {
+            $.each(checked, function (i, v) {
+                ownSupplierId = v.ownSupplierId;
+                channelContractId = v.channelContractId;
+                orderId = v.orderId;
+            })
+            var url = 'order_review.html?reviewNum=2&ownSupplierId=' + ownSupplierId + '&channelContractId=' + channelContractId + "&orderId="+orderId;
+            var revWin =  $("#revWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.review"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            revWin.center().open();
+        }
+    }
+
+    function sendConfirm(){
+
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        if (checkedCount) {
+            kendo.ui.showConfirmDialog({
+                message:'<@spring.message "fms.ordorder.confirmsend"/>',
+            }).done(function (e) {
+                if (e.button == 'OK') {
+
+                    var employeeName = "";
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "${base.contextPath}/fms/ord/order/queryUser",
+                        data: {
+                            userId: ${Session.userId}
+                        },
+                        success: function (json) {
+                            var row = json.rows[0] || {};
+                            for (var k in row) {
+                                if (k = "employeeName") {
+                                    employeeName = row[k];
+                                }
+                            }
+                        }
+
+                    });
+
+                    $.each(checked, function (i, v) {
+                        v.sendStatus = "Y";
+                        v.sendUserId = ${Session.userId};
+                        v.sendEmployeeName = employeeName;
+                        v.sendDate = new Date();
+                        v.dirty = true;
+                        
+                        $.ajax({
+                        	url:"${base.contextPath}/fms/ord/order/addHisStatus2",
+                            type:"POST",
+                            dataType:"json",   //返回格式为json
+                            async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+                            data:{"status":"SEND_STATUS",
+                            	 	"orderId":orderId
+                            },    //参数值
+                            success:function(data){
+                                //请求成功时处理
+                                if(data.success){
+                                	window.parent.$('#Grid').data('kendoGrid').saveChanges();
+                                    window.parent.$("#revWin").data("kendoWindow").close();
+                                }
+                            }
+                        });
+                    })
+                    $('#Grid').data('kendoGrid').saveChanges();
+                }
+            });
+
+        }
+    }
+
+    function surrender() {
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        if (checkedCount) {
+            var url = 'order_surrender.html';
+            var surWin =  $("#surWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.surrender"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            surWin.center().open();
+        }
+    }
+
+    function setPhoneFlag(){
+
+        var checked = grid.selectedDataItems();
+        var checkedCount = grid.selectedDataItems().length;
+        /* if (checkedCount) {
+            kendo.ui.showConfirmDialog({
+                message:'<@spring.message "fms.ordorder.confirmphone"/>',
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    $.each(checked, function (i, v) {
+                        v.phoneFlag = "Y";
+                        v.dirty = true;
+                    })
+                    $('#Grid').data('kendoGrid').saveChanges();
+                }
+            });
+
+        } */
+        $.each(checked, function (i, v) {
+            orderId = v.orderId;
+        })
+        if (checkedCount) {
+            var url = 'order_phone_flag_update.html?functionCode=' + functionCode + '&orderId=' + orderId;
+            var phoneWin =  $("#phoneWin").kendoWindow({
+                width: 700,
+                height: 500,
+                title: '<@spring.message "fms.ordorder.phoneflag"/>',
+                content: url,
+                iframe:  true,
+                visible: false,
+                modal:true
+            }).data("kendoWindow");
+            phoneWin.center().open();
+        }
+    }
+
+    var uidData;
+    function upload(uid){
+        uidData = uid;
+        data = dataSource.getByUid(uidData);
+        if(data.reqFileId != "" && typeof(data.reqFileId) != "undefined"){
+            kendo.ui.showConfirmDialog({
+                message: '<@spring.message "fms.overwrite_file"/>'
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    window.fileWin = $("#fileWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    fileWin.center().open();
+                }
+            });
+        }
+        else{
+            window.fileWin = $("#fileWin").kendoWindow({
+                title: '<@spring.message "sysfile.upload"/>',
+                width: 400,
+                height: 250,
+                modal: true
+            }).data("kendoWindow");
+            fileWin.center().open();
+        }
+
+    }
+    $("#files").kendoUpload({
+        async        : {
+            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        },
+        showFileList : false,
+        upload       : onUpload,
+        success      : onSuccess
+    });
+
+    function onUpload(e){
+        e.data = {
+            modularName:'ORD',
+            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+            maxSize:20480
+        }
+    };
+
+    function onSuccess(e){
+        if(e.response.success){
+            var data = grid.dataSource.getByUid(uidData);
+            data.oldReqFileId = data.reqFileId;
+            data.reqFileId = e.response.file.fileId;
+            data.reqToken = e.response.file._token;
+            data.dirty = true;
+            grid.refresh();
+            document.getElementById("attacheDownload"+uidData).disabled="";
+            fileWin.close();
+            kendo.ui.showInfoDialog({
+                message  : '<@spring.message "spe.pleasesavedata"/>'
+            })
+        }else{
+            kendo.ui.showErrorDialog({
+                message  : e.response.message
+            })
+        }
+    }
+
+    function downloadFile(uid)
+    {
+        var data = dataSource.getByUid(uid);
+        $.ajax({
+            url : '${base.contextPath}/commons/attach/validateFile',
+            type : "POST",
+            dataType : "json",
+            data : {
+                fileId:data.reqFileId,
+                token:data.reqToken
+            },
+            success : function(json) {
+                if(json.success == true){
+                    url='${base.contextPath}/fms/sys/attach/file/detail?fileId='+data.reqFileId+'&token='+data.reqToken;
+                    var iframe = document.getElementById("ifile");
+                    iframe.src=url;
+                }else{
+                    kendo.ui.showErrorDialog({
+                        message  : '<@spring.message "fms.file_not_exists"/>'
+                    })
+                }
+            },
+        })
+
+    };
+
+    $.ajax({
+        url:"${base.contextPath}/clb/sys/user/isImporter",
+        method:"POST",
+        contentType:"application/json",
+        dataType:"json",
+        data:{},
+        success:function (data) {
+            if(data){
+                $("#importExcelBtn").show();
+            }else{
+                $("#importExcelBtn").hide();
+            }
+        }
+    });
+
+    //　导入excel
+    function importExcel(){
+        var url = '${base.contextPath}/fnd/import/import_upload.html?className=clb.core.order.service.impl.OrdOrderImport';
+        var importDialog = $("#importDialog").kendoWindow({
+            actions: ["Close"],
+            width: '100%',
+            height: '100%',
+            title: '<@spring.message "fms.data_import"/>',
+            content: url,
+            iframe: true,
+            visible: false,
+            modal: true,
+            close: function () {
+                //window 关闭  刷新本页面的grid
+                $('#Grid').data('kendoGrid').dataSource.page(1);
+            }
+        }).data("kendoWindow");
+        importDialog.maximize();
+        importDialog.center().open();
+    }
+
+    function saveData() {
+        $('#Grid').data('kendoGrid').saveChanges();
+    }
+
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+    function expectCoolDateQuery() {
+    	viewModel.model.set("expectCoolDateColumn","expectCoolDateQuery");
+    	$('#Grid').data('kendoGrid').dataSource.page(1);
+	}
+    Hap.autoResizeGrid("#Grid");
+
+
+</script>
+</body>
+</html>

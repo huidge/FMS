@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlContractRoleMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlContractRole">
+        <result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="ROLE" property="role" jdbcType="VARCHAR" />
+        <result column="ROLE_USER_ID" property="roleUserId" jdbcType="DECIMAL" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="BENEFIT" property="benefit" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryCnlContractRole" parameterType="clb.core.channel.dto.CnlContractRole" resultMap="BaseResultMap">
+        SELECT
+        fccr.CONTRACT_ROLE_ID,
+        fccr.CHANNEL_CONTRACT_ID,
+        fccr.ROLE,
+        fccr.ROLE_USER_ID,
+        fccr.BENEFIT,
+        fccr.PROGRAM_ID,
+        fccr.REQUEST_ID,
+        rpt.key_name name
+        FROM
+        fms_cnl_contract_role AS fccr
+
+        LEFT JOIN sys_user su
+        ON su.user_id = fccr.ROLE_USER_ID
+
+        LEFT JOIN (
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'OPERATOR' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        UNION
+        SELECT
+        CHANNEL_ID,
+        CHANNEL_NAME,
+        'CHANNEL',PHONE_CODE,CONTACT_PHONE PHONE,EMAIL
+        FROM
+        fms_cnl_channel
+        UNION
+        SELECT
+        SUPPLIER_ID,
+        NAME,
+        'SUPPLIER', PHONE_CODE,CONTACT_NUM PHONE,EMAIL
+        FROM
+        fms_spe_supplier
+        UNION
+        SELECT
+        CUSTOMER_ID,
+        CHINESE_NAME,
+        'CUSTOMER',PHONE_CODE ,PHONE, EMAIL
+        FROM
+        fms_ctm_customer
+        UNION
+        SELECT
+        EMPLOYEE_ID key_id,
+        NAME key_name,
+        'ADMINISTRATION' key_type ,PHONE_CODE,MOBIL PHONE,EMAIL
+        FROM
+        hr_employee
+        ) rpt ON (
+        su.RELATED_PARTY_ID = rpt.key_id
+        AND su.USER_TYPE = rpt.key_type
+        )
+        WHERE 1=1
+        <if test = "channelContractId != null"> AND fccr.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL} </if>
+    </select>
+
+    <select id="queryIntroducer" parameterType="clb.core.channel.dto.CnlContractRole" resultMap="BaseResultMap" >
+        SELECT su.USER_NAME NAME,fccr.BENEFIT,fccr.ROLE_USER_ID
+        FROM fms_cmn_channel_commission fccc
+        JOIN fms_cnl_contract_role fccr
+        ON (fccc.CHANNEL_CONTRACT_ID = fccr.CHANNEL_CONTRACT_ID AND fccr.ROLE = 'INTRODUCER')
+        LEFT JOIN sys_user su
+        ON su.user_id = fccr.ROLE_USER_ID
+        where fccc.LINE_ID = #{channelCommissionLineId , jdbcType=DECIMAL}
+    </select>
+
+    <select id="queryAdmin" parameterType="clb.core.channel.dto.CnlContractRole" resultMap="BaseResultMap" >
+        select fccr.CONTRACT_ROLE_ID
+        FROM fms_cnl_contract_role fccr
+        WHERE fccr.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        AND fccr.ROLE = 'ADMINISTRATION'
+    </select>
+
+</mapper>

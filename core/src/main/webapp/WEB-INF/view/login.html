@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Hap</title>
+	<link href="${base.contextPath}/resources/upload/favicon.png" rel="shortcut icon" />
+	<link href="${base.contextPath}/lib/font-awesome-4.6.3/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+	<script src="${base.contextPath}/lib/kendoui/js/jquery-1.12.3.js"></script>
+	<script type="text/javascript">
+        if(window.top!=window.self){
+            window.top.location="${base.contextPath}/login";
+        }
+        $.ajax({
+            type: 'GET',
+            url: '${base.contextPath}/api/public/getProFile/PROTAL_WEB_URL',
+            contentType: "application/json; charset=utf-8",
+            error:function(datas){
+            },
+            success: function (datas) {
+                if(datas!=undefined && datas!='undefined' && datas!=''){
+                    window.location.href = datas;
+                }else{
+                    window.location.href = "${base.contextPath}/login";
+                }
+            }
+        });
+	</script>

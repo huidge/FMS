@@ -1,0 +1,304 @@
+<#-- 
+ * description:应收/渠道对账更新版本页面
+ * version: 1.0 
+ * author:bo.wu@hand-china.com
+ * -->
+<#include "../../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusCode=SYS.STATUS_CODE" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="${base.contextPath}/resources/js/common/zeroModal/zeroModal.css" />
+<link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+<script src="${base.contextPath}/resources/js/common/zeroModal/zeroModal.js" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?companyTypes=SPE.PAYMENT_COMPANY_TYPE" type="text/javascript"></script>
+<script type="text/javascript">
+	//多语言常量
+	validateNotEmpty='<@spring.message "spe.notempty"/>';
+	var viewModel = kendo.observable({
+        model: {
+        }
+    });
+    
+    var requestType = '${RequestParameters.requestType!0}';
+    var userType = '${Session.userType}';
+    var companyId = '${Session.companyId}';
+    var companyName = '${Session.companyName}';
+    var roleId = ${Session.roleId};
+    
+    if(roleId != 10001){
+    	if(userType == 'SUPPLIER' || userType == 'CHANNEL'){
+    		viewModel.model.set('receiveCompanyType',userType);
+    		viewModel.model.set('receiveCompanyId',companyId);
+    		viewModel.model.set('receiveCompanyName',companyName);
+    	}
+    }
+</script>
+<body>
+<script src="${base.contextPath}/resources/js/common/validate.js" type="text/javascript"></script>
+<div id="page-content" style ="margin-top:100px">
+		<form class="form-horizontal" id="updateVersion">
+                <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label"><@spring.message "fet.updateversion.receivecompanytype"/></label>
+                            <div class="col-sm-6">
+                                <input name="receiveCompanyType" id="receiveCompanyType" style="width: 100%" data-bind="value:model.receiveCompanyType">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+		    		   <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"><@spring.message "fet.updateversion.receivecompanyid"/></label>
+                                <div class="col-sm-6">
+                                    <input name="receiveCompanyId" id="receiveCompanyId" style="width: 100%" data-bind="value:model.receiveCompanyId,text:model.receiveCompanyName">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+				<div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+		    		   <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"><@spring.message "fet.updateversion.paymentcompanytype"/></label>
+                                <div class="col-sm-6">
+                                    <input name="paymentCompanyType" id="paymentCompanyType" style="width: 100%" data-bind="value:model.paymentCompanyType">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+		    		   <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"><@spring.message "fet.updateversion.paymentcompanyid"/></label>
+                                <div class="col-sm-6">
+                                    <input name="paymentCompanyId" id="paymentCompanyId" style="width: 100%" data-bind="value:model.paymentCompanyId">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+		    		   <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"><@spring.message "fet.common.period"/></label>
+                                <div class="col-sm-6">
+                                    <input name="receiptPeriod" id="receiptPeriod" style="width: 100%" 
+                                           data-bind="value:model.receiptPeriod">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+        </form>
+        
+        <div class="row" style="margin-bottom: 20px;margin-left:30%;width:60%">
+              <span class="btn btn-success" style="margin-left:12%;margin-right:5px;" onclick="submit()" type="button"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+        	  <span class="btn btn-default" style="margin-right:5px;" onclick="cancel()"><i class="fa fa-rotate-left"></i><@spring.message "hap.cancel"/></span>                
+        </div>
+</div>
+<script>
+kendo.bind($('#page-content'), viewModel);
+
+
+$(function(){
+	if(roleId != 10001){
+		if(userType == 'SUPPLIER' || userType == 'CHANNEL'){
+			var drop = $("#receiveCompanyType").data('kendoDropDownList');
+			drop.enable(false);
+			if(userType == 'SUPPLIER'){
+				viewModel.model.set('paymentCompanyType','SUPPLIER');
+				var drop1 = $("#paymentCompanyType").data('kendoDropDownList');
+				drop1.enable(false);
+				var lov = $("#paymentCompanyId").data('kendoLov');
+				lov.enable(true);
+			}
+		}
+	}
+});
+
+$('#page-content').kendoValidator({
+    errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+});
+
+//收款方类型
+$("#receiveCompanyType")
+.kendoDropDownList({
+	 change:function(){
+		 viewModel.model.set('receiveCompanyId',null);
+		 var lov = $("#receiveCompanyId").data('kendoLov');
+		 lov.text('');
+		 lov.value('');
+		 lov.enable(true);
+		 if(viewModel.model.receiveCompanyType == 'CHANNEL'){
+			 $("#receiveCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_CHANNEL"/>, {
+				 	enable:true
+             }));
+		 }else{
+			 $("#receiveCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_SUPPLIER"/>, {
+				 	enable:true
+                }));
+        }
+		
+	 },
+	dataSource :companyTypes,
+	dataTextField: "meaning",
+	dataValueField: "value",
+	valuePrimitive: true,
+ 	optionLabel:'--<@spring.message "fet.updateversion.receivecompanytype"/>--'
+});
+
+
+//收款方名称
+$("#receiveCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_SUPPLIER"/>, {
+        textField: 'receiveCompanyName',
+        enable:false
+}));
+
+//付款方类型
+$("#paymentCompanyType")
+.kendoDropDownList({
+	 change:function(){
+		 viewModel.model.set('paymentCompanyId',null);
+		 var lov = $("#paymentCompanyId").data('kendoLov');
+		 lov.text('');
+		 lov.value('');
+		 lov.enable(true);
+		 if(viewModel.model.paymentCompanyType == 'CHANNEL'){
+			 $("#paymentCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_CHANNEL"/>, {
+				 	select:function(){
+				 		var kendoLov1 = $("#receiptPeriod").data("kendoLov");
+			            kendoLov1.enable(true);
+				 	},
+                    textField: 'paymentCompanyName',
+                    enable:true
+             }));
+		 }else{
+			 $("#paymentCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_SUPPLIER"/>, {
+				 	select:function(){
+				 		var kendoLov1 = $("#receiptPeriod").data("kendoLov");
+			            kendoLov1.enable(true);
+				 	},
+                    textField: 'paymentCompanyName',
+                    enable:true
+                }));
+        }
+		
+	 },
+	dataSource :companyTypes,
+	dataTextField: "meaning",
+	dataValueField: "value",
+	valuePrimitive: true,
+ 	optionLabel:'--<@spring.message "fet.updateversion.paymentcompanytype"/>--'
+});			 
+
+//付款方名称
+$("#paymentCompanyId").kendoLov($.extend(<@lov "SPE_PAYMENT_TERM_SUPPLIER"/>, {
+		 select:function(){
+	 		var kendoLov1 = $("#receiptPeriod").data("kendoLov");
+	        kendoLov1.enable(true);
+	 	 },
+         textField: 'paymentCompanyName',
+         enable:false
+}));
+
+
+
+
+
+//应收期间
+$("#receiptPeriod")
+.kendoLov($.extend(<@lov "FET_PERIOD"/>,{
+	query:function(e){
+		e.param['partyType'] = viewModel.model.paymentCompanyType;
+    	e.param['partyId'] = viewModel.model.paymentCompanyId;
+	},
+	textField: 'periodName',
+    enable:false
+}));
+				 
+function submit(){
+	 if(requestType == 0){
+		 kendo.ui.showErrorDialog({
+             title    : '错误',
+             message  : '请求类型为空！'
+         })
+         return;
+	 }
+	 if(roleId != 10001 && companyId == ''){
+		 if(userType == 'SUPPLIER'){
+			 kendo.ui.showErrorDialog({
+	             title    : '错误',
+	             message  : '当前用户未关联供应商!'
+	         })
+	         return;
+		 }
+		 if(userType == 'CHANNEL'){
+			 message = '当前用户未关联渠道!';
+			 kendo.ui.showErrorDialog({
+	             title    : '错误',
+	             message  : '当前用户未关联渠道!'
+	         })
+	         return;
+		 }
+     }
+	 var validator = $("#page-content").data("kendoValidator");
+     if (validator.validate()){
+			kendo.ui.showConfirmDialog({
+	    		title:'确认框',
+	            message:'确定更新所有版本？',
+	        }).done(function (e) {
+	        	var unique = zeroModal.loading(6);
+	        	viewModel.model.set('periodId',$("#receiptPeriod").data('kendoLov').value());
+	        	viewModel.model.set('requestType',requestType);
+	        	$.ajax({
+	                url : '${base.contextPath}/fet/suppose/common/updateAllVersion',
+	                type : "POST",
+	                contentType : "application/json",
+	                dataType : "json",
+	                data :JSON.stringify(viewModel.model),
+	                success : function(json) {
+	                	zeroModal.close(unique);
+	                	if(json.success){
+	    	    			if(json.rows.length > 0){
+	    	    				 window.parent.response = json;
+	    	    				 var url = '${base.contextPath}/forecast/updateresult.html';
+	    		 	             var dialog =  window.parent.$("#resultdialog").kendoWindow({
+	    		   		            width: 700,
+	    		   		            height: 700,
+	    		   		            title: '更新结果', 
+	    		   		            content: url,                  
+	    		   		            iframe:  true,
+	    		   		            visible: false,
+	    		   		            modal:true
+	    		   		         }).data("kendoWindow");
+	    		   		         dialog.maximize();
+	    		   				 dialog.open();
+	    		   				 cancel();
+	    	    			 }else{
+	    	    				 window.parent.kendo.ui.showInfoDialog({
+	    	    					 title    : '提示',
+	    	                         message  : json.message
+		                         });
+	    	    				 window.parent.dataSource.read();
+	    	    				 cancel();
+	    	    			 }
+	    	    			 
+	    		        }else{
+	    		        	kendo.ui.showErrorDialog({
+	                            title    : '错误',
+	                            message  : json.message
+	                        })
+
+	    		        }
+	                }
+	            });
+			});
+	    }
+}
+function cancel(){
+	window.parent.$("#dialog").data("kendoWindow").close();
+}
+</script>
+
+
+
+</body>
+</html>

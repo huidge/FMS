@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.OrdRenewalMapper">
+    <resultMap id="BaseResultMap" type="clb.core.order.dto.OrdRenewal">
+        <result column="RENEWAL_ID" property="renewalId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="RENEWAL_STATUS" property="renewalStatus" jdbcType="DECIMAL" />
+        <result column="FLAG" property="flag" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <!-- 订单表的字段 -->
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+        <result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR" />
+        <result column="COMPANY_CHANNEL_ID" property="companyChannelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId" jdbcType="DECIMAL" />
+        <result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId" jdbcType="DECIMAL" />
+        <result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+        <result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_CHECK_DATE" property="reserveCheckDate" jdbcType="TIMESTAMP" />
+        <result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+        <result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+        <result column="EXPECT_COOL_DATE" property="expectCoolDate" jdbcType="DATE" />
+        <result column="FIRST_PAY_DATE" property="firstPayDate" jdbcType="DATE" />
+        <result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+        <result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+        <result column="ADMINISTRATIVE_DATE" property="administrativeDate" jdbcType="DATE" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus" jdbcType="VARCHAR" />
+        <result column="APPLICATION_STATUS" property="applicationStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_USER_ID" property="customerUserId" jdbcType="DECIMAL" />
+        <result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate" jdbcType="TIMESTAMP" />
+        <result column="HK_CONTACT_PERSON" property="hkContactPerson" jdbcType="VARCHAR" />
+        <result column="HK_CONTACT_PHONE" property="hkContactPhone" jdbcType="VARCHAR" />
+        <result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+        <result column="QUICK_CHECK_FLAG" property="quickCheckFlag" jdbcType="VARCHAR" />
+        <result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag" jdbcType="VARCHAR" />
+        <result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_ASSISTANT" property="signAssistant" jdbcType="VARCHAR" />
+        <result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+        <result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+        <result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+        <result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId" jdbcType="DECIMAL" />
+        <result column="RESERVE_COMMENT" property="reserveComment" jdbcType="VARCHAR" />
+        <result column="RESERVE_USER_ID" property="reserveUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_SUPPLIER_ID" property="signSupplierId" jdbcType="DECIMAL" />
+        <result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+        <result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo" jdbcType="VARCHAR" />
+        <result column="RECEPTION_USER_ID" property="receptionUserId" jdbcType="DECIMAL" />
+        <result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+        <result column="REVIEWER1_DATE" property="reviewer1Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+        <result column="REVIEWER2_DATE" property="reviewer2Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER_COMMENT" property="reviewerComment" jdbcType="VARCHAR" />
+        <result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+        <result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+        <result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+        <result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+        <result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_OTHER" property="renewalOther" jdbcType="VARCHAR" />
+        <result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+        <result column="DDA_SUBMIT_DATE" property="ddaSubmitDate" jdbcType="TIMESTAMP" />
+        <result column="DDA_EFFECTIVE_DATE" property="ddaffectiveDate" jdbcType="TIMESTAMP" />
+        <result column="FEEDBACK_BALANCE" property="feedbackBalance" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_BALANCE" property="accountBalance" jdbcType="DECIMAL" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="INTEGER" />
+        
+    </resultMap>
+    
+    <select id="selectAllFiled" resultType="clb.core.order.dto.OrdRenewal" resultMap="BaseResultMap">
+    	SELECT
+			`for`.RENEWAL_ID,
+			`for`.ORDER_ID,
+			`for`.PROGRAM_ID,
+			`for`.REQUEST_ID,
+			`for`.OBJECT_VERSION_NUMBER,
+			`for`.CREATION_DATE,
+			`for`.FLAG,
+			`for`.CREATED_BY,
+			`for`.LAST_UPDATED_BY,
+			`for`.LAST_UPDATE_DATE,
+			`for`.LAST_UPDATE_LOGIN,
+			`for`.ATTRIBUTE_CATEGORY,
+			`for`.ATTRIBUTE1,
+			`for`.ATTRIBUTE2,
+			`for`.ATTRIBUTE3,
+			`for`.ATTRIBUTE4,
+			`for`.ATTRIBUTE5,
+			`for`.ATTRIBUTE6,
+			`for`.ATTRIBUTE7,
+			`for`.ATTRIBUTE8,
+			`for`.ATTRIBUTE9,
+			`for`.ATTRIBUTE10,
+			`for`.ATTRIBUTE11,
+			`for`.ATTRIBUTE12,
+			`for`.ATTRIBUTE13,
+			`for`.ATTRIBUTE14,
+			`for`.ATTRIBUTE15,
+			foo.ORDER_ID,
+			foo.ORDER_NUMBER,
+			foo.POLICY_NUMBER,
+			foo.PAY_NUMBER,
+			foo.CUSTOMER_NUMBER,
+			foo.COMPANY_CHANNEL_ID,
+			foo.CHANNEL_ID,
+			foo.CONTRACT_ROLE_ID,
+			foo.PRODUCT_SUPPLIER_ID,
+			foo.ITEM_ID,
+			foo.SUBLINE_ID,
+			foo.CURRENCY,
+			foo.PAY_METHOD,
+			foo.YEAR_PAY_AMOUNT,
+			foo.POLICY_AMOUNT,
+			foo.APPLICANT_CUSTOMER_ID,
+			foo.INSURANT_CUSTOMER_ID,
+			foo.INCREASE_FLAG,
+			foo.SUBMIT_DATE,
+			foo.RESERVE_DATE,
+			foo.RESERVE_ARRIVAL_DATE,
+			foo.RESERVE_CHECK_DATE,
+			foo.SIGN_DATE,
+			foo.EFFECTIVE_DATE,
+			foo.APPROVE_DATE,
+			foo.EXPECT_COOL_DATE,
+			foo.FIRST_PAY_DATE,
+			foo.RENEWAL_DUE_DATE,
+			foo.GRACE_DATE,
+			foo.ADMINISTRATIVE_DATE,
+			foo.`STATUS`,
+			foo.CLUB_CONFIRM_STATUS,
+			foo.CUSTOMER_CONFIRM_STATUS,
+			foo.APPLICATION_STATUS,
+			foo.CUSTOMER_USER_ID,
+			foo.SMS_FLAG,
+			foo.CUSTOMER_OPERATE_DATE,
+			foo.HK_CONTACT_PERSON,
+			foo.HK_CONTACT_PHONE,
+			foo.RECEIPT_DATE,
+			foo.QUICK_CHECK_FLAG,
+			foo.ELE_INSURANCE_FLAG,
+			foo.FILL_USER_ID,
+			foo.SIGN_ASSISTANT,
+			foo.ARRIVAL_DATE,
+			foo.LEAVE_DATE,
+			foo.PHONE_FLAG,
+			foo.CONTACT_PERSON,
+			foo.CONTACT_PHONE,
+			foo.SIGN_ADDRESS,
+			foo.MEET_ADDRESS,
+			foo.RESERVE_SUPPLIER_ID,
+			foo.RESERVE_COMMENT,
+			foo.RESERVE_USER_ID,
+			foo.SIGN_SUPPLIER_ID,
+			foo.SIGN_PERSON,
+			foo.EXPRESS_DELIVERY_INFO,
+			foo.RECEPTION_USER_ID,
+			foo.REVIEWER1,
+			foo.REVIEWER1_DATE,
+			foo.REVIEWER2,
+			foo.REVIEWER2_DATE,
+			foo.REVIEWER_COMMENT,
+			foo.SEND_USER_ID,
+			foo.SEND_DATE,
+			foo.PLAN_FILE_ID,
+			foo.REQ_FILE_ID,
+			foo.PROGRAM_ID,
+			foo.REQUEST_ID,
+			foo.OBJECT_VERSION_NUMBER,
+			foo.CREATION_DATE,
+			foo.CREATED_BY,
+			foo.LAST_UPDATED_BY,
+			foo.LAST_UPDATE_DATE,
+			foo.LAST_UPDATE_LOGIN,
+			foo.ATTRIBUTE_CATEGORY,
+			foo.ATTRIBUTE1,
+			foo.ATTRIBUTE2,
+			foo.ATTRIBUTE3,
+			foo.ATTRIBUTE4,
+			foo.ATTRIBUTE5,
+			foo.ATTRIBUTE6,
+			foo.ATTRIBUTE7,
+			foo.ATTRIBUTE8,
+			foo.ATTRIBUTE9,
+			foo.ATTRIBUTE10,
+			foo.ATTRIBUTE11,
+			foo.ATTRIBUTE12,
+			foo.ATTRIBUTE13,
+			foo.ATTRIBUTE14,
+			foo.ATTRIBUTE15,
+			foo.SEND_STATUS,
+			foo.NEXT_POLICY_AMOUNT,
+			foo.NEXT_POLICY_DUE_DATE,
+			foo.FIRST_PAYMENT_METHOD,
+			foo.RENEWAL_PAYMENT_METHOD,
+			foo.RENEWAL_OTHER,
+			foo.DDA_FLAG,
+			foo.DDA_SUBMIT_DATE,
+			foo.DDA_EFFECTIVE_DATE,
+			foo.FEEDBACK_BALANCE,
+			foo.ACCOUNT_BALANCE,
+			foo.PAY_PERIODS
+		FROM
+			fms_ord_renewal AS `for`,
+			fms_ord_order AS foo
+		where
+			`for`.ORDER_ID = #{orderId} 
+		AND
+			foo.ORDER_ID = #{orderId}
+    </select>
+
+
+</mapper>

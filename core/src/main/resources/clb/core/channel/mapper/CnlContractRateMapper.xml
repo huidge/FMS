@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlContractRateMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlContractRate">
+        <result column="CHANNEL_RATE_ID" property="channelRateId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="SPECIAL_DESC" property="specialDesc" jdbcType="VARCHAR" />
+
+        <result column="BIG_CLASS" property="bigClass" jdbcType="VARCHAR" />
+        <result column="MID_CLASS" property="midClass" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="RATE1" property="rate1" jdbcType="DECIMAL" />
+        <result column="RATE2" property="rate2" jdbcType="DECIMAL" />
+        <result column="RATE3" property="rate3" jdbcType="DECIMAL" />
+        <result column="RATE4" property="rate4" jdbcType="DECIMAL" />
+        <result column="RATE5" property="rate5" jdbcType="DECIMAL" />
+        <result column="RATE6" property="rate6" jdbcType="DECIMAL" />
+        <result column="RATE7" property="rate7" jdbcType="DECIMAL" />
+        <result column="RATE8" property="rate8" jdbcType="DECIMAL" />
+        <result column="RATE9" property="rate9" jdbcType="DECIMAL" />
+        <result column="RATE10" property="rate10" jdbcType="DECIMAL" />
+        <result column="PERFORMANCE_REQUIRE" property="performanceRequire" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        <result column="BIG_CLASS_DESC" property="bigClassDesc" jdbcType="VARCHAR" />
+        <result column="MID_CLASS_DESC" property="midClassDesc" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS_DESC" property="minClassDesc" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryRate" parameterType="clb.core.channel.dto.CnlContractRate" resultMap="BaseResultMap" >
+        SELECT
+        fccr.CHANNEL_RATE_ID,
+        fccr.CHANNEL_CONTRACT_ID,
+        fccr.BIG_CLASS,
+        fccr.MID_CLASS,
+        fccr.MIN_CLASS,
+        fccr.ITEM_ID,
+        fccr.SUBLINE_ID,
+        fccr.SPECIAL_DESC,
+        fccr.PROGRAM_ID,
+        fccr.REQUEST_ID,
+        fccr.RATE1,
+        fccr.RATE2,
+        fccr.RATE3,
+        fccr.RATE4,
+        fccr.RATE5,
+        fccr.RATE6,
+        fccr.RATE7,
+        fccr.RATE8,
+        fccr.RATE9,
+        fccr.RATE10,
+        fccr.PERFORMANCE_REQUIRE,
+        fpi.ITEM_NAME,
+        fpis.SUBLINE_ITEM_NAME,
+        scvt.MEANING BIG_CLASS_DESC,
+        scvt1.MEANING MID_CLASS_DESC,
+        scvt2.MEANING MIN_CLASS_DESC
+        FROM
+        fms_cnl_contract_rate AS fccr
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.item_id = fccr.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.subline_id = fccr.subline_id
+
+        LEFT JOIN sys_code_b sc
+        ON SC.code = 'PRD.PRODUCT_DIVISION'
+        LEFT JOIN sys_code_value_b scvb
+        ON scvb.code_id=sc.code_id
+        AND scvb.value=fccr.BIG_CLASS
+        LEFT JOIN sys_code_value_tl scvt
+        ON scvt.code_value_id=scvb.code_value_id
+        AND scvt.lang = #{request.locale, jdbcType = VARCHAR}
+
+        LEFT JOIN sys_code_b sc1
+        ON SC1.code = 'PRD.PRODUCT_CLASS'
+        LEFT JOIN sys_code_value_b scvb1
+        ON scvb1.code_id=sc1.code_id
+        AND scvb1.value=fccr.MID_CLASS
+        LEFT JOIN sys_code_value_tl scvt1
+        ON scvt1.code_value_id=scvb1.code_value_id
+        AND scvt1.lang = #{request.locale, jdbcType = VARCHAR}
+
+        LEFT JOIN sys_code_b sc2
+        ON SC2.code = 'PRD.PRODUCT_CATAGORY'
+        LEFT JOIN sys_code_value_b scvb2
+        ON scvb2.code_id=sc2.code_id
+        AND scvb2.value=fccr.MIN_CLASS
+        LEFT JOIN sys_code_value_tl scvt2
+        ON scvt2.code_value_id=scvb2.code_value_id
+        AND scvt2.lang = #{request.locale, jdbcType = VARCHAR}
+        /*LEFT JOIN fms_cnl_level fcl
+        ON fccr.LEVEL_ID = fcl.ID*/
+        WHERE 1=1
+        <if test = "channelContractId != null">
+        	AND fccr.CHANNEL_CONTRACT_ID = #{channelContractId , jdbcType=DECIMAL}
+        </if>
+        <if test = "bigClass != null and bigClass != ''" >
+            AND fccr.BIG_CLASS = #{bigClass}
+        </if>
+        <if test = "midClass != null and midClass != ''" >
+            AND fccr.MID_CLASS = #{midClass}
+        </if>
+        <if test = "minClass != null and minClass != ''" >
+            AND fccr.MIN_CLASS = #{minClass}
+        </if>
+        <if test = "itemId != null and itemId != ''" >
+            AND fccr.ITEM_ID = #{itemId}
+        </if>
+        <if test = "sublineId != null and sublineId != ''" >
+            AND fccr.SUBLINE_ID = #{sublineId}
+        </if>
+        ORDER BY fccr.CREATION_DATE desc
+    </select>
+    
+    <!--查询渠道对应的佣金分成-->
+    <select id="queryChannelRate" parameterType="clb.core.channel.dto.CnlContractRate" resultMap="BaseResultMap" >
+        SELECT 
+		  ccrd.`RATIO_LINE_ID`,
+		  ccrd.`RATIO_ID`,
+		  scvb1.`VALUE` BIG_CLASS,
+		  scvb1.`MEANING` BIG_CLASS_DESC,
+		  scvb2.`VALUE` MID_CLASS,
+		  scvb2.`MEANING` MID_CLASS_DESC,
+		  scvb3.`VALUE` MIN_CLASS,
+		  scvb3.`MEANING` MIN_CLASS_DESC,
+		  ccrd.`ITEM_ID`,
+		  fpi.`ITEM_NAME`,
+		  ccrd.`SUBLINE_ITEM_ID` SUBLINE_ID,
+		  fpis.`SUBLINE_ITEM_NAME`,
+		  ccrd.`THE_FIRST_YEAR` RATE1,
+		  ccrd.`THE_SECOND_YEAR` RATE2,
+		  ccrd.`THE_THIRD_YEAR` RATE3,
+		  ccrd.`THE_FOURTH_YEAR` RATE4,
+		  ccrd.`THE_FIFTH_YEAR` RATE5,
+		  ccrd.`THE_SIXTH_YEAR` RATE6,
+		  ccrd.`THE_SEVENTH_YEAR` RATE7,
+		  ccrd.`THE_EIGHT_YEAR` RATE8,
+		  ccrd.`THE_NINTH_YEAR` RATE9,
+		  ccrd.`THE_TENTH_YEAR` RATE10,
+		  ccrd.`COMMENTS` PERFORMANCE_REQUIRE,
+  		  ccrd.`OBJECT_VERSION_NUMBER` 
+		FROM
+		  FMS_CMN_CHANNEL_RATIO_DETAIL ccrd 
+		  LEFT JOIN fms_prd_items fpi 
+		    ON fpi.`ITEM_ID` = ccrd.`ITEM_ID` 
+		  LEFT JOIN fms_prd_item_subline fpis 
+		    ON fpis.`ITEM_ID` = ccrd.`ITEM_ID` 
+		    AND fpis.`SUBLINE_ID` = ccrd.`SUBLINE_ITEM_ID` 
+		  LEFT JOIN sys_code_b scb1 
+		    ON scb1.CODE = 'PRD.PRODUCT_DIVISION' 
+		  LEFT JOIN sys_code_value_b scvb1 
+		    ON scb1.CODE_ID = scvb1.CODE_ID 
+		    AND scvb1.VALUE = ccrd.BIG_CLASS 
+		  LEFT JOIN sys_code_b scb2 
+		    ON scb2.CODE = 'PRD.PRODUCT_CLASS' 
+		  LEFT JOIN sys_code_value_b scvb2 
+		    ON scb2.CODE_ID = scvb2.CODE_ID 
+		    AND scvb2.VALUE = ccrd.MID_CLASS 
+		  LEFT JOIN sys_code_b scb3 
+		    ON scb2.CODE = 'PRD.PRODUCT_CATAGORY' 
+		  LEFT JOIN sys_code_value_b scvb3 
+		    ON scb3.CODE_ID = scvb3.CODE_ID 
+		    AND scvb3.VALUE = ccrd.MIN_CLASS 
+		  WHERE ccrd.RATIO_ID = #{rateLevelId}
+		  ORDER BY ccrd.CREATION_DATE desc
+    </select>
+    
+    <!--查询供应商对应的佣金分成-->
+    <select id="querySupplierRate" parameterType="clb.core.channel.dto.CnlContractRate" resultMap="BaseResultMap">
+		SELECT 
+			fcl.ID,
+			fcl.CHANNEL_CLASS_CODE,
+			fcl.LEVEL_NAME,
+			fcl.THE_FIRST_YEAR RATE1,
+			fcl.THE_SECOND_YEAR RATE2,
+			fcl.THE_THIRD_TEAR RATE3,
+			fcl.THE_FORTH_YEAR RATE4, 
+			fcl.THE_FIFTH_YEAR RATE5,
+			fcl.THE_SIXTH_YEAR RATE6,
+			fcl.THE_SEVENTH_YEAR RATE7,
+			fcl.THE_EIGHT_YEAR RATE8,
+			fcl.THE_NINTH_YEAR RATE9,
+			fcl.THE_TENTH_YEAR RATE10,
+			fcl.EFFECTIVE_END_DATE,
+			fcl.EFFECTIVE_START_DATE,
+			fcl.VERSION,
+			fcl.SUPPLIER_ID
+		  FROM fms_cnl_level fcl
+		WHERE fcl.LEVEL_NAME = #{rateLevelName}
+		  AND CURDATE() BETWEEN fcl.EFFECTIVE_START_DATE AND fcl.EFFECTIVE_END_DATE
+        <if test = "channelClassCode != null">
+          AND fcl.CHANNEL_CLASS_CODE = #{channelTypeCode , jdbcType=VARCHAR}
+        </if>
+        <if test = "supplierId != null">
+          AND fcl.SUPPLIER_ID = #{partyId , jdbcType=VARCHAR}
+        </if>
+		 ORDER BY fcl.CREATION_DATE desc
+    </select>
+
+    <!--查询团队成员对应的对应的佣金分成（上级渠道查下级）-->
+    <select id="queryTeamCommission" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap" >
+        SELECT
+        fccr.CHANNEL_RATE_ID,
+        fccr.CHANNEL_CONTRACT_ID,
+        fccr.BIG_CLASS,
+        fccr.MID_CLASS,
+        fccr.MIN_CLASS,
+        fccr.ITEM_ID,
+        fccr.SUBLINE_ID,
+        fccr.SPECIAL_DESC,
+        fccr.PROGRAM_ID,
+        fccr.REQUEST_ID,
+        fccr.RATE1,
+        fccr.RATE2,
+        fccr.RATE3,
+        fccr.RATE4,
+        fccr.RATE5,
+        fccr.RATE6,
+        fccr.RATE7,
+        fccr.RATE8,
+        fccr.RATE9,
+        fccr.RATE10,
+        fccr.PERFORMANCE_REQUIRE,
+        fpi.ITEM_NAME,
+        fpis.SUBLINE_ITEM_NAME
+        FROM
+        fms_cnl_contract_rate AS fccr
+        LEFT JOIN fms_prd_items fpi
+        ON fpi.item_id = fccr.item_id
+        LEFT JOIN fms_prd_item_subline fpis
+        ON fpis.subline_id = fccr.subline_id
+        WHERE 1=1
+        AND EXISTS (
+        select 1 from fms_cnl_channel_contract AS fccc
+        WHERE fccc.CHANNEL_CONTRACT_ID = fccr.CHANNEL_CONTRACT_ID
+        AND fccc.channel_id = #{channelId}
+        AND fccc.party_type = 'CHANNEL'
+        AND fccc.party_id = #{partyId}
+        AND current_timestamp() BETWEEN fccc.start_date AND fccc.end_date
+        )
+    </select>
+    <!-- 用于查询是否存在重复数据 -->
+    <select id="selectRateByNull" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="BaseResultMap">
+        SELECT
+	        fccr.CHANNEL_RATE_ID,
+	        fccr.CHANNEL_CONTRACT_ID,
+	        fccr.BIG_CLASS,
+	        fccr.MID_CLASS,
+	        fccr.MIN_CLASS,
+	        fccr.ITEM_ID,
+	        fccr.SUBLINE_ID,
+	        fccr.SPECIAL_DESC,
+	        fccr.PROGRAM_ID,
+	        fccr.REQUEST_ID,
+	        fccr.RATE1,
+	        fccr.RATE2,
+	        fccr.RATE3,
+	        fccr.RATE4,
+	        fccr.RATE5,
+	        fccr.RATE6,
+	        fccr.RATE7,
+	        fccr.RATE8,
+	        fccr.RATE9,
+	        fccr.RATE10,
+	        fccr.PERFORMANCE_REQUIRE
+	        FROM
+	        fms_cnl_contract_rate AS fccr
+	        WHERE fccr.CHANNEL_CONTRACT_ID = #{channelContractId}
+        <if test = "bigClass != null and bigClass != ''" >
+            AND fccr.BIG_CLASS = #{bigClass}
+        </if>
+        <if test = "bigClass == null or bigClass == ''" >
+            AND fccr.BIG_CLASS IS NULL
+        </if>
+        <if test = "midClass != null and midClass != ''" >
+            AND fccr.MID_CLASS = #{midClass}
+        </if>
+        <if test = "midClass == null or midClass == ''" >
+            AND fccr.MID_CLASS IS NULL
+        </if>
+        <if test = "minClass != null and minClass != ''" >
+            AND fccr.MIN_CLASS = #{minClass}
+        </if>
+        <if test = "minClass == null or minClass == ''" >
+            AND fccr.MIN_CLASS IS NULL
+        </if>
+        <if test = "itemId != null and itemId != ''" >
+            AND fccr.ITEM_ID = #{itemId}
+        </if>
+        <if test = "itemId == null or itemId == ''" >
+            AND fccr.ITEM_ID IS NULL
+        </if>
+        <if test = "sublineId != null and sublineId != ''" >
+            AND fccr.SUBLINE_ID = #{sublineId}
+        </if>
+        <if test = "sublineId == null or sublineId == ''" >
+            AND fccr.SUBLINE_ID IS NULL
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlMyTeamCommonMapper">
+    <resultMap id="ChannelContractMap" type="clb.core.channel.dto.CnlChannelContract">
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_CODE" property="contractCode" jdbcType="VARCHAR" />
+        <result column="CONTRACT_TYPE_CODE" property="contractTypeCode" jdbcType="VARCHAR" />
+        <result column="PRODUCT_DIVISION" property="productDivision" jdbcType="VARCHAR" />
+        <result column="PARTY_ID" property="partyId" jdbcType="DECIMAL" />
+        <result column="PARTY_TYPE" property="partyType" jdbcType="VARCHAR" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="START_DATE" property="startDate" jdbcType="DATE" />
+        <result column="END_DATE" property="endDate" jdbcType="DATE" />
+        <result column="CONTRACT_APPROACH" property="contractApproach" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="MERCHANT_PERSON" property="merchantPerson" jdbcType="VARCHAR" />
+        <result column="CHANNEL_PERSON" property="channelPerson" jdbcType="VARCHAR" />
+        <result column="INTRODUCE_PERSON" property="introducePerson" jdbcType="VARCHAR" />
+        <result column="MAKE_PERSON" property="makePerson" jdbcType="VARCHAR" />
+        <result column="PRODUCT_PERSON" property="productPerson" jdbcType="VARCHAR" />
+        <result column="BUSINESS_PERSON" property="businessPerson" jdbcType="VARCHAR" />
+        <result column="MERCHANT_BENEFIT" property="merchantBenefit" jdbcType="VARCHAR" />
+        <result column="CHANNEL_BENEFIT" property="channelBenefit" jdbcType="VARCHAR" />
+        <result column="INTRODUCE_BENEFIT" property="introduceBenefit" jdbcType="VARCHAR" />
+        <result column="MAKE_BENEFIT" property="makeBenefit" jdbcType="VARCHAR" />
+        <result column="PRODUCT_BENEFIT" property="productBenefit" jdbcType="VARCHAR" />
+        <result column="BUSINESS_BENEFIT" property="businessBenefit" jdbcType="VARCHAR" />
+        <result column="SETTLE_FLAG" property="settleFlag" jdbcType="VARCHAR" />
+        <result column="SETTLE_TYPE_CODE" property="settleTypeCode" jdbcType="VARCHAR" />
+        <result column="SPECIAL_TREATMENT" property="specialTreatment" jdbcType="VARCHAR" />
+        <result column="SETTLE_ACCOUNT" property="settleAccount" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="PARTY_NAME" property="partyName" jdbcType="VARCHAR" />
+
+        <result column="BUSINESS_STAFF" property="businessStaff" jdbcType="VARCHAR" />
+        <result column="CLB_CLUB" property="clbClub" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER" property="reserveSupplier" jdbcType="VARCHAR" />
+        <result column="SIGN_NOTICE" property="signNotice" jdbcType="VARCHAR" />
+        <result column="FILL" property="fill" jdbcType="VARCHAR" />
+        <result column="CONTRACT_SIGN" property="contractSign" jdbcType="VARCHAR" />
+        <result column="SITE_FOLLOW" property="siteFollow" jdbcType="VARCHAR" />
+        <result column="POLICY_REVIEW" property="policyReview" jdbcType="VARCHAR" />
+        <result column="POLICY_SEND" property="policySend" jdbcType="VARCHAR" />
+        <result column="POLICY_FOLLOW" property="policyFollow" jdbcType="VARCHAR" />
+
+        <result column="BUSINESS_STAFF_USER_ID" property="businessStaffUserId" jdbcType="DECIMAL" />
+        <result column="CLB_CLUB_USER_ID" property="clbClubUserId" jdbcType="DECIMAL" />
+        <result column="RESERVE_SUPPLIER_USER_ID" property="reserveSupplierUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_NOTICE_USER_ID" property="signNoticeUserId" jdbcType="DECIMAL" />
+        <result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_SIGN_USER_ID" property="contractSignUserId" jdbcType="DECIMAL" />
+        <result column="SITE_FOLLOW_USER_ID" property="siteFollowUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_REVIEW_USER_ID" property="policyReviewUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_SEND_USER_ID" property="policySendUserId" jdbcType="DECIMAL" />
+        <result column="POLICY_FOLLOW_USER_ID" property="policyFollowUserId" jdbcType="DECIMAL" />
+
+        <result column="BUSINESS_STAFF_USER_NAME" property="businessStaffUserName" jdbcType="VARCHAR" />
+        <result column="CLB_CLUB_USER_NAME" property="clbClubUserName" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_USER_NAME" property="reserveSupplierUserName" jdbcType="VARCHAR" />
+        <result column="SIGN_NOTICE_USER_NAME" property="signNoticeUserName" jdbcType="VARCHAR" />
+        <result column="FILL_USER_NAME" property="fillUserName" jdbcType="VARCHAR" />
+        <result column="CONTRACT_SIGN_USER_NAME" property="contractSignUserName" jdbcType="VARCHAR" />
+        <result column="SITE_FOLLOW_USER_NAME" property="siteFollowUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_REVIEW_USER_NAME" property="policyReviewUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_SEND_USER_NAME" property="policySendUserName" jdbcType="VARCHAR" />
+        <result column="POLICY_FOLLOW_USER_NAME" property="policyFollowUserName" jdbcType="VARCHAR" />
+
+    </resultMap>
+    
+    
+    <resultMap id="OrdCommissionMap" type="clb.core.order.dto.OrdCommission">
+        <result column="COMMISSION_ID" property="commissionId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="THE_FIRST_YEAR" property="theFirstYear" jdbcType="DECIMAL" />
+        <result column="THE_SECOND_YEAR" property="theSecondYear" jdbcType="DECIMAL" />
+        <result column="THE_THIRD_YEAR" property="theThirdYear" jdbcType="DECIMAL" />
+        <result column="THE_FOURTH_YEAR" property="theFourthYear" jdbcType="DECIMAL" />
+        <result column="THE_FIFTH_YEAR" property="theFifthYear" jdbcType="DECIMAL" />
+        <result column="THE_SIXTH_YEAR" property="theSixthYear" jdbcType="DECIMAL" />
+        <result column="THE_SEVENTH_YEAR" property="theSeventhYear" jdbcType="DECIMAL" />
+        <result column="THE_EIGHT_YEAR" property="theEightYear" jdbcType="DECIMAL" />
+        <result column="THE_NINTH_YEAR" property="theNinthYear" jdbcType="DECIMAL" />
+        <result column="THE_TENTH_YEAR" property="theTenthYear" jdbcType="DECIMAL" />
+        <result column="FIRST_YEAR_AMOUNT" property="firstYearAmount" jdbcType="DECIMAL" />
+        <result column="SECOND_YEAR_AMOUNT" property="secondYearAmount" jdbcType="DECIMAL" />
+        <result column="THIRD_YEAR_AMOUNT" property="thirdYearAmount" jdbcType="DECIMAL" />
+        <result column="FOURTH_YEAR_AMOUNT" property="fourthYearAmount" jdbcType="DECIMAL" />
+        <result column="FIFTH_YEAR_AMOUNT" property="fifthYearAmount" jdbcType="DECIMAL" />
+        <result column="SIXTH_YEAR_AMOUNT" property="sixthYearAmount" jdbcType="DECIMAL" />
+        <result column="SEVENTH_YEAR_AMOUNT" property="seventhYearAmount" jdbcType="DECIMAL" />
+        <result column="EIGHT_YEAR_AMOUNT" property="eightYearAmount" jdbcType="DECIMAL" />
+        <result column="NINTH_YEAR_AMOUNT" property="ninthYearAmount" jdbcType="DECIMAL" />
+        <result column="TENTH_YEAR_AMOUNT" property="tenthYearAmount" jdbcType="DECIMAL" />
+        <result column="FIRST_YEAR_ACTUAL" property="firstYearActual" jdbcType="DECIMAL" />
+        <result column="SECOND_YEAR_ACTUAL" property="secondYearActual" jdbcType="DECIMAL" />
+        <result column="THIRD_YEAR_ACTUAL" property="thirdYearActual" jdbcType="DECIMAL" />
+        <result column="FOURTH_YEAR_ACTUAL" property="fourthYearActual" jdbcType="DECIMAL" />
+        <result column="FIFTH_YEAR_ACTUAL" property="fifthYearActual" jdbcType="DECIMAL" />
+        <result column="SIXTH_YEAR_ACTUAL" property="sixthYearActual" jdbcType="DECIMAL" />
+        <result column="SEVENTH_YEAR_ACTUAL" property="seventhYearActual" jdbcType="DECIMAL" />
+        <result column="EIGHT_YEAR_ACTUAL" property="eightYearActual" jdbcType="DECIMAL" />
+        <result column="NINTH_YEAR_ACTUAL" property="ninthYearActual" jdbcType="DECIMAL" />
+        <result column="TENTH_YEAR_ACTUAL" property="tenthYearActual" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_CODE" property="contractCode" jdbcType="VARCHAR" />
+        <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <resultMap id="OrderMap" type="clb.core.order.dto.OrdOrder">
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="POLICY_NUMBER" property="policyNumber" jdbcType="VARCHAR" />
+        <result column="PAY_NUMBER" property="payNumber" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR" />
+        <result column="COMPANY_CHANNEL_ID" property="companyChannelId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_ID" property="channelId" jdbcType="DECIMAL" />
+        <result column="CONTRACT_ROLE_ID" property="contractRoleId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_SUPPLIER_ID" property="productSupplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="YEAR_PAY_AMOUNT" property="yearPayAmount" jdbcType="DECIMAL" />
+        <result column="POLICY_AMOUNT" property="policyAmount" jdbcType="DECIMAL" />
+        <result column="APPLICANT_CUSTOMER_ID" property="applicantCustomerId" jdbcType="DECIMAL" />
+        <result column="INSURANT_CUSTOMER_ID" property="insurantCustomerId" jdbcType="DECIMAL" />
+        <result column="INCREASE_FLAG" property="increaseFlag" jdbcType="VARCHAR" />
+        <result column="SUBMIT_DATE" property="submitDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_DATE" property="reserveDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_ARRIVAL_DATE" property="reserveArrivalDate" jdbcType="TIMESTAMP" />
+        <result column="RESERVE_CHECK_DATE" property="reserveCheckDate" jdbcType="TIMESTAMP" />
+        <result column="SIGN_DATE" property="signDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_DATE" property="effectiveDate" jdbcType="DATE" />
+        <result column="APPROVE_DATE" property="approveDate" jdbcType="DATE" />
+        <result column="EXPECT_COOL_DATE" property="expectCoolDate" jdbcType="DATE" />
+        <result column="FIRST_PAY_DATE" property="firstPayDate" jdbcType="DATE" />
+        <result column="RENEWAL_DUE_DATE" property="renewalDueDate" jdbcType="DATE" />
+        <result column="RENEWAL_SUCCESS_DATE" property="renewalSuccessDate" jdbcType="DATE" />
+        <result column="GRACE_DATE" property="graceDate" jdbcType="DATE" />
+        <result column="ADMINISTRATIVE_DATE" property="administrativeDate" jdbcType="DATE" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="CLUB_CONFIRM_STATUS" property="clubConfirmStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_CONFIRM_STATUS" property="customerConfirmStatus" jdbcType="VARCHAR" />
+        <result column="APPLICATION_STATUS" property="applicationStatus" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_USER_ID" property="customerUserId" jdbcType="DECIMAL" />
+        <result column="SMS_FLAG" property="smsFlag" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_OPERATE_DATE" property="customerOperateDate" jdbcType="TIMESTAMP" />
+        <result column="HK_CONTACT_PERSON" property="hkContactPerson" jdbcType="VARCHAR" />
+        <result column="HK_CONTACT_PHONE_CODE" property="hkContactPhoneCode" jdbcType="VARCHAR" />
+        <result column="HK_CONTACT_PHONE" property="hkContactPhone" jdbcType="VARCHAR" />
+        <result column="HK_CONTACT_PHONE_ALL" property="hkContactPhoneAll" jdbcType="VARCHAR" />
+        <result column="RECEIPT_DATE" property="receiptDate" jdbcType="TIMESTAMP" />
+        <result column="QUICK_CHECK_FLAG" property="quickCheckFlag" jdbcType="VARCHAR" />
+        <result column="ELE_INSURANCE_FLAG" property="eleInsuranceFlag" jdbcType="VARCHAR" />
+        <result column="FILL_USER_ID" property="fillUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_ASSISTANT" property="signAssistant" jdbcType="VARCHAR" />
+        <result column="SIGN_ASSISTANT_NAME" property="signAssistantName" jdbcType="VARCHAR" />
+        <result column="ARRIVAL_DATE" property="arrivalDate" jdbcType="TIMESTAMP" />
+        <result column="LEAVE_DATE" property="leaveDate" jdbcType="TIMESTAMP" />
+        <result column="PHONE_FLAG" property="phoneFlag" jdbcType="VARCHAR" />
+        <result column="CONTACT_PERSON" property="contactPerson" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="SIGN_ADDRESS" property="signAddress" jdbcType="VARCHAR" />
+        <result column="MEET_ADDRESS" property="meetAddress" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_ID" property="reserveSupplierId" jdbcType="DECIMAL" />
+        <result column="RESERVE_COMMENT" property="reserveComment" jdbcType="VARCHAR" />
+        <result column="RESERVE_USER_ID" property="reserveUserId" jdbcType="DECIMAL" />
+        <result column="SIGN_SUPPLIER_ID" property="signSupplierId" jdbcType="DECIMAL" />
+        <result column="SIGN_PERSON" property="signPerson" jdbcType="VARCHAR" />
+        <result column="EXPRESS_DELIVERY_INFO" property="expressDeliveryInfo" jdbcType="VARCHAR" />
+        <result column="RECEPTION_USER_ID" property="receptionUserId" jdbcType="DECIMAL" />
+        <result column="REVIEWER1" property="reviewer1" jdbcType="VARCHAR" />
+        <result column="REVIEWER1_DATE" property="reviewer1Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER2" property="reviewer2" jdbcType="VARCHAR" />
+        <result column="REVIEWER2_DATE" property="reviewer2Date" jdbcType="TIMESTAMP" />
+        <result column="REVIEWER_COMMENT" property="reviewerComment" jdbcType="VARCHAR" />
+        <result column="REVIEWER1_NAME" property="reviewer1Name" jdbcType="VARCHAR" />
+        <result column="REVIEWER2_NAME" property="reviewer2Name" jdbcType="VARCHAR" />
+        <result column="SEND_USER_ID" property="sendUserId" jdbcType="DECIMAL" />
+        <result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
+        <result column="SEND_STATUS" property="sendStatus" jdbcType="VARCHAR" />
+        <result column="PLAN_FILE_ID" property="planFileId" jdbcType="DECIMAL" />
+        <result column="REQ_FILE_ID" property="reqFileId" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_AMOUNT" property="nextPolicyAmount" jdbcType="DECIMAL" />
+        <result column="NEXT_POLICY_DUE_DATE" property="nextPolicyDueDate" jdbcType="TIMESTAMP" />
+        <result column="FIRST_PAYMENT_METHOD" property="firstPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_PAYMENT_METHOD" property="renewalPaymentMethod" jdbcType="VARCHAR" />
+        <result column="RENEWAL_OTHER" property="renewalOther" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ITEM" property="item" jdbcType="VARCHAR" />
+        <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+        <result column="COMPANY_CHANNEL_NAME" property="companyChannelName" jdbcType="VARCHAR" />
+        <result column="CHANNEL_NAME" property="channelName" jdbcType="VARCHAR" />
+        <result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+        <result column="INSURANT" property="insurant" jdbcType="VARCHAR" />
+        <result column="SIGN_SUPPLIER_NAME" property="signSupplierName" jdbcType="VARCHAR" />
+        <result column="RESERVE_SUPPLIER_NAME" property="reserveSupplierName" jdbcType="VARCHAR" />
+        <result column="ORDER_INFO" property="orderInfo" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_EMPLOYEE_NAME" property="customerEmployeeName" jdbcType="VARCHAR" />
+        <result column="FILL_EMPLOYEE_NAME" property="fillEmployeeName" jdbcType="VARCHAR" />
+        <result column="SEND_EMPLOYEE_NAME" property="sendEmployeeName" jdbcType="VARCHAR" />
+        <result column="OWN_SUPPLIER_ID" property="ownSupplierId" jdbcType="DECIMAL" />
+        <result column="OWN_SUPPLIER_NAME" property="ownSupplierName" jdbcType="VARCHAR" />
+        <result column="MIDDLE_SUPPLIER_NAME" property="middleSupplierName" jdbcType="VARCHAR" />
+        <result column="INSURANCE_SUPPLIER_NAME" property="insuranceSupplierName" jdbcType="VARCHAR" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="DDA_FLAG" property="ddaFlag" jdbcType="VARCHAR" />
+        <result column="DDA_SUBMIT_DATE" property="ddaSubmitDate" jdbcType="TIMESTAMP" />
+        <result column="DDA_EFFECTIVE_DATE" property="ddaEffectiveDate" jdbcType="TIMESTAMP" />
+        <result column="FEEDBACK_BALANCE" property="feedbackBalance" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_BALANCE" property="accountBalance" jdbcType="DECIMAL" />
+        <result column="BALANCE_CURRENCY" property="balanceCurrency" jdbcType="VARCHAR" />
+        <result column="BALANCE_PAYMENT_METHOD" property="balancePaymentMethod" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="PRODUCT_SUPPLIER_NAME" property="productSupplierName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        <result column="TR_CHANNEL_COUNT" property="trChannelCount" jdbcType="DECIMAL" />
+        <result column="TR_SUPPLIER_COUNT" property="trSupplierCount" jdbcType="DECIMAL" />
+        <result column="INTRODUCER" property="introducer" jdbcType="VARCHAR" />
+        <result column="INTRODUCER_NAME" property="introducerName" jdbcType="VARCHAR" />
+        <result column="INTRODUCE_BENEFIT" property="introduceBenefit" jdbcType="VARCHAR" />
+        <result column="INSURANT_BIRTH_DATE" property="insurantBirthDate" jdbcType="TIMESTAMP" />
+        <result column="SIGN_FEE" property="signFee" jdbcType="DECIMAL" />
+        <result column="CARD_FEE" property="cardFee" jdbcType="DECIMAL" />
+        <result column="PAY_PERIODS" property="payPeriods" jdbcType="DECIMAL" />
+        <result column="FUNCTION_CODE" property="functionCode" jdbcType="VARCHAR" />
+        <result column="APPLICANT_SEX" property="applicantSex" jdbcType="VARCHAR" />
+        <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
+        <result column="STOCK_CODE" property="stockCode" jdbcType="VARCHAR" />
+        <result column="ANNUAL_INTEREST" property="annualInterest" jdbcType="VARCHAR" />
+        <result column="DIVIDEND_PERIOD" property="dividendPeriod" jdbcType="VARCHAR" />
+        <result column="SUBSCRIPTION_FEE" property="subscriptionFee" jdbcType="VARCHAR" />
+        <result column="CUSTODY_FEE" property="custodyFee" jdbcType="VARCHAR" />
+        <result column="ISSUE_DATE" property="issueDate" jdbcType="TIMESTAMP" />
+        <result column="DIVIDEND_DATE1" property="dividendDate1" jdbcType="TIMESTAMP" />
+        <result column="DIVIDEND_DATE2" property="dividendDate2" jdbcType="TIMESTAMP" />
+        <result column="PRODUCT_MANAGER" property="productManager" jdbcType="VARCHAR" />
+        <result column="PRODUCT_MANAGER_PHONE" property="productManagerPhone" jdbcType="VARCHAR" />
+        <result column="RESERVE_CONTACT_PERSON" property="reserveContactPerson" jdbcType="VARCHAR" />
+        <result column="RESERVE_CONTACT_PHONE_CODE" property="reserveContactPhoneCode" jdbcType="VARCHAR" />
+        <result column="RESERVE_CONTACT_PHONE" property="reserveContactPhone" jdbcType="VARCHAR" />
+        <result column="CIES_FLAG" property="ciesFlag" jdbcType="VARCHAR" />
+        <result column="CIES_PROCESS_RATE" property="ciesProcessRate" jdbcType="VARCHAR" />
+        <result column="INVESTED_ITEM" property="investedItem" jdbcType="VARCHAR" />
+        <result column="INVESTED_OTHER" property="investedOther" jdbcType="VARCHAR" />
+        <result column="INVESTED_SUBLINE" property="investedSubline" jdbcType="VARCHAR" />
+        <result column="CONTRACT_FILE_ID" property="contractFileId" jdbcType="DECIMAL" />
+        <result column="MIGRATE_COUNTRY" property="migrateCountry" jdbcType="VARCHAR" />
+        <result column="BUDGET" property="budget" jdbcType="DECIMAL" />
+        <result column="RELATED_ORDER_ID" property="relatedOrderId" jdbcType="DECIMAL" />
+        <result column="RELATED_ORDER_NUMBER" property="relatedOrderNumber" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_PRICE" property="customerPrice" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" jdbcType="VARCHAR" />
+        <result column="PEOPLE_COUNT" property="peopleCount" jdbcType="DECIMAL" />
+        <result column="PAY_AMOUNT" property="payAmount" jdbcType="DECIMAL" />
+        <result column="VEHICLE_TYPE" property="vehicleType" jdbcType="VARCHAR" />
+        <result column="USER_HOUR" property="userHour" jdbcType="VARCHAR" />
+        <result column="DEPARTURE" property="departure" jdbcType="VARCHAR" />
+        <result column="DESTINATION" property="destination" jdbcType="VARCHAR" />
+        <result column="LODGER_NAME" property="lodgerName" jdbcType="VARCHAR" />
+        <result column="LODGER_PINYIN" property="lodgerPinyin" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_PHONE_CODE" property="customerPhoneCode" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_PHONE" property="customerPhone" jdbcType="VARCHAR" />
+        <result column="PRICE_INTERVAL" property="priceInterval" jdbcType="VARCHAR" />
+        <result column="CHECKIN_DATE" property="checkinDate" jdbcType="TIMESTAMP" />
+        <result column="CHECKOUT_DATE" property="checkoutDate" jdbcType="TIMESTAMP" />
+        <result column="ROOM_COUNT" property="roomCount" jdbcType="DECIMAL" />
+        <result column="ROOM_TYPE" property="roomType" jdbcType="VARCHAR" />
+        <result column="HOTEL_NAME" property="hotelName" jdbcType="VARCHAR" />
+        <result column="VACCINE_CUSTOMER_NAME" property="vaccineCustomerName" jdbcType="VARCHAR" />
+        <result column="VACCINE_CUSTOMER_AGE" property="vaccineCustomerAge" jdbcType="DECIMAL" />
+        <result column="VACCINE_CUSTOMER_SEX" property="vaccineCustomerSex" jdbcType="VARCHAR" />
+        <result column="VACCINE_CUSTOMER_PASS" property="vaccineCustomerPass" jdbcType="VARCHAR" />
+        <result column="VACCINE_CUSTOMER_TIMES" property="vaccineCustomerTimes" jdbcType="VARCHAR" />
+        <result column="KEEP_FLAG" property="keepFlag" jdbcType="VARCHAR" />
+        <result column="AGREED_PAYMENT_DATE" property="agreedPaymentDate" jdbcType="TIMESTAMP" />
+        <result column="VALUEADD_TYPE" property="valueaddType" jdbcType="VARCHAR" />
+        <result column="SECURITY_LEVEL" property="securityLevel" jdbcType="VARCHAR" />
+        <result column="SECURITY_REGION" property="securityRegion" jdbcType="VARCHAR" />
+        <result column="SELFPAY" property="selfpay" jdbcType="VARCHAR" />
+        <result column="MIN_CLASS" property="minClass" jdbcType="VARCHAR" />
+        <result column="SAME_FLAG" property="sameFlag" jdbcType="VARCHAR" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="PREPAY_FLAG" property="prepayFlag" jdbcType="VARCHAR" />
+        <result column="DEAL_PATH" property="dealPath" jdbcType="VARCHAR" />
+        <result column="APPLICANT_CHINESE_NAME" property="applicantChineseName" jdbcType="VARCHAR" />
+        <result column="APPLICANT_ENGLISH_NAME" property="applicantEnglishName" jdbcType="VARCHAR" />
+        <result column="APPLICANT_BIRTH_DATE" property="applicantbirthDate"/>
+        <result column="APPLICANT_IDENTITY_NUMBER" property="applicantIdentityNumber"/>
+        <result column="APPLICANT_NATIONALITY" property="applicantNationality"/>
+        <result column="APPLICANT_CITY" property="applicantCity"/>
+        <result column="APPLICANT_MARRIAGE_STATUS" property="applicantMarriageStatus"/>
+        <result column="APPLICANT_PHONE" property="applicantPhone"/>
+        <result column="APPLICANT_EMAIL" property="applicantEmail"/>
+        <result column="APPLICANT_POST_ADDRESS" property="applicantPostAddress"/>
+        <result column="APPLICANT_JOB" property="applicantJob"/>
+        <result column="APPLICANT_POSITION" property="applicantPostion"/>
+        <result column="APPLICANT_COMPANY_ADDRESS" property="applicantCompanyAddress"/>
+        <result column="APPLICANT_IDENTITY_NATION" property="applicantIdentityNation"/>
+        <result column="INSURANT_CHINESE_NAME" property="insurantChineseName" jdbcType="VARCHAR" />
+        <result column="INSURANT_ENGLISH_NAME" property="insurantEnglishName" jdbcType="VARCHAR" />
+        <result column="INSURANT_SEX" property="insurantSex" jdbcType="VARCHAR" />
+        <result column="INSURANT_BIRTH_DATE" property="insurantbirthDate"/>
+        <result column="INSURANT_IDENTITY_NUMBER" property="insurantIdentityNumber"/>
+        <result column="INSURANT_NATIONALITY" property="insurantNationality"/>
+        <result column="INSURANT_CITY" property="insurantCity"/>
+        <result column="INSURANT_MARRIAGE_STATUS" property="insurantMarriageStatus"/>
+        <result column="INSURANT_PHONE" property="insurantPhone"/>
+        <result column="INSURANT_EMAIL" property="insurantEmail"/>
+        <result column="INSURANT_POST_ADDRESS" property="insurantPostAddress"/>
+        <result column="INSURANT_JOB" property="insurantJob"/>
+        <result column="INSURANT_POSITION" property="insurantPostion"/>
+        <result column="INSURANT_COMPANY_ADDRESS" property="insurantCompanyAddress"/>
+        <result column="INSURANT_IDENTITY_NATION" property="insurantIdentityNation"/>
+        
+        <result column="ORDER_DEAL_USER_ID" property="orderDealUserId" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_DEAL_USER_ID" property="customerDealUserId" jdbcType="DECIMAL" />
+        <result column="Application_DEAL_USER_ID" property="applicationDealUserId" jdbcType="DECIMAL" />
+        <result column="ORDER_DEAL_NAME" property="orderDealName" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_DEAL_NAME" property="customerDealName" jdbcType="VARCHAR" />
+        <result column="Application_DEAL_NAME" property="applicationDealName" jdbcType="VARCHAR" />
+
+        <result column="BACK_FLAG" property="backFlag" jdbcType="VARCHAR" />
+        <result column="BACK_DATE" property="backDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <resultMap id="ReceiveableMap" type="clb.core.forecast.dto.FetReceivable">
+        <result column="RECEIVABLE_ID" property="receivableId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_PERIOD" property="receiptPeriod" jdbcType="VARCHAR" />
+        <result column="RECEIPT_TYPE" property="receiptType" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_TYPE" property="paymentCompanyType" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_TYPE" property="receiveCompanyType" jdbcType="VARCHAR" />
+        <result column="PAYMENT_COMPANY_ID" property="paymentCompanyId" jdbcType="DECIMAL" />
+        <result column="RECEIVE_COMPANY_ID" property="receiveCompanyId" jdbcType="DECIMAL" />
+        <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="ORDER_CURRENCY" property="orderCurrency" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="EXCHANGE_RATE" property="exchangeRate" jdbcType="DECIMAL" />
+        <result column="HKD_AMOUNT" property="hkdAmount" jdbcType="DECIMAL" />
+        <result column="DUE_DATE" property="dueDate" jdbcType="DATE" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="EXPECT_COOL_DATE" property="expectCoolDate" jdbcType="DATE"/>
+        <result column="PAYMENT_COMPANY_NAME" property="paymentCompanyName" jdbcType="VARCHAR" />
+        <result column="RECEIVE_COMPANY_NAME" property="receiveCompanyName" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="APPLICANT_NAME" property="applicantName" jdbcType="VARCHAR" />
+        <result column="PERIOD_ID" property="periodId" jdbcType="DECIMAL" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="queryMember" parameterType="clb.core.channel.dto.CnlChannelContract" resultMap="ChannelContractMap" >
+        SELECT
+			*
+		FROM
+			fms_cnl_channel_contract fccc
+		WHERE
+			fccc.PARTY_TYPE = #{partyType}
+		AND fccc.PARTY_ID = #{partyId}
+    </select>
+    
+    <select id="queryFollow" resultMap="OrdCommissionMap" >
+        SELECT
+			foc.*,foo.ORDER_TYPE
+		FROM
+			fms_ord_commission foc,
+			fms_ord_order foo
+		WHERE
+			foc.COMPANY_TYPE = #{ordCommission.companyType, jdbcType = VARCHAR}
+		AND foc.COMPANY_ID = #{ordCommission.companyId, jdbcType = DECIMAL}
+		AND foc.ORDER_ID = foo.ORDER_ID
+		AND foo. STATUS IN
+		<foreach collection="followingStatus" item="status" index="index"
+            open="(" close=")" separator=",">
+            #{status.value, jdbcType = VARCHAR}
+        </foreach>
+        <if test = "orderType != null">
+		AND foo.ORDER_TYPE = #{orderType, jdbcType = VARCHAR}
+		</if>
+    </select>
+    
+    <select id="queryAllOrderData" resultMap="OrderMap" >
+        SELECT
+			foo.*
+		FROM
+			fms_ord_order foo
+		WHERE
+			EXISTS (
+				SELECT
+					1
+				FROM
+					fms_cnl_channel_contract fccc
+				WHERE
+					(
+						(
+							fccc.PARTY_TYPE = #{companyType}
+							AND fccc.PARTY_ID = #{companyId}
+						)
+						<if test = "companyType != null and companyType == 'CHANNEL'.toString()">
+							OR foo.CHANNEL_ID = #{companyId}
+						</if>
+						
+					)
+				AND fccc.CHANNEL_ID = foo.CHANNEL_ID
+			)
+    </select>
+    
+    
+    <select id="queryReceivableData" resultMap="ReceiveableMap" >
+    	SELECT
+			ffr.PAYMENT_COMPANY_TYPE,
+			ffr.PAYMENT_COMPANY_ID,
+			ffr.RECEIVE_COMPANY_TYPE,
+			ffr.RECEIVE_COMPANY_ID,
+			ffr.VERSION,
+			sum(ffr.HKD_AMOUNT) HKD_AMOUNT
+		FROM
+			fms_fet_receivable ffr
+		WHERE
+			ffr.RECEIVE_COMPANY_ID = #{receivable.receiveCompanyId, jdbcType = VARCHAR}
+		AND ffr.RECEIVE_COMPANY_TYPE = #{receivable.receiveCompanyType, jdbcType = VARCHAR}
+		AND ffr.RECEIPT_TYPE = #{receivable.receiptType, jdbcType = VARCHAR}
+		AND ffr.VERSION = (
+			SELECT
+				max(ffr1.VERSION)
+			FROM
+				fms_fet_receivable ffr1
+			WHERE
+				ffr1.RECEIVE_COMPANY_ID = ffr.RECEIVE_COMPANY_ID
+			AND ffr1.RECEIVE_COMPANY_TYPE = ffr.RECEIVE_COMPANY_TYPE
+			AND ffr1.RECEIPT_TYPE = ffr.RECEIPT_TYPE
+			AND ffr1.PAYMENT_COMPANY_TYPE = ffr.PAYMENT_COMPANY_TYPE
+			AND ffr1.PAYMENT_COMPANY_ID = ffr.PAYMENT_COMPANY_ID
+		)
+		AND ffr.ORDER_ID IN
+		<foreach collection="orders" item="order" index="index"
+            open="(" close=")" separator=",">
+            #{order.orderId, jdbcType = DECIMAL}
+        </foreach>
+		GROUP BY
+			ffr.PAYMENT_COMPANY_TYPE,
+			ffr.PAYMENT_COMPANY_ID,
+			ffr.RECEIVE_COMPANY_TYPE,
+			ffr.RECEIVE_COMPANY_ID,
+			ffr.VERSION
+    </select>
+    
+    
+    <select id="queryOrderDataByChannelId" parameterType="clb.core.order.dto.OrdOrder" resultMap="OrderMap" >
+    	SELECT
+			foo.*, fcc.CHANNEL_NAME
+		FROM
+			fms_ord_order foo,
+			fms_cnl_channel fcc
+		WHERE
+			foo.CHANNEL_ID = #{channelId}
+		AND foo.CHANNEL_ID = fcc.CHANNEL_ID
+		AND foo. STATUS IN (
+			'POLICY_EFFECTIVE',
+			'ISSUE_SUCCESS',
+			'BUY_SUCCESS'
+		)
+	</select>
+    
+    
+    
+    
+</mapper>

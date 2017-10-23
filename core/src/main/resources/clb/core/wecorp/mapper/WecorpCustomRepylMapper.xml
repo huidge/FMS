@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Created by wzl on 2017/6/14.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.wecorp.mapper.WecorpCustomReplyMapper">
+    <resultMap id="BaseResultMap" type="clb.core.wecorp.dto.WecorpCustomReply">
+        <result column="CUSTOM_REPLY_ID" property="customReplyId" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="MSG_TYPE" property="msgType" jdbcType="VARCHAR" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="REPLY_TYPE" property="replyType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectByReplyType" parameterType="clb.core.wecorp.dto.WecorpCustomReply" resultMap="BaseResultMap">
+        select *
+        from woa_account_custom_reply
+        where reply_type=#{replyType,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByAccountNumAndReplyType" parameterType="clb.core.wecorp.dto.WecorpCustomReply" resultMap="BaseResultMap">
+        select *
+        from woa_account_custom_reply
+        where reply_type=#{replyType,jdbcType=VARCHAR} AND account_num = #{accountNum,jdbcType=VARCHAR}
+    </select>
+</mapper>

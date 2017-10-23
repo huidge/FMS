@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.order.mapper.SysPageFieldCfgMapper">
+	<resultMap id="BaseResultMap" type="clb.core.order.dto.SysPageFieldCfg">
+		<result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+		<result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+		<result column="RESOURCE_TYPE" property="resourceType"
+			jdbcType="VARCHAR" />
+		<result column="RESOURCE_ID" property="resourceId" jdbcType="VARCHAR" />
+		<result column="QUERY_FLAG" property="queryFlag" jdbcType="VARCHAR" />
+		<result column="UPDATE_FLAG" property="updateFlag" jdbcType="VARCHAR" />
+		<result column="PARENT_LINE_ID" property="parentLineId"
+			jdbcType="DECIMAL" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="meaning" property="meaning" jdbcType="VARCHAR" />
+		<result column="parent_meaning" property="parentMeaning" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 订单配置查询 -->
+	<select id="selectSettingInfo" parameterType="clb.core.order.dto.SysPageFieldCfg"
+		resultMap="BaseResultMap">
+		select fspfc.*,
+		scvb.`VALUE`,
+		scvb.MEANING,
+		scvb.CODE_VALUE_ID,
+		(SELECT scvb1.MEANING from fms_sys_page_field_cfg fs,sys_code_value_b scvb1
+		where fs.line_id = fspfc.parent_line_id and fs.resource_id =
+		scvb1.CODE_VALUE_ID) parent_meaning
+		from fms_sys_page_field_cfg fspfc, sys_code_value_b scvb
+		where fspfc.resource_id = scvb.CODE_VALUE_ID
+		<if test="roleCode != null">
+			AND fspfc.role_code = #{roleCode}
+		</if>
+	</select>
+
+    <!-- 查询一级目录 -->
+    <select id="queryByRoleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select fspfc.*,
+		scvb.`VALUE`,
+		scvb.MEANING,
+		scvb.CODE_VALUE_ID,
+		(SELECT scvb1.MEANING from fms_sys_page_field_cfg fs,sys_code_value_b scvb1
+		where fs.line_id = fspfc.parent_line_id and fs.resource_id =
+		scvb1.CODE_VALUE_ID) parent_meaning
+		from fms_sys_page_field_cfg fspfc, sys_code_value_b scvb
+		where fspfc.resource_id = scvb.CODE_VALUE_ID
+		and fspfc.parent_line_id is null
+		<if test="roleCode != null and roleCode!=''">
+			AND fspfc.role_code = #{roleCode}
+		</if>
+    </select>
+    
+    <!-- 查询二级目录 -->
+    <select id="queryByParentLineId" resultMap="BaseResultMap">
+        select fspfc.*,
+		scvb.`VALUE`,
+		scvb.MEANING,
+		scvb.CODE_VALUE_ID,
+		(SELECT scvb1.MEANING from fms_sys_page_field_cfg fs,sys_code_value_b scvb1
+		where fs.line_id = fspfc.parent_line_id and fs.resource_id =
+		scvb1.CODE_VALUE_ID) parent_meaning
+		from fms_sys_page_field_cfg fspfc, sys_code_value_b scvb
+		where fspfc.resource_id = scvb.CODE_VALUE_ID
+		and fspfc.parent_line_id = #{parentLineId}
+    </select>  
+    
+    <!-- 更新状态 -->
+    <update id="updateFlag" parameterType="clb.core.order.dto.SysPageFieldCfg">
+        update fms_sys_page_field_cfg 
+        SET query_flag =#{queryFlag}, update_flag=#{updateFlag}, last_update_date = now()
+        where line_id = #{id}   
+    </update>
+</mapper>

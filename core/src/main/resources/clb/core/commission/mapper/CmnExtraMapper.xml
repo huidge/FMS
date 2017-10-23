@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.commission.mapper.CmnExtraMapper">
+    <resultMap id="BaseResultMap" type="clb.core.commission.dto.CmnExtra">
+        <result column="EXTRA_ID" property="extraId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="PARENT_EXTRA_ID" property="parentExtraId"/>
+        <result column="SUPERIOR_SUPPLIER_ID" property="superiorSupplierId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_TYPE_CODE" property="channelTypeCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CONTRIBUTION_PERIOD" property="contributionPeriod" jdbcType="VARCHAR" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="POLICYHOLDERS_MIN_AGE" property="policyholdersMinAge" jdbcType="DECIMAL" />
+        <result column="POLICYHOLDERS_MAX_AGE" property="policyholdersMaxAge" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA1" property="superiorExtra1" jdbcType="DECIMAL" />
+        <result column="EXTRA1" property="extra1" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT1" property="adjustment1" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA2" property="superiorExtra2" jdbcType="DECIMAL" />
+        <result column="EXTRA2" property="extra2" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT2" property="adjustment2" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA3" property="superiorExtra3" jdbcType="DECIMAL" />
+        <result column="EXTRA3" property="extra3" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT3" property="adjustment3" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA4" property="superiorExtra4" jdbcType="DECIMAL" />
+        <result column="EXTRA4" property="extra4" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT4" property="adjustment4" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA5" property="superiorExtra5" jdbcType="DECIMAL" />
+        <result column="EXTRA5" property="extra5" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT5" property="adjustment5" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA6" property="superiorExtra6" jdbcType="DECIMAL" />
+        <result column="EXTRA6" property="extra6" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT6" property="adjustment6" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA7" property="superiorExtra7" jdbcType="DECIMAL" />
+        <result column="EXTRA7" property="extra7" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT7" property="adjustment7" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA8" property="superiorExtra8" jdbcType="DECIMAL" />
+        <result column="EXTRA8" property="extra8" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT8" property="adjustment8" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA9" property="superiorExtra9" jdbcType="DECIMAL" />
+        <result column="EXTRA9" property="extra9" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT9" property="adjustment9" jdbcType="DECIMAL" />
+        <result column="SUPERIOR_EXTRA10" property="superiorExtra10" jdbcType="DECIMAL" />
+        <result column="EXTRA10" property="extra10" jdbcType="DECIMAL" />
+        <result column="ADJUSTMENT10" property="adjustment10" jdbcType="DECIMAL" />
+        <result column="VERSION" property="version" jdbcType="DECIMAL" />
+        <result column="EFFECTIVE_START_DATE" property="effectiveStartDate" jdbcType="TIMESTAMP" />
+        <result column="EFFECTIVE_END_DATE" property="effectiveEndDate" jdbcType="TIMESTAMP" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+
+
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="PARENT_SUPPLIER_NAME" property="parentSupplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_SUPPLIER_NAME" property="itemSupplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryBasic" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtra">
+        SELECT fce.PARENT_EXTRA_ID,
+        fss.`NAME` "SUPPLIER_NAME",
+        fssp.`NAME` "PARENT_SUPPLIER_NAME",
+        fce.CHANNEL_TYPE_CODE,
+        fssi.`NAME` "ITEM_SUPPLIER_NAME",
+        fpi.ITEM_CODE,
+        fpi.ITEM_NAME,
+        fce.CONTRIBUTION_PERIOD,
+        fce.CURRENCY,
+        fce.PAY_METHOD,
+        fce.POLICYHOLDERS_MIN_AGE,
+        fce.POLICYHOLDERS_MAX_AGE,
+        fce.SUPERIOR_EXTRA1,
+        fce.EXTRA1,
+        fce.ADJUSTMENT1,
+        fce.SUPERIOR_EXTRA2,
+        fce.EXTRA2,
+        fce.ADJUSTMENT2,
+        fce.SUPERIOR_EXTRA3,
+        fce.EXTRA3,
+        fce.ADJUSTMENT3,
+        fce.SUPERIOR_EXTRA4,
+        fce.EXTRA4,
+        fce.ADJUSTMENT4,
+        fce.SUPERIOR_EXTRA5,
+        fce.EXTRA5,
+        fce.ADJUSTMENT5,
+        fce.SUPERIOR_EXTRA6,
+        fce.EXTRA6,
+        fce.ADJUSTMENT6,
+        fce.SUPERIOR_EXTRA7,
+        fce.EXTRA7,
+        fce.ADJUSTMENT7,
+        fce.SUPERIOR_EXTRA8,
+        fce.EXTRA8,
+        fce.ADJUSTMENT8,
+        fce.SUPERIOR_EXTRA9,
+        fce.EXTRA9,
+        fce.ADJUSTMENT9,
+        fce.SUPERIOR_EXTRA10,
+        fce.EXTRA10,
+        fce.ADJUSTMENT10,
+        fce.VERSION,
+        fce.EFFECTIVE_START_DATE,
+        fce.EFFECTIVE_END_DATE
+        FROM
+        fms_cmn_extra AS fce
+        LEFT JOIN fms_spe_supplier fss ON fce.SUPPLIER_ID = fss.SUPPLIER_ID
+        LEFT JOIN fms_spe_supplier fssp ON fce.SUPERIOR_SUPPLIER_ID = fssp.SUPPLIER_ID
+        LEFT JOIN fms_prd_items fpi ON fce.ITEM_ID = fpi.ITEM_ID
+        LEFT JOIN fms_spe_supplier fssi ON fpi.SUPPLIER_ID = fssi.SUPPLIER_ID
+        WHERE 1=1
+            <if test="supplierId!=null and supplierId!=''">
+                AND fce.SUPPLIER_ID = #{supplierId}
+            </if>
+
+            <if test="itemSupplierId!=null and itemSupplierId!=''">
+                AND fssi.SUPPLIER_ID = #{itemSupplierId}
+            </if>
+            <if test="channelTypeCode!=null and channelTypeCode!=''">
+                AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+            </if>
+            <if test="itemName!=null and itemName!=''">
+                AND ITEM_NAME = #{itemName}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND PAY_METHOD = #{payMethod}
+            </if>
+            <if test="policyHoldersAge!=null and policyHoldersAge!=''">
+                AND POLICYHOLDERS_MIN_AGE &lt;= #{policyHoldersAge}
+                AND POLICYHOLDERS_MAX_AGE &gt;= #{policyHoldersAge}
+            </if>
+            <if test="version!=null and version!=''">
+                AND VERSION = #{version}
+            </if>
+    </select>
+
+    <select id="queryMaxVersion" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtra">
+        select * from fms_cmn_extra
+        where
+        SUPPLIER_ID = #{supplierId}
+        <choose>
+	        <when test="superiorSupplierId!=null">
+	           AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+	        </when>
+	        <otherwise>
+	           AND SUPERIOR_SUPPLIER_ID is null
+	        </otherwise>
+	    </choose>
+        AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        <choose>
+	        <when test="parentExtraId!=null">
+	          AND PARENT_EXTRA_ID = #{parentExtraId}
+	        </when>
+	        <otherwise>
+	           AND PARENT_EXTRA_ID is null
+	        </otherwise>
+	    </choose>
+        AND PAY_METHOD = #{payMethod}
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        order  by VERSION desc LIMIT 1 
+    </select>
+    
+    <select id="queryExtra" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtra">
+        select * from fms_cmn_extra
+        where
+        SUPPLIER_ID = #{supplierId}
+        <choose>
+	        <when test="superiorSupplierId!=null">
+	           AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+	        </when>
+	        <otherwise>
+	           AND SUPERIOR_SUPPLIER_ID is null
+	        </otherwise>
+	    </choose>
+        AND CHANNEL_TYPE_CODE = #{channelTypeCode}
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        <choose>
+	        <when test="parentExtraId!=null">
+	          AND PARENT_EXTRA_ID = #{parentExtraId}
+	        </when>
+	        <otherwise>
+	           AND PARENT_EXTRA_ID is null
+	        </otherwise>
+	    </choose>
+        AND PAY_METHOD = #{payMethod}
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        and VERSION=#{version}
+    </select>
+
+	<select id="queryYTDate" resultMap="BaseResultMap" parameterType="clb.core.commission.dto.CmnExtra">
+        select * from fms_cmn_extra
+        where
+        SUPPLIER_ID = #{supplierId}
+        AND SUPERIOR_SUPPLIER_ID=#{superiorSupplierId}
+        AND CHANNEL_TYPE_CODE ='YT'
+        AND ITEM_ID = #{itemId}
+        AND CONTRIBUTION_PERIOD = #{contributionPeriod}
+        AND CURRENCY = #{currency}
+        AND PARENT_EXTRA_ID IS NULL 
+        AND PAY_METHOD = #{payMethod}
+        AND POLICYHOLDERS_MIN_AGE = #{policyholdersMinAge}
+        AND POLICYHOLDERS_MAX_AGE = #{policyholdersMaxAge}
+        order  by VERSION desc LIMIT 1 
+    </select>
+
+	<select id="queryExtraBasic" resultMap="BaseResultMap">
+	     SELECT T.* FROM (
+			SELECT  fce.extra_id,
+					fss.SUPPLIER_ID SUPERIOR_SUPPLIER_ID,
+					fss.`NAME` PARENT_SUPPLIER_NAME,
+					null SUPPLIER_ID,
+			        fssi.`NAME` ITEM_SUPPLIER_NAME,
+			        fce.CHANNEL_TYPE_CODE,
+					fpi.ITEM_ID,
+			        fpi.ITEM_CODE,
+			        fpi.ITEM_NAME,
+			        fce.CONTRIBUTION_PERIOD,
+			        fce.CURRENCY,
+			        fce.PAY_METHOD,
+			        fce.POLICYHOLDERS_MIN_AGE,
+			        fce.POLICYHOLDERS_MAX_AGE,
+			        fce.SUPERIOR_EXTRA1,
+			        fce.EXTRA1,
+			        fce.ADJUSTMENT1,
+			        fce.SUPERIOR_EXTRA2,
+			        fce.EXTRA2,
+			        fce.ADJUSTMENT2,
+			        fce.SUPERIOR_EXTRA3,
+			        fce.EXTRA3,
+			        fce.ADJUSTMENT3,
+			        fce.SUPERIOR_EXTRA4,
+			        fce.EXTRA4,
+			        fce.ADJUSTMENT4,
+			        fce.SUPERIOR_EXTRA5,
+			        fce.EXTRA5,
+			        fce.ADJUSTMENT5,
+			        fce.SUPERIOR_EXTRA6,
+			        fce.EXTRA6,
+			        fce.ADJUSTMENT6,
+			        fce.SUPERIOR_EXTRA7,
+			        fce.EXTRA7,
+			        fce.ADJUSTMENT7,
+			        fce.SUPERIOR_EXTRA8,
+			        fce.EXTRA8,
+			        fce.ADJUSTMENT8,
+			        fce.SUPERIOR_EXTRA9,
+			        fce.EXTRA9,
+			        fce.ADJUSTMENT9,
+			        fce.SUPERIOR_EXTRA10,
+			        fce.EXTRA10,
+			        fce.ADJUSTMENT10,
+			        fce.VERSION,
+			        fce.EFFECTIVE_START_DATE,
+			        fce.EFFECTIVE_END_DATE
+			        FROM
+			        fms_cmn_extra AS fce
+			        LEFT JOIN fms_spe_supplier fss ON fce.SUPPLIER_ID = fss.SUPPLIER_ID
+			        LEFT JOIN fms_prd_items fpi ON fce.ITEM_ID = fpi.ITEM_ID
+			        LEFT JOIN fms_spe_supplier fssi ON fpi.SUPPLIER_ID = fssi.SUPPLIER_ID
+			        where fce.CHANNEL_TYPE_CODE='GYS' 
+			        <if test="itemSupplierId!=null and itemSupplierId!=''">
+	                AND fssi.SUPPLIER_ID = #{itemSupplierId}
+	            </if>
+			union all 
+			SELECT  null extra_id,
+					fcb.SUPPLIER_ID SUPERIOR_SUPPLIER_ID,
+					fss.`NAME` PARENT_SUPPLIER_NAME,
+					null SUPPLIER_ID,
+		            fss.`NAME` ITEM_SUPPLIER_NAME,
+		            null CHANNEL_TYPE_CODE,
+		            fcb.ITEM_ID,
+		            fpi.ITEM_CODE,
+		            fpi.ITEM_NAME,
+		            fcb.CONTRIBUTION_PERIOD,
+		            fcb.CURRENCY,
+		            fcb.PAY_METHOD,
+		            fcb.POLICYHOLDERS_MIN_AGE,
+		            fcb.POLICYHOLDERS_MAX_AGE,
+		            0 SUPERIOR_EXTRA1,
+			        0 EXTRA1,
+			        0 ADJUSTMENT1,
+			        0 SUPERIOR_EXTRA2,
+			        0 EXTRA2,
+			        0 ADJUSTMENT2,
+			        0 SUPERIOR_EXTRA3,
+			        0 EXTRA3,
+			        0 ADJUSTMENT3,
+			        0 SUPERIOR_EXTRA4,
+			        0 EXTRA4,
+			        0 ADJUSTMENT4,
+			        0 SUPERIOR_EXTRA5,
+			        0 EXTRA5,
+			        0 ADJUSTMENT5,
+			        0 SUPERIOR_EXTRA6,
+			        0 EXTRA6,
+			        0 ADJUSTMENT6,
+			        0 SUPERIOR_EXTRA7,
+			        0 EXTRA7,
+			        0 ADJUSTMENT7,
+			        0 SUPERIOR_EXTRA8,
+			        0 EXTRA8,
+			        0 ADJUSTMENT8,
+			        0 SUPERIOR_EXTRA9,
+			        0 EXTRA9,
+			        0 ADJUSTMENT9,
+			        0 SUPERIOR_EXTRA10,
+			        0 EXTRA10,
+			        0 ADJUSTMENT10,
+		            fcb.VERSION,
+		            fcb.EFFECTIVE_START_DATE,
+		            fcb.EFFECTIVE_END_DATE
+		        FROM
+		        fms_cmn_basic AS fcb
+		        LEFT JOIN fms_spe_supplier fss
+		        ON fcb.SUPPLIER_ID = fss.SUPPLIER_ID
+		        LEFT JOIN fms_prd_items fpi
+		        ON fcb.ITEM_ID = fpi.ITEM_ID	
+		        where 1=1 
+		        <if test="itemSupplierId!=null and itemSupplierId!=''">
+	                AND fss.SUPPLIER_ID = #{itemSupplierId}
+	            </if>
+		  ) T
+		   where T.EFFECTIVE_END_DATE>SYSDATE()  
+            <if test="itemName!=null and itemName!=''">
+                AND T.ITEM_NAME = #{itemName}
+            </if>
+            <if test="contributionPeriod!=null and contributionPeriod!=''">
+                AND T.CONTRIBUTION_PERIOD = #{contributionPeriod}
+            </if>
+            <if test="currency!=null and currency!=''">
+                AND T.CURRENCY = #{currency}
+            </if>
+            <if test="payMethod!=null and payMethod!=''">
+                AND T.PAY_METHOD = #{payMethod}
+            </if>
+            <!-- 当前用户不能看到自己的数据 -->
+            <if test="supplierId!=null">
+                AND T.SUPERIOR_SUPPLIER_ID &lt;&gt; #{supplierId}
+            </if>
+	</select>
+
+</mapper>

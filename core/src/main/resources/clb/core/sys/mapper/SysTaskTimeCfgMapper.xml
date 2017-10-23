@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.SysTaskTimeCfgMapper">
+	<resultMap id="BaseResultMap" type="clb.core.sys.dto.SysTaskTimeCfg">
+		<result column="CFG_ID" property="cfgId"  />
+		<result column="JOB_CLASS" property="jobClass"  />
+		<result column="ITEM_ID" property="itemId"  />
+		<result column="ADDITIONAL_RISK_FLAG" property="additionalRiskFlag"  />
+		<result column="EXTRACT_FLAG" property="extractFlag"  />
+		<result column="HIGH_MEDICAL_FLAG" property="highMedicalFlag" />
+		<result column="TASK_TIME" property="taskTime" />
+		<result column="ITEM_NAME" property="itemName" />
+		<result column="big_class" property="bigClass" /> 
+		<result column="min_class" property="minClass" />
+		<result column="mid_class" property="midClass" />
+		<result column="user_id" property="userId" />
+	</resultMap>
+
+	<select id="queryAllField" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysTaskTimeCfg">
+		SELECT sttc.CFG_ID ,sttc.JOB_CLASS,sttc.ITEM_ID,sttc.ADDITIONAL_RISK_FLAG,sttc.EXTRACT_FLAG,sttc.HIGH_MEDICAL_FLAG,sttc.TASK_TIME,
+		  IFNULL(sttc.BIG_CLASS, '') BIG_CLASS,
+			IFNULL(sttc.MID_CLASS, '') MID_CLASS,
+			IFNULL(sttc.MIN_CLASS, '') MIN_CLASS ,pi.ITEM_NAME
+		   from FMS_SYS_TASK_TIME_CFG sttc 
+		 LEFT JOIN fms_prd_items pi on sttc.ITEM_ID=pi.ITEM_ID
+		 <where>
+		  	<if test="itemName!=null and itemName!=''">
+		     	and pi.item_name like CONCAT('%', #{itemName}, '%')
+	      	</if>
+			<if test="bigClass != null">
+	            AND sttc.big_class = #{bigClass}
+	        </if >
+	        <if test="midClass != null">
+	            AND sttc.mid_class = #{midClass}
+	        </if >
+	        <if test="minClass != null">
+	            AND sttc.min_class = #{minClass}
+	        </if >
+	        <if test="itemId != null">
+	            AND sttc.item_id = #{itemId}
+	        </if >
+	        <if test="jobClass != null">
+	            AND sttc.job_class = #{jobClass}
+	        </if >
+		</where>
+	</select>
+
+	<select id="queryPlanHandle" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysTaskTimeCfg">
+		 SELECT fhp.USER_ID,fppr.ITEM_ID,fppr.EXTRACT_FLAG, fppr.ADDITIONAL_RISK_FLAG,fppr.ADVANCED_MEDICAL_FLAG HIGH_MEDICAL_FLAG,pi.BIG_CLASS,pi.MID_CLASS,pi.MIN_CLASS
+		  FROM fms_sys_function_handle_person fhp 
+		  inner JOIN fms_pln_plan_request fppr on fhp.SOURCE_ID=fppr.PLAN_ID
+		  inner join fms_prd_items pi on fppr.ITEM_ID=pi.ITEM_ID
+		 where fhp.FUNCTION_CODE = 'PLAN_JOB' 
+		 AND DATE_FORMAT(fhp.LAST_UPDATE_DATE,'%Y-%m-%d') >= DATE_FORMAT(SYSDATE(), '%Y-%m-%d')
+	</select>
+	
+	
+	<select id="queryByParams" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysTaskTimeCfg">
+		 select * from FMS_SYS_TASK_TIME_CFG where 1=1 ${params}
+	</select>
+	
+	<select id="queryCfg" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysTaskTimeCfg">
+		 select * from FMS_SYS_TASK_TIME_CFG 
+		 where JOB_CLASS=#{jobClass}
+		 <choose>
+		 	<when test="bigClass != null">
+		 	 AND big_class = #{bigClass}
+		 	</when>
+		 	<otherwise>
+		 	AND big_class IS NULL
+		 	</otherwise>
+		 </choose>
+		 <choose>
+		 	<when test="midClass != null">
+		 	 AND mid_class = #{midClass}
+		 	</when>
+		 	<otherwise>
+		 	AND mid_class IS NULL
+		 	</otherwise>
+		 </choose>
+		 <choose>
+		 	<when test="minClass != null">
+		 	 AND min_class = #{minClass}
+		 	</when>
+		 	<otherwise>
+		 	AND min_class IS NULL
+		 	</otherwise>
+		 </choose>
+		 <choose>
+		 	<when test="itemId != null">
+		 	 AND item_id = #{itemId}
+		 	</when>
+		 	<otherwise>
+		 	AND item_id IS NULL
+		 	</otherwise>
+		 </choose>
+		 AND ADDITIONAL_RISK_FLAG=#{additionalRiskFlag}
+		 AND EXTRACT_FLAG=#{extractFlag}
+		 AND HIGH_MEDICAL_FLAG=#{highMedicalFlag}
+	</select>
+</mapper>

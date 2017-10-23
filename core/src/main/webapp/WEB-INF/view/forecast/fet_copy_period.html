@@ -1,0 +1,125 @@
+<#include "../include/header.html">
+    <script src="${base.contextPath}/clb/common/clbCode?partyTypeData=CNL.PARTY_TYPE" type="text/javascript"></script>
+    <link href="${base.contextPath}/resources/css/supplier/lov.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var headId = '${RequestParameters.headId!0}';
+        var partyType,partyId;
+
+        var viewModel = kendo.observable({
+            model: {},
+        });
+
+    </script>
+<head>
+    <meta charset="UTF-8">
+</head>
+    <body>
+    <div id="page-content" style ="margin-top:100px">
+
+        <!-- 当前用户是管理员-->
+        <form class="form-horizontal" id="updateVersion">
+
+            <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">日历名称</label>
+                        <div class="col-sm-6">
+                            <input id="accountantName" style="width: 100%" required="required"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">关联方类型</label>
+                        <div class="col-sm-6">
+                            <input id="partyType" style="width: 100%" required="required" data-required-msg="必输"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom:20px;margin-left:20px;width:60%">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">关联方名称</label>
+                        <div class="col-sm-6">
+                            <input id="partyName"style="width: 100%" required="required" data-required-msg="必输" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row" style="margin-bottom: 20px;margin-left:30%;width:60%">
+            <span class="btn btn-success" style="margin-left:12%;margin-right:5px;" onclick="copy()" type="button"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+            <span class="btn btn-default" style="margin-right:5px;" onclick="cancel()"><i class="fa fa-rotate-left"></i><@spring.message "hap.cancel"/></span>
+        </div>
+    </div>
+    <script>
+        $(function(){
+
+            /* 关联方类型下拉框 */
+            $('#partyType').kendoDropDownList({
+                optionLabel:'--请选择关联方类型--',
+                dataTextField: "meaning",
+                dataValueField: "value",
+                dataSource: partyTypeData,
+                select:function (e) {
+                    partyType = e.dataItem.value;
+                }
+            });
+
+            $("#partyName").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "FET_PERIOD_PARTY_NAME")}, {
+                query: function (e) {
+                    e.param['partyType'] = partyType;
+                },
+                select: function (e) {
+                    partyId = e.item.partyId
+                }
+            }))
+        });
+
+        function copy() {
+            var accountantName = $('#accountantName').val();
+            if(accountantName == '' || partyId == undefined || partyType == undefined) {
+                window.parent.kendo.ui.showErrorDialog({
+                    title: '错误',
+                    message:'日历名称、关联方类型、关联方名称 均不能为空!'
+                });
+                return;
+            }
+            var data = {accountantName: accountantName, headId: headId, partyId: partyId, partyType: partyType};
+            $.ajax({
+                type: "POST",
+                url: "${base.contextPath}/fms/fet/period/head/copyPeriod",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data){
+                    if (data.success) {
+                        window.parent.kendo.ui.showInfoDialog({
+                            title:$l('hap.tip.info'),
+                            message:'复制成功!'
+                        });
+                    } else {
+                        window.parent.kendo.ui.showErrorDialog({
+                            title: '错误',
+                            message: data.message
+                        });
+                    }
+                    window.parent.$("#copyWindow").data("kendoWindow").close();
+                    window.parent.grid.refresh();
+                    window.parent.dataSource.read();
+                }
+            });
+        }
+
+        function cancel(){
+            window.parent.$("#copyWindow").data("kendoWindow").close();
+        }
+    </script>
+</body>
+</html>

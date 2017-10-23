@@ -1,0 +1,459 @@
+<#-- 
+ * description:分类集定义
+ * version: 1.0 
+ * author:wanjun.feng@hand-china.com
+ * -->
+<#include "../include/header.html">
+<body>
+<script src="${base.contextPath}/clb/common/clbCode?prdClassStatusData=SYS.STATUS_CODE" type="text/javascript"></script>
+<script type="text/javascript">
+    viewModel = kendo.observable({
+        model: {},
+        queryFunction: function () {
+            $('#classSetGrid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+</script>
+<div id="content-container">
+    <div id="page-content">
+    <form class="form-horizontal">
+        <!--查询面板-->
+	    <div class="panel">
+            <div class="panel-body">
+                <div class="row">
+	                <div class="col-sm-4">
+	                    <div class="form-group">
+	                        <label class="col-sm-3 control-label"><@spring.message "prdclassset.setname"/></label>
+	                        <div class="col-sm-9">
+	                            <input type="text" style="width: 100%"
+	                                   data-bind="value:model.setName" class="k-textbox">
+	                        </div>
+	                    </div>
+	                </div>
+	            </div><!-- row end -->
+	        </div><!-- panel-body end -->
+	        <div class="panel-footer text-right">
+	            <span class="btn btn-primary" data-bind="click:queryFunction">
+	                <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/>
+	            </span>
+	            <span class="btn btn-default" data-bind="click:resetForm">
+	                <i class="fa fa-refresh" style="margin-right:3px;"></i><@spring.message "hap.reset"/>
+	            </span>
+	        </div>
+	    </div>
+	    </form>
+        <div style="clear:both">
+            <div id="classSetGrid" class="table"></div>
+        </div>
+    </div>
+    <!-- 管理分类集窗口 -->
+    <div id="classSetManageWin"></div>
+    <script type="text/javascript">
+        function openClassSetManagerWin(setId, setName, statusCode, className1Code, className2Code, className3Code, className4Code, className5Code) {
+       		$("#classSetManageWin").kendoWindow({
+               actions: ["Close"],
+               title: "管理分类集",
+               draggable: true,
+               height: "90%",
+               width: "90%",
+               content: "${base.contextPath}/production/prd_class.html?setId="+setId+"&setName="+setName+"&statusCode="+statusCode+"&className1Code="+className1Code+"&className2Code="+className2Code+"&className3Code="+className3Code+"&className4Code="+className4Code+"&className5Code="+className5Code,
+               iframe: true,
+               modal: true
+           });
+           var win = $("#classSetManageWin").data("kendoWindow");
+           win.toggleMaximization();
+           win.maximize();
+           win.center().open();
+        }
+        kendo.bind($('#page-content'), viewModel);
+        var crudServiceBaseUrl = "${base.contextPath}/production/classSet/";
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl+'query',
+                    type: "POST",
+                    dataType: "json"
+                },
+                create : { 
+                    url : crudServiceBaseUrl + "submit",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                update : { 
+                    url : crudServiceBaseUrl + "submit",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                destroy : { 
+                    url : crudServiceBaseUrl + "remove",
+                    contentType: "application/json",
+                    type : "POST" 
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                    	var datas = Hap.prepareSubmitParameter(options, type);
+                        return kendo.stringify(datas);
+                    } else if (type === "read"){
+                    	return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "setId",
+                    fields: {
+                    	setId:{},
+                    	setCode:{},
+                    	setName:{},
+                    	comments:{},
+                    	className1Code:{},
+                    	className2Code:{},
+                    	className3Code:{},
+                    	className4Code:{},
+                    	className5Code:{},
+                    	statusCode:{validation:{required:true},defaultValue:'Y'}
+                    }
+                }
+            }
+        });
+
+        var grid = $("#classSetGrid").kendoGrid({
+            dataSource: dataSource,
+            navigatable: false,
+            height: '100%',
+            resizable: true,
+            scrollable: true,
+            //sortable: true,
+            //selectable: "multiple, rowbox",
+            rownumber: true,
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [{
+                template: '<span class="btn btn-primary k-grid-add">'+
+              		'<i class="fa fa-plus-square"></i>'+
+              		'<@spring.message "hap.new"/></span>'
+            },
+            {
+                template: '<span class="btn btn-success k-grid-save-changes">'+
+           		'<i class="fa fa-save"></i>'+
+        		'<@spring.message "hap.save"/></span>'
+            },
+            {
+                template: '<span class="btn btn-default k-grid-cancel-changes">'+
+           		'<i class="fa fa-rotate-left"></i>'+
+        		'<@spring.message "hap.cancel"/></span>'
+            }],
+            columns: [
+                {
+                    field: "setCode",
+                    title: '<@spring.message "prdclassset.setcode"/>',
+                    width: 150,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor:function (container, options){
+                        if(options.model.setId==null || options.model.setId==""){
+                            $('<input name="' + options.field + '" type="text" class="form-control"/>')
+                                    .appendTo(container)
+                        }else{
+                            container.html(options.model.setCode);
+                        }
+                    }
+                },
+                {
+                    field: "setName",
+                    title: '<@spring.message "prdclassset.setname"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    }
+                },
+                {
+                    field: "comments",
+                    title: '<@spring.message "hap.comment"/>',
+                    width: 200,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    }
+                },
+                {
+                    field: "statusCode",
+                    title: '<@spring.message "prdclassset.statuscode"/>',
+                    width: 80,
+                    template: function(dataItem){
+                        var v = dataItem.statusCode;
+                        $.each(prdClassStatusData,function(i,n){
+                            if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                     },
+                     editor: function(container, options){
+                         $('<input name="' + options.field + '" required />')
+	                         .appendTo(container)
+	                         .kendoDropDownList({
+	                             dataTextField: "meaning",
+	                             dataValueField: "value",
+	                             dataSource: prdClassStatusData,
+	                 			 optionLabel:"--<@spring.message 'fms.select'/>--"
+	                         });
+                     },
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    }
+                },
+                {
+                    field: "className1Name",
+                    title: '<@spring.message "prdclassset.classname1code"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+                        	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "PUB_CODE_PARENT"/>,{
+	                          	textField:'className1Name',
+	                          	valueField:'className1Code',
+	                          	query: function(e) {
+	                          		e.param['enabledFlag'] = 'Y';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('className1Name', e.item.description);
+	                          		options.model.set('className1Code', e.item.code);
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('className1Name', '');
+		                          		options.model.set('className1Code', '');
+                                     }
+	                          	}, 
+	                          	model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                    	return dataItem['className1Name'] || ''
+                    }
+                },
+                {
+                    field: "className2Name",
+                    title: '<@spring.message "prdclassset.classname2code"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+                        	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "PUB_CODE_PARENT"/>,{
+	                          	textField:'className2Name',
+	                          	valueField:'className2Code',
+	                          	query: function(e) {
+	                          		e.param['enabledFlag'] = 'Y';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('className2Name', e.item.description);
+	                          		options.model.set('className2Code', e.item.code);
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('className2Name', '');
+		                          		options.model.set('className2Code', '');
+                                     }
+	                          	}, 
+	                          	model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                    	return dataItem['className2Name'] || ''
+                    }
+                },
+                {
+                    field: "className3Name",
+                    title: '<@spring.message "prdclassset.classname3code"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+                        	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "PUB_CODE_PARENT"/>,{
+	                          	textField:'className3Name',
+	                          	valueField:'className3Code',
+	                          	query: function(e) {
+	                          		e.param['enabledFlag'] = 'Y';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('className3Name', e.item.description);
+	                          		options.model.set('className3Code', e.item.code);
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('className3Name', '');
+		                          		options.model.set('className3Code', '');
+                                     }
+	                          	}, 
+	                          	model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                    	return dataItem['className3Name'] || ''
+                    }
+                },
+                {
+                    field: "className4Name",
+                    title: '<@spring.message "prdclassset.classname4code"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+                        	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "PUB_CODE_PARENT"/>,{
+	                          	textField:'className4Name',
+	                          	valueField:'className4Code',
+	                          	query: function(e) {
+	                          		e.param['enabledFlag'] = 'Y';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('className4Name', e.item.description);
+	                          		options.model.set('className4Code', e.item.code);
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('className4Name', '');
+		                          		options.model.set('className4Code', '');
+                                     }
+	                          	},  
+	                          	model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                    	return dataItem['className4Name'] || ''
+                    }
+                },
+                {
+                    field: "className5Name",
+                    title: '<@spring.message "prdclassset.classname5code"/>',
+                    width: 100,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    editor          : function (container, options) { 
+                        $('<input name="' + options.field + '"/>')
+                        	.appendTo(container)
+	                   	 	.kendoLov($.extend(<@lov "PUB_CODE_PARENT"/>,{
+	                          	textField:'className5Name',
+	                          	valueField:'className5Code',
+	                          	query: function(e) {
+	                          		e.param['enabledFlag'] = 'Y';
+	                          	},
+	                          	select: function(e) {
+	                          		options.model.set('className5Name', e.item.description);
+	                          		options.model.set('className5Code', e.item.code);
+	                          	},
+	                          	change : function(e) {
+	                          		if (e.sender._prev=="") {
+                                        //当lov中数据清除时，绑定的值也清空
+		                          		options.model.set('className5Name', '');
+		                          		options.model.set('className5Code', '');
+                                     }
+	                          	}, 
+	                          	model    : options.model
+                        }));
+                    },
+                    template        : function (dataItem) {
+                    	return dataItem['className5Name'] || ''
+                    }
+                },
+                {
+                    title: '<@spring.message "hap.action"/>',
+                    width: 80,
+                    headerAttributes: {
+                        'class':'table-header-cell',
+                        style:'text-align: center'
+                    },
+                    attributes: {
+                        "class": "table-cell",
+                        style: "text-align:center;"
+                    },
+                    template : function (dataItem) {
+                    	if (dataItem.setId) {
+                    		return '<a href="#" onclick="openClassSetManagerWin('+dataItem.setId+',\''+dataItem.setName+'\',\''+dataItem.statusCode+'\',\''+dataItem.className1Code+'\',\''+dataItem.className2Code+'\',\''+dataItem.className3Code+'\',\''+dataItem.className4Code+'\',\''+dataItem.className5Code+'\')"><@spring.message "prdclassset.manage"/></a>';
+                    	} else {
+                    		return '<a href="#"><@spring.message "prdclassset.manage"/></a>';
+                    	}
+                    }
+                }],
+            editable: true
+        }).data("kendoGrid");
+
+        Hap.autoResizeGrid("#classSetGrid");
+    </script>
+</div>
+</body>
+</html>

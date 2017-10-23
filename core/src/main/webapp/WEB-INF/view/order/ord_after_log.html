@@ -1,0 +1,176 @@
+<#--
+ * description: 售后/续保日志
+ * version: 1.0
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?logStatusData=ORD.AFTER_LOG" type="text/javascript"></script>
+<script type="text/javascript">
+
+	var generalId ='${RequestParameters.generalId!0}';
+	var idType ='<#if RequestParameters.idType?exists> ${RequestParameters.idType} <#else>null</#if>'; 
+    
+    
+    var viewModel = kendo.observable({
+        model: {},
+         createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        } 
+    });
+
+    if(generalId != 0 && idType != "") {
+        viewModel.model.set("generalId",generalId);
+        viewModel.model.set("idType",idType.trim());
+    }
+    
+</script>
+<body>
+<div id="page-content">
+    <div style="clear:both">
+        <div id="LogGrid"></div>
+    </div>
+</div>
+<script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}";
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/ord/after/log/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/ord/after/log/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/ord/after/log/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/ord/after/log/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 200,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "logId",
+                fields: {}
+            }
+        }
+    });
+
+    var grid = $("#LogGrid").kendoGrid({
+        dataSource: dataSource,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        pageable : false,
+        columns: [
+			{
+			    field: "logId",
+			    title: '日志ID',
+			    width: 120,
+			    hidden:true
+			},
+			{
+			    field: "generalId",
+			    title: '售后/续保id',
+			    width: 120,
+			    hidden:true
+			},
+			 {
+			    field: "idType",
+			    title: '售后/续保',
+			    width: 120,
+			    hidden:true
+			},
+			{
+			    field: "statusDate",
+			    /* title: '修改时间', */
+			    width: 100,
+			    headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle; display:none;'
+                }
+			},
+			{
+			    field: "status",
+			    /* title: '状态', */
+			    width: 120,
+			    headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle; display:none;'
+                },
+                template: function(dataItem){
+                    var v = dataItem.status;
+                    $.each(logStatusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    if (typeof(v) == "" || v == null) {
+                        return "";
+                    }
+                    return v;
+                 },
+                 editor: function(container, options){
+                     $('<input name="' + options.field + '"/>')
+                     .appendTo(container)
+                     .kendoDropDownList({
+                         dataTextField: "meaning",
+                         dataValueField: "value",
+                         dataSource: logStatusData
+                     });
+                 }
+			},
+			{
+			    field: "comment",
+			    /* title: '说明', */
+			    width: 120,
+			    headerAttributes: {
+                    'class':'table-header-cell',
+                    style:'text-align: center;vertical-align:middle; display:none;'
+                }
+			},
+        ],
+        editable: false
+    }).data("kendoGrid");
+
+    Hap.autoResizeGrid("#LogGrid");
+
+</script>
+</body>
+</html>

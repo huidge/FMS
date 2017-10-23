@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeCalendarMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeCalendar">
+        <result column="CALENDAR_ID" property="calendarId" jdbcType="DECIMAL" />
+        <result column="CALENDAR_NAME" property="calendarName" jdbcType="VARCHAR" />
+        <result column="STATUS_CODE" property="statusCode" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="selectData" resultMap="BaseResultMap" parameterType="clb.core.supplier.dto.SpeCalendar">
+    	select fsc.*	
+		from fms_spe_calendar fsc
+		<where>
+			<if test="calendarId!=null">
+	            AND fsc.CALENDAR_ID = #{calendarId}
+			</if>
+			<if test="calendarName!=null">
+	            AND fsc.CALENDAR_NAME like CONCAT(CONCAT('%',#{calendarName}),'%')
+			</if>
+		</where>
+    
+    </select>
+
+
+</mapper>

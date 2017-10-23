@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.pln.mapper.PlnPlanSpiderSettingMapper">
+    <resultMap id="BaseResultMap" type="clb.core.pln.dto.PlnPlanSpiderSetting">
+        <result column="SETTING_ID" property="settingId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_ID" property="supplierId" jdbcType="DECIMAL" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ID" property="sublineId" jdbcType="DECIMAL" />
+        <result column="PAY_METHOD" property="payMethod" jdbcType="VARCHAR" />
+        <result column="INSURANCE_ITEM_NAME" property="insuranceItemName" jdbcType="VARCHAR" />
+        <result column="INSURANCE_CURRENCY" property="insuranceCurrency" jdbcType="VARCHAR" />
+        <result column="INSURANCE_SUBLINE_NAME" property="insuranceSublineName" jdbcType="VARCHAR" />
+        <result column="INSURANCE_PAY_METHOD" property="insurancePayMethod" jdbcType="VARCHAR" />
+        <result column="SPIDER_PROGRAM" property="spiderProgram" jdbcType="VARCHAR" />
+        <result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="SUBLINE_ITEM_NAME" property="sublineItemName" jdbcType="VARCHAR" />
+        <result column="SPECIAL_USERNAME" property="specialUsername" jdbcType="VARCHAR" />
+        <result column="SPECIAL_PASSWORD" property="specialPassword" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        fpps.*,
+        fss.`NAME` SUPPLIER_NAME,
+        fpi.ITEM_NAME,
+        fpis.SUBLINE_ITEM_NAME
+        FROM
+        FMS_PLN_PLAN_SPIDER_SETTING fpps,
+        fms_spe_supplier fss,
+        fms_prd_items fpi,
+        fms_prd_item_subline fpis
+        WHERE
+        fpps.SUPPLIER_ID = fss.SUPPLIER_ID
+        AND fpps.ITEM_ID = fpi.ITEM_ID
+        AND fpps.SUBLINE_ID = fpis.SUBLINE_ID
+        <if test="supplierId!=null">
+            AND fpps.SUPPLIER_ID = #{supplierId}
+        </if>
+        <if test="itemName!=null">
+            AND fpi.ITEM_NAME = #{itemName}
+        </if>
+        <if test="itemId!=null">
+            AND fpi.ITEM_ID = #{itemId}
+        </if>
+        <if test="enableFlag!=null">
+            <if test="enableFlag!='ALL'">
+                AND fpps.ENABLE_FLAG = #{enableFlag}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectSpiderName" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT DISTINCT
+            FPPSS.SPIDER_PROGRAM
+        FROM
+            fms_pln_plan_spider_setting FPPSS,
+            fms_pln_plan_request fppr
+        WHERE
+            FPPSS.ITEM_ID = fppr.ITEM_ID
+        AND fppr.REQUEST_NUMBER = #{requestNumber}
+    </select>
+
+    <!-- 查询计划书爬虫设置有没有设置 -->
+    <select id="selectPlanSpiderCount" parameterType="java.lang.String"
+            resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+        fms_pln_plan_spider_setting FPPSS,
+        fms_pln_plan_request fppr
+        WHERE 1=1
+        AND	FPPSS.ITEM_ID = fppr.ITEM_ID
+        AND FPPSS.CURRENCY = fppr.CURRENCY
+        AND FPPSS.SUBLINE_ID = fppr.SUBLINE_ID
+        AND FPPSS.PAY_METHOD = FPPR.PAY_METHOD
+        AND fppr.REQUEST_NUMBER = #{requestNumber}
+        AND FPPSS.ENABLE_FLAG = 'Y'
+    </select>
+
+    <!-- 查询计划书保险公司账户密码 -->
+    <select id="selectUserPass" parameterType="clb.core.pln.dto.PlnPlanSpiderSetting"
+            resultMap="BaseResultMap">
+        SELECT
+        fpps.*,
+        fppsu.USERNAME,
+        fppsu.PASSWORD
+        FROM
+        FMS_PLN_PLAN_SPIDER_SETTING fpps,
+        FMS_PLN_PLAN_SPIDER_USERPASS fppsu
+        WHERE
+        fpps.SUPPLIER_ID = fppsu.SUPPLIER_ID
+        AND fpps.ITEM_ID = #{itemId}
+        AND fpps.SUBLINE_ID = #{sublineId}
+        AND fpps.PAY_METHOD = #{payMethod}
+        AND fpps.CURRENCY = #{currency}
+        AND fpps.SPIDER_PROGRAM = #{spiderProgram}
+    </select>
+
+</mapper>

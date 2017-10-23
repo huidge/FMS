@@ -1,0 +1,296 @@
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?enableFlag=WHTCUSTOM.ENABLE_FLAG" type="text/javascript"></script>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function () {
+        	//debugger;
+        	window.parent.$("#dialog").data("kendoWindow").close();
+        },
+    });
+    
+    var status="add";
+    msgDetailId = '${RequestParameters.msgDetailId!}';
+    if(msgDetailId){
+		viewModel.model.msgDetailId = msgDetailId;
+		status="update";
+		console.log(status);
+		 $.ajax({
+	        type: "POST",
+	        async: false,//在主线程同步使用XMLHttpRequest是因为对最终用户的体验其带来的不利影响
+	        url: "${base.contextPath}/fms/wht/msg/detail/query",
+	        data: {"msgDetailId":msgDetailId},
+	        success: function (json) {
+	             var row = json.rows[0] || {};
+	            for (var k in row) {
+	            	viewModel.model.set(k, row[k]);
+	            } 
+	        }
+	    }); 
+	};
+	console.log(status);
+    function saveFunction() {
+    	debugger;
+    	if(!viewModel.model.templateEnabled){
+    		viewModel.model.templateEnabled = "Y" ;  
+    	};
+    	if(!viewModel.model.templateDateFrom && viewModel.model.templateDateTo){
+            	kendo.ui.showErrorDialog({
+                    message: "请输入信息模板有效期生效时间"
+                });
+            	return;
+    	};
+    	if(viewModel.model.templateDateFrom && viewModel.model.templateDateTo){
+        	var oDate1 = new Date(viewModel.model.templateDateFrom);
+            var oDate2 = new Date(viewModel.model.templateDateTo);
+            if(oDate1.getTime() > oDate2.getTime()){
+            	kendo.ui.showErrorDialog({
+                    message: "信息模板有效期生效时间不能大于失效时间"
+                });
+            	return;
+            } 
+    	};
+    	var validator = $("#mainform").data("kendoValidator");
+		if (validator.validate()) {
+				console.log(viewModel.model);
+				var urll;
+				if(status=="add"){
+					urll = "${base.contextPath}/fms/wht/msg/detail/add"
+				}else{
+					urll = "${base.contextPath}/fms/wht/msg/detail/updateTemplate"
+				}; 
+				Hap.submitForm({
+					url : urll,
+					formModel : viewModel.model,
+					//asArray : false,
+					success : function(data) {
+						if (data.success) {
+							kendo.ui.showInfoDialog({
+	                             title: $l('hap.tip.info'),
+	                             message: $l('成功')
+	                         }).done(function (event) {
+	                             if (event.button == 'OK') {
+	                            	 window.parent.location.reload();
+	                            }
+	                         });
+							
+						} else {
+							kendo.ui.showErrorDialog({
+								message : "失败"
+							});
+						}
+					}
+		       });
+		}
+    };
+	console.log(viewModel.model);
+    
+</script>
+<body>
+<div id="page-content">
+	<div class="panel" >
+		<div id="query-form" >
+			<form class="form-horizontal" id="mainform" style="margin-top: 5px;">
+                 <div class="panel-body">
+                 	<div class="col-xs-12" style="margin-bottom: 10px">
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">模板代码 *</label>
+                                <div class="col-xs-8">
+                                	<input id="templateCode" required data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.templateCode" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">模板名称 *</label>
+                                <div class="col-xs-8">
+                                	<input type="text" required data-role="maskedtextbox" style="width: 100%" data-bind="value:model.templateName" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 	<div class="col-xs-12" style="margin-bottom: 10px">
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">模板描述&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                                	<input id="templateDescribe" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.templateDescribe" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">模板序号 *</label>
+                                <div class="col-xs-8">
+                                	<input onkeydown="onlyNum();" type="text" required data-role="maskedtextbox" style="width: 100%" data-bind="value:model.templateSerialNum" class="k-textbox">
+                                	<script type="text/javascript">
+                                	function onlyNum() {
+            						    if(!(event.keyCode==46)&&!(event.keyCode==8)&&!(event.keyCode==37)&&!(event.keyCode==39))
+            						    if(!((event.keyCode>=48&&event.keyCode<=57)||(event.keyCode>=96&&event.keyCode<=105)))
+            						    event.returnValue=false;
+            						}
+                                	</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 	<div class="col-xs-12" style="margin-bottom: 10px">
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">关联模板代码&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                                	<input id="relationTemplateCode" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.relationTemplateCode" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right"> 是否有效&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                               		<input  style="width:100%" name="templateEnabled" id="templateEnabled" data-bind="value:model.templateEnabled" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 	<div class="col-xs-12" style="margin-bottom: 10px">
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">有效日期从&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                         		 		<input type="text" id = "templateDateFrom" style="width: 100%" data-role="datetimepicker"
+                                          data-bind="value:model.templateDateFrom" class="k-datetimepicker" >
+                               			<script>
+		                                   	$("#templateDateFrom").kendoDateTimePicker({
+		                                       	format: "yyyy-MM-dd HH:mm:ss",
+		                                   	});
+                         		 		</script>           
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">有效日期至&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                         		 		<input type="text" id = "templateDateTo" style="width: 100%" data-role="datetimepicker"
+                                          data-bind="value:model.templateDateTo" class="k-datetimepicker" >
+                               			<script>
+		                                   	$("#templateDateTo").kendoDateTimePicker({
+		                                       	format: "yyyy-MM-dd HH:mm:ss",
+		                                   	});
+                         		 		</script>           
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 	<div class="col-xs-12" style="margin-bottom: 10px">
+                        <div class="col-xs-6" >
+                            <div class="form-group" >
+                                <label class="col-xs-4 control-label"
+                                       style="text-align: right">额外参数&nbsp&nbsp&nbsp</label>
+                                <div class="col-xs-8">
+                                	<input id="additionalParameter" data-role="maskedtextbox" type="text" style="width: 100%"  data-bind="value:model.additionalParameter" class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+			    </div>
+		    </form>
+            <div class="col-sm-12" style="margin-top:30px">
+              	<div class="form-group">
+                  	<div class="col-sm-12" style="text-align: center">   
+      					<span class="btn btn-default" style="margin-right:150px;" type="button" data-bind="click:resetForm">取消</span>
+      					<span class="btn btn-success" id="saveGrid"  onclick="saveFunction()" type="submit">保存</span>
+                  	</div>
+              	</div>
+          	</div>
+	    </div>
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+    <!-- <div style="clear:both">
+        <div id="Grid"></div>
+    </div> -->
+</div>
+
+<script type="text/javascript">
+	//验证
+	$("#mainform").kendoValidator({
+		messages: {
+	        required: '{0}不能为空！'
+		},
+		invalidMessageType : "tooltip"
+	});	
+	
+
+	//下拉框
+	$("#templateEnabled").kendoComboBox({
+	    valuePrimitive: true,
+	    dataTextField: "meaning",
+	    dataValueField: "value",
+	    dataSource: enableFlag
+	}); 
+	
+    /* var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/fms/wht/msg/detail/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/fms/wht/msg/detail/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/fms/wht/msg/detail/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/fms/wht/msg/detail/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "msgDetailId",
+                fields: {}
+            }
+        }
+    }); */
+</script>
+</body>
+</html>

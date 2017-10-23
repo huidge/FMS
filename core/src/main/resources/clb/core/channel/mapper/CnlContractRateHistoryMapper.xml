@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.channel.mapper.CnlContractRateHistoryMapper">
+    <resultMap id="BaseResultMap" type="clb.core.channel.dto.CnlContractRateHistory">
+        <result column="RATE_HIS_ID" property="rateHisId" jdbcType="DECIMAL" />
+        <result column="CHANNEL_CONTRACT_ID" property="channelContractId" jdbcType="DECIMAL" />
+        <result column="RATE_LEVEL_NAME" property="rateLevelName" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryRateHis" parameterType="clb.core.channel.dto.CnlContractRateHistory" resultMap="BaseResultMap" >
+        SELECT 
+		  t.`RATE_HIS_ID`,
+		  t.`CHANNEL_CONTRACT_ID`,
+		  t.`RATE_LEVEL_NAME`,
+		  t.`CREATED_BY`,
+		  su.`USER_NAME`,
+		  t.`CREATION_DATE`,
+		  t.`COMMENTS`,
+  		  t.`OBJECT_VERSION_NUMBER`
+		FROM
+		  fms_cnl_contract_rate_history t,
+		  sys_user su 
+		WHERE t.`CREATED_BY` = su.`USER_ID`
+		  AND  t.`CHANNEL_CONTRACT_ID` = #{channelContractId}
+		 ORDER BY t.`CREATION_DATE` DESC
+    </select>
+</mapper>

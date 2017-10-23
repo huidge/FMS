@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<style type="text/css">
+    #model {
+        display: none;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background: #f3f5d9 ;
+        width: 100%;
+        height: 100%;
+        z-index: 99999;
+    }
+    #progressBar {
+        margin-top: 25%;
+        margin-left:25%;
+        margin-bottom:60%
+    }
+</style>
+<div>
+    <div id="model" class="model">
+        <div class="demo-section k-content">
+            <div id="progressBar" style="width: 50%;"></div>
+        </div>
+    </div>
+    <script>
+        var pb = $("#progressBar").kendoProgressBar({
+            min: 0,
+            max: 20,
+            type: "value",
+            animation: {
+                duration: 200
+            }
+        }).data("kendoProgressBar");
+    </script>
+</div>
+<script src="${base.contextPath}/resources/js/wg.js"></script>
+<script>
+    /*省市县名称多语言*/
+    var provinceName="<@spring.message 'wg.fnd.area.select_province'/>";
+    var cityName="<@spring.message 'wg.fnd.area.select_city'/>";
+    var regionName="<@spring.message 'wg.fnd.area.select_region'/>";
+</script>
+</html>

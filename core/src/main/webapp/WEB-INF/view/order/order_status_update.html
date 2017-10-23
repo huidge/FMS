@@ -1,0 +1,1103 @@
+<#--
+ * description: 订单状态修改页面
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/5/2 10:20:00
+-->
+<#include "../include/header.html">
+<script src="${base.contextPath}/clb/common/clbCode?statusData=ORD.ORDER_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?ddaStatusData=ORD.DDA_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/clb/common/clbCode?yesNo=SYS.YES_NO" type="text/javascript"></script>
+<script type="text/javascript">
+    var functionCode = '${RequestParameters.functionCode!}';
+    var signSupplierId = <#if RequestParameters.signSupplierId?exists> ${RequestParameters.signSupplierId} <#else>-1</#if>;
+    var ownSupplierId = <#if RequestParameters.ownSupplierId?exists> ${RequestParameters.ownSupplierId} <#else>-1</#if>;
+    var channelContractId = <#if RequestParameters.channelContractId?exists> ${RequestParameters.channelContractId} <#else>-1</#if>;
+    var productSupplierId = <#if RequestParameters.productSupplierId?exists> ${RequestParameters.productSupplierId} <#else>-1</#if>;
+    var orderId = <#if RequestParameters.orderId?exists> ${RequestParameters.orderId} <#else>-1</#if>;
+    var type = '${RequestParameters.type!}';
+
+    var viewModel = kendo.observable({
+        model: {}
+    });
+
+    if(productSupplierId==-1 ){
+    }else{
+        $.ajax({
+            url:_basePath+"/production/supplier/query?supplierId="+productSupplierId,
+            type : "POST",
+            dataType:"json",
+            contentType:"application/json",
+            success:function (data) {
+                for(var i in data.rows) {
+                    viewModel.model.set("gracePeriod",data.rows[i]["gracePeriod"]);
+                    viewModel.model.set("administrativePeriod",data.rows[i]["administrativePeriod"]);
+                }
+            }
+        });
+    }
+
+    viewModel.model.set("orderId",orderId);
+    viewModel.model.set("functionCode",functionCode);
+
+    var allManual = "N";
+
+    //跳转页面查询
+    if(orderId !=-1) {
+        //查询订单信息
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/order/query",
+            data: {
+                orderId: orderId,
+                functionCode: functionCode
+            },
+            success: function (json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    if (k != "status") {
+                        viewModel.model.set(k, row[k]);
+                    }
+                }
+            }
+
+        });
+
+        viewModel.model.set("arrivalDateHis",viewModel.model.arrivalDate);
+        viewModel.model.set("leaveDateHis",viewModel.model.leaveDate);
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "${base.contextPath}/fms/ord/commission/queryManualFlag?orderId=" + orderId,
+            data: {},
+            success: function (json) {
+                var row = json.rows[0] || {};
+                allManual = row["allManual"];
+            }
+
+        });
+    }
+
+</script>
+<div id="reqWin" style="display: none;">
+    <form>
+        <input type="file" id="reqFiles" name="reqFiles"></input>
+    </form>
+</div>
+<body>
+    <div id="page-content">
+        <div class="panel panel-default">
+        <form class="form-horizontal">
+            <div class="panel-heading">
+                <span class="panel-title"> <@spring.message "fms.ordorder.status"/></span>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-xs-12" >
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.status"/></label>
+                        <div class="col-xs-8">
+                            <input id="status" name="status" type="text" required validationMessage='<@spring.message "hap.error.nullexception"/>' data-bind="value:model.status" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="policyNumberDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.policyNumber"/></label>
+                        <div class="col-xs-8">
+                            <input id="policyNumber" name="policyNumber" type="text" class="k-textbox" data-bind="value:model.policyNumber" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="hisDescDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordstatushis.description"/></label>
+                        <div class="col-xs-8">
+                            <textarea id="hisDesc" rows="6" name="hisDesc" type="text" data-bind="value:model.hisDesc" class="k-textbox" style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="arrivalDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.arrivalDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="arrivalDate" name="arrivalDate" type="text" data-bind="value:model.arrivalDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="leaveDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.leaveDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="leaveDate" name="leaveDate" type="text" data-bind="value:model.leaveDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="signPersonDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.signPerson"/></label>
+                        <div class="col-xs-8">
+                            <input id="signPerson" name="signPerson" type="text" data-bind="value:model.signPerson,text:model.signPerson" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="signAssistantDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.signAssistant"/></label>
+                        <div class="col-xs-8">
+                            <input id="signAssistant" name="signAssistant" type="text" data-bind="value:model.signAssistant,text:model.signAssistantName" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="reqUploadDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.requestcopyarchive"/></label>
+                        <div class="col-xs-8" id="reqFileDiv">
+                            <button type="button" onclick="reqUpload()" class="btn btn-info btn-xs" id="btn_reqUpload" style="margin-top: 5px" data-toggle="tooltip" data-placement="top" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-xs-12" id="sendMessagesDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right">投保人短信</label>
+                        <div class="col-xs-8">
+                            <input id="sendMessages" name="sendMessages" type="text" data-bind="value:model.whetherSendMes" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="approveDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.approvedate"/></label>
+                        <div class="col-xs-8">
+                            <input id="approveDate" name="approveDate" type="text" data-bind="value:model.approveDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="effectiveDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.effectivedate"/> *</label>
+                        <div class="col-xs-8">
+                            <input id="effectiveDate" name="effectiveDate" required validationMessage="<@spring.message "hap.error.nullexception"/>" type="text" data-bind="value:model.effectiveDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="firstPayDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.firstpaydate"/> *</label>
+                        <div class="col-xs-8">
+                            <input id="firstPayDate" name="firstPayDate" required validationMessage="<@spring.message "hap.error.nullexception"/>" type="text" data-bind="value:model.firstPayDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="expectCoolDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.expectcooldate"/> </label>
+                        <div class="col-xs-8">
+                            <input id="expectCoolDate" name="expectCoolDate" required validationMessage="<@spring.message "hap.error.nullexception"/>" type="text" data-bind="value:model.expectCoolDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="ddaFlagDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.ddaflag"/></label>
+                        <div class="col-xs-8">
+                            <input id="ddaFlag" name="ddaFlag" type="text" data-bind="value:model.ddaFlag" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="ddaSubmitDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.ddaSubmitDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="ddaSubmitDate" name="ddaSubmitDate" type="text" data-bind="value:model.ddaSubmitDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="ddaEffectiveDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.ddaEffectiveDate"/></label>
+                        <div class="col-xs-8">
+                            <input id="ddaEffectiveDate" name="ddaEffectiveDate" type="text" data-bind="value:model.ddaEffectiveDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-xs-12" id="nextPolicyAmountDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.nextPolicyAmount"/> *</label>
+                        <div class="col-xs-8">
+                            <input id="nextPolicyAmount" name="nextPolicyAmount" required validationMessage="<@spring.message "hap.error.nullexception"/>" type="text" data-bind="value:model.nextPolicyAmount" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="nextPolicyDueDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.nextPolicyDueDate"/> *</label>
+                        <div class="col-xs-8">
+                            <input id="nextPolicyDueDate" name="nextPolicyDueDate" required validationMessage="<@spring.message "hap.error.nullexception"/>" type="text" data-bind="value:model.nextPolicyDueDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="graceDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.gracedate"/></label>
+                        <div class="col-xs-8">
+                            <input id="graceDate" name="graceDate" type="text" data-bind="value:model.graceDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="administrativeDateDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.administrativedate"/></label>
+                        <div class="col-xs-8">
+                            <input id="administrativeDate" name="administrativeDate" type="text" data-bind="value:model.administrativeDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="customerNumberDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ctmcustomer.customercode"/></label>
+                        <div class="col-xs-8">
+                            <input id="customerNumber" name="customerNumber" type="text" class="k-textbox" data-bind="value:model.customerNumber" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12" id="payNumberDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.ordorder.payNumber"/></label>
+                        <div class="col-xs-8">
+                            <input id="payNumber" name="payNumber" type="text" class="k-textbox" data-bind="value:model.payNumber" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="feedbackBalanceDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.feedbackBalance"/></label>
+                        <div class="col-xs-8">
+                            <input id="feedbackBalance" name="feedbackBalance" type="text" data-bind="value:model.feedbackBalance" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" id="accountBalanceDiv">
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label class="col-xs-3 control-label"
+                               style="text-align: right"><@spring.message "fms.OrdOrder.accountBalance"/></label>
+                        <div class="col-xs-8">
+                            <input id="accountBalance" name="accountBalance" type="text" data-bind="value:model.accountBalance" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="panel-footer text-right">
+                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span onclick="cancelData()" class="btn btn-default" id="btn_cancel" style="width: 100px;margin-right:5px;"><i class="fa fa-reply" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+            </div>
+        </form>
+        </div>
+
+    </div>
+    <script>kendo.bind($('#page-content'), viewModel);</script>
+
+<script type="text/javascript">
+
+    $('#page-content').kendoValidator({
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+    });
+
+    $("#hisDescDiv").hide();
+    $("#arrivalDateDiv").hide();
+    $("#leaveDateDiv").hide();
+    $("#signPersonDiv").hide();
+    $("#signAssistantDiv").hide();
+    $("#reqUploadDiv").hide();
+
+    $("#approveDateDiv").hide();
+    $("#effectiveDateDiv").hide();
+    $("#firstPayDateDiv").hide();
+    $("#expectCoolDateDiv").hide();
+    $("#ddaFlagDiv").hide();
+    $("#ddaSubmitDateDiv").hide();
+    $("#ddaEffectiveDateDiv").hide();
+    $("#nextPolicyAmountDiv").hide();
+    $("#nextPolicyDueDateDiv").hide();
+    $("#graceDateDiv").hide();
+    $("#administrativeDateDiv").hide();
+    $("#customerNumberDiv").hide();
+    $("#payNumberDiv").hide();
+    $("#feedbackBalanceDiv").hide();
+    $("#accountBalanceDiv").hide();
+    $("#policyNumberDiv").hide();
+    $("#sendMessagesDiv").hide();
+
+    viewModel.model.set("whetherSendMes", 'Y');
+
+
+    $("#status").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/fms/ord/order/queryOrderStatus",
+                        data: {functionCode : functionCode},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        },
+        select: function(e) {
+            if (e.dataItem.value && e.dataItem.value == "ARRIVAL") {
+                $("#hisDescDiv").hide();
+                $("#arrivalDateDiv").show();
+                $("#leaveDateDiv").hide();
+                $("#signPersonDiv").show();
+                $("#signAssistantDiv").show();
+                $("#reqUploadDiv").hide();
+
+                $("#approveDateDiv").hide();
+                $("#effectiveDateDiv").hide();
+                $("#firstPayDateDiv").hide();
+                $("#expectCoolDateDiv").hide();
+                $("#ddaFlagDiv").hide();
+                $("#ddaSubmitDateDiv").hide();
+                $("#ddaEffectiveDateDiv").hide();
+                $("#nextPolicyAmountDiv").hide();
+                $("#nextPolicyDueDateDiv").hide();
+                $("#graceDateDiv").hide();
+                $("#administrativeDateDiv").hide();
+                $("#customerNumberDiv").hide();
+                $("#payNumberDiv").hide();
+                $("#feedbackBalanceDiv").hide();
+                $("#accountBalanceDiv").hide();
+                $("#policyNumberDiv").hide();
+                $("#sendMessagesDiv").hide();
+
+
+                $("#effectiveDate").removeAttr("required");
+                $("#firstPayDate").removeAttr("required");
+                $("#nextPolicyAmount").removeAttr("required");
+                $("#nextPolicyDueDate").removeAttr("required");
+                $("#expectCoolDate").removeAttr("required");
+
+                if (viewModel.model.arrivalDate == null || viewModel.model.arrivalDate == "") {
+                    viewModel.model.set("arrivalDate", new Date());
+                }
+                viewModel.model.set("leaveDate", viewModel.model.leaveDateHis);
+
+            } else if (e.dataItem.value && e.dataItem.value == "LEAVE") {
+                $("#hisDescDiv").hide();
+                $("#arrivalDateDiv").hide();
+                $("#leaveDateDiv").show();
+                $("#signPersonDiv").hide();
+                $("#signAssistantDiv").hide();
+                $("#reqUploadDiv").hide();
+
+                $("#approveDateDiv").hide();
+                $("#effectiveDateDiv").hide();
+                $("#firstPayDateDiv").hide();
+                $("#expectCoolDateDiv").hide();
+                $("#ddaFlagDiv").hide();
+                $("#ddaSubmitDateDiv").hide();
+                $("#ddaEffectiveDateDiv").hide();
+                $("#nextPolicyAmountDiv").hide();
+                $("#nextPolicyDueDateDiv").hide();
+                $("#graceDateDiv").hide();
+                $("#administrativeDateDiv").hide();
+                $("#customerNumberDiv").hide();
+                $("#payNumberDiv").hide();
+                $("#feedbackBalanceDiv").hide();
+                $("#accountBalanceDiv").hide();
+                $("#policyNumberDiv").hide();
+                $("#sendMessagesDiv").hide();
+
+                $("#effectiveDate").removeAttr("required");
+                $("#firstPayDate").removeAttr("required");
+                $("#nextPolicyAmount").removeAttr("required");
+                $("#nextPolicyDueDate").removeAttr("required");
+                $("#expectCoolDate").removeAttr("required");
+
+                if (viewModel.model.leaveDate == null || viewModel.model.leaveDate == "") {
+                    viewModel.model.set("leaveDate", new Date());
+                }
+                viewModel.model.set("arrivalDate", viewModel.model.arrivalDateHis);
+
+            } else if (e.dataItem.value && e.dataItem.value == "APPROVING") {
+                $("#hisDescDiv").hide();
+                $("#arrivalDateDiv").hide();
+                $("#leaveDateDiv").hide();
+                $("#signPersonDiv").hide();
+                $("#signAssistantDiv").hide();
+                $("#reqUploadDiv").show();
+
+                $("#approveDateDiv").hide();
+                $("#effectiveDateDiv").hide();
+                $("#firstPayDateDiv").hide();
+                $("#expectCoolDateDiv").hide();
+                $("#ddaFlagDiv").hide();
+                $("#ddaSubmitDateDiv").hide();
+                $("#ddaEffectiveDateDiv").hide();
+                $("#nextPolicyAmountDiv").hide();
+                $("#nextPolicyDueDateDiv").hide();
+                $("#graceDateDiv").hide();
+                $("#administrativeDateDiv").hide();
+                $("#customerNumberDiv").hide();
+                $("#payNumberDiv").hide();
+                $("#feedbackBalanceDiv").hide();
+                $("#accountBalanceDiv").hide();
+                $("#policyNumberDiv").show();
+                $("#sendMessagesDiv").hide();
+
+                $("#effectiveDate").removeAttr("required");
+                $("#firstPayDate").removeAttr("required");
+                $("#nextPolicyAmount").removeAttr("required");
+                $("#nextPolicyDueDate").removeAttr("required");
+                $("#expectCoolDate").removeAttr("required");
+
+                viewModel.model.set("leaveDate", viewModel.model.leaveDateHis);
+                viewModel.model.set("arrivalDate", viewModel.model.arrivalDateHis);
+            } else if (e.dataItem.value && e.dataItem.value == "POLICY_EFFECTIVE") {
+                $("#hisDescDiv").hide();
+                $("#arrivalDateDiv").hide();
+                $("#leaveDateDiv").hide();
+                $("#signPersonDiv").hide();
+                $("#signAssistantDiv").hide();
+                $("#reqUploadDiv").hide();
+
+                $("#approveDateDiv").show();
+                $("#effectiveDateDiv").show();
+                $("#firstPayDateDiv").show();
+                $("#expectCoolDateDiv").show();
+                $("#ddaFlagDiv").show();
+                $("#ddaSubmitDateDiv").show();
+                $("#ddaEffectiveDateDiv").show();
+                $("#nextPolicyAmountDiv").show();
+                $("#nextPolicyDueDateDiv").show();
+                $("#graceDateDiv").show();
+                $("#administrativeDateDiv").show();
+                $("#customerNumberDiv").show();
+                $("#payNumberDiv").show();
+                $("#feedbackBalanceDiv").show();
+                $("#accountBalanceDiv").show();
+                $("#policyNumberDiv").hide();
+                $("#sendMessagesDiv").show();
+
+                $("#effectiveDate").attr("required","required");
+                $("#firstPayDate").attr("required","required");
+                $("#nextPolicyAmount").attr("required","required");
+                $("#nextPolicyDueDate").attr("required","required");
+                $("#expectCoolDate").removeAttr("required");
+
+                viewModel.model.set("leaveDate", viewModel.model.leaveDateHis);
+                viewModel.model.set("arrivalDate", viewModel.model.arrivalDateHis);
+            } else if (e.dataItem.value && e.dataItem.value == "SIGNED") {
+                $("#hisDescDiv").show();
+                $("#arrivalDateDiv").hide();
+                $("#leaveDateDiv").hide();
+                $("#signPersonDiv").hide();
+                $("#signAssistantDiv").hide();
+                $("#reqUploadDiv").hide();
+
+                $("#approveDateDiv").hide();
+                $("#effectiveDateDiv").hide();
+                $("#firstPayDateDiv").hide();
+                $("#expectCoolDateDiv").hide();
+                $("#ddaFlagDiv").hide();
+                $("#ddaSubmitDateDiv").hide();
+                $("#ddaEffectiveDateDiv").hide();
+                $("#nextPolicyAmountDiv").hide();
+                $("#nextPolicyDueDateDiv").hide();
+                $("#graceDateDiv").hide();
+                $("#administrativeDateDiv").hide();
+                $("#customerNumberDiv").hide();
+                $("#payNumberDiv").hide();
+                $("#feedbackBalanceDiv").hide();
+                $("#accountBalanceDiv").hide();
+                $("#policyNumberDiv").show();
+                $("#sendMessagesDiv").hide();
+
+                $("#effectiveDate").removeAttr("required");
+                $("#firstPayDate").removeAttr("required");
+                $("#nextPolicyAmount").removeAttr("required");
+                $("#nextPolicyDueDate").removeAttr("required");
+                $("#expectCoolDate").removeAttr("required");
+
+                viewModel.model.set("leaveDate", viewModel.model.leaveDateHis);
+                viewModel.model.set("arrivalDate", viewModel.model.arrivalDateHis);
+
+            } else {
+                $("#hisDescDiv").show();
+                $("#arrivalDateDiv").hide();
+                $("#leaveDateDiv").hide();
+                $("#signPersonDiv").hide();
+                $("#signAssistantDiv").hide();
+                $("#reqUploadDiv").hide();
+
+                $("#approveDateDiv").hide();
+                $("#effectiveDateDiv").hide();
+                $("#firstPayDateDiv").hide();
+                $("#expectCoolDateDiv").hide();
+                $("#ddaFlagDiv").hide();
+                $("#ddaSubmitDateDiv").hide();
+                $("#ddaEffectiveDateDiv").hide();
+                $("#nextPolicyAmountDiv").hide();
+                $("#nextPolicyDueDateDiv").hide();
+                $("#graceDateDiv").hide();
+                $("#administrativeDateDiv").hide();
+                $("#customerNumberDiv").hide();
+                $("#payNumberDiv").hide();
+                $("#feedbackBalanceDiv").hide();
+                $("#accountBalanceDiv").hide();
+                $("#policyNumberDiv").hide();
+                $("#sendMessagesDiv").hide();
+
+                $("#effectiveDate").removeAttr("required");
+                $("#firstPayDate").removeAttr("required");
+                $("#nextPolicyAmount").removeAttr("required");
+                $("#nextPolicyDueDate").removeAttr("required");
+                $("#expectCoolDate").removeAttr("required");
+
+                viewModel.model.set("leaveDate", viewModel.model.leaveDateHis);
+                viewModel.model.set("arrivalDate", viewModel.model.arrivalDateHis);
+
+            }
+        },
+        change : function (e) {
+            if (viewModel.model.status == "RESERVE_SUCCESS" ) {
+                if ( viewModel.model.clubConfirmStatus != "CLUB_CONFIRMED" || viewModel.model.clubConfirmStatus == null || viewModel.model.clubConfirmStatus == ""
+                  || viewModel.model.reserveCheckDate == null || viewModel.model.reserveCheckDate == "") {
+                    viewModel.model.set('status', null);
+                    $("#hisDescDiv").hide();
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.tip.info'),
+                        message: "当前会所状态未确认，或预约验证时间为空"
+                    });
+                }
+            } else if (viewModel.model.status == "SIGNED" && allManual != "Y") {
+                if (viewModel.model.channelId != null && viewModel.model.itemId != null && viewModel.model.sublineItemName != null
+                    && viewModel.model.currency != null && viewModel.model.payMethod != null && viewModel.model.reserveDate != null) {
+                    var trRows;
+                    var d = new Date(viewModel.model.reserveDate);
+                    var curr_date = d.getDate();
+                    var curr_month = d.getMonth() + 1;
+                    var curr_year = d.getFullYear();
+                    String(curr_month).length < 2 ? (curr_month = "0" + curr_month) : curr_month;
+                    String(curr_date).length < 2 ? (curr_date = "0" + curr_date) : curr_date;
+                    var date = curr_year + "-" + curr_month + "-" + curr_date;
+
+                    var addData;
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "${base.contextPath}/fms/ord/addition/query?orderId=" + viewModel.model.orderId + "&pagesize="+1000,
+                        data: {},
+                        success: function (json) {
+                            addData = json.rows;
+                        }
+                    });
+
+                    var itemIds = [];
+                    for (var i = 0; i < addData.length; i++) {
+                        var item = {itemId:addData[i].itemId,sublineItemName:addData[i].sublineItemName};
+                        itemIds.push(item);
+                    }
+
+                    var obj = {};
+                    obj['channelId'] = viewModel.model.channelId;
+                    obj['itemId'] = viewModel.model.itemId ;
+                    obj['contributionPeriod'] = viewModel.model.sublineItemName;
+                    obj['currency'] = viewModel.model.currency ;
+                    obj['payMethod'] = viewModel.model.payMethod;
+                    obj['effectiveDate'] = date ;
+                    obj['dealPath'] = viewModel.model.dealPath;
+                    obj['additionRiskList'] = itemIds ;
+                    //productSupplierId,ownSupplierId,signSupplierId
+                    obj['prdSupplierId'] = productSupplierId;
+                    //用于标志，当更新状态查询交易路线的时候,不需要走特殊路基
+                    obj['attribute1'] = 'N';
+
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        contentType: 'application/json',
+                        url: "${base.contextPath}/fms/ord/order/validateTradeRoute",
+                        data: JSON.stringify(obj),
+                        success: function (json) {
+                            trRows = json.rows;
+                        }
+                    });
+
+                    if (trRows.length == 0) {
+                        viewModel.model.set("status", null);
+
+                        $("#hisDescDiv").hide();
+                        $("#arrivalDateDiv").hide();
+                        $("#leaveDateDiv").hide();
+                        $("#signPersonDiv").hide();
+                        $("#signAssistantDiv").hide();
+                        $("#reqUploadDiv").hide();
+
+                        $("#approveDateDiv").hide();
+                        $("#effectiveDateDiv").hide();
+                        $("#firstPayDateDiv").hide();
+                        $("#expectCoolDateDiv").hide();
+                        $("#ddaFlagDiv").hide();
+                        $("#ddaSubmitDateDiv").hide();
+                        $("#ddaEffectiveDateDiv").hide();
+                        $("#nextPolicyAmountDiv").hide();
+                        $("#nextPolicyDueDateDiv").hide();
+                        $("#graceDateDiv").hide();
+                        $("#administrativeDateDiv").hide();
+                        $("#customerNumberDiv").hide();
+                        $("#payNumberDiv").hide();
+                        $("#balanceCurrencyDiv").hide();
+                        $("#feedbackBalanceDiv").hide();
+                        $("#accountBalanceDiv").hide();
+                        $("#policyNumberDiv").hide();
+                        $("#sendMessagesDiv").hide();
+
+                        kendo.ui.showInfoDialog({
+                            title: $l('hap.tip.info'),
+                            message: "您选择的产品无转介费，暂时无法预约，请联系您的上线或供应商！"
+                        });
+                    }
+                }
+            }
+        }
+    });
+
+    $("#sendMessages").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: yesNo,
+    });
+
+    $("#signPerson").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SIGN_TR")}, {
+        query: function(e) {
+            e.param['supplierId'] =  signSupplierId;
+        },
+        select:function (e) {
+            viewModel.model.set("signPerson",e.item.employeeName);
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("signPerson",null);
+            }
+        }
+    }));
+
+    $("#signAssistant").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "ORD_SIGN_ASSISTANT")}, {
+        query: function(e) {
+            e.param['channelContractId'] =  channelContractId;
+        },
+        select:function (e) {
+            viewModel.model.set("signAssistant",e.item.userId);
+            viewModel.model.set("signAssistantName",e.item.employeeName);
+        },
+        change :function (e) {
+            if (e.sender._prev == '' || e.sender._prev == null) {
+                viewModel.model.set("signAssistant",null);
+                viewModel.model.set("signAssistantName",null);
+            }
+        }
+    }));
+
+    $("#arrivalDate").kendoDateTimePicker({
+        format: "yyyy-MM-dd HH:mm:ss"
+    });
+
+    $("#leaveDate").kendoDateTimePicker({
+        format: "yyyy-MM-dd HH:mm:ss"
+    });
+
+    $("#approveDate").kendoDatePicker();
+    $("#effectiveDate").kendoDatePicker();
+
+    function addmulMonth(date,n){   // n个月后
+        var yy = date.getFullYear();
+        var mm = date.getMonth();
+        var dd = date.getDate();
+        var dt=new Date(yy,mm,dd)
+        console.log(dt);
+        console.log(n);
+        dt.setMonth(dt.getMonth()+n);
+        console.log(dt);
+        if( (dt.getFullYear()*12+dt.getMonth()) > (yy*12+mm + n)) {
+            console.log(dt.getFullYear() + dt.getMonth());
+            dt=new Date(dt.getFullYear(),dt.getMonth(),0);
+            console.log(dt);
+        }
+        return dt;
+    }
+
+    $("#firstPayDate").kendoDatePicker({
+        change : function () {
+
+            if (viewModel.model.firstPayDate == null || viewModel.model.firstPayDate == ""
+                || viewModel.model.payMethod == null || viewModel.model.payMethod == "") {
+                viewModel.model.set("nextPolicyDueDate", null);
+            } else {
+                var date = new Date(viewModel.model.firstPayDate);
+                if (viewModel.model.payMethod == "MP") {
+                    date = addmulMonth(date, 1);
+                    viewModel.model.set("nextPolicyDueDate", date);
+                } else if (viewModel.model.payMethod == "QP") {
+                    date = addmulMonth(date, 3);
+                    viewModel.model.set("nextPolicyDueDate", date);
+                } else if (viewModel.model.payMethod == "SAP") {
+                    date = addmulMonth(date, 6);
+                    viewModel.model.set("nextPolicyDueDate", date);
+                } else {
+                    date.setFullYear(date.getFullYear() + 1);
+                    viewModel.model.set("nextPolicyDueDate", date);
+                }
+
+                var administrativeDate;
+                if (viewModel.model.gracePeriod != null) {
+                    date = new Date(date.getFullYear(),date.getMonth(),date.getDate()+viewModel.model.gracePeriod);
+                    viewModel.model.set("graceDate",date);
+                }
+                if (viewModel.model.administrativePeriod != null && viewModel.model.administrativePeriod != 0) {
+                    administrativeDate = new Date(date.getFullYear(),date.getMonth(),date.getDate()+viewModel.model.administrativePeriod);
+                    viewModel.model.set("administrativeDate",administrativeDate);
+                }
+            }
+
+        }
+    });
+    $("#expectCoolDate").kendoDatePicker();
+//    $("#ddaFlag").kendoCheckbox({
+//        checkedValue: 'Y',
+//        uncheckedValue: 'N'
+//    });
+    $("#ddaFlag").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: ddaStatusData
+    });
+    $("#ddaSubmitDate").kendoDatePicker();
+    $("#ddaEffectiveDate").kendoDatePicker();
+    $("#nextPolicyAmount").kendoNumericTextBox({min:0});
+
+    $("#nextPolicyDueDate").kendoDatePicker({
+        change : function () {
+            var date = new Date(viewModel.model.nextPolicyDueDate);
+            var administrativeDate;
+            if (viewModel.model.gracePeriod != null) {
+                date = new Date(date.getFullYear(),date.getMonth(),date.getDate()+viewModel.model.gracePeriod);
+                viewModel.model.set("graceDate",date);
+            }
+            if (viewModel.model.administrativePeriod != null && viewModel.model.administrativePeriod != 0) {
+                administrativeDate = new Date(date.getFullYear(),date.getMonth(),date.getDate()+viewModel.model.administrativePeriod);
+                viewModel.model.set("administrativeDate",administrativeDate);
+            }
+        }
+    });
+
+    $("#graceDate").kendoDatePicker();
+    $("#administrativeDate").kendoDatePicker();
+
+    $("#feedbackBalance").kendoNumericTextBox();
+    $("#accountBalance").kendoNumericTextBox();
+
+    $("#balanceCurrency").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "meaning",
+        dataValueField: "value",
+        dataSource: currencyData
+    });
+
+
+    function reqUpload(){
+        if(viewModel.model.reqFileId != "" && viewModel.model.reqFileId != null && typeof(viewModel.model.reqFileId) != "undefined"){
+            kendo.ui.showConfirmDialog({
+                message: '<@spring.message "fms.overwrite_file"/>'
+            }).done(function (e) {
+                if (e.button == 'OK') {
+                    window.reqWin = $("#reqWin").kendoWindow({
+                        title: '<@spring.message "sysfile.upload"/>',
+                        width: 400,
+                        height: 250,
+                        modal: true
+                    }).data("kendoWindow");
+                    reqWin.center().open();
+                }
+            });
+        }else{
+            window.reqWin = $("#reqWin").kendoWindow({
+                title: '<@spring.message "sysfile.upload"/>',
+                width: 400,
+                height: 250,
+                modal: true
+            }).data("kendoWindow");
+            reqWin.center().open();
+        }
+    }
+    $("#reqFiles").kendoUpload({
+        async        : {
+            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+        },
+        showFileList : false,
+        upload       : onUpload,
+        success      : onReqSuccess
+    });
+
+    function onUpload(e){
+
+        e.data = {
+            modularName:'ORD',
+            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+            maxSize:20480
+        }
+
+    };
+
+    function onReqSuccess(e){
+        if(e.response.success){
+
+            viewModel.model.oldReqFileId = viewModel.model.reqFileId;
+            viewModel.model.reqFileId = e.response.file.fileId;
+            viewModel.model.reqToken = e.response.file._token;
+            $("#reqFileName").remove();
+            $("#reqFileDiv").append(' <label id="reqFileName">' + e.response.file.fileName +'</label>');
+            reqWin.close();
+        }else{
+            kendo.ui.showErrorDialog({
+                message  : e.response.message
+            })
+        }
+    }
+
+    function save() {
+        viewModel.model.set("signPerson",$("#signPerson").val());
+        if (viewModel.model.status != "" && viewModel.model.status != null) {
+            var statusDesc = viewModel.model.status;
+            $.each(statusData, function (i, n) {
+                if ((n.value || '').toLowerCase() == (statusDesc || '').toLowerCase()) {
+                    statusDesc = n.meaning;
+                }
+            })
+        }
+
+        if (type == "GRID") {
+            var checked = window.parent.grid.selectedDataItems();
+            $.each(checked, function (i, v) {
+
+                if (viewModel.model.status == "ARRIVAL") {
+                    v.arrivalDate = viewModel.model.arrivalDate;
+                    v.signPerson = viewModel.model.signPerson;
+                    v.signAssistant = viewModel.model.signAssistant;
+                    v.signAssistantName = viewModel.model.signAssistantName;
+                } else if (viewModel.model.status == "LEAVE") {
+                    v.leaveDate = viewModel.model.leaveDate;
+                } else if (viewModel.model.status == "APPROVING") {
+                    v.oldReqFileId = viewModel.model.oldReqFileId;
+                    v.reqFileId = viewModel.model.reqFileId;
+                    v.reqToken = viewModel.model.reqToken;
+                    v.policyNumber = viewModel.model.policyNumber;
+                } else if (viewModel.model.status == "POLICY_EFFECTIVE") { // todo
+                    v.approveDate = viewModel.model.approveDate;
+                    v.effectiveDate = viewModel.model.effectiveDate;
+                    v.firstPayDate = viewModel.model.firstPayDate;
+                    v.expectCoolDate = viewModel.model.expectCoolDate;
+                    v.ddaFlag = viewModel.model.ddaFlag;
+                    v.ddaSubmitDate = viewModel.model.ddaSubmitDate;
+                    v.ddaEffectiveDate = viewModel.model.ddaEffectiveDate;
+                    v.nextPolicyAmount = viewModel.model.nextPolicyAmount;
+                    v.nextPolicyDueDate = viewModel.model.nextPolicyDueDate;
+                    v.renewalDueDate = viewModel.model.nextPolicyDueDate;
+                    v.graceDate = viewModel.model.graceDate;
+                    v.administrativeDate = viewModel.model.administrativeDate;
+                    v.customerNumber = viewModel.model.customerNumber;
+                    v.payNumber = viewModel.model.payNumber;
+                    v.balanceCurrency = viewModel.model.balanceCurrency;
+                    v.feedbackBalance = viewModel.model.feedbackBalance;
+                    v.accountBalance = viewModel.model.accountBalance;
+                    v.whetherSendMes = viewModel.model.whetherSendMes;
+                } else if (viewModel.model.status == "SIGNED") {
+                    v.policyNumber = viewModel.model.policyNumber;
+                    v.hisDesc = viewModel.model.hisDesc;
+                } else {
+                    v.hisDesc = viewModel.model.hisDesc;
+                }
+                v.status = viewModel.model.status;
+                v.statusDesc = statusDesc;
+                v.hisStatus = viewModel.model.status;
+                v.dirty = true;
+            })
+            window.parent.$('#Grid').data('kendoGrid').saveChanges();
+            window.parent.$("#updWin").data("kendoWindow").close();
+        } else {
+            if (viewModel.model.status == "ARRIVAL") {
+                window.parent.viewModel.model.set("arrivalDate", viewModel.model.arrivalDate);
+                window.parent.viewModel.model.set("signPerson", viewModel.model.signPerson);
+                window.parent.viewModel.model.set("signAssistant", viewModel.model.signAssistant);
+                window.parent.viewModel.model.set("signAssistantName", viewModel.model.signAssistantName);
+            } else if (viewModel.model.status == "LEAVE") {
+                window.parent.viewModel.model.set("leaveDate", viewModel.model.leaveDate);
+            } else if (viewModel.model.status == "APPROVING") {
+                window.parent.viewModel.model.set("oldReqFileId", viewModel.model.oldReqFileId);
+                window.parent.viewModel.model.set("reqFileId", viewModel.model.reqFileId);
+                window.parent.viewModel.model.set("reqToken", viewModel.model.reqToken);
+                window.parent.viewModel.model.set("policyNumber", viewModel.model.policyNumber);
+            } else if (viewModel.model.status == "POLICY_EFFECTIVE") {
+                window.parent.viewModel.model.set("approveDate", viewModel.model.approveDate);
+                window.parent.viewModel.model.set("effectiveDate", viewModel.model.effectiveDate);
+                window.parent.viewModel.model.set("firstPayDate", viewModel.model.firstPayDate);
+                window.parent.viewModel.model.set("expectCoolDate", viewModel.model.expectCoolDate);
+                window.parent.viewModel.model.set("ddaFlag", viewModel.model.ddaFlag);
+                window.parent.viewModel.model.set("ddaSubmitDate", viewModel.model.ddaSubmitDate);
+                window.parent.viewModel.model.set("ddaEffectiveDate", viewModel.model.ddaEffectiveDate);
+                window.parent.viewModel.model.set("nextPolicyAmount", viewModel.model.nextPolicyAmount);
+                window.parent.viewModel.model.set("nextPolicyDueDate", viewModel.model.nextPolicyDueDate);
+                window.parent.viewModel.model.set("renewalDueDate", viewModel.model.nextPolicyDueDate);
+                window.parent.viewModel.model.set("graceDate", viewModel.model.graceDate);
+                window.parent.viewModel.model.set("administrativeDate", viewModel.model.administrativeDate);
+                window.parent.viewModel.model.set("customerNumber", viewModel.model.customerNumber);
+                window.parent.viewModel.model.set("payNumber", viewModel.model.payNumber);
+                window.parent.viewModel.model.set("balanceCurrency", viewModel.model.balanceCurrency);
+                window.parent.viewModel.model.set("feedbackBalance", viewModel.model.feedbackBalance);
+                window.parent.viewModel.model.set("accountBalance", viewModel.model.accountBalance);
+                window.parent.viewModel.model.set("whetherSendMes", viewModel.model.whetherSendMes);
+            } else if (viewModel.model.status == "SIGNED") {
+                window.parent.viewModel.model.set("policyNumber", viewModel.model.policyNumber);
+                window.parent.viewModel.model.set("hisDesc", viewModel.model.hisDesc);
+            } else {
+                window.parent.viewModel.model.set("hisDesc", viewModel.model.hisDesc);
+            }
+            window.parent.viewModel.model.set("status", viewModel.model.status);
+            window.parent.viewModel.model.set("statusDesc", statusDesc);
+            window.parent.viewModel.model.set("hisStatus", viewModel.model.status);
+            window.parent.viewModel.model.set("dirty", true);
+            window.parent.saveData();
+            window.parent.$("#updWin").data("kendoWindow").close();
+        }
+
+    }
+
+    function saveData() {
+        var validator = $("#page-content").data("kendoValidator");
+        //状态是已取消的时候 内容必填
+        if(viewModel.model.status == "CANCELLED"){
+        	if(viewModel.model.hisDesc == null || viewModel.model.hisDesc.trim() == ""){
+        		kendo.ui.showErrorDialog({
+                    message  : '请填写取消原因!'
+                })
+        		return;
+        	}
+        }
+        if (!validator.validate()) {
+            kendo.ui.showErrorDialog({
+                message  : '<@spring.message "fms.ordorder.validate_false"/>'
+            })
+        }else {
+
+            if((viewModel.model.status == "APPROVING") &&
+                (viewModel.model.reqFileId == "" || viewModel.model.reqFileId == null || typeof(viewModel.model.reqFileId) == "undefined")){
+                kendo.ui.showErrorDialog({
+                    message  : '请上传申请书copy件！'
+                })
+            }  else {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: '<@spring.message "fms.ordorder.confirmupdatestatus"/>'
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+
+                        if (viewModel.model.status == "POLICY_EFFECTIVE") {
+                            var trRows;
+                            $.ajax({
+                                type: "POST",
+                                async: false,
+                                url: "${base.contextPath}/fms/ord/pending/queryNotClosed",
+                                data: {
+                                    orderId: viewModel.model.orderId,
+                                },
+                                success: function (json) {
+                                    trRows = json.rows;
+                                }
+
+                            });
+
+                            if (trRows.length != 0) {
+                                kendo.ui.showConfirmDialog({
+                                    title: $l('hap.tip.info'),
+                                    message: '所选订单存在未关闭的pending数据，请确认是否继续，继续则系统将自动关闭掉这些pending数据。'
+                                }).done(function (event) {
+                                    if (event.button == 'OK') {
+                                        save();
+                                    }
+                                })
+                            } else {
+                                save();
+                            }
+
+                        } else {
+                            save();
+                        }
+
+
+                    }
+                })
+            }
+        }
+    }
+
+    function cancelData() {
+        window.parent.$("#updWin").data("kendoWindow").close();
+    }
+
+
+</script>
+</body>
+</html>

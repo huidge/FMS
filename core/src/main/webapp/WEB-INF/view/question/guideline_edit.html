@@ -1,0 +1,508 @@
+<#-- * description:操作指引管理列表.html * version: 1.0 * --> 
+<#include "../include/header.html">
+<script type="text/javascript">
+	//获取从上一个页面传递过来的参数
+	var guidelineId = '${RequestParameters.guidelineId!0}';
+
+	var viewModel = kendo.observable({
+		model : {},
+	});
+	
+		if (guidelineId != 0) {
+			$.ajax({
+				url : '${base.contextPath}/question/guideline/queryById',
+				type : "POST",
+				data : {
+					guidelineId : guidelineId
+				},
+				success : function(data) {
+					var row = data.rows[0] || {};
+					for ( var k in row) {
+						viewModel.model.set(k, row[k]);
+					}
+				}
+			});
+		}
+	
+</script>
+<div id="fileWin" style="display: none;">
+    <form>
+        <input type="file" id="files" name="files"></input>
+    </form>
+</div>
+<body>
+	<div id="page-content">
+		<div class="panel">
+			<form class="form-horizontal" id="baseMessage">
+				<!-- <fieldset> -->
+					<div class="panel-body">
+						<div class="row" style="margin-bottom: 3px;">
+							<div class="form-group">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="firstname" class="col-sm-1 control-label">名称:</label>
+										<input class="col-sm-4" type="text" id="guidelineName" name="guidelineName" class=" k-textbox"
+										 data-bind="value:model.guidelineName">
+									</div>
+									<div class="form-group">
+										<label for="lastname" class="col-sm-1 control-label">说明:</label>
+										<input class="col-sm-4" id="comments" type="text" name="comments" class=" k-textbox" 
+										 data-bind="value:model.comments">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<!-- </fieldset> -->
+					<h5>上传指引图片 </h5>
+					<div style="clear:both">
+				        <div id="Grid" class="table"></div>
+				    </div>
+		            <div class="col-xs-12" >
+                        <div class="form-group" style="margin-bottom:10px;float:right;">
+                            <div class="col-xs-9">
+                                <span onclick="saveData()" class="btn btn-success" id="btn_save" type="submit" style="width: 100px;margin-right:5px;"><i class="fa fa-save" style="margin-right:3px;"></i>提交</span>
+                            </div>
+                        </div>
+                    </div>
+		</form>
+		</div>
+		<iframe id="ifile" style="display:none"></iframe>
+		<div id="dialog"></div>
+	<script type="text/javascript">
+		 kendo.bind($('#page-content'), viewModel);
+		 
+		 var BaseUrl = _basePath;
+			dataSource = new kendo.data.DataSource({
+			        transport: {
+			            read: {
+			                url: BaseUrl + "/question/guideline/file/quertSort?guidelineId="+guidelineId,
+			                type: "POST",
+			                dataType: "json"
+			            },
+			            update: {
+			                url: BaseUrl + "/question/guideline/file/submit",
+			                type: "POST",
+			                contentType: "application/json"
+			            },
+			            destroy: {
+			                url: BaseUrl + "/question/guideline/file/remove",
+			                type: "POST",
+			                contentType: "application/json"
+			            },
+			            create: {
+			                url: BaseUrl + "/question/guideline/file/submit",
+			                type: "POST",
+			                contentType: "application/json"
+			            },
+			            parameterMap: function (options, type) {
+			                if (type !== "read" && options.models) {
+			                    var datas = Hap.prepareSubmitParameter(options, type)
+			                    return kendo.stringify(datas);
+			                } else if (type === "read") {
+			                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+			                }
+			            }
+			        },
+			        batch: true,
+			        serverPaging: false,
+			        pageSize: 10,
+			        schema: {
+			            data: 'rows',
+			            total: 'total',
+			            model: {
+			                id: "lineId",
+			                fields: {
+			                	 fileName:{editable:false}, 
+			                	fileSize:{editable:false}
+			                }
+			            }
+			        }
+			    });
+
+			    var grid=$("#Grid").kendoGrid({
+			        dataSource: dataSource,
+			        height: '300px',
+			        resizable: true,
+			        scrollable: true,
+			        navigatable: false,
+			        selectable: 'multiple, rowbox',
+			        pageable:false,
+			        toolbar: [
+			            {
+			                template: '<button type="button"  onclick="newArcData()" class="btn btn-primary" style="float:left;margin-right:5px;">' +
+			                '<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></button>'
+
+			            },
+			            {
+			                template: '<span onclick="deleteArcData()" class="btn btn-danger" style="float:left;margin-right:5px;">' +
+			                '<i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>'
+			            },
+			            {
+			                name: "cancel",
+			                template: '<span class="btn btn-default k-grid-cancel-changes">' +
+			                '<i class="fa fa-eraser" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>'
+			            },
+			           
+			        ],
+			        columns: [
+							{
+							    field: "lineId",
+							    title: 'id',
+							    width: 120,
+							    hidden:true
+							},
+							{
+							    field: "guidelineId",
+							    title: 'id',
+							    width: 120,
+							    hidden:true
+							},
+							{
+							    field: "fileId",
+							    title: '文件id',
+							    width: 120,
+							    hidden:true
+							},
+							{
+							    field: "rank",
+							    title: '排序',
+							    width: 120,
+							    hidden:true
+							},
+			              {
+			                field: "fileName",
+			                title: '文件名字',
+			                width: 120,
+			                attributes: {style: "text-align:center"},
+			                headerAttributes: {
+			                    style  : "text-align: center"
+			                },
+			                editor: function (container, options) {
+			                    $('<input type="text" class="k-textbox" onchange="validateGridName(\''+options.model.uid+'\')" required validationMessage="<@spring.message "hap.error.nullexception"/>" name="' + options.field + '"/>')
+			                        .appendTo(container)
+			                }
+			            },
+			            {
+			                field: "fileSize",
+			                title: '文件大小',
+			                width: 100,
+			                attributes: {style: "text-align:center"},
+			                headerAttributes: {
+			                    style  : "text-align: center"
+			                },
+			                template : function (dataItem) {
+			                	if(dataItem.fileSize){
+			                		var value = dataItem.fileSize;
+			                		return Math.round(value*0.001);
+			                	}else {
+			                		return "";
+			                	}
+			                }
+			            },
+			            {
+			                title: '查看图片',
+			                width: 80,
+			                attributes: {style: "text-align:center"},
+			                headerAttributes: {
+			                    style  : "text-align: center"
+			                },
+			                template : function (dataItem) {
+			                    if(dataItem.fileId){
+			                    	return "<a href='#' onclick='queryPic("+dataItem.fileId+")'>查看</a>";
+			                    }else{
+			                    	return "";
+			                    }
+			                }
+			             },
+			             {
+			                 title: '排序',
+			                 width: 80,
+			                 attributes: {
+			                     "class": "table-cell",
+			                     style: "text-align:center;"
+			                 },
+			                 headerAttributes: {
+			                     'class':'table-header-cell',
+			                     style:'text-align: center'
+			                 } ,
+			             	template: function (dataItem) {
+			             		if(dataItem.lineId){					  
+			                    		 return '<a href="#" onclick="moveUp('+dataItem.lineId+',\''+dataItem.guidelineId+'\',\''+dataItem.fileId+'\',\''+dataItem.rank+'\')">上移</a>&nbsp;&nbsp;<a href="#" onclick="moveDown('+dataItem.lineId+',\''+dataItem.guidelineId+'\',\''+dataItem.fileId+'\',\''+dataItem.rank+'\')">下移</a>';
+			             		}else{
+			             			return '';
+			             		}
+			             	}
+			             },
+			            {
+			                title: '<@spring.message "hap.action"/>',
+			                width: 80,
+			                attributes: {style: "text-align:center"},
+			                headerAttributes: {
+			                    style  : "text-align: center"
+			                },
+			                template : function (dataItem) {
+			                    var buttons = '';
+			                    if(dataItem.fileId){
+			                        buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+			                    }
+			                    else buttons = '&nbsp;<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheDownload'+dataItem.uid+'" onclick="downloadFile(\''+dataItem.uid+'\')"  disabled="disabled" title="<@spring.message "hap.download"/>"><span class="fa fa-download"></span></button>';
+			                    return  '<button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" id="attacheUpload'+dataItem.uid+'" onclick="upload(\''+dataItem.uid+'\')" title="<@spring.message "sysfile.upload"/>"><span class="fa fa-upload"></span></button>'+buttons;
+			                }
+			            }
+			        ],
+			        editable: true
+			    }).data("kendoGrid");
+		
+		 function newArcData() {
+		        if($('#Grid').find('.k-grid-edit-row').length > 1){
+	                kendo.ui.showInfoDialog({
+	                    message:"请先保存"
+	                });
+	            }else {
+	            	$("#Grid").data('kendoGrid').addRow();
+	            }
+		    }
+		 
+		 //删除
+		 function deleteArcData() {
+		        var grid = $("#Grid").data("kendoGrid");
+		        var checked = grid.selectedDataItems();
+		        if (grid.selectedDataItems().length) {
+		            kendo.ui.showConfirmDialog({
+		                title: $l('hap.tip.info'),
+		                message: $l('hap.tip.delete_confirm')
+		            }).done(function (event) {
+		                if (event.button == 'OK') {
+		                    $.each(checked, function (i, v) {
+		                        if(v.fileId != "" && v._token != "" && v.fileId != undefined && v._token != undefined) {
+		                            $.ajax({
+		                                url:"${base.contextPath}/question/guideline/file/remove",
+		                                type : "POST",
+		                                data:{
+		                                    fileId:v.fileId,
+		                                    token:v._token
+		                                }
+		                            })
+		                        }
+		                    })
+		                    $.each(checked, function (i, v) {
+		                        grid.dataSource.remove(v)
+		                    })
+		                    grid.dataSource.sync();
+		                }
+		            })
+		        }
+		    }
+		 
+			var uidData;
+		    var isUpload;
+		    function upload(uid){
+		        uidData = uid;
+		        data = dataSource.getByUid(uidData);
+		        if(data.fileId != "" && typeof(data.fileId) != "undefined"){
+		            kendo.ui.showConfirmDialog({
+		                message: '<@spring.message "fms.overwrite_file"/>'
+		            }).done(function (e) {
+		                if (e.button == 'OK') {
+		                    isUpload = true;
+		                    window.fileWin = $("#fileWin").kendoWindow({
+		                        title: '<@spring.message "sysfile.upload"/>',
+		                        width: 400,
+		                        height: 250,
+		                        modal: true
+		                    }).data("kendoWindow");
+		                    fileWin.center().open();
+		                }else{
+		                    isUpload = false;
+		                }
+		            });
+		        }
+		        else{
+		            isUpload = false;
+		            window.fileWin = $("#fileWin").kendoWindow({
+		                title: '<@spring.message "sysfile.upload"/>',
+		                width: 400,
+		                height: 250,
+		                modal: true
+		            }).data("kendoWindow");
+		            fileWin.center().open();
+		        }
+
+		    }
+		    $("#files").kendoUpload({
+		        async        : {
+		            saveUrl: "${base.contextPath}/commons/attach/upload?${_csrf.parameterName}=${_csrf.token}"
+		        },
+		        showFileList : false,
+		        upload       : onUpload,
+		        success      : onSuccess
+		    });
+
+		    function onUpload(e){
+		        e.data = {
+		            modularName:'QA',
+		            allowType:'jpg;png;pdf;doc;xls;xlsx;docx',
+		            maxSize:20480
+		        }
+		    };
+		    var fileId;
+		    var fileIds = [];
+		    function onSuccess(e){
+		        if(e.response.success){
+		            var grid = $("#Grid").data("kendoGrid");
+		            var data = grid.dataSource.getByUid(uidData);
+		            data.fileSize = Math.ceil((e.response.file.fileSize)/1024);
+		            data.oldFileId = data.fileId;
+		            data.fileId = e.response.file.fileId;
+		            data._token = e.response.file._token;
+		            var newTime = new Date(e.response.file.uploadDate);
+		            newTime = Hap.formatDateTime(newTime);
+		            data.uploadDate = newTime;
+		            data.dirty = true;
+		            grid.refresh();
+		            document.getElementById("attacheDownload"+uidData).disabled="";
+		            fileWin.close();
+		            //viewModel.model.set("fileSize",data.fileSize);
+		            fileId = data.fileId;
+		            fileIds.push(fileId);
+		        }else{
+		            kendo.ui.showErrorDialog({
+		                message  : e.response.message
+		            })
+		        }
+		    }
+
+		    function downloadFile(uid){
+		        data = dataSource.getByUid(uid);
+		        $.ajax({
+		            url : '${base.contextPath}/commons/attach/validateFile',
+		            type : "POST",
+		            dataType : "json",
+		            data : {
+		                fileId:data.fileId,
+		                token:data._token
+		            },
+		            success : function(json) {
+		                if(json.success == true){
+		                    url='${base.contextPath}/sys/attach/file/detail?fileId='+data.fileId+'&token='+data._token;
+		                    var iframe = document.getElementById("ifile");
+		                    iframe.src=url;
+		                }else{
+		                    kendo.ui.showErrorDialog({
+		                        message  : '<@spring.message "fms.file_not_exists"/>'
+		                    })
+		                }
+		            },
+		        })
+
+		    };
+		 
+		    //点击保存
+			 function saveData () { 
+				 viewModel.model.set("fileGrid",$("#Grid").data("kendoGrid").dataSource._data);
+		         if(guidelineId != 0){
+		        	 viewModel.model.set("guidelineId",guidelineId);
+		        	 Hap.submitForm({
+			             url: '${base.contextPath}/question/guideline/submit',
+			             formModel: viewModel.model,
+			             success: function (data) {
+			            	 if(data.success){
+				                	kendo.ui.showInfoDialog({
+			                             title: $l('hap.tip.info'),
+			                             message: $l('hap.tip.success')
+			                         });
+				                	 grid.refresh();
+					            	 dataSource.read(); 
+					            	
+			                	}else{
+			                		kendo.ui.showErrorDialog({
+			                            title: $l('hap.tip.error'),
+			                            message: data.message
+			                        });
+			                	}
+			             }
+			         })
+		         }else {
+		        	 viewModel.model.set("guidelineId",null);
+		        	 Hap.submitForm({
+			             url: '${base.contextPath}/question/guideline/add',
+			             formModel: viewModel.model,
+			             success: function (data) {
+			            	 if(data.success){
+				                	kendo.ui.showInfoDialog({
+			                             title: $l('hap.tip.info'),
+			                             message: $l('hap.tip.success')
+			                         }).done(function(event){
+			                        	 if (event.button == 'OK') {
+			                        		 window.parent.$("#dialog").data("kendoWindow").close();  
+			                        	 }
+			                         });
+			                	}else{
+			                		kendo.ui.showErrorDialog({
+			                            title: $l('hap.tip.error'),
+			                            message: data.message
+			                        });
+			                	}
+			             }
+			         })
+		        	 
+		         }
+			   }
+
+		    Hap.autoResizeGrid("#Grid");  
+		    
+		    function queryPic(fileId){
+		    	 var url = 'pic_show.html?fileId='+fileId;
+	    		 var dialog =  $("#dialog").kendoWindow({
+	                  width: "50%",
+	                 height: "70%", 
+	                 title: "查看图片",
+	                 content: url,                  
+	                 iframe:  true,
+	                 visible: false,
+	                 modal:true,
+	                  close: function(){
+	                	  grid.refresh();
+			            	dataSource.read();
+	             	 }
+	              }).data("kendoWindow");
+	   		  	 dialog.center().open();
+		    }
+		    
+		    function moveUp(lineId,guidelineId,fileId,rank){
+		    	$.ajax({
+					url:"${base.contextPath}/question/guideline/file/moveUp?guidelineId="+guidelineId+"&rank="+rank+"&fileId="+fileId+"&lineId="+lineId,
+					success:function(data){
+						if(data.success){
+							grid.refresh();
+			            	 dataSource.read();
+						}else{
+							 kendo.ui.showErrorDialog({
+	                             title: '错误',
+	                             message: "已经到顶了!"
+	                         })
+						}
+					}
+				})
+		    }
+		    function moveDown(lineId,guidelineId,fileId,rank){
+		    	$.ajax({
+					url:"${base.contextPath}/question/guideline/file/moveDown?guidelineId="+guidelineId+"&rank="+rank+"&fileId="+fileId+"&lineId="+lineId,
+					success:function(data){
+						if(data.success){
+							grid.refresh();
+			            	 dataSource.read();
+						}else{
+							 kendo.ui.showErrorDialog({
+	                             title: '错误',
+	                             message: "已经到底了!"
+	                         })
+						}
+					}
+				})
+		    }
+	</script>
+</div>
+</body>
+</html>

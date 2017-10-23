@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.sys.mapper.SysFunctionHandlePersonMapper">
+
+	<resultMap id="BaseResultMap" type="clb.core.sys.dto.SysFunctionHandlePerson">
+			<result column="user_id" property="userId"  />
+			<result column="TASK_TIME" property="taskTime"  />
+    </resultMap>
+
+	<select id="queryTodayTaskTimeByFunctionCode" resultMap="BaseResultMap" parameterType="clb.core.sys.dto.SysFunctionHandlePerson">
+		 SELECT USER_ID,SUM(TASK_TIME)TASK_TIME from fms_sys_function_handle_person fhp
+		  LEFT JOIN fms_sys_task_time_cfg ttc on fhp.FUNCTION_CODE=ttc.JOB_CLASS 
+		  and ttc.ITEM_ID=(SELECT ppr.ITEM_ID FROM fms_pln_plan_request ppr WHERE ppr.plan_id=fhp.SOURCE_ID) 
+		 where DATE_FORMAT(fhp.LAST_UPDATE_DATE,'%Y-%m-%d')>=DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+	            AND fhp.FUNCTION_CODE = #{functionCode}
+		 GROUP BY USER_ID
+	</select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.production.mapper.PrdHotRecommendMapper">
+    <resultMap id="BaseResultMap" type="clb.core.production.dto.PrdHotRecommend">
+        <result column="RECOMMEND_ID" property="recommendId" jdbcType="DECIMAL" />
+        <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+        <result column="SEQ_NUM" property="seqNum" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectInfoByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+         select fpi.ITEM_NAME,
+                fphr.* 
+           from fms_prd_hot_recommend fphr, fms_prd_items fpi
+           where fphr.ITEM_ID = fpi.ITEM_ID
+             and fphr.PRODUCT_TYPE = #{productType}
+             order by fphr.SEQ_NUM
+    </select> 
+     
+</mapper>

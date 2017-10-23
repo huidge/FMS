@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.supplier.mapper.SpeCalendarLineMapper">
+    <resultMap id="BaseResultMap" type="clb.core.supplier.dto.SpeCalendarLine">
+        <result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+        <result column="CALENDAR_ID" property="calendarId" jdbcType="DECIMAL" />
+        <result column="THE_YEAR" property="theYear" jdbcType="DECIMAL" />
+        <result column="THE_MONTH" property="theMonth" jdbcType="DECIMAL" />
+        <result column="THE_DAY" property="theDay" jdbcType="DECIMAL" />
+        <result column="DAY_TYPE" property="dayType" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <delete id="deleteByCalendarId" parameterType="java.lang.Long">
+    	delete from fms_spe_calendar_line where calendar_id = #{CalendarId}
+    </delete>
+
+
+</mapper>

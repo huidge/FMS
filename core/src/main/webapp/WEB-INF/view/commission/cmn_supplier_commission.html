@@ -1,0 +1,767 @@
+<#--
+        * description: 供应商佣金表
+        * version: 1.0
+        * author: jiaolong.li@hand-china.com
+        * -->
+<#include "../include/header.html">
+    <link rel="stylesheet" href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.css">
+    <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.1.118/js/jszip.min.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-loading-bar.css">
+
+    <script src="${base.contextPath}/clb/common/clbCode?channelTypeData=CNL.CHANNEL_CLASS"
+            type="text/javascript"></script>
+    <script src="${base.contextPath}/clb/common/clbCode?payMethodData=CMN.PAY_METHOD"
+            type="text/javascript"></script>
+    <script src="${base.contextPath}/clb/common/clbCode?currencyData=PUB.CURRENCY"
+            type="text/javascript"></script>
+    <script src="${base.contextPath}/clb/common/clbCode?priceTypeData=CMN.PRICE_TYPE"
+            type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var viewModel = kendo.observable({
+            model: {},
+            channelTypeData: channelTypeData,
+            payMethodData: payMethodData,
+            createFunction: function () {
+                $('#supplierCommGrid').data('kendoGrid').addRow();
+            },
+            saveFunction: function () {
+                $('#supplierCommGrid').data('kendoGrid').saveChanges();
+            },
+            queryFunction: function (e) {
+                $('#supplierCommGrid').data('kendoGrid').dataSource.page(1);
+            },
+            resetForm: function () {
+                var formData = viewModel.model.toJSON();
+                for (var k in formData) {
+                    viewModel.model.set(k, null);
+                }
+            },
+            exportExcel: function(){
+
+            }
+        });
+    </script>
+
+    <body>
+
+    <!--查询面板-->
+    <div id="content-container">
+        <div id="page-content">
+            <div class="panel">
+                <form class="form-horizontal" style="margin-top: 5px;">
+                    <div class="panel-body">
+
+                        <!--查询框第一行-->
+                        <div class="col-xs-12" >
+                            <!--供应商名称-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.supplierName"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="supplierId" style="width:100%"
+                                               data-bind="value:model.supplierId">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--渠道分类-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.channelTypeName"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="channelTypeCode" style="width:100%"
+                                               data-bind="value:model.channelTypeCode">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--渠道名称-->
+                            <!--<div class="col-xs-4" >-->
+                                <!--<div class="form-group" style="margin-bottom:10px">-->
+                                    <!--<label class="col-xs-4 control-label"-->
+                                           <!--style="text-align: right"><@spring.message "CmnSupplierCommission.channelName"/></label>-->
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<input id="channelName" style="width:100%"-->
+                                               <!--data-bind="value:model.channelName">-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+
+                        <!--查询框第二行-->
+                        <div class="col-xs-12" >
+
+                            <!--产品公司-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.itemSupplierName"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="itemSupplierId" style="width:100%"
+                                               data-bind="value:model.itemSupplierId">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--产品名称-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.itemName"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="itemName" style="width:100%"
+                                               data-bind="value:model.itemName">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--币种-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.currency"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="currency" style="width:100%"
+                                               data-bind="value:model.currency">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--查询框第三行-->
+                        <div class="col-xs-12" >
+                            <!--供款期-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.contributionPeriod"/></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" style="width:100%" data-bind="value:model.contributionPeriod"
+                                               class="k-textbox">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--缴费方式-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.payMethod"/></label>
+                                    <div class="col-sm-8">
+                                        <input id="payMethod" style="width:100%"
+                                               data-bind="value:model.payMethod">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--有效日期-->
+                            <div class="col-xs-4" >
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label class="col-xs-4 control-label"
+                                           style="text-align: right"><@spring.message "CmnSupplierCommission.effectiveDate"/></label>
+                                    <div class="col-xs-8">
+                                        <input id="effectiveDate" style="width:100%" data-bind="value:model.effectiveDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="panel-footer text-right">
+                            <span class="btn btn-primary" data-bind="click:queryFunction" type="submit">
+                                <i class="fa fa-search"
+                                   style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                        <span class="btn btn-default" type="button" data-bind="click:resetForm">
+                                <i class="fa fa-eraser"
+                                   style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                    </div>
+                </form>
+            </div>
+
+            <div id='grid-container'>
+                <div id="supplierCommGrid" class="table"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        // 绑定viewModel
+        kendo.bind($('#page-content'), viewModel);
+
+        // 查询面板下拉框
+        // 缴款方式
+        $('#payMethod').kendoDropDownList({
+            optionLabel: "-请选择缴款方式-",
+            filter: "contains",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:payMethodData
+        });
+
+        // 渠道分类
+        $('#channelTypeCode').kendoDropDownList({
+            optionLabel: "-请选择渠道分类-",
+            filter: "contains",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:channelTypeData
+        });
+
+        // 渠道名称
+        $('#channelName').kendoLov({
+            code: "CMN_CHANNEL_NAME",
+            contextPath: '${base.contextPath}',
+            locale: '${base.locale}'
+        });
+
+        // 供应商
+        $('#supplierId').kendoLov({
+            code: "CMN_SUPPLIER",
+            contextPath: '${base.contextPath}',
+            locale: '${base.locale}'
+        });
+
+        // 产品公司
+        $('#itemSupplierId').kendoLov({
+            code: "CMN_PRODUCT_COMPANY",
+            contextPath: '${base.contextPath}',
+            locale: '${base.locale}'
+        });
+
+        // 产品名称
+        $('#itemName').kendoLov({
+            code: "CMN_PRODUCT_NAME",
+            contextPath: '${base.contextPath}',
+            locale: '${base.locale}',
+            textField:'itemName',
+            dataTextField:'itemName',
+        });
+
+        // 币种
+        $('#currency').kendoDropDownList({
+            optionLabel: "-请选择币种-",
+            filter: "contains",
+            valuePrimitive: true,
+            dataTextField : "meaning",
+            dataValueField : "value",
+            dataSource:currencyData
+        });
+
+        $("#effectiveDate").kendoDateTimePicker({
+            format : "yyyy-MM-dd HH:mm:ss"
+        });
+        $("#effectiveDate").data("kendoDateTimePicker").value(new Date());
+
+        //var BaseUrl = _basePath;
+        var BaseUrl = _basePath;
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: BaseUrl + "/fms/cmn/supplier/commission/query",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url: BaseUrl + "/fms/cmn/supplier/commission/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                destroy: {
+                    url: BaseUrl + "/fms/cmn/supplier/commission/remove",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                create: {
+                    url: BaseUrl + "/fms/cmn/supplier/commission/submit",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type)
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+
+                        viewModel.model.set("effectiveDate", $("#effectiveDate").data("kendoDateTimePicker").value());
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    }
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "lineId",
+                    fields: {
+                        lineId:{},
+                        supplierId:{},
+                        supplierName:{},
+//                        superiorSupplierId:{},
+//                        superiorSupplierName:{},
+                        channelTypeCode:{},
+                        channelTypeName:{},
+                        itemId:{},
+                        itemSupplierId:{},
+                        itemSupplierName:{},
+                        itemName:{},
+                        itemCode:{},
+                        contributionPeriod:{},
+                        currency:{},
+                        payMethod:{},
+                        payMethodName:{},
+                        policyholdersMinAge:{type: "number"},
+                        policyholdersMaxAge:{type: "number"},
+                        theFirstYear:{type: "number"},
+                        theSecondYear:{type: "number"},
+                        theThirdYear:{type: "number"},
+                        theFourthYear:{type: "number"},
+                        theFifthYear:{type: "number"},
+                        theSixthYear:{type: "number"},
+                        theSeventhYear:{type: "number"},
+                        theEightYear:{type: "number"},
+                        theNinthYear:{type: "number"},
+                        theTenthYear:{type: "number"},
+                        version:{},
+                        effectiveStartDate:{},
+                        effectiveEndDate:{},
+                        effectiveDate:{}
+                    },
+                    editable:function (col) {
+                        return !(this.lineId != "" || col == "version");
+                    }
+                }
+            }
+        });
+
+        var grid = $("#supplierCommGrid").kendoGrid({
+            excelExport: function (e) {
+                //阻止默认事件冒泡
+                e.preventDefault();
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: '<@spring.message "fms.cmnsuppliercommission.excelexport"/>',
+                }).done(function (event) {
+                    if (event.button == "OK") {
+                        NProgress.start();
+                        $('<a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>导出 Excel中..<i class="fa fa-spinner faa-spin animated" style="font-size: 14px;"></i></a>').replaceAll("#supplierCommGrid .k-grid-excel");
+                        dataSource.page(1);
+                        var condition = {};
+                        for (var k in viewModel.model) {
+                            if (viewModel.model.hasOwnProperty(k)) {
+                                condition[k] = viewModel.model.get(k);
+                            }
+                        }
+                        condition.pageSize = dataSource.total();
+                        dataSource.read(condition).then(function () {
+                            var workbook = new kendo.ooxml.Workbook(e.workbook);
+                            kendo.saveAs({
+                                dataURI: workbook.toDataURL(),
+                                fileName: '<@spring.message "fms.cmnsuppliercommission.list"/>'
+                            });
+                            NProgress.done();
+                            $('<a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>导出 Excel</a>').replaceAll("#supplierCommGrid .k-grid-excel");
+                        })
+                    }
+                });
+            },
+            excel: {
+                allPages: true,
+            },
+            dataSource: dataSource,
+            height: '100%',
+            resizable: true,
+            rownumber: true,
+            scrollable: true,
+            navigatable: false,
+            //selectable: 'multiple, rowbox',
+            pageable: {
+                pageSizes: [5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            },
+            toolbar: [
+                {
+                    template: '<span type="button" onclick="exportExcel()" class="btn btn-primary">' +
+                    '<i class="fa fa-file-excel-o" style="margin-right:3px;"></i><@spring.message "hap.exportexcel"/></span>'
+                },
+                {
+                    template: '<span id="startJobBtn" onclick="startJob()" class="btn btn-success k-grid-save-changes">' +
+                    '<i class="fa fa-repeat" style="margin-right:3px;"></i><@spring.message "启动供应商佣金表计算任务"/></span>'
+                }
+            ],
+            columns: [
+                {
+                    field: "lineId",
+                    title: '<@spring.message "CmnSupplierCommission.lineId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "supplierId",
+                    title: '<@spring.message "CmnSupplierCommission.supplierId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "supplierName",
+                    title: '<@spring.message "CmnSupplierCommission.supplierName"/>',
+                    width: 120
+                },
+//                {
+//                    field: "superiorSupplierId",
+//                    title: '<@spring.message "CmnSupplierCommission.superiorSupplierId"/>',
+//                    width: 120,
+//                    hidden: true
+//                },
+//                {
+//                    field: "superiorSupplierName",
+//                    title: '<@spring.message "CmnSupplierCommission.superiorSupplierName"/>',
+//                    width: 120
+//                },
+                {
+                    field: "channelTypeCode",
+                    title: '<@spring.message "CmnSupplierCommission.channelTypeCode"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "channelTypeName",
+                    title: '<@spring.message "CmnSupplierCommission.channelTypeName"/>',
+                    width: 120
+                },
+                {
+                    field: "itemId",
+                    title: '<@spring.message "CmnSupplierCommission.itemId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "itemSupplierId",
+                    title: '<@spring.message "CmnSupplierCommission.itemSupplierId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "itemSupplierName",
+                    title: '<@spring.message "CmnSupplierCommission.itemSupplierName"/>',
+                    width: 120
+                },
+                {
+                    field: "itemName",
+                    title: '<@spring.message "CmnSupplierCommission.itemName"/>',
+                    width: 120
+                },
+                {
+                    field: "itemCode",
+                    title: '<@spring.message "CmnSupplierCommission.itemCode"/>',
+                    width: 120
+                },
+                {
+                    field: "contributionPeriod",
+                    title: '<@spring.message "CmnSupplierCommission.contributionPeriod"/>',
+                    width: 120
+                },
+                {
+                    field: "currency",
+                    title: '<@spring.message "CmnSupplierCommission.currency"/>',
+                    width: 120,
+                    template: function (dataItem) {
+                        var v = dataItem.currency;
+                        $.each(currencyData, function (i, n) {
+                            if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                                v = n.meaning;
+                                return v;
+                            }
+                        })
+                        return v;
+                    }
+                },
+                {
+                    field: "payMethod",
+                    title: '<@spring.message "CmnSupplierCommission.payMethod"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "payMethodName",
+                    title: '<@spring.message "CmnSupplierCommission.payMethodName"/>',
+                    width: 120
+                },
+                {
+                    field: "policyholdersMinAge",
+                    title: '<@spring.message "CmnSupplierCommission.policyholdersMinAge"/>',
+                    width: 120
+                },
+                {
+                    field: "policyholdersMaxAge",
+                    title: '<@spring.message "CmnSupplierCommission.policyholdersMaxAge"/>',
+                    width: 120
+                },
+                //价格类型
+                {
+                    field: "priceType",
+                    title: '<@spring.message "CmnBasic.priceType"/>',
+                    width: 120,
+                    attributes: {style: "text-align:center"},
+                    headerAttributes: {
+                        style: "text-align: center"
+                    },
+                    template: function (dataItem) {
+                        for (var i in priceTypeData) {
+                            if (dataItem.priceType == priceTypeData[i].value) {
+                                return priceTypeData[i].meaning;
+                            }
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: "theFirstYear",
+                    title: '<@spring.message "CmnSupplierCommission.theFirstYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theFirstYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theFirstYear){
+                                return (dataItem.theFirstYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theSecondYear",
+                    title: '<@spring.message "CmnSupplierCommission.theSecondYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theSecondYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theSecondYear){
+                                return (dataItem.theSecondYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+
+                },
+                {
+                    field: "theThirdYear",
+                    title: '<@spring.message "CmnSupplierCommission.theThirdYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theThirdYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theThirdYear){
+                                return (dataItem.theThirdYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+
+                    }
+                },
+                {
+                    field: "theFourthYear",
+                    title: '<@spring.message "CmnSupplierCommission.theFourthYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theFourthYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theFourthYear){
+                                return (dataItem.theFourthYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theFifthYear",
+                    title: '<@spring.message "CmnSupplierCommission.theFifthYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theFifthYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theFifthYear){
+                                return (dataItem.theFifthYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theSixthYear",
+                    title: '<@spring.message "CmnSupplierCommission.theSixthYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theSixthYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theSixthYear){
+                                return (dataItem.theSixthYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theSeventhYear",
+                    title: '<@spring.message "CmnSupplierCommission.theSeventhYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theSeventhYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theSeventhYear){
+                                return (dataItem.theSeventhYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theEightYear",
+                    title: '<@spring.message "CmnSupplierCommission.theEightYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theEightYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theEightYear){
+                                return (dataItem.theEightYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theNinthYear",
+                    title: '<@spring.message "CmnSupplierCommission.theNinthYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theNinthYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theNinthYear){
+                                return (dataItem.theNinthYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                {
+                    field: "theTenthYear",
+                    title: '<@spring.message "CmnSupplierCommission.theTenthYear"/>',
+                    width: 120,
+                    template:function (dataItem) {
+                        if(dataItem.priceType=="PERCENTAGE"){
+                            return (dataItem.theTenthYear*100).toFixed(2) + "%";
+                        }else {
+                            if(dataItem.theTenthYear){
+                                return (dataItem.theTenthYear).toFixed(2);
+                            }
+                            return "0";
+                        }
+                    }
+                },
+                /*{
+                    field: "version",
+                    title: '<@spring.message "CmnSupplierCommission.version"/>',
+                    width: 120
+                },*/
+                {
+                    field: "dealPathName",
+                    title: '<@spring.message "CmnChannelCommission.dealPathName"/>',
+                    width: 300
+                },
+                {
+                    field: "effectiveStartDate",
+                    title: '<@spring.message "CmnSupplierCommission.effectiveStartDate"/>',
+                    width: 120
+                },
+                {
+                    field: "effectiveEndDate",
+                    title: '<@spring.message "CmnSupplierCommission.effectiveEndDate"/>',
+                    width: 120
+                },
+                {
+                    field: "programId",
+                    title: '<@spring.message "CmnSupplierCommission.programId"/>',
+                    width: 120,
+                    hidden: true
+                },
+                {
+                    field: "requestId",
+                    title: '<@spring.message "CmnSupplierCommission.requestId"/>',
+                    width: 120,
+                    hidden: true
+                },
+            ],
+            editable: true
+        }).data("kendoGrid");
+
+        $.ajax({
+            url:"${base.contextPath}/clb/sys/user/isAdmin",
+            method:"POST",
+            contentType:"application/json",
+            dataType:"json",
+            data:{},
+            success:function (data) {
+                if(data){
+                    $("#startJobBtn").show();
+                }else{
+                    $("#startJobBtn").hide();
+                }
+            }
+        });
+
+
+        //导出excel
+        function exportExcel(){
+            grid.saveAsExcel();
+        }
+
+        //执行任务
+        function startJob(){
+
+            kendo.ui.showConfirmDialog({
+                title: $l('hap.tip.info'),
+                message: $l('hap.tip.job_confirm')
+            }).done(function (event) {
+                if (event.button == 'OK') {
+                    var result = false;
+                    $.ajax({async:false,
+                        type:"post",
+                        url:'${base.contextPath}/fms/cmn/supplier/commission/startJob',
+                        success:function(json){
+                            kendo.ui.showInfoDialog({
+                                title: $l('hap.tip.info'),
+                                message: json.message
+                            });
+                        }});
+                }
+            })
+        }
+
+        function deleteData() {
+
+            Hap.deleteGridSelection({
+                grid: $('#supplierCommGrid')
+            });
+
+        }
+
+        Hap.autoResizeGrid("#supplierCommGrid");
+
+
+    </script>
+    </body>
+    </html>

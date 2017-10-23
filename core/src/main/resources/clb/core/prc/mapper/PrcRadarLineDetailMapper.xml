@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="clb.core.prc.mapper.PrcRadarLineDetailMapper">
+	<resultMap id="BaseResultMap" type="clb.core.prc.dto.PrcRadarLineDetail">
+		<result column="DETAIL_ID" property="detailId" jdbcType="DECIMAL" />
+		<result column="SERIAL_NUMBER" property="serialNumber"
+			jdbcType="DECIMAL" />
+		<result column="DETAIL_NAME" property="detailName" jdbcType="VARCHAR" />
+		<result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+		<result column="att_id" property="attId" />
+		<result column="SQL_CONTENT" property="sqlContent" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="LINE_ID" property="lineId" jdbcType="DECIMAL" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="value" property="value" />
+		<result column="meaning" property="meaning"/>
+		<result column="COMPARE_RULE" property="compareRule"/>
+	</resultMap>
+
+	<select id="selectByLineId" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		fprld.DETAIL_ID,
+		fprld.SERIAL_NUMBER,
+		fprld.DETAIL_NAME,
+		fprld.SOURCE_TYPE,
+		fprld.att_id,
+		fprld.SQL_CONTENT,
+		fprld.`STATUS`,
+		fprld.LINE_ID
+		from fms_prc_radar_line_detail fprld
+		where fprld.line_id =#{lineId}
+	</select>
+	
+	<!-- 获取产品属性信息 -->
+	<select id="selectAttSetInfo" resultMap="BaseResultMap">
+	    select fpa.ATT_ID value, 
+	           fpa.ATT_NAME meaning 
+	    from fms_prd_attribute_set_line fpasl, fms_prd_attribute fpa
+        where fpasl.ATT_ID = fpa.ATT_ID
+        <if test="attSetId != null and attSetId != ''">
+          and fpasl.ATT_SET_ID = #{attSetId}
+        </if>
+	</select>
+	
+    <!-- 查询当前的维度行明细 -->
+    <select id="selectLineDetailInfo" resultMap="BaseResultMap">
+        select fprld.* 
+        from fms_prc_radar_line_detail fprld, fms_prc_radar_line fprl
+        where fprld.LINE_ID = fprl.LINE_ID
+          and fprl.ATT_SET_ID = #{attSetId}
+          and fprld.DETAIL_NAME = #{detailName}
+          and fprld.DETAIL_ID = #{detailId}
+    </select>
+    
+    <select id="wsSelectLineDetail" resultMap="BaseResultMap">
+	    select
+		fprld.DETAIL_ID,
+		fprld.SERIAL_NUMBER,
+		fprld.DETAIL_NAME,
+		fprld.SOURCE_TYPE,
+		fprld.att_id,
+		fprld.SQL_CONTENT,
+		fprld.`STATUS`,
+		fprld.LINE_ID ,fpasl.COMPARE_RULE
+		from fms_prc_radar_line_detail fprld 
+	    LEFT  join fms_prd_attribute_set_line fpasl on fprld.att_id=fpasl.ATT_ID and fpasl.COMPARE_FLAG='Y' 
+			where fprld.`STATUS`='Y' 
+	    and fprld.line_id =#{lineId}
+	    and (fpasl.ATT_SET_ID=#{attSetId} or fprld.ATT_ID is null )
+	</select>
+    
+</mapper>
